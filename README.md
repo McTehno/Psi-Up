@@ -18,9 +18,9 @@ Sistem je namenjen različnim skupinam uporabnikov, kot so študenti, zaposleni,
 - prikaz modulov in učnih enot,
 - grafični prikaz učne poti,
 - prikaz napredovanja od začetnega stanja do končnega cilja.
-- 
+
 ## 4. Tehnološki sklad
-- Frontend: React
+- Frontend: React, TypeScript, Vite
 - Backend: Python
 - Baza podatkov: MongoDB
 - ORM: še ni določeno
@@ -37,7 +37,81 @@ psi-up/
 │
 └── README.md
 
+```
+## 6. Pravila poimenovanja in pisanja kode
+### 6.1 Splošna pravila
+- Imena naj bodo jasna, razumljiva in povezana z domeno projekta.
+- V dokumentaciji uporabljamo slovenske izraze.
+- V kodi lahko uporabljamo angleška imena, kadar je to bolj naravno za programski jezik ali knjižnice.
+- Poimenovanje mora biti dosledno skozi celoten projekt.
+- Nepotrebnih okrajšav se izogibamo.
 
+### 6.2 Poimenovanje map
+
+- Mape pišemo z malimi črkami.
+
+- Če je ime sestavljeno iz več besed, uporabimo vezaj.
+
+Primer:
+
+```text
+ucne-poti/
+vprasalnik/
+
+```
+
+### 6.3 Poimenovanje datotek na frontendu
+
+- React komponente pišemo v PascalCase.
+Primer:
+```text
+UcnaPotPrikaz.jsx
+ObrazecVprasalnika.jsx
+```
+- Pomožne datoteke pišemo z malimi črkami in vezaji.
+
+### 6.4 Poimenovanje datotek na backendu
+
+- Python datoteke pišemo z malimi črkami in podčrtaji.
+Primer:
+```text
+storitev_priporocil.py
+```
+### 6.5 Poimenovanje spremenljivk in funkcij
+
+- V JavaScript/React uporabljamo *camelCase*.
+  
+Primer:
+```text
+izbranaKompetenca
+pridobiUcnoPot()
+posljiVprasalnik()
+```
+
+- V Pythonu uporabljamo *snake_case*.
+
+Primer:
+```text
+poslji_vprasalnik()
+```
+
+### 6.6 Poimenovanje React komponent
+
+- React komponente pišemo v *PascalCase*.
+
+Primer:
+```text
+SeznamUcnihEnot
+```
+
+### 6.7 Komentarji v kodi
+
+Komentarje uporabljamo samo tam, kjer pojasnijo pomembno logiko ali odločitev.
+
+Dober primer:
+```text
+# Za začetno verzijo sistem vrne eno priporočeno učno pot glede na izbrano kompetenco.
+```
 
 # Besednjak pojmov za projekt priporočilnega sistema učnih poti
 

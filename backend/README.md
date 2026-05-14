@@ -16,7 +16,8 @@ backend/
 │   │   ├── assessments.py
 │   │   ├── learning_paths.py
 │   │   ├── competencies.py
-│   │   └── modules.py
+│   │   ├── modules.py
+│   │   └── learning_units.py
 │   │
 │   ├── services/
 │   │   ├── competency_groups/
@@ -43,9 +44,13 @@ backend/
 │   │   │   ├── __init__.py
 │   │   │   └── learning_path_service.py
 │   │   │
-│   │   └── modules/
+│   │   ├── modules/
+│   │   │   ├── __init__.py
+│   │   │   └── module_service.py
+│   │   │
+│   │   └── learning_units/
 │   │       ├── __init__.py
-│   │       └── module_service.py
+│   │       └── learning_unit_service.py
 │   │
 │   ├── repositories/
 │   │   ├── competency_group_repository.py
@@ -61,7 +66,8 @@ backend/
 │   │   ├── competency_schema.py
 │   │   ├── assessment_schema.py
 │   │   ├── learning_path_schema.py
-│   │   └── module_schema.py
+│   │   ├── module_schema.py
+│   │   └── learning_unit_schema.py
 │   │
 │   └── database/
 │       └── mongodb.py

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.competency_groups import router as competency_groups_router
-
+from app.api.questionnaires import router as questionnaires_router
 
 app = FastAPI(
     title="Psi-Up API",
@@ -11,7 +11,7 @@ app = FastAPI(
 
 
 app.include_router(competency_groups_router, prefix="/api")
-
+app.include_router(questionnaires_router, prefix="/api")
 
 @app.get("/")
 def read_root():

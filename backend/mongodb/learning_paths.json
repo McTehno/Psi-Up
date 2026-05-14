@@ -1,0 +1,112 @@
+[
+  {
+    "_id": "up_1",
+    "title": "Strokovnjak za Office 365",
+    "description": "Učna pot, ki uporabnika pripelje od osnovnega do naprednega znanja orodij Office 365 in AI orodij.",
+    "competencies": [
+      {
+        "competency_id": "komp_1",
+        "modules": [
+          {
+            "module_id": "mod_1",
+            "order": 1
+          },
+          {
+            "module_id": "mod_2",
+            "order": 2
+          },
+          {
+            "module_id": "mod_3",
+            "order": 3
+          },
+          {
+            "module_id": "mod_4",
+            "order": 4
+          },
+          {
+            "module_id": "mod_5",
+            "order": 5
+          }
+        ]
+      },
+      {
+        "competency_id": "komp_2",
+        "modules": [
+          {
+            "module_id": "mod_6",
+            "order": 1
+          },
+          {
+            "module_id": "mod_8",
+            "order": 2
+          },
+          {
+            "module_id": "mod_7",
+            "order": 3
+          },
+          {
+            "module_id": "mod_9",
+            "order": 4
+          },
+          {
+            "module_id": "mod_10",
+            "order": 5
+          }
+        ]
+      },
+      {
+        "competency_id": "komp_4",
+        "modules": [
+          {
+            "module_id": "mod_15",
+            "order": 1
+          },
+          {
+            "module_id": "mod_16",
+            "order": 2
+          },
+          {
+            "module_id": "mod_17",
+            "order": 3
+          },
+          {
+            "module_id": "mod_18",
+            "order": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "up_2",
+    "title": "Kibernetska varnost in odgovorno delo",
+    "description": "Učna pot za zagotavljanje varnega sodelovanja in obveščanje o digitalni zasebnosti.",
+    "competencies": [
+      {
+        "competency_id": "komp_3",
+        "modules": [
+          {
+            "module_id": "mod_11",
+            "order": 1
+          },
+          {
+            "module_id": "mod_13",
+            "order": 2
+          },
+          {
+            "module_id": "mod_14",
+            "order": 3
+          },
+          {
+            "module_id": "mod_12",
+            "order": 4
+          },
+          {
+            "module_id": "mod_4",
+            "order": 5
+          }
+        ]
+      }
+    ]
+  }
+]

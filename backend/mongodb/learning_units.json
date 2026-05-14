@@ -1,0 +1,906 @@
+[
+  {
+    "_id": "ue_1",
+    "title": "Uvod v procesiranje besedil",
+    "content": "Osnove pisanja, shranjevanja in odpiranja dokumentov v programu MS Word.",
+    "assessment_method": "Praktična naloga - oblikovanje kratkega dopisa.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_2",
+    "title": "Oblikovanje in stili",
+    "content": "Uporaba vgrajenih stilov, nastavitve pisav in odstavkov.",
+    "assessment_method": "Kviz (10 vprašanj).",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_3",
+    "title": "Uvod v preglednice",
+    "content": "Razumevanje celic, vrstic, stolpcev in osnovnega vnosa podatkov v MS Excel.",
+    "assessment_method": "Samoocena in oddaja delovnega zvezka.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 90
+  },
+  {
+    "_id": "ue_4",
+    "title": "Osnove komunikacije preko MS Teams",
+    "content": "Ustvarjanje sestankov, pošiljanje sporočil in upravljanje obvestil.",
+    "assessment_method": "Praktična demonstracija - organizacija testnega sestanka.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_5",
+    "title": "Ustvarjanje močnih gesel",
+    "content": "Tehnike za ustvarjanje, varno shranjevanje in upravljanje gesel.",
+    "assessment_method": "Kviz varnostne pismenosti.",
+    "instructor": "Nina Zupan",
+    "duration_min": 30
+  },
+  {
+    "_id": "ue_6",
+    "title": "Urejanje besedila in odstavkov",
+    "content": "Osnovno označevanje besedila, kopiranje, lepljenje, poravnava in razmik med odstavki v Wordu.",
+    "assessment_method": "Praktična vaja - ureditev kratkega dokumenta.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_7",
+    "title": "Vstavljanje tabel in slik",
+    "content": "Dodajanje tabel, slik in podpisov ter osnovno oblikovanje elementov v dokumentu.",
+    "assessment_method": "Praktična naloga - dokument s tabelo in sliko.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_8",
+    "title": "Glave, noge in oštevilčenje strani",
+    "content": "Nastavitev glave, noge, oštevilčenja strani in osnovne postavitve dokumenta.",
+    "assessment_method": "Oddaja pravilno oštevilčenega dokumenta.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_9",
+    "title": "Slogi in predloge za dokumente",
+    "content": "Uporaba slogov, predlog in enotnega vizualnega videza dokumenta.",
+    "assessment_method": "Kviz in praktična uporaba predloge.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_10",
+    "title": "Tiskanje, izvoz in deljenje dokumentov",
+    "content": "Priprava dokumenta za tisk, izvoz v PDF in varno deljenje datoteke.",
+    "assessment_method": "Praktična demonstracija izvoza v PDF.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_11",
+    "title": "Seznami, zamiki in struktura besedila",
+    "content": "Oblikovanje oštevilčenih in alinejnih seznamov ter uporaba zamikov za pregledno strukturo.",
+    "assessment_method": "Praktična vaja - strukturiran dokument.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_12",
+    "title": "Postavitev strani in robovi",
+    "content": "Nastavljanje robov, orientacije strani in velikosti papirja za različne vrste dokumentov.",
+    "assessment_method": "Oddaja dokumenta s pravilno postavitvijo strani.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_13",
+    "title": "Pregledovanje in popravljanje dokumentov",
+    "content": "Preverjanje črkovanja, uporaba komentarjev in osnovno sledenje spremembam.",
+    "assessment_method": "Kviz in urejanje besedila z napakami.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_14",
+    "title": "Priprava formalnega dopisa",
+    "content": "Uporaba vseh naučenih elementov za pripravo formalnega poslovnega dopisa.",
+    "assessment_method": "Praktična naloga - končni dopis.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_15",
+    "title": "Vnašanje podatkov in oblike celic",
+    "content": "Vnos podatkov, formatiranje celic in osnove urejanja delovnega lista v Excelu.",
+    "assessment_method": "Oddaja urejenega delovnega lista.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_16",
+    "title": "Osnovne formule in operatorji",
+    "content": "Seštevanje, odštevanje, množenje in deljenje z uporabo osnovnih formul.",
+    "assessment_method": "Praktična vaja s formulami.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_17",
+    "title": "Relativno in absolutno sklicevanje",
+    "content": "Razlika med relativnimi in absolutnimi sklici ter njihova praktična uporaba.",
+    "assessment_method": "Kratka naloga s sklicevanjem.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_18",
+    "title": "Funkcije SUM, AVERAGE in MIN/MAX",
+    "content": "Uporaba najpogostejših funkcij za osnovno obdelavo številčnih podatkov.",
+    "assessment_method": "Kviz in reševanje primerov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_19",
+    "title": "Razvrščanje in filtriranje podatkov",
+    "content": "Urejanje podatkov po velikosti, abecedi in uporabo osnovnih filtrov.",
+    "assessment_method": "Praktična naloga - filtriran seznam.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_20",
+    "title": "Uvod v načrtovanje predstavitve",
+    "content": "Načrtovanje vsebine, izbira strukture in priprava osnovnega scenarija za predstavitev.",
+    "assessment_method": "Oddaja načrta predstavitve.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_21",
+    "title": "Oblikovanje prosojnic",
+    "content": "Uporaba predlog, postavitve elementov in enotnega vizualnega sloga prosojnic.",
+    "assessment_method": "Praktična vaja - niz treh prosojnic.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_22",
+    "title": "Vstavljanje slik, ikon in grafik",
+    "content": "Dodajanje vizualnih elementov v predstavitev in osnovno urejanje njihove postavitve.",
+    "assessment_method": "Oddaja vizualno obogatene predstavitve.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_23",
+    "title": "Animacije in prehodi",
+    "content": "Dodajanje prehodov med prosojnicami in preprostih animacij za boljšo preglednost.",
+    "assessment_method": "Praktična naloga z animacijami.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_24",
+    "title": "Govorni nastop in predstavitveni tempo",
+    "content": "Priprava govornega nastopa, raba zapiskov in obvladovanje tempa pri predstavitvi.",
+    "assessment_method": "Kratka javna predstavitev.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_25",
+    "title": "Priprava zaključne predstavitve",
+    "content": "Sestava celotne zaključne predstavitve z uporabo vseh osnovnih elementov.",
+    "assessment_method": "Praktična oddaja končne predstavitve.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_26",
+    "title": "Ustvarjanje sestankov v Teams",
+    "content": "Načrtovanje sestanka, vabila udeležencem in osnovne možnosti upravljanja srečanja.",
+    "assessment_method": "Praktična organizacija testnega sestanka.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_27",
+    "title": "Kanali, klepet in obvestila",
+    "content": "Razumevanje kanalov, zasebnih sporočil in nastavitev obvestil v Teams.",
+    "assessment_method": "Kviz in praktična vaja.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_28",
+    "title": "Skupna raba datotek v Teams",
+    "content": "Deljenje dokumentov, dovoljenja za urejanje in osnovno sodelovanje v datotekah.",
+    "assessment_method": "Oddaja deljene datoteke.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_29",
+    "title": "Spletni sestanki in pravila bontona",
+    "content": "Osnovna pravila vedenja, vklop kamere, mikrofon in sodelovanje na spletnem sestanku.",
+    "assessment_method": "Praktična demonstracija spletnega sestanka.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_30",
+    "title": "Praktična vaja: sodelovanje v ekipi",
+    "content": "Izvedba delovne naloge v Teams z uporabo klepeta, sestanka in skupne datoteke.",
+    "assessment_method": "Skupinska praktična naloga.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_31",
+    "title": "Uvod v OneDrive",
+    "content": "Razumevanje oblačne hrambe, prijava in osnovna organizacija datotek v OneDrive.",
+    "assessment_method": "Kratek kviz in prijava v storitev.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 30
+  },
+  {
+    "_id": "ue_32",
+    "title": "Ustvarjanje map in organizacija datotek",
+    "content": "Urejanje vsebine v mapah, preimenovanje in strukturiranje dokumentov v oblaku.",
+    "assessment_method": "Praktična ureditev strukture map.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_33",
+    "title": "Sinhronizacija z računalnikom",
+    "content": "Povezava OneDrive z računalnikom in razumevanje sinhronizacije datotek.",
+    "assessment_method": "Praktična demonstracija sinhronizacije.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_34",
+    "title": "Deljenje datotek in dovoljenja",
+    "content": "Nastavljanje povezav za deljenje, dovoljenj in časovne omejitve dostopa.",
+    "assessment_method": "Oddaja pravilno deljene datoteke.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_35",
+    "title": "Različice dokumentov in zgodovina",
+    "content": "Pregled zgodovine sprememb in uporaba različic dokumentov v oblaku.",
+    "assessment_method": "Praktična vaja z obnovitvijo različice.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_36",
+    "title": "Praktična vaja: oblačni delovni prostor",
+    "content": "Izvedba osnovnega delovnega procesa z uporabo OneDrive za shranjevanje in deljenje.",
+    "assessment_method": "Praktična naloga v oblaku.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_37",
+    "title": "Napredne funkcije za delo s podatki",
+    "content": "Uporaba funkcij IF, COUNTIF in osnovnih logičnih formul za analizo podatkov.",
+    "assessment_method": "Reševanje delovnega lista.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_38",
+    "title": "Pogojevanje in pogojno oblikovanje",
+    "content": "Označevanje pomembnih vrednosti z različnimi pravili pogojnega oblikovanja.",
+    "assessment_method": "Praktična vaja s pogoji.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_39",
+    "title": "Iskalne funkcije VLOOKUP in XLOOKUP",
+    "content": "Uporaba iskalnih funkcij za povezovanje podatkov iz različnih tabel.",
+    "assessment_method": "Praktična naloga z iskanjem podatkov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_40",
+    "title": "Uvod v vrtilne tabele",
+    "content": "Priprava vrtilnih tabel za povzetke, filtre in osnovno analizo podatkov.",
+    "assessment_method": "Oddaja vrtilne tabele.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_41",
+    "title": "Diagrami in vizualizacija podatkov",
+    "content": "Izbira ustreznih grafov za prikaz trendov, razlik in primerjav.",
+    "assessment_method": "Izdelava grafa na podlagi podatkov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_42",
+    "title": "Praktična vaja: analitični pregled podatkov",
+    "content": "Samostojna priprava naprednejšega pregleda podatkov z več funkcijami.",
+    "assessment_method": "Oddaja analitičnega lista.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_43",
+    "title": "Kaj je makro in kako deluje",
+    "content": "Razumevanje avtomatizacije v Office okolju in osnovna ideja makrojev.",
+    "assessment_method": "Kratek kviz pojmov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_44",
+    "title": "Snemanje makra",
+    "content": "Uporaba snemalnika makrov za ponavljajoča se opravila v Excelu.",
+    "assessment_method": "Praktična naloga - posnet makro.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_45",
+    "title": "Urejanje in zagon makra",
+    "content": "Prilagajanje obstoječega makra in ponovni zagon na novih podatkih.",
+    "assessment_method": "Oddaja delujočega makra.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_46",
+    "title": "Varnost pri uporabi makrov",
+    "content": "Razumevanje opozoril, podpisovanja in varnostnih tveganj pri makrih.",
+    "assessment_method": "Kviz varnosti makrov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_47",
+    "title": "Makri za avtomatizacijo poročil",
+    "content": "Povezava makrov z ustvarjanjem ponavljajočih se poročil in pripravo izhodov.",
+    "assessment_method": "Praktična vaja z avtomatizacijo poročila.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_48",
+    "title": "Praktična vaja: avtomatiziran Excel proces",
+    "content": "Izvedba celotnega delovnega procesa z uporabo enega ali več makrov.",
+    "assessment_method": "Končna praktična naloga.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_49",
+    "title": "Osnove spajanja dokumentov",
+    "content": "Razumevanje izvora podatkov in osnovne priprave dokumenta za spajanje.",
+    "assessment_method": "Kratek kviz in priprava osnutka.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_50",
+    "title": "Priprava glavnega dokumenta",
+    "content": "Ustvarjanje predloge za dopise, etikete ali obvestila v spajanju dokumentov.",
+    "assessment_method": "Praktična naloga - glavna predloga.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_51",
+    "title": "Povezava podatkovnega vira",
+    "content": "Uvoz podatkov iz preglednice in povezava s predlogo dokumenta.",
+    "assessment_method": "Oddaja povezanega dokumenta.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_52",
+    "title": "Vstavljanje polj za spajanje",
+    "content": "Dodajanje spremenljivih polj in preverjanje pravilnega izpisa v dokumentu.",
+    "assessment_method": "Praktična vaja z različnimi polji.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_53",
+    "title": "Predogled in končni izpis",
+    "content": "Pregled rezultatov spajanja in priprava končnega dokumenta za izpis ali pošiljanje.",
+    "assessment_method": "Oddaja končnega združenega dokumenta.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_54",
+    "title": "Praktična vaja: masovni dopis",
+    "content": "Priprava popolnega primera spajanja dokumentov za množično pošiljanje.",
+    "assessment_method": "Praktična naloga - masovni dopis.",
+    "instructor": "dr. Janez Novak",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_55",
+    "title": "Uvod v SharePoint",
+    "content": "Spoznavanje portalov SharePoint, osnovna struktura in namen uporabe v organizaciji.",
+    "assessment_method": "Kratek kviz in ogled portala.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_56",
+    "title": "Ustvarjanje spletnih strani",
+    "content": "Priprava enostavnih strani, vsebinskih blokov in navigacije znotraj SharePointa.",
+    "assessment_method": "Praktična izdelava strani.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_57",
+    "title": "Dokumentne knjižnice in metapodatki",
+    "content": "Dodajanje dokumentov, uporaba knjižnic in osnov metapodatkov za preglednost.",
+    "assessment_method": "Oddaja organizirane knjižnice dokumentov.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_58",
+    "title": "Pravice dostopa in vloge uporabnikov",
+    "content": "Razumevanje vlog, dovoljenj in upravljanje dostopa do vsebin.",
+    "assessment_method": "Kviz in konfiguracija dovoljenj.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_59",
+    "title": "Delovni tokovi in obvestila",
+    "content": "Osnovna avtomatizacija obveščanja in preprostih delovnih tokov.",
+    "assessment_method": "Praktična naloga z obvestili.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_60",
+    "title": "Praktična vaja: interna SharePoint stran",
+    "content": "Priprava preproste interne strani z dokumenti, navigacijo in dovoljenji.",
+    "assessment_method": "Oddaja delujoče strani.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_61",
+    "title": "Uvod v PowerBI",
+    "content": "Namestitev, osnovni koncepti in pregled delovnega okolja PowerBI.",
+    "assessment_method": "Kratek kviz o okolju.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_62",
+    "title": "Povezava podatkovnih virov",
+    "content": "Uvoz podatkov iz Excelovih datotek in osnovna priprava modela.",
+    "assessment_method": "Praktična naloga z uvozom podatkov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_63",
+    "title": "Osnovne vizualizacije",
+    "content": "Dodajanje stolpčnih, linijskih in krožnih grafov ter njihova interpretacija.",
+    "assessment_method": "Izdelava osnovnega poročila.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_64",
+    "title": "Filtri, segmenti in interakcije",
+    "content": "Uporaba filtrov za raziskovanje podatkov in interaktivno poročanje.",
+    "assessment_method": "Praktična vaja s filtri.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_65",
+    "title": "Nadzorne plošče in postavitev strani",
+    "content": "Združevanje vizualizacij v nadzorno ploščo in priprava pregledne postavitve.",
+    "assessment_method": "Oddaja nadzorne plošče.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_66",
+    "title": "Praktična vaja: poročilo za vodstvo",
+    "content": "Izdelava kratkega poslovnega poročila v PowerBI za predstavitev ključnih kazalnikov.",
+    "assessment_method": "Končna praktična naloga.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_67",
+    "title": "Prepoznavanje prevar in phishinga",
+    "content": "Prepoznavanje lažnih sporočil, sumljivih povezav in znakov spletnih prevar.",
+    "assessment_method": "Kviz prepoznavanja phishinga.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_68",
+    "title": "Varna gesla in upravljalniki gesel",
+    "content": "Dodatna praksa pri ustvarjanju gesel, uporabo upravljalnikov in večfaktorske prijave.",
+    "assessment_method": "Praktična naloga z upravljalnikom gesel.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_69",
+    "title": "Posodabljanje sistemov in naprav",
+    "content": "Zakaj so posodobitve pomembne in kako se izvaja osnovno vzdrževanje naprav.",
+    "assessment_method": "Kratek kviz in scenarij ukrepanja.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_70",
+    "title": "Varnostno kopiranje podatkov",
+    "content": "Osnovne strategije varnostnega kopiranja in obnova podatkov v primeru izgube.",
+    "assessment_method": "Praktična demonstracija varnostne kopije.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_71",
+    "title": "Praktična vaja: varna digitalna rutina",
+    "content": "Uvajanje vsakodnevnih varnostnih navad pri delu z digitalnimi orodji.",
+    "assessment_method": "Oddaja varnostnega načrta.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_72",
+    "title": "Deljenje občutljivih datotek",
+    "content": "Varna priprava datotek za pošiljanje in nadzor nad dostopom.",
+    "assessment_method": "Praktična naloga z varnim deljenjem.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_73",
+    "title": "Šifriranje in zaščita dokumentov",
+    "content": "Osnovni pristopi k zaščiti datotek z gesli in šifriranjem.",
+    "assessment_method": "Oddaja zaščitenega dokumenta.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_74",
+    "title": "Pravice dostopa in revizije",
+    "content": "Upravljanje dovoljenj, pregled dostopov in osnovni nadzor nad deljenjem.",
+    "assessment_method": "Kratka praktična vaja.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_75",
+    "title": "Varna komunikacija pri izmenjavi podatkov",
+    "content": "Kako varno pošiljati občutljive informacije in kdaj uporabiti varnejši kanal.",
+    "assessment_method": "Kviz scenarijev.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_76",
+    "title": "Politike hrambe in brisanja",
+    "content": "Osnovna pravila hranjenja in varnega brisanja občutljivih podatkov.",
+    "assessment_method": "Praktični scenarij ohranjanja podatkov.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_77",
+    "title": "Praktična vaja: varen prenos dokumenta",
+    "content": "Priprava in prenos dokumenta po varnem postopku z ustreznimi dovoljenji.",
+    "assessment_method": "Praktična demonstracija.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_78",
+    "title": "Digitalna identiteta",
+    "content": "Razumevanje digitalne identitete, računov in pomena zaščite prijavnih podatkov.",
+    "assessment_method": "Kratek kviz o identiteti.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_79",
+    "title": "Nastavitve zasebnosti na spletu",
+    "content": "Pregled zasebnostnih nastavitev v spletnih storitvah in socialnih omrežjih.",
+    "assessment_method": "Praktična prilagoditev nastavitev.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_80",
+    "title": "Upravljanje dovoljenj aplikacij",
+    "content": "Preverjanje, katere pravice imajo aplikacije, in zmanjševanje nepotrebnih dostopov.",
+    "assessment_method": "Scenarij pregleda dovoljenj.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_81",
+    "title": "Sledi na spletu in digitalni odtis",
+    "content": "Razumevanje, kako nastaja digitalni odtis in kako ga zmanjšati.",
+    "assessment_method": "Kratek refleksijski zapis.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_82",
+    "title": "Zasebnost pri deljenju vsebin",
+    "content": "Premislek o zasebnosti pri objavljanju, deljenju in komentiranju na spletu.",
+    "assessment_method": "Kviz in analiza primerov.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_83",
+    "title": "Praktična vaja: pregled zasebnosti računa",
+    "content": "Samostojen pregled in izboljšanje zasebnostnih nastavitev izbranega računa.",
+    "assessment_method": "Praktična oddaja z opisom sprememb.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_84",
+    "title": "Vrste zlonamerne programske opreme",
+    "content": "Razlikovanje med virusi, trojanci, črvi, izsiljevalsko programsko opremo in drugimi grožnjami.",
+    "assessment_method": "Kviz prepoznavanja vrst groženj.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_85",
+    "title": "Znaki okužbe sistema",
+    "content": "Prepoznavanje počasnega delovanja, nenavadnih obvestil in drugih znakov okužbe.",
+    "assessment_method": "Analiza scenarijev.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_86",
+    "title": "Osnovni odziv ob incidentu",
+    "content": "Kaj storiti ob sumu na okužbo ali napad in kako pravilno prijaviti incident.",
+    "assessment_method": "Praktični varnostni scenarij.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_87",
+    "title": "Vloga antivirusne zaščite",
+    "content": "Razumevanje osnovnih funkcij antivirusnih orodij in rednega pregleda sistema.",
+    "assessment_method": "Kratek kviz in praktični pregled.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_88",
+    "title": "Varno nameščanje programske opreme",
+    "content": "Preverjanje virov, podpisov in dovoljenj pred namestitvijo programske opreme.",
+    "assessment_method": "Scenarij varne namestitve.",
+    "instructor": "Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_89",
+    "title": "Praktična vaja: odziv na varnostni dogodek",
+    "content": "Celovit postopek obravnave simuliranega varnostnega dogodka od zaznave do prijave.",
+    "assessment_method": "Končna praktična demonstracija.",
+    "instructor": "Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_90",
+    "title": "Kaj je generativna umetna inteligenca",
+    "content": "Pregled osnovnih pojmov, primerov uporabe in razlik med AI orodji za besedilo, sliko in podatke.",
+    "assessment_method": "Kratek kviz osnovnih pojmov.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_91",
+    "title": "Oblikovanje učinkovitih pozivov",
+    "content": "Pisanje jasnih navodil za AI, določanje cilja, tona, formata in omejitev rezultata.",
+    "assessment_method": "Praktična vaja - priprava treh različnih pozivov.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_92",
+    "title": "Pregled uporabnih AI orodij",
+    "content": "Primerjava orodij za pisanje, povzemanje, iskanje in vizualno podporo pri delu.",
+    "assessment_method": "Oddaja primerjalne tabele orodij.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_93",
+    "title": "AI za iskanje in preverjanje informacij",
+    "content": "Uporaba AI kot pomoč pri iskanju informacij, hkrati pa preverjanje zanesljivosti in vira podatkov.",
+    "assessment_method": "Analiza dveh informacijskih virov.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_94",
+    "title": "Uvod v AI pomoč pri pisanju",
+    "content": "Uporaba AI za oblikovanje osnutkov dopisov, povzetkov in delovnih navodil.",
+    "assessment_method": "Praktična naloga - priprava osnutka besedila.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_95",
+    "title": "Praktična vaja: AI orodje v vsakdanjem delu",
+    "content": "Samostojna izvedba tipične delovne naloge z uporabo izbranega AI orodja.",
+    "assessment_method": "Praktična demonstracija.",
+    "instructor": "mag. Sara Mlakar",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_96",
+    "title": "AI za osnutke e-poštnih sporočil",
+    "content": "Priprava profesionalnih elektronskih sporočil s pomočjo AI in prilagajanje tona občinstvu.",
+    "assessment_method": "Oddaja treh različnih e-poštnih osnutkov.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_97",
+    "title": "AI za povzemanje dokumentov",
+    "content": "Krajšanje dolgih dokumentov v jasne povzetke za hitrejše razumevanje vsebine.",
+    "assessment_method": "Praktična vaja - povzetek večjega besedila.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_98",
+    "title": "Preoblikovanje tona in sloga besedila",
+    "content": "Prilagajanje besedila formalnemu, prijaznemu ali jedrnatemu slogu glede na namen komunikacije.",
+    "assessment_method": "Kratka transformacija obstoječega besedila.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_99",
+    "title": "Urejanje in preverjanje generiranega besedila",
+    "content": "Pregled napak, odstranjevanje nejasnosti in dopolnjevanje AI osnutkov z lastno presojo.",
+    "assessment_method": "Primerjava izvirnega in popravljenega besedila.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_100",
+    "title": "AI pri pripravi navodil in postopkov",
+    "content": "Uporaba AI za pripravo strukturiranih navodil, protokolov in notranjih postopkov.",
+    "assessment_method": "Oddaja vzorčnega postopka v treh korakih.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_101",
+    "title": "Praktična vaja: priprava internega obvestila",
+    "content": "Priprava končnega delovnega besedila z uporabo AI in lastnim urejanjem vsebine.",
+    "assessment_method": "Praktična naloga - interni dopis ali obvestilo.",
+    "instructor": "Tilen Horvat",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_102",
+    "title": "AI za čiščenje podatkov",
+    "content": "Prepoznavanje podvojenih zapisov, neenotnih formatov in predlogov za urejanje podatkovnih nizov.",
+    "assessment_method": "Praktična vaja na podatkovnem naboru.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_103",
+    "title": "AI za predlog formul in funkcij",
+    "content": "Uporaba AI za iskanje ustreznih formul, funkcij in razlago njihove uporabe v preglednicah.",
+    "assessment_method": "Oddaja rešenega delovnega lista.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_104",
+    "title": "AI za hitre analize trendov",
+    "content": "Ugotavljanje vzorcev v podatkih, primerjava obdobij in priprava kratkih vpogledov.",
+    "assessment_method": "Kratka analiza izbranega podatkovnega nabora.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_105",
+    "title": "AI za pripravo grafov in vpogledov",
+    "content": "Predlogi primernih grafov in interpretacija ključnih rezultatov za poročanje.",
+    "assessment_method": "Izdelava grafa in razlaga ugotovitev.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_106",
+    "title": "Uporaba AI v vrtilnih tabelah",
+    "content": "Pomoč pri izbiri polj, filtriranju in pripravi povzetkov v vrtilnih tabelah.",
+    "assessment_method": "Praktična naloga z vrtilno tabelo.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_107",
+    "title": "Praktična vaja: analitični povzetek podatkov",
+    "content": "Samostojna priprava kratkega analitičnega poročila z uporabo AI podpore.",
+    "assessment_method": "Oddaja poročila in pregled uporabljenih korakov.",
+    "instructor": "mag. Ana Kovač",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_108",
+    "title": "Etika in odgovornost pri uporabi AI",
+    "content": "Razmislek o pristranskosti, odgovornosti in primerni rabi AI rezultatov.",
+    "assessment_method": "Kratek esej ali refleksija.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_109",
+    "title": "Preverjanje točnosti in virov",
+    "content": "Metode za preverjanje dejstev, citiranje virov in identifikacijo napačnih rezultatov.",
+    "assessment_method": "Primerjava AI odgovora z zanesljivim virom.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 60
+  },
+  {
+    "_id": "ue_110",
+    "title": "Varovanje občutljivih podatkov v AI orodjih",
+    "content": "Kdaj podatkov ne vnašamo v AI orodja in kako zmanjšati tveganje razkritja informacij.",
+    "assessment_method": "Varnostni scenarij z odločitvami.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_111",
+    "title": "Omejitve in tveganja AI",
+    "content": "Pregled tipičnih napak, halucinacij, pristranskosti in napačnih predpostavk AI sistemov.",
+    "assessment_method": "Kviz razumevanja tveganj.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_112",
+    "title": "Pravila uporabe AI v organizaciji",
+    "content": "Osnove internih pravil, zasebnosti in odgovorne uporabe AI v delovnem okolju.",
+    "assessment_method": "Priprava kratkih priporočil za ekipo.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 45
+  },
+  {
+    "_id": "ue_113",
+    "title": "Praktična vaja: varen delovni scenarij",
+    "content": "Izvedba konkretne naloge z upoštevanjem etičnih, varnostnih in organizacijskih pravil.",
+    "assessment_method": "Praktična demonstracija in razlaga postopka.",
+    "instructor": "dr. Nina Zupan",
+    "duration_min": 60
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "komp_1",
+    "title": "Osnovna digitalna pismenost: Office 365",
+    "description": "Pridobitev osnovnih veščin za pisarniško delo.",
+    "level": "Osnovna"
+  },
+  {
+    "_id": "komp_2",
+    "title": "Napredna digitalna produktivnost: Office 365",
+    "description": "Nadgradnja znanj za avtomatizacijo in napredno analitiko.",
+    "level": "Napredna"
+  },
+  {
+    "_id": "komp_3",
+    "title": "Spletna varnost in varno sodelovanje",
+    "description": "Neodvisna kompetenca za varno in zanesljivo uporabo spleta.",
+    "level": "Srednja"
+  },
+  {
+    "_id": "komp_4",
+    "title": "AI podpora pri vsakdanjem delu",
+    "description": "Uporaba generativne umetne inteligence za hitrejše, bolj pregledno in bolj odgovorno delo.",
+    "level": "Srednja"
+  }
+]

@@ -1,0 +1,292 @@
+[
+  {
+    "_id": "mod_1",
+    "title": "Osnove obdelave besedil (Word)",
+    "description": "Modul namenjen spoznavanju in osnovnemu oblikovanju besedil.",
+    "learning_units": [
+      "ue_1",
+      "ue_2",
+      "ue_11",
+      "ue_12",
+      "ue_13",
+      "ue_14"
+    ],
+    "competency_id": "komp_1",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_2",
+    "title": "Osnove dela s preglednicami (Excel)",
+    "description": "Vnos podatkov in uporaba osnovnih aritmetičnih operacij.",
+    "learning_units": [
+      "ue_3",
+      "ue_15",
+      "ue_16",
+      "ue_17",
+      "ue_18",
+      "ue_19"
+    ],
+    "competency_id": "komp_1",
+    "prerequisites": [
+      {
+        "module_id": "mod_1"
+      }
+    ]
+  },
+  {
+    "_id": "mod_3",
+    "title": "Izdelava predstavitev (PowerPoint)",
+    "description": "Osnove postavljanja prosojnic in animacij.",
+    "learning_units": [
+      "ue_20",
+      "ue_21",
+      "ue_22",
+      "ue_23",
+      "ue_24",
+      "ue_25"
+    ],
+    "competency_id": "komp_1",
+    "prerequisites": [
+      {
+        "module_id": "mod_1"
+      }
+    ]
+  },
+  {
+    "_id": "mod_4",
+    "title": "Komunikacija in sodelovanje na daljavo",
+    "description": "Osnove uporabe Teams in deljenja datotek.",
+    "learning_units": [
+      "ue_4",
+      "ue_26",
+      "ue_27",
+      "ue_28",
+      "ue_29",
+      "ue_30"
+    ],
+    "competency_id": "komp_3",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_5",
+    "title": "Osnove oblačne hrambe (OneDrive)",
+    "description": "Shranjevanje in sinhronizacija datotek v oblaku.",
+    "learning_units": [
+      "ue_31",
+      "ue_32",
+      "ue_33",
+      "ue_34",
+      "ue_35",
+      "ue_36"
+    ],
+    "competency_id": "komp_1",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_6",
+    "title": "Napredna obdelava podatkov (Excel)",
+    "description": "Uporaba zahtevnejših funkcij in vrtilnih tabel.",
+    "learning_units": [
+      "ue_37",
+      "ue_38",
+      "ue_39",
+      "ue_40",
+      "ue_41",
+      "ue_42"
+    ],
+    "competency_id": "komp_2",
+    "prerequisites": [
+      {
+        "module_id": "mod_2"
+      }
+    ]
+  },
+  {
+    "_id": "mod_7",
+    "title": "Avtomatizacija z makroji",
+    "description": "Snemanje in osnovno urejanje makrojev za pohitritev dela.",
+    "learning_units": [
+      "ue_43",
+      "ue_44",
+      "ue_45",
+      "ue_46",
+      "ue_47",
+      "ue_48"
+    ],
+    "competency_id": "komp_2",
+    "prerequisites": [
+      {
+        "module_id": "mod_6"
+      }
+    ]
+  },
+  {
+    "_id": "mod_8",
+    "title": "Napredno oblikovanje in spajanje dokumentov",
+    "description": "Strukturiranje dolgih dokumentov in uporaba Mail Merge funkcije.",
+    "learning_units": [
+      "ue_49",
+      "ue_50",
+      "ue_51",
+      "ue_52",
+      "ue_53",
+      "ue_54"
+    ],
+    "competency_id": "komp_2",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_9",
+    "title": "Upravljanje SharePoint spletišč",
+    "description": "Izdelava in administracija internih spletišč ter pravic.",
+    "learning_units": [
+      "ue_55",
+      "ue_56",
+      "ue_57",
+      "ue_58",
+      "ue_59",
+      "ue_60"
+    ],
+    "competency_id": "komp_2",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_10",
+    "title": "Uvod v PowerBI analitiko",
+    "description": "Vizualizacija podatkov in priprava nadzornih plošč.",
+    "learning_units": [
+      "ue_61",
+      "ue_62",
+      "ue_63",
+      "ue_64",
+      "ue_65",
+      "ue_66"
+    ],
+    "competency_id": "komp_2",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_11",
+    "title": "Kibernetska varnost za končne uporabnike",
+    "description": "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
+    "learning_units": [
+      "ue_5",
+      "ue_67",
+      "ue_68",
+      "ue_69",
+      "ue_70",
+      "ue_71"
+    ],
+    "competency_id": "komp_3",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_12",
+    "title": "Varno deljenje in zaščita podatkov",
+    "description": "Enkripcija in varna distribucija občutljivih datotek.",
+    "learning_units": [
+      "ue_72",
+      "ue_73",
+      "ue_74",
+      "ue_75",
+      "ue_76",
+      "ue_77"
+    ],
+    "competency_id": "komp_3",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_13",
+    "title": "Digitalna identiteta in zasebnost",
+    "description": "Varovanje osebnih podatkov in nastavitve zasebnosti na spletu.",
+    "learning_units": [
+      "ue_78",
+      "ue_79",
+      "ue_80",
+      "ue_81",
+      "ue_82",
+      "ue_83"
+    ],
+    "competency_id": "komp_3",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_14",
+    "title": "Prepoznavanje zlonamerne programske opreme",
+    "description": "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
+    "learning_units": [
+      "ue_84",
+      "ue_85",
+      "ue_86",
+      "ue_87",
+      "ue_88",
+      "ue_89"
+    ],
+    "competency_id": "komp_3",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_15",
+    "title": "Uvod v AI orodja za delo",
+    "description": "Razumevanje osnov generativne umetne inteligence in pravilna izbira orodij za vsakodnevne naloge.",
+    "learning_units": [
+      "ue_90",
+      "ue_91",
+      "ue_92",
+      "ue_93",
+      "ue_94",
+      "ue_95"
+    ],
+    "competency_id": "komp_4",
+    "prerequisites": [
+      {
+        "module_id": "mod_1"
+      }
+    ]
+  },
+  {
+    "_id": "mod_16",
+    "title": "AI za pisanje in povzemanje vsebin",
+    "description": "Uporaba AI za pripravo, izboljšanje in povzemanje besedilnih vsebin.",
+    "learning_units": [
+      "ue_96",
+      "ue_97",
+      "ue_98",
+      "ue_99",
+      "ue_100",
+      "ue_101"
+    ],
+    "competency_id": "komp_4",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_17",
+    "title": "AI za preglednice in podatkovne vpoglede",
+    "description": "Pomoč AI pri čiščenju podatkov, iskanju formul in pripravi hitrih analiz.",
+    "learning_units": [
+      "ue_102",
+      "ue_103",
+      "ue_104",
+      "ue_105",
+      "ue_106",
+      "ue_107"
+    ],
+    "competency_id": "komp_4",
+    "prerequisites": []
+  },
+  {
+    "_id": "mod_18",
+    "title": "Odgovorna in varna uporaba AI",
+    "description": "Preverjanje točnosti, varovanje podatkov in razumevanje omejitev AI orodij.",
+    "learning_units": [
+      "ue_108",
+      "ue_109",
+      "ue_110",
+      "ue_111",
+      "ue_112",
+      "ue_113"
+    ],
+    "competency_id": "komp_4",
+    "prerequisites": []
+  }
+]

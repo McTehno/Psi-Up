@@ -6,6 +6,7 @@ from app.api.recommendations import router as recommendations_router
 from app.api.assessments import router as assessments_router
 from app.api.learning_paths import router as learning_paths_router
 from app.api.competencies import router as competencies_router
+from app.api.modules import router as modules_router
 
 app = FastAPI(
     title="Psi-Up API",
@@ -20,6 +21,7 @@ app.include_router(recommendations_router, prefix="/api")
 app.include_router(assessments_router, prefix="/api")
 app.include_router(learning_paths_router, prefix="/api")
 app.include_router(competencies_router, prefix="/api")
+app.include_router(modules_router, prefix="/api")
 
 @app.get("/")
 def read_root():

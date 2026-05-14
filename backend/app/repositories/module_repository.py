@@ -14,3 +14,12 @@ def get_module_by_id(module_id: str):
     )
 
     return module
+
+def get_all_modules():
+    database = get_database()
+
+    modules = list(
+        database[COLLECTION_NAME].find({})
+    )
+
+    return modules

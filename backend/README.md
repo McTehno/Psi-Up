@@ -14,12 +14,17 @@ backend/
 │   │   ├── questionnaires.py
 │   │   ├── recommendations.py
 │   │   ├── assessments.py
-│   │   └── learning_paths.py
+│   │   ├── learning_paths.py
+│   │   └── competencies.py
 │   │
 │   ├── services/
 │   │   ├── competency_groups/
 │   │   │   ├── __init__.py
 │   │   │   └── competency_group_service.py
+│   │   │
+│   │   ├── competencies/
+│   │   │   ├── __init__.py
+│   │   │   └── competency_service.py
 │   │   │
 │   │   ├── questionnaires/
 │   │   │   ├── __init__.py
@@ -48,6 +53,7 @@ backend/
 │   │   ├── competency_group_schema.py
 │   │   ├── questionnaire_schema.py
 │   │   ├── recommendation_schema.py
+│   │   ├── competency_schema.py
 │   │   ├── assessment_schema.py
 │   │   └── learning_path_schema.py
 │   │

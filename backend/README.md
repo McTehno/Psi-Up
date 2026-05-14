@@ -10,18 +10,37 @@ backend/
 │   ├── config.py
 │   │
 │   ├── api/
-│   │   └── competency_groups.py
+│   │   ├── competency_groups.py
+│   │   ├── questionnaires.py
+│   │   ├── recommendations.py
+│   │   └── assessments.py
 │   │
 │   ├── services/
-│   │   └── competency_groups/
+│   │   ├── competency_groups/
+│   │   │   ├── __init__.py
+│   │   │   └── competency_group_service.py
+│   │   │
+│   │   ├── questionnaires/
+│   │   │   ├── __init__.py
+│   │   │   └── questionnaire_service.py
+│   │   │
+│   │   ├── recommendations/
+│   │   │   ├── __init__.py
+│   │   │   └── recommendation_service.py
+│   │   │
+│   │   └── assessments/
 │   │       ├── __init__.py
-│   │       └── competency_group_service.py
+│   │       └── assessment_service.py
 │   │
 │   ├── repositories/
-│   │   └── competency_group_repository.py
+│   │   ├── competency_group_repository.py
+│   │   └── competency_repository.py
 │   │
 │   ├── schemas/
-│   │   └── competency_group_schema.py
+│   │   ├── competency_group_schema.py
+│   │   ├── questionnaire_schema.py
+│   │   ├── recommendation_schema.py
+│   │   └── assessment_schema.py
 │   │
 │   └── database/
 │       └── mongodb.py
@@ -37,6 +56,7 @@ backend/
 ├── tests/
 ├── .env.example
 └── requirements.txt
+
 ```
 ## Namen datoteke
 | Mapa/datoteka | Namen |
@@ -225,5 +245,4 @@ Ni še dovolj natančna za končno verzijo, ker:
 - weight pove samo “moč” odgovora, ne pa področja kompetence,
 - sistem trenutno izbere eno kompetenco na podlagi skupnega rezultata,
 - še ne podpira več enakovredno priporočenih kompetenc,
-- še ne upošteva podrobnejših pravil stranke,
 - še ne uporablja realnih podatkov.

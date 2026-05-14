@@ -4,6 +4,7 @@ from app.api.competency_groups import router as competency_groups_router
 from app.api.questionnaires import router as questionnaires_router
 from app.api.recommendations import router as recommendations_router
 from app.api.assessments import router as assessments_router
+from app.api.learning_paths import router as learning_paths_router
 
 
 app = FastAPI(
@@ -17,7 +18,7 @@ app.include_router(competency_groups_router, prefix="/api")
 app.include_router(questionnaires_router, prefix="/api")
 app.include_router(recommendations_router, prefix="/api")
 app.include_router(assessments_router, prefix="/api")
-
+app.include_router(learning_paths_router, prefix="/api")
 
 @app.get("/")
 def read_root():

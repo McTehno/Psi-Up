@@ -13,7 +13,8 @@ backend/
 │   │   ├── competency_groups.py
 │   │   ├── questionnaires.py
 │   │   ├── recommendations.py
-│   │   └── assessments.py
+│   │   ├── assessments.py
+│   │   └── learning_paths.py
 │   │
 │   ├── services/
 │   │   ├── competency_groups/
@@ -28,19 +29,27 @@ backend/
 │   │   │   ├── __init__.py
 │   │   │   └── recommendation_service.py
 │   │   │
-│   │   └── assessments/
+│   │   ├── assessments/
+│   │   │   ├── __init__.py
+│   │   │   └── assessment_service.py
+│   │   │
+│   │   └── learning_paths/
 │   │       ├── __init__.py
-│   │       └── assessment_service.py
+│   │       └── learning_path_service.py
 │   │
 │   ├── repositories/
 │   │   ├── competency_group_repository.py
-│   │   └── competency_repository.py
+│   │   ├── competency_repository.py
+│   │   ├── learning_path_repository.py
+│   │   ├── module_repository.py
+│   │   └── learning_unit_repository.py
 │   │
 │   ├── schemas/
 │   │   ├── competency_group_schema.py
 │   │   ├── questionnaire_schema.py
 │   │   ├── recommendation_schema.py
-│   │   └── assessment_schema.py
+│   │   ├── assessment_schema.py
+│   │   └── learning_path_schema.py
 │   │
 │   └── database/
 │       └── mongodb.py
@@ -56,8 +65,8 @@ backend/
 ├── tests/
 ├── .env.example
 └── requirements.txt
-
 ```
+
 ## Namen datoteke
 | Mapa/datoteka | Namen |
 | :-- | :-- |
@@ -246,3 +255,19 @@ Ni še dovolj natančna za končno verzijo, ker:
 - sistem trenutno izbere eno kompetenco na podlagi skupnega rezultata,
 - še ne podpira več enakovredno priporočenih kompetenc,
 - še ne uporablja realnih podatkov.
+
+
+## Generiranje učne poti
+
+```text
+POST /api/learning-paths/generate
+```
+
+Sprejme izbrano kompetenco in trenutno raven znanja ter vrne pripravljeno učno pot z moduli in učnimi enotami.
+
+V trenutni MVP verziji backend poišče obstoječo učno pot, ki vsebuje izbrano kompetenco, nato iz nje vzame module za to kompetenco. Module razvrsti po polju order, za vsak modul pridobi pripadajoče učne enote in vrne pripravljeno strukturo za frontend.
+
+Predpogoji modulov se trenutno vrnejo v odgovoru, vendar se vrstni red še ne izračunava dinamično iz predpogojev. Za začetno verzijo se uporablja vrstni red iz testnih podatkov.
+
+Backend vsebuje tudi pripravljene funkcije za preverjanje, ali zgenerirana učna pot že obstaja, vendar se dejansko shranjevanje novih zgeneriranih poti trenutno še ne izvaja. Ta del je pripravljen za kasnejšo nadgradnjo.
+

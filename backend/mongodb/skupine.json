@@ -1,0 +1,72 @@
+[
+    {
+    "_id": "skup_1",
+    "naziv": "Uporaba Microsoft 365 in Copilot orodij",
+    "opis": "Pridobitev osnovnih veščin za pisarniško delo in vsakodnevno uporabo Microsoft 365 in Copilot orodij.",
+    "kompetence": [
+      { "kompetenca_id": "komp_1" },
+      { "kompetenca_id": "komp_2" },
+      { "kompetenca_id": "komp_4" }
+    ],
+    "vprasalnik": [
+      {
+        "vprasanje": "Kako pogosto uporabljate Microsoft 365 orodja v svojem delu?",
+        "odgovori": [
+          { "odgovor": "Dnevno", "teza": 3 },
+          { "odgovor": "Teden", "teza": 2 },
+          { "odgovor": "Redko", "teza": 1 }
+        ]
+      },
+      {
+        "vprasanje": "Katera Microsoft 365 orodja uporabljate najpogosteje?",
+        "odgovori": [
+          { "odgovor": "Word, Excel, PowerPoint", "teza": 3 },
+          { "odgovor": "Outlook, Teams", "teza": 2 },
+          { "odgovor": "Druga orodja", "teza": 1 }
+        ]
+      },
+      {
+        "vprasanje": "Koliko vas zanima Copilot AI?",
+        "odgovori": [
+          { "odgovor": "Napredno", "teza": 3 },
+          { "odgovor": "Srednje", "teza": 2 },
+          { "odgovor": "Osnovno", "teza": 1 }
+        ]
+      }
+    ]
+    },
+    {
+    "_id": "skup_2",
+    "naziv": "Kibernetska varnost in odgovorno delo",
+    "opis": "Zagotavljanje varnega sodelovanja in obveščanje o digitalni zasebnosti.",
+    "kompetence": [
+      { "kompetenca_id": "komp_3" }
+    ],
+    "vprasalnik": [
+        {
+            "vprasanje": "Kako pogosto se zavedate kibernetske varnosti pri svojem delu?",
+            "odgovori": [
+                { "odgovor": "Vedno", "teza": 3 },
+                { "odgovor": "Občasno", "teza": 2 },
+                { "odgovor": "Redko", "teza": 1 }
+            ]
+        },
+        {
+            "vprasanje": "Katera področja kibernetske varnosti so vam najbolj znana?",
+            "odgovori": [
+                { "odgovor": "Zaščita podatkov, gesla", "teza": 3 },
+                { "odgovor": "Prepoznavanje phishinga", "teza": 2 },
+                { "odgovor": "Druga področja", "teza": 1 }
+            ]
+        },
+        {
+            "vprasanje": "Kako ocenjujete svoje znanje o kibernetski varnosti?",
+            "odgovori": [
+                { "odgovor": "Napredno", "teza": 3 },
+                { "odgovor": "Srednje", "teza": 2 },
+                { "odgovor": "Osnovno", "teza": 1 }
+            ]
+        }
+    ]
+    }
+]

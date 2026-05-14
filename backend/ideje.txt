@@ -1,0 +1,123 @@
+Kaj bi popravila:
+
+1.Trenutno imamo vprašanja in odgovore, ki imajo weight, ampak nimamo jasne povezave med odgovorom in kompetenco, ki jo ta odgovor ocenjuje.
+{
+  "answer": "Dnevno",
+  "weight": 3
+}
+To je dobro za osnovno točkovanje, ampak ne pove, kateri kompetenci ta odgovor pripada.
+Če ima skupina več kompetenc, na primer:
+
+komp_1 = osnovni Office
+komp_2 = napredni Office
+komp_4 = AI podpora
+
+potem mora odgovor pomagati backendu ugotoviti, kateri kompetenci je uporabnik najbližje.
+
+Zato bi bilo boljše, da odgovor vsebuje tudi competency_scores.
+
+Primer:
+
+{
+  "answer": "Word, Excel, PowerPoint",
+  "weight": 3,
+  "competency_scores": {
+    "komp_1": 3,
+    "komp_2": 1,
+    "komp_4": 0
+  }
+}
+
+Za Copilot vprašanje:
+
+{
+  "answer": "Napredno",
+  "weight": 3,
+  "competency_scores": {
+    "komp_4": 3,
+    "komp_2": 1
+  }
+}
+
+To je pomembno, ker drugače backend vidi samo weight, ampak ne ve, ali ta teža pomeni Office, AI, varnost ali nekaj drugega.
+
+Za MVP lahko pustimo weight, ampak če želimo, da backend določi kompetenco znotraj skupine, bo skoraj nujno imeti neko povezavo odgovor → kompetenca.
+Ali da backend določi ta pravila. Na primer, če je odgovor "Word, Excel, PowerPoint", potem je to 3 točke za komp_1, 1 točka za komp_2 in 0 točk za komp_4.
+
+
+2.Vrsni red modulov:
+Dogovorili smo da bo vrstni red modulov določen s predpogoji, potem je vprašanje, ali sploh potrebujete order v ucne poti.
+
+prerequisites = realna logika odvisnosti
+
+Za MVP je order koristen, ker je enostaven.
+
+Kasneje pa lahko backend določi vrstni red iz prerequisites.
+
+Jaz bi za zdaj pustila order, ker omogoča hiter delujoč prikaz. Kasneje lahko dodamo logiko predpogojev.
+
+
+3.Presečišča med kompetencami
+
+To, kar si omenila, je zelo pomembno:
+
+več kompetenc ima lahko enake module
+
+To je normalno in dobro.
+
+Primer:
+
+mod_4 = Teams komunikacija
+
+Lahko pripada:
+
+Office 365 kompetenci
+varnostni kompetenci
+sodelovalni kompetenci
+
+Zato bi bilo bolje, da modul nima samo enega:
+
+"competency_id": "komp_1"
+
+ampak raje:
+
+"competency_ids": ["komp_1", "komp_3"]
+
+Ker en modul lahko podpira več kompetenc.
+
+Torej to bi jaz popravila v modules.json.
+
+
+4. Učne enote
+
+Edino, kar bi mogoče dodala kasneje, je tip učne enote, ali
+je obvezna ali izbirna. 
+
+"type": "mandatory"
+
+ali pa to raje hranite v modulu.
+
+Ker ista učna enota je lahko v enem modulu obvezna, v drugem pa izbirna. Zato je bolje, da obveznost ni v learning_units.json, ampak v modulu.
+
+Namesto:
+
+"learning_units": ["ue_1", "ue_2"]
+
+bolje:
+
+"learning_units": [
+  {
+    "learning_unit_id": "ue_1",
+    "type": "mandatory",
+    "order": 1
+  },
+  {
+    "learning_unit_id": "ue_2",
+    "type": "optional",
+    "order": 2
+  }
+]
+
+Za MVP pa lahko pustite seznam ID-jev, če ne želite komplicirati.
+
+

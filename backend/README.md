@@ -174,3 +174,56 @@ GET  /api/learning-units
 GET  /api/learning-units/{learningUnitId}
 
 
+# Trenutna primitivna logika za določanje kompetence
+
+Ker testni podatki trenutno nimajo direktne povezave:
+```text
+odgovor → določena kompetenca
+```
+
+ima vsak odgovor samo:
+```text
+weight
+```
+Zato backend trenutno naredi to:
+```text
+1. vzame vse izbrane odgovore,
+2. pogleda njihove weight vrednosti,
+3. sešteje weight,
+4. glede na skupni rezultat izbere kompetenco iz skupine.
+```
+Primer:
+```text
+odgovor 1 = weight 3
+odgovor 2 = weight 2
+odgovor 3 = weight 1
+
+total_score = 6
+```
+Potem backend uporabi preprosto pravilo:
+```text
+nižji rezultat → prva kompetenca v skupini
+srednji rezultat → druga kompetenca v skupini
+višji rezultat → zadnja kompetenca v skupini
+```
+
+Za skupino skup_1 to pomeni približno:
+```text 
+komp_1 → osnovna Office 365 kompetenca
+komp_2 → napredna Office 365 kompetenca
+komp_4 → AI podpora pri delu
+```
+Za skupino skup_2, kjer je samo ena kompetenca, backend vedno vrne to eno kompetenco.
+
+## Pomembna omejitev trenutne logike
+
+Trenutna logika je primerna samo za delujoč prototip.
+
+Ni še dovolj natančna za končno verzijo, ker:
+
+- odgovori niso neposredno povezani s kompetencami,
+- weight pove samo “moč” odgovora, ne pa področja kompetence,
+- sistem trenutno izbere eno kompetenco na podlagi skupnega rezultata,
+- še ne podpira več enakovredno priporočenih kompetenc,
+- še ne upošteva podrobnejših pravil stranke,
+- še ne uporablja realnih podatkov.

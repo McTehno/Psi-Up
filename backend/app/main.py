@@ -1,14 +1,20 @@
-from app.database.mongodb import get_database
+from fastapi import FastAPI
+
+from app.api.competency_groups import router as competency_groups_router
 
 
-def test_connection():
-    db = get_database()
-    collections = db.list_collection_names()
-
-    print("Connected to MongoDB")
-    print("Database:", db.name)
-    print("Collections:", collections)
+app = FastAPI(
+    title="Psi-Up API",
+    description="Backend API for the Psi-Up learning path recommendation system.",
+    version="0.1.0",
+)
 
 
-if __name__ == "__main__":
-    test_connection()
+app.include_router(competency_groups_router, prefix="/api")
+
+
+@app.get("/")
+def read_root():
+    return {
+        "message": "Psi-Up backend is running."
+    }

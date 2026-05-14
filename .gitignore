@@ -1,0 +1,39 @@
+# Python virtual environment
+backend/venv/
+backend/.venv/
+
+# Environment variables
+backend/.env
+backend/.env.local
+
+# Python cache
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.py[cod]
+backend/**/*.py[cod]
+
+# Test and coverage files
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+
+# Logs
+backend/*.log
+backend/logs/
+
+# IDE / editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python build files
+backend/build/
+backend/dist/
+backend/*.egg-info/
+
+# Local database/export temp files
+backend/tmp/
+backend/temp/

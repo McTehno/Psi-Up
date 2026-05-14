@@ -1,6 +1,6 @@
 # Backend struktura
 
-Backend je organiziran tako, da so ločeni API endpointi, poslovna logika, dostop do podatkov, podatkovne sheme in povezava z bazo. Takšna struktura omogoča lažje vzdrževanje in kasnejše razširitve sistema.
+Backend je organiziran tako, da so ločeni API endpointi, poslovna logika, dostop do podatkov, podatkovne sheme in povezava z bazo. Takšna struktura omogoča lažje vzdrževanje, testiranje in kasnejše razširitve sistema.
 
 ```text
 backend/
@@ -8,22 +8,37 @@ backend/
 ├── app/
 │   ├── main.py
 │   ├── config.py
+│   │
 │   ├── api/
+│   │   └── competency_groups.py
+│   │
 │   ├── services/
+│   │   └── competency_groups/
+│   │       ├── __init__.py
+│   │       └── competency_group_service.py
+│   │
 │   ├── repositories/
+│   │   └── competency_group_repository.py
+│   │
 │   ├── schemas/
+│   │   └── competency_group_schema.py
+│   │
 │   └── database/
+│       └── mongodb.py
 │
 ├── data/
-│   ├── competencies.json
-│   ├── modules.json
-│   └── learning_units.json
+│   └── mongodb/
+│       ├── competencies.json
+│       ├── competency_groups.json
+│       ├── learning_paths.json
+│       ├── learning_units.json
+│       └── modules.json
 │
 ├── tests/
+├── .env.example
 └── requirements.txt
-
 ```
-
+## Namen datoteke
 | Mapa/datoteka | Namen |
 | :-- | :-- |
 | `backend/` | Glavna mapa za backend del aplikacije. |
@@ -37,6 +52,70 @@ backend/
 | `app/database/` | Vsebuje konfiguracijo in povezavo s podatkovno bazo. |
 | `data/` | Vsebuje začasne oziroma razvojne podatke, ki se uporabljajo pred povezavo s pravo bazo podatkov. 
 | `tests/` | Vsebuje teste za backend funkcionalnosti. |
+
+# Navodila za zagon
+
+## Povezava do MongoDB Atlas Cluster
+
+1. Odpri MongoDB Compass.
+2. Klikni New Connection.
+3. V polje za povezavo prilepi connection string:
+  ```text
+    mongodb+srv://<username>:<password>@cluster0.g0ntvzk.mongodb.net/
+  ```
+
+4. Zamenjaj:
+<username> in <password>
+
+5. Klikni Connect.
+6. Po povezavi poišči bazo: psi_up
+
+V bazi morajo biti kolekcije:
+```text
+competencies
+competency_groups
+learning_paths
+learning_units
+modules
+```
+
+# Zagon backend aplikacije
+1. Premik v backend mapo
+```text
+cd backend
+```
+2. Ustvarjanje virtualnega okolja
+```text
+python -m venv venv
+```
+3. Aktiviranje virtualnega okolja
+```text
+venv\Scripts\activate
+```
+4. Namestitev knjižnic
+```text
+pip install -r requirements.txt
+```
+5. Zagon backend aplikacije
+```text
+uvicorn app.main:app --reload
+```
+
+Backend se zažene na naslovu:
+```text
+http://127.0.0.1:8000
+```
+
+Dokumentacija API-ja je dostopna na:
+```text
+http://127.0.0.1:8000/docs
+```
+
+Izklop virtualnega okolja
+```text
+deactivate
+```
+
 
 
 # Trenutno zamišljen flow aplikacije
@@ -73,45 +152,25 @@ Backend dobi:
 
 Potem iz tega sestavi pot.
 
-# Navodila za zagon
+# Načrtovani API endpointi
+GET  /api/competency-groups
+GET  /api/competency-groups/{groupId}
+GET  /api/competency-groups/{groupId}/questionnaire
 
-## Povezava do MongoDB Atlas Cluster
+POST /api/recommendations/competencies
+POST /api/assessments/self-assessment
+POST /api/learning-paths/generate
 
-1. Odpri MongoDB Compass.
-2. Klikni New Connection.
-3. V polje za povezavo prilepi connection string:
-  ```text
-    mongodb+srv://<username>:<password>@cluster0.g0ntvzk.mongodb.net/
-  ```
+GET  /api/competencies
+GET  /api/competencies/{competencyId}
 
-4. Zamenjaj:
-<username> in <password>
+GET  /api/learning-paths
+GET  /api/learning-paths/{learningPathId}
 
-5. Klikni Connect.
-6. Po povezavi poišči bazo: psi_up
+GET  /api/modules
+GET  /api/modules/{moduleId}
 
-V bazi morajo biti kolekcije:
-```text
-competencies
-competency_groups
-learning_paths
-learning_units
-modules
-```
+GET  /api/learning-units
+GET  /api/learning-units/{learningUnitId}
 
-# Zagon venv
-1. Ustvarite virtualno okolje:
-```text
-python -m venv venv
-```
 
-2. Aktivirajte virtualno okolje:
-```text
-venv\Scripts\activate
-```
-
-Za izklop venv
-
-```text
-deactivate
-```

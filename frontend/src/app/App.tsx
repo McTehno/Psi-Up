@@ -110,8 +110,8 @@ function UsersIcon({ className = 'h-5 w-5' }: IconProps) {
 function EditIcon({ className = 'h-5 w-5' }: IconProps) {
 	return (
 		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M12 20h9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-			<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+			<path d="M12 20h9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+			<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
 		</svg>
 	)
 }
@@ -119,7 +119,7 @@ function EditIcon({ className = 'h-5 w-5' }: IconProps) {
 function ShieldIcon({ className = 'h-5 w-5' }: IconProps) {
 	return (
 		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+			<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
 		</svg>
 	)
 }
@@ -206,40 +206,42 @@ const digcompAreas = [
 
 function App() {
 	const [activeIndex, setActiveIndex] = useState(0)
+	const [rotationCount, setRotationCount] = useState(0)
 
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setActiveIndex((prev) => (prev + 1) % digcompAreas.length)
+			setRotationCount((prev) => prev + 1)
 		}, 4000)
 		return () => clearInterval(interval)
 	}, [])
 
 	return (
-		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-forest-900">
+		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-brown-900">
 			<div
-				className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(111,146,127,0.34),_transparent_28%),radial-gradient(circle_at_82%_12%,_rgba(143,99,75,0.13),_transparent_20%),radial-gradient(circle_at_85%_10%,_rgba(111,146,127,0.16),_transparent_24%),linear-gradient(180deg,_rgba(250,253,249,0.98),_rgba(229,239,231,0.98))]"
+				className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(139,115,85,0.16),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(139,115,85,0.12),_transparent_22%),radial-gradient(circle_at_90%_80%,_rgba(114,93,67,0.08),_transparent_30%),linear-gradient(180deg,_rgba(245,240,232,0.98),_rgba(224,213,195,0.98))]"
 				aria-hidden="true"
 			/>
 			<div
-				className="pointer-events-none absolute left-0 top-36 -z-10 h-72 w-72 rounded-full bg-forest-300/25 blur-3xl"
+				className="pointer-events-none absolute left-0 top-36 -z-10 h-72 w-72 rounded-full bg-sand-300/30 blur-3xl"
 				aria-hidden="true"
 			/>
 			<div
-				className="pointer-events-none absolute right-0 top-24 -z-10 h-96 w-96 rounded-full bg-forest-200/20 blur-3xl"
+				className="pointer-events-none absolute right-0 top-24 -z-10 h-96 w-96 rounded-full bg-brown-100/25 blur-3xl"
 				aria-hidden="true"
 			/>
 
 			<div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
-				<header className="flex items-center justify-between gap-4 border-b border-forest-900/10 pb-5">
+				<header className="flex items-center justify-between gap-4 border-b border-brown-200/60 pb-5">
 					<a href="#top" className="inline-flex items-center gap-3">
-						<span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest-900 text-sm font-semibold tracking-[0.25em] text-sand-50 shadow-lg shadow-forest-900/20">
+						<span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brown-700 text-sm font-semibold tracking-[0.25em] text-sand-50 shadow-lg shadow-brown-700/20">
 							PS
 						</span>
 						<span>
-							<span className="block font-display text-xl tracking-tight text-forest-900">
+							<span className="block font-display text-xl tracking-tight text-brown-900">
 								Psi-Up
 							</span>
-							<span className="block text-sm text-forest-700">Priporočilne učne poti</span>
+							<span className="block text-sm text-brown-600">Priporočilne učne poti</span>
 						</span>
 					</a>
 
@@ -248,7 +250,7 @@ function App() {
 							<a
 								key={item.href}
 								href={item.href}
-								className="rounded-full border border-forest-200 bg-forest-50 px-4 py-2 text-sm font-medium text-forest-800 transition hover:border-forest-300 hover:bg-white hover:text-forest-900"
+								className="rounded-full border border-sand-300 bg-sand-50 px-4 py-2 text-sm font-medium text-brown-700 transition hover:border-brown-400 hover:bg-white hover:text-brown-900"
 							>
 								{item.label}
 							</a>
@@ -258,30 +260,30 @@ function App() {
 
 				<section
 					id="top"
-					className="grid gap-12 py-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-20"
+					className="grid gap-12 pt-8 pb-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:pt-10 lg:pb-20"
 				>
 					<div className="max-w-xl">
-						
 
-						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-forest-900 sm:text-6xl xl:text-7xl">
+
+						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-brown-900 sm:text-6xl xl:text-7xl">
 							Pot do cilja je lažja, ko je najprej mirna.
 						</h1>
 
-						<p className="mt-5 max-w-lg text-lg leading-8 text-forest-700">
+						<p className="mt-5 max-w-lg text-lg leading-8 text-brown-600">
 							Psi-Up poveže vprašalnik, DigComp in učno pot v eno jasno priporočilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">
 							<a
 								href="#how-it-works"
-								className="inline-flex items-center justify-center rounded-full bg-forest-900 px-6 py-3 text-sm font-semibold text-sand-50 shadow-[0_14px_40px_rgba(23,49,40,0.18)] transition hover:bg-forest-800"
+								className="inline-flex items-center justify-center rounded-full bg-forest-700 px-6 py-3 text-sm font-semibold text-sand-50 shadow-[0_14px_40px_rgba(61,90,62,0.22)] transition hover:bg-forest-800"
 							>
 								Kako deluje
 								<ArrowRightIcon className="ml-2 h-4 w-4" />
 							</a>
 							<a
 								href="#digcomp"
-								className="inline-flex items-center justify-center rounded-full border border-forest-200 bg-forest-50 px-6 py-3 text-sm font-semibold text-forest-900 shadow-sm transition hover:border-forest-300 hover:bg-white"
+								className="inline-flex items-center justify-center rounded-full border border-sand-300 bg-sand-100 px-6 py-3 text-sm font-semibold text-brown-800 shadow-sm transition hover:border-brown-300 hover:bg-white"
 							>
 								Kaj upošteva
 							</a>
@@ -291,7 +293,7 @@ function App() {
 							{focusTags.map((tag) => (
 								<span
 									key={tag}
-									className="rounded-full border border-forest-200 bg-forest-50 px-3 py-2 text-sm font-medium text-forest-800"
+									className="rounded-full border border-sand-300 bg-sand-100 px-3 py-2 text-sm font-medium text-brown-700"
 								>
 									{tag}
 								</span>
@@ -307,18 +309,17 @@ function App() {
 								return (
 									<div
 										key={area.title}
-										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-700 ease-in-out ${
-											isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'
-										}`}
+										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-700 ease-in-out ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'
+											}`}
 										aria-hidden={!isActive}
 									>
 										<span className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg border border-white/20 ${area.themeBg} ${area.themeText}`}>
 											<area.icon className="h-8 w-8" />
 										</span>
-										<h2 className="mt-6 font-display text-3xl sm:text-4xl font-semibold leading-tight text-forest-900 max-w-[28rem]">
+										<h2 className="mt-6 font-display text-3xl sm:text-4xl font-semibold leading-tight text-brown-900 max-w-[28rem]">
 											{area.title}
 										</h2>
-										<p className="mt-4 text-sm sm:text-base leading-relaxed text-forest-700 max-w-[24rem]">
+										<p className="mt-4 text-sm sm:text-base leading-relaxed text-brown-600 max-w-[24rem]">
 											{area.description}
 										</p>
 									</div>
@@ -329,20 +330,20 @@ function App() {
 						{/* The Rotating Wheel (Massive background element bleeding off screen) */}
 						<svg
 							viewBox="-120 -120 240 240"
-							className="absolute top-64 lg:top-48 -right-[240%] sm:-right-[160%] md:-right-[130%] lg:-right-[90%] w-[300%] sm:w-[220%] md:w-[180%] lg:w-[150%] max-w-[1200px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
-							style={{ transform: `rotate(${-81 - activeIndex * 72}deg)` }}
+							className="absolute top-12 lg:top-12 -right-[270%] sm:-right-[170%] md:-right-[140%] lg:-right-[120%] w-[350%] sm:w-[250%] md:w-[200%] lg:w-[180%] max-w-[1400px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
+							style={{ transform: `rotate(${-81 - rotationCount * 72}deg)` }}
 						>
 							{digcompAreas.map((area, idx) => {
 								const startAngle = (idx * 72 - 90) * (Math.PI / 180)
 								const endAngle = ((idx + 1) * 72 - 90) * (Math.PI / 180)
-								
+
 								// Use a slightly larger radius for the pentagon placement
 								const v1x = Math.cos(startAngle) * 95
 								const v1y = Math.sin(startAngle) * 95
 								const v2x = Math.cos(endAngle) * 95
 								const v2y = Math.sin(endAngle) * 95
 
-								// Increased spacing (gap) between the lines (0.2 to 0.8)
+								// Increased spacing (gap) between the lines
 								const x1 = v1x + (v2x - v1x) * 0.2
 								const y1 = v1y + (v2y - v1y) * 0.2
 								const x2 = v1x + (v2x - v1x) * 0.8
@@ -372,20 +373,20 @@ function App() {
 					{processSteps.map((step, index) => (
 						<Fragment key={step.title}>
 							<article
-								className="rounded-[2rem] border border-forest-900/10 bg-white/85 p-6 shadow-sm"
+								className="rounded-[2rem] border border-sand-300/60 bg-white/85 p-6 shadow-sm"
 							>
 								<div className="flex items-center justify-between gap-4">
-									<span className="flex h-11 w-11 items-center justify-center rounded-full bg-forest-100 text-forest-700">
+									<span className="flex h-11 w-11 items-center justify-center rounded-full bg-brown-100 text-brown-700">
 										<step.icon className="h-5 w-5" />
 									</span>
-									<span className="text-xs font-semibold uppercase tracking-[0.24em] text-forest-700">
+									<span className="text-xs font-semibold uppercase tracking-[0.24em] text-brown-500">
 										Korak
 									</span>
 								</div>
-								<h2 className="mt-5 font-display text-3xl leading-tight text-forest-900">
+								<h2 className="mt-5 font-display text-3xl leading-tight text-brown-900">
 									{step.title}
 								</h2>
-								<p className="mt-2 text-sm leading-7 text-forest-700">{step.text}</p>
+								<p className="mt-2 text-sm leading-7 text-brown-500">{step.text}</p>
 							</article>
 							{index < processSteps.length - 1 ? (
 								<div className="flex items-center justify-center py-1 lg:px-1 lg:py-0">
@@ -399,39 +400,39 @@ function App() {
 				</section>
 
 				<section id="digcomp" className="grid gap-6 py-10 lg:grid-cols-[1.05fr_0.95fr]">
-					<article className="rounded-[2rem] border border-forest-900/10 bg-white/85 p-7 shadow-sm sm:p-8">
-						<p className="text-xs font-semibold uppercase tracking-[0.28em] text-brown-700">
+					<article className="rounded-[2rem] border border-sand-300/60 bg-white/85 p-7 shadow-sm sm:p-8">
+						<p className="text-xs font-semibold uppercase tracking-[0.28em] text-brown-500">
 							DigComp + curriculum
 						</p>
-						<h2 className="mt-4 max-w-xl font-display text-4xl leading-tight text-forest-900">
+						<h2 className="mt-4 max-w-xl font-display text-4xl leading-tight text-brown-900">
 							Priporočilo je prilagojeno.
 						</h2>
-						<p className="mt-4 max-w-xl text-base leading-8 text-forest-700">
+						<p className="mt-4 max-w-xl text-base leading-8 text-brown-600">
 							Sistem upošteva predznanje, cilj in vlogo.
 						</p>
 						<div className="mt-6 grid gap-3 sm:grid-cols-2">
 							{outcomeCards.map(({ icon: Icon, title }) => (
-								<div key={title} className="flex items-center gap-3 rounded-2xl border border-forest-200 bg-forest-50 px-4 py-4">
-									<span className="flex h-10 w-10 items-center justify-center rounded-full bg-forest-900 text-sand-50">
+								<div key={title} className="flex items-center gap-3 rounded-2xl border border-brown-200 bg-brown-50 px-4 py-4">
+									<span className="flex h-10 w-10 items-center justify-center rounded-full bg-brown-700 text-sand-50">
 										<Icon className="h-5 w-5" />
 									</span>
-									<p className="text-sm font-semibold text-forest-900">{title}</p>
+									<p className="text-sm font-semibold text-brown-800">{title}</p>
 								</div>
 							))}
 						</div>
 					</article>
 
-					<article className="overflow-hidden rounded-[2rem] border border-forest-900/10 bg-white shadow-sm">
+					<article className="overflow-hidden rounded-[2rem] border border-sand-300/60 bg-white shadow-sm">
 						<img
 							src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80"
 							alt="Pen on lined paper"
 							className="h-72 w-full object-cover object-center"
 						/>
 						<div className="p-6">
-							<p className="text-sm font-semibold uppercase tracking-[0.24em] text-forest-700">
+							<p className="text-sm font-semibold uppercase tracking-[0.24em] text-brown-500">
 								Za koga je
 							</p>
-							<p className="mt-3 text-sm leading-7 text-forest-700">
+							<p className="mt-3 text-sm leading-7 text-brown-600">
 								Za študente, zaposlene, profesorje in ekipe.
 							</p>
 						</div>

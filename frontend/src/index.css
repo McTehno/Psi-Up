@@ -5,32 +5,50 @@
   --font-sans: 'Manrope', 'Segoe UI', sans-serif;
   --font-display: 'Fraunces', Georgia, serif;
 
-  --color-sand-50: #fbf7f0;
-  --color-sand-100: #f3eadf;
-  --color-sand-200: #e8dccb;
+  /* ── Beige / Sand scale (backgrounds, surfaces) ── */
+  --color-sand-50:  #FAF7F2;
+  --color-sand-100: #F5F0E8;
+  --color-sand-200: #EDE5D8;
+  --color-sand-300: #E0D5C3;
+  --color-sand-400: #D4C9B8;
+  --color-sand-500: #C2B49E;
+  --color-sand-600: #A89880;
+  --color-sand-700: #8B7C65;
+  --color-sand-800: #6E614F;
+  --color-sand-900: #504639;
 
-  --color-forest-50: #edf5f1;
-  --color-forest-100: #d8e7de;
-  --color-forest-200: #bed3c6;
-  --color-forest-500: #6e927f;
-  --color-forest-700: #305647;
-  --color-forest-800: #214234;
-  --color-forest-900: #173128;
+  /* ── Brown scale (structural, text, cards) ── */
+  --color-brown-50:  #F7F2EC;
+  --color-brown-100: #EDE3D6;
+  --color-brown-200: #D4C4AD;
+  --color-brown-300: #BBA688;
+  --color-brown-400: #A68D6A;
+  --color-brown-500: #8B7355;
+  --color-brown-600: #725D43;
+  --color-brown-700: #5C4A35;
+  --color-brown-800: #3E3124;
+  --color-brown-900: #2C2417;
 
-  --color-brown-50: #f6eee8;
-  --color-brown-100: #e8d6c9;
-  --color-brown-200: #cfad94;
-  --color-brown-500: #9b6b4f;
-  --color-brown-700: #6f4b3a;
-  --color-brown-900: #3e291f;
+  /* ── Forest / Dark-green accent scale ── */
+  --color-forest-50:  #EEF2ED;
+  --color-forest-100: #DDE6DB;
+  --color-forest-200: #C3D4C0;
+  --color-forest-300: #9DB89A;
+  --color-forest-400: #7A9E78;
+  --color-forest-500: #5E845C;
+  --color-forest-600: #4A6741;
+  --color-forest-700: #3D5A3E;
+  --color-forest-800: #2F4530;
+  --color-forest-900: #1E2E1F;
 
-  --color-terracotta-50: #fbefe9;
-  --color-terracotta-100: #f4ded4;
-  --color-terracotta-200: #eac4b3;
-  --color-terracotta-300: #dda68f;
-  --color-terracotta-500: #c57452;
-  --color-terracotta-600: #b65d3e;
-  --color-terracotta-700: #96482f;
+  /* ── Terracotta / warm accent scale ── */
+  --color-terracotta-50:  #FBF0EA;
+  --color-terracotta-100: #F4DDD0;
+  --color-terracotta-200: #E8C3AF;
+  --color-terracotta-300: #D9A68B;
+  --color-terracotta-500: #BF7B56;
+  --color-terracotta-600: #A86540;
+  --color-terracotta-700: #8D5033;
 }
 
 html {
@@ -40,17 +58,17 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  color: #173128;
+  color: #2C2417;
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background:
-    radial-gradient(circle at top left, rgba(111, 146, 127, 0.38), transparent 26%),
-    radial-gradient(circle at 82% 12%, rgba(143, 99, 75, 0.14), transparent 20%),
-    radial-gradient(circle at 85% 10%, rgba(111, 146, 127, 0.2), transparent 22%),
-    linear-gradient(180deg, #fbfcf8 0%, #e2eee4 100%);
+    radial-gradient(circle at top left, rgba(139, 115, 85, 0.16), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(139, 115, 85, 0.12), transparent 22%),
+    radial-gradient(circle at 90% 80%, rgba(114, 93, 67, 0.08), transparent 30%),
+    linear-gradient(180deg, #F5F0E8 0%, #E0D5C3 100%);
   background-attachment: fixed;
 }
 
@@ -59,6 +77,6 @@ body {
 }
 
 ::selection {
-  background: rgba(196, 116, 82, 0.22);
-  color: #173128;
+  background: rgba(139, 115, 85, 0.22);
+  color: #2C2417;
 }

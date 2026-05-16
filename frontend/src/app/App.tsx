@@ -1,8 +1,6 @@
-import { Fragment } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 
 import { landingAnchors } from './router'
-
-const greenPathImage = new URL('../assets/greenpath.jpeg', import.meta.url).href
 
 type IconProps = {
 	className?: string
@@ -89,6 +87,53 @@ function ArrowRightIcon({ className = 'h-4 w-4' }: IconProps) {
 	)
 }
 
+function SearchIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.7" />
+			<path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+		</svg>
+	)
+}
+
+function UsersIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+			<circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.7" />
+			<path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+			<path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+		</svg>
+	)
+}
+
+function EditIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<path d="M12 20h9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+			<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+		</svg>
+	)
+}
+
+function ShieldIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+		</svg>
+	)
+}
+
+function LightbulbIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<path d="M9 18h6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+			<path d="M10 22h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+			<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A6 6 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+		</svg>
+	)
+}
+
 const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
 
 const processSteps = [
@@ -116,20 +161,59 @@ const outcomeCards = [
 	{ icon: CompassIcon, title: 'DigComp' },
 ] as const
 
-const galleryImages = [
+const digcompAreas = [
 	{
-		src: greenPathImage,
-		alt: 'Zelena pot skozi gozd',
-		caption: 'Zelena pot',
+		title: 'Iskanje, vrednotenje in upravljanje',
+		icon: SearchIcon,
+		description: 'Iskanje, vrednotenje in upravljanje podatkov ter informacij.',
+		themeBg: 'bg-[#FACA3A]',
+		themeText: 'text-white',
+		svgFill: '#FACA3A',
 	},
 	{
-		src: 'https://images.unsplash.com/photo-1517971071642-34a2d3ecc9cd?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cGVuJTIwd3JpdGluZyUyMHBhcGVyfGVufDB8fDB8fHww',
-		alt: 'Pen writing on paper',
-		caption: 'Jasen zapis',
+		title: 'Komunikacija in sodelovanje',
+		icon: UsersIcon,
+		description: 'Interakcija, deljenje in sodelovanje v digitalnem okolju.',
+		themeBg: 'bg-[#4888C9]',
+		themeText: 'text-white',
+		svgFill: '#4888C9',
+	},
+	{
+		title: 'Ustvarjanje digitalnih vsebin',
+		icon: EditIcon,
+		description: 'Razvoj, integracija in obdelava digitalnih virov.',
+		themeBg: 'bg-[#F29111]',
+		themeText: 'text-white',
+		svgFill: '#F29111',
+	},
+	{
+		title: 'Varnost in odgovorna raba',
+		icon: ShieldIcon,
+		description: 'Zaščita naprav, podatkov, zasebnosti in zdravja.',
+		themeBg: 'bg-[#4AAA4B]',
+		themeText: 'text-white',
+		svgFill: '#4AAA4B',
+	},
+	{
+		title: 'Prepoznavanje in reševanje težav',
+		icon: LightbulbIcon,
+		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
+		themeBg: 'bg-[#F05A4E]',
+		themeText: 'text-white',
+		svgFill: '#F05A4E',
 	},
 ] as const
 
 function App() {
+	const [activeIndex, setActiveIndex] = useState(0)
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setActiveIndex((prev) => (prev + 1) % digcompAreas.length)
+		}, 4000)
+		return () => clearInterval(interval)
+	}, [])
+
 	return (
 		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-forest-900">
 			<div
@@ -177,10 +261,7 @@ function App() {
 					className="grid gap-12 py-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-20"
 				>
 					<div className="max-w-xl">
-						<span className="inline-flex items-center gap-2 rounded-full border border-brown-200 bg-brown-50 px-4 py-2 text-sm font-semibold text-brown-700 shadow-sm shadow-brown-100/20">
-							<span className="h-2 w-2 rounded-full bg-brown-500" />
-							Začni tam, kjer si danes
-						</span>
+						
 
 						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-forest-900 sm:text-6xl xl:text-7xl">
 							Pot do cilja je lažja, ko je najprej mirna.
@@ -218,55 +299,69 @@ function App() {
 						</div>
 					</div>
 
-					<div className="grid gap-4 sm:grid-cols-[1.05fr_0.95fr]">
-						<figure className="group relative overflow-hidden rounded-[2rem] border border-forest-900/10 bg-white shadow-[0_24px_80px_rgba(17,40,30,0.1)] sm:row-span-2">
-							<img
-								src={galleryImages[0].src}
-								alt={galleryImages[0].alt}
-								className="h-full min-h-[34rem] w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
-							/>
-							<figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-forest-900/70 to-transparent p-5 text-sand-50">
-								<p className="text-xs font-semibold uppercase tracking-[0.24em] text-sand-100/75">
-									{galleryImages[0].caption}
-								</p>
-								<p className="mt-1 max-w-xs text-sm leading-6 text-sand-100/85">
-									Miren začetek poti.
-								</p>
-							</figcaption>
-						</figure>
-
-						<div className="flex min-h-[18rem] flex-col justify-between rounded-[2rem] border border-forest-900/10 bg-forest-900 p-6 text-sand-50 shadow-[0_18px_60px_rgba(17,40,30,0.16)]">
-							<div>
-								<p className="text-xs font-semibold uppercase tracking-[0.24em] text-brown-100/80">
-									Začni zdaj
-								</p>
-								<h2 className="mt-3 max-w-[14rem] font-display text-3xl leading-tight text-sand-50">
-									Odpri vprašalnik in dobi prvo smer.
-								</h2>
-							</div>
-							<a
-								href="#how-it-works"
-								className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-brown-50 px-5 py-4 text-sm font-semibold text-brown-900 transition hover:bg-white"
-							>
-								Začni vprašalnik
-								<ArrowRightIcon className="h-4 w-4" />
-							</a>
-							<p className="mt-4 text-sm leading-6 text-forest-100/80">
-								En klik do začetka poti.
-							</p>
+					<div className="relative min-h-[30rem] sm:min-h-[40rem] w-full flex flex-col">
+						{/* Foreground Info Layer */}
+						<div className="absolute inset-x-0 top-16 sm:top-20 z-10 flex flex-col items-center text-center px-4 sm:px-6">
+							{digcompAreas.map((area, idx) => {
+								const isActive = activeIndex === idx
+								return (
+									<div
+										key={area.title}
+										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-700 ease-in-out ${
+											isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'
+										}`}
+										aria-hidden={!isActive}
+									>
+										<span className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg border border-white/20 ${area.themeBg} ${area.themeText}`}>
+											<area.icon className="h-8 w-8" />
+										</span>
+										<h2 className="mt-6 font-display text-3xl sm:text-4xl font-semibold leading-tight text-forest-900 max-w-[28rem]">
+											{area.title}
+										</h2>
+										<p className="mt-4 text-sm sm:text-base leading-relaxed text-forest-700 max-w-[24rem]">
+											{area.description}
+										</p>
+									</div>
+								)
+							})}
 						</div>
 
-						<figure className="group overflow-hidden rounded-[2rem] border border-forest-900/10 bg-white shadow-[0_18px_60px_rgba(17,40,30,0.08)]">
-							<img
-								src={galleryImages[1].src}
-								alt={galleryImages[1].alt}
-								className="h-60 w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
-							/>
-							<figcaption className="p-4">
-								<p className="text-sm font-semibold text-forest-900">{galleryImages[1].caption}</p>
-								<p className="mt-1 text-sm leading-6 text-forest-700">Najprej zapis, potem smer.</p>
-							</figcaption>
-						</figure>
+						{/* The Rotating Wheel (Massive background element bleeding off screen) */}
+						<svg
+							viewBox="-120 -120 240 240"
+							className="absolute top-64 lg:top-48 -right-[240%] sm:-right-[160%] md:-right-[130%] lg:-right-[90%] w-[300%] sm:w-[220%] md:w-[180%] lg:w-[150%] max-w-[1200px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
+							style={{ transform: `rotate(${-81 - activeIndex * 72}deg)` }}
+						>
+							{digcompAreas.map((area, idx) => {
+								const startAngle = (idx * 72 - 90) * (Math.PI / 180)
+								const endAngle = ((idx + 1) * 72 - 90) * (Math.PI / 180)
+								
+								// Use a slightly larger radius for the pentagon placement
+								const v1x = Math.cos(startAngle) * 95
+								const v1y = Math.sin(startAngle) * 95
+								const v2x = Math.cos(endAngle) * 95
+								const v2y = Math.sin(endAngle) * 95
+
+								// Increased spacing (gap) between the lines (0.2 to 0.8)
+								const x1 = v1x + (v2x - v1x) * 0.2
+								const y1 = v1y + (v2y - v1y) * 0.2
+								const x2 = v1x + (v2x - v1x) * 0.8
+								const y2 = v1y + (v2y - v1y) * 0.8
+
+								return (
+									<line
+										key={area.title}
+										x1={x1}
+										y1={y1}
+										x2={x2}
+										y2={y2}
+										stroke={area.svgFill}
+										strokeWidth="18"
+										strokeLinecap="round"
+									/>
+								)
+							})}
+						</svg>
 					</div>
 				</section>
 

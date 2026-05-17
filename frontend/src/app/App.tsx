@@ -305,12 +305,20 @@ function App() {
 						{/* Foreground Info Layer */}
 						<div className="absolute inset-x-0 top-16 sm:top-20 z-10 flex flex-col items-center text-center px-4 sm:px-6">
 							{digcompAreas.map((area, idx) => {
-								const isActive = activeIndex === idx
+								const isActive = activeIndex === idx;
+								const isPast = idx === (activeIndex - 1 + digcompAreas.length) % digcompAreas.length;
+								
+								let positionClass = 'translate-x-16 -translate-y-16 rotate-12 opacity-0 pointer-events-none scale-95'; // coming from top-right arc
+								if (isActive) {
+									positionClass = 'translate-x-0 translate-y-0 rotate-0 opacity-100 z-10 scale-100'; // active in center
+								} else if (isPast) {
+									positionClass = '-translate-x-12 translate-y-24 -rotate-12 opacity-0 pointer-events-none scale-95'; // exiting down and left, around the edge
+								}
+
 								return (
 									<div
 										key={area.title}
-										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-700 ease-in-out ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'
-											}`}
+										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-1000 ease-in-out origin-center ${positionClass}`}
 										aria-hidden={!isActive}
 									>
 										<span className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg border border-white/20 ${area.themeBg} ${area.themeText}`}>
@@ -330,7 +338,7 @@ function App() {
 						{/* The Rotating Wheel (Massive background element bleeding off screen) */}
 						<svg
 							viewBox="-120 -120 240 240"
-							className="absolute top-12 lg:top-12 -right-[270%] sm:-right-[170%] md:-right-[140%] lg:-right-[120%] w-[350%] sm:w-[250%] md:w-[200%] lg:w-[180%] max-w-[1400px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
+							className="absolute top-24 lg:top-24 -right-[270%] sm:-right-[170%] md:-right-[140%] lg:-right-[120%] w-[350%] sm:w-[250%] md:w-[200%] lg:w-[180%] max-w-[1400px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
 							style={{ transform: `rotate(${-81 - rotationCount * 72}deg)` }}
 						>
 							{digcompAreas.map((area, idx) => {

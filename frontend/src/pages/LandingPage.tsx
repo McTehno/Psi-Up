@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 
-import { landingAnchors } from './router'
+import { landingAnchors } from '../app/router'
 
 type IconProps = {
 	className?: string

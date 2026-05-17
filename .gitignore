@@ -37,3 +37,6 @@ backend/*.egg-info/
 # Local database/export temp files
 backend/tmp/
 backend/temp/
+
+# Node modules for frontend
+node_modules/

@@ -1,0 +1,94 @@
+.competency-card {
+	position: relative;
+
+	width: 100%;
+	min-height: 154px;
+	display: flex;
+	align-items: center;
+	gap: 28px;
+	padding: 28px 42px 28px 28px;
+
+	background: #fffdf8;
+	border: 1.5px solid #ded5c6;
+	border-radius: 16px;
+
+	text-align: left;
+	cursor: pointer;
+
+	transition:
+		border-color 180ms ease,
+		box-shadow 180ms ease,
+		transform 180ms ease,
+		background-color 180ms ease;
+}
+
+.competency-card:hover {
+	border-color: #b8aa94;
+	box-shadow: 0 10px 28px rgba(63, 56, 45, 0.08);
+	transform: translateY(-1px);
+}
+
+.competency-card--selected {
+	background: #f4eee4;
+	border-color: #31583b;
+	box-shadow: 0 0 0 3px rgba(49, 88, 59, 0.14);
+}
+
+.competency-card__check {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+
+	width: 32px;
+	height: 32px;
+
+	display: grid;
+	place-items: center;
+
+	background: #31583b;
+	color: #fffdf8;
+	border-radius: 50%;
+
+	font-size: 18px;
+	font-weight: 800;
+}
+
+.competency-card__icon {
+	width: 88px;
+	height: 88px;
+	flex: 0 0 88px;
+
+	display: grid;
+	place-items: center;
+
+	background: #f4eee4;
+	border-radius: 50%;
+}
+
+.competency-card--selected .competency-card__icon {
+	background: #fffdf8;
+}
+
+.competency-card__icon img {
+	width: 42px;
+	height: 42px;
+	object-fit: contain;
+}
+
+.competency-card__content h2 {
+	margin: 0 0 8px;
+
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 26px;
+	line-height: 1.15;
+	font-weight: 700;
+	color: #26231f;
+}
+
+.competency-card__content p {
+	margin: 0;
+
+	font-size: 18px;
+	line-height: 1.35;
+	color: #5d5a55;
+}

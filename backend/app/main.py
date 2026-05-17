@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.competency_groups import router as competency_groups_router
 from app.api.questionnaires import router as questionnaires_router
@@ -9,14 +10,21 @@ from app.api.competencies import router as competencies_router
 from app.api.modules import router as modules_router
 from app.api.learning_units import router as learning_units_router
 
-
-
 app = FastAPI(
     title="Psi-Up API",
     description="Backend API for the Psi-Up learning path recommendation system.",
     version="0.1.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(competency_groups_router, prefix="/api")
 app.include_router(questionnaires_router, prefix="/api")

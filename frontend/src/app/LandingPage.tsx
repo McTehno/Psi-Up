@@ -204,7 +204,7 @@ const digcompAreas = [
 	},
 ] as const
 
-function App() {
+function LandingPage() {
 	const [activeIndex, setActiveIndex] = useState(0)
 	const [rotationCount, setRotationCount] = useState(0)
 
@@ -451,4 +451,4 @@ function App() {
 	)
 }
 
-export default App
+export default LandingPage

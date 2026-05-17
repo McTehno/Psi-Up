@@ -40,3 +40,4 @@ backend/temp/
 
 # Node modules for frontend
 node_modules/
+frontend/.env

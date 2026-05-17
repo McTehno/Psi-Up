@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import type { LearningPathData } from '../types/domain';
 import { LearningPathVisualizer } from '../features/learning-paths/components/LearningPathVisualizer';
 import { Download, Bookmark, Share2 } from 'lucide-react';
@@ -47,6 +48,22 @@ const mockData: LearningPathData = {
 };
 
 export const PathResultPage: React.FC = () => {
+  const location = useLocation();
+  const learningPathResponse = location.state?.learningPath;
+
+  const data: LearningPathData = learningPathResponse ? {
+    pathTitle: learningPathResponse.title,
+    pathDescription: learningPathResponse.description,
+    targetCompetency: learningPathResponse.competency_id,
+    modules: learningPathResponse.modules.map((m: { id: string, title: string, description: string, learning_units: unknown[] }, idx: number) => ({
+      id: m.id,
+      order: idx + 1,
+      title: m.title,
+      description: m.description,
+      learningUnitsCount: m.learning_units?.length || 0
+    }))
+  } : mockData;
+
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#3E2723] flex flex-col md:flex-row font-sans overflow-x-hidden">
       
@@ -76,7 +93,7 @@ export const PathResultPage: React.FC = () => {
 
       {/* Main Content - Right Column */}
       <main className="w-full md:w-3/4 bg-[#F2EDE1] relative flex justify-center overflow-x-hidden">
-        <LearningPathVisualizer data={mockData} />
+        <LearningPathVisualizer data={data} />
       </main>
 
     </div>

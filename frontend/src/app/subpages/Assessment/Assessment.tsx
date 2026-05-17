@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
 	getCompetencyGroups,
 	getCompetencyGroupQuestionnaire,
 } from '../../../api/competencyGroups'
+import { getCompetencyRecommendations, generateLearningPath } from '../../../api/learningPaths'
 import womanImage from '../../../../public/woman.png'
-import { assessmentAudio, assessmentCopy } from './assessmentSteps'
+import { assessmentCopy } from './assessmentSteps'
 import AssessmentLayout from './modules/AssessmentLayout'
 import AssessmentHeader from './modules/AssessmentHeader'
 import AssessmentIntro from './modules/AssessmentIntro'
@@ -41,6 +43,7 @@ type CompetencyGroup = {
 type AssessmentPhase = 'group-selection' | 'questionnaire' | 'completed'
 
 function Assessment() {
+	const navigate = useNavigate()
 	const [phase, setPhase] = useState<AssessmentPhase>('group-selection')
 	const [competencyGroups, setCompetencyGroups] = useState<CompetencyGroup[]>([])
 	const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
@@ -48,6 +51,7 @@ function Assessment() {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 	const [selectedAnswers, setSelectedAnswers] = useState<Record<number, AnswerOption>>({})
 	const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(false)
+	const [isGeneratingPath, setIsGeneratingPath] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const currentAudioSrc = getAssessmentVoice({
 		phase,
@@ -102,7 +106,9 @@ function Assessment() {
 			? Boolean(selectedGroupId) && !isLoadingQuestionnaire
 			: phase === 'questionnaire'
 				? Boolean(selectedAnswer)
-				: false
+				: phase === 'completed'
+					? !isGeneratingPath
+					: false
 
 	const nextButtonLabel =
 		phase === 'group-selection' && isLoadingQuestionnaire
@@ -110,7 +116,9 @@ function Assessment() {
 			: phase === 'questionnaire' &&
 					currentQuestionIndex === questionnaire.length - 1
 				? 'Zaključi →'
-				: 'Naslednjo →'
+				: phase === 'completed'
+					? (isGeneratingPath ? 'Generiranje...' : 'Ustvari učno pot →')
+					: 'Naslednjo →'
 
 	useEffect(() => {
 		const loadCompetencyGroups = async () => {
@@ -195,6 +203,38 @@ function Assessment() {
 			}
 
 			setCurrentQuestionIndex((index) => index + 1)
+		}
+
+		if (phase === 'completed') {
+			if (!selectedGroupId) return;
+			setIsGeneratingPath(true);
+			setError(null);
+			try {
+				const answersPayload = questionnaire.map((item, index) => {
+					const answerObj = selectedAnswers[index];
+					const answerIndex = item.answers.findIndex(a => a.answer === answerObj.answer);
+					return {
+						question_index: index,
+						answer_index: answerIndex !== -1 ? answerIndex : 0
+					};
+				});
+
+				const recommendation = await getCompetencyRecommendations(selectedGroupId, answersPayload);
+				
+				if (recommendation.recommended_competencies && recommendation.recommended_competencies.length > 0) {
+					const firstRec = recommendation.recommended_competencies[0];
+					const learningPath = await generateLearningPath(firstRec.competency_id, firstRec.level);
+					
+					navigate('/path', { state: { learningPath } });
+				} else {
+					setError('Ni bilo mogoče najti priporočenih kompetenc.');
+				}
+			} catch (err) {
+				console.error(err);
+				setError('Napaka pri generiranju učne poti. Preverite, če strežnik deluje.');
+			} finally {
+				setIsGeneratingPath(false);
+			}
 		}
 	}
 

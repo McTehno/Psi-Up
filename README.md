@@ -42,7 +42,8 @@ psi-up/
 │   ├── package.json
 │   └── .env
 └── docs/
-    └── besednjak.md
+    ├── besednjak.md
+    └── podatkovni-model.md
 ```
 
 ## 6. Pravila poimenovanja in pisanja kode

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "progress_001",
+    "user_id": "user_001",
+    "saved_learning_paths": ["up_001"],
+    "saved_modules": ["mod_001"],
+    "saved_learning_units": ["ue_001"],
+    "favorite_learning_paths": ["up_001"],
+    "favorite_modules": [],
+    "favorite_learning_units": ["ue_001"],
+    "completed_learning_units": ["ue_001"],
+    "completed_modules": [],
+    "completed_learning_paths": [],
+    "current_positions": [
+      {
+        "learning_path_id": "up_001",
+        "current_module_id": "mod_001",
+        "current_learning_unit_id": "ue_002"
+      }
+    ]
+  }
+]

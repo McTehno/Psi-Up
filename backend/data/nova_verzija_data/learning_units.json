@@ -1,0 +1,386 @@
+[
+  {
+    "id": "ue_001",
+    "title": "Osnovni pojmi umetne inteligence",
+    "short_description": "Uvod v osnovne pojme umetne inteligence.",
+    "duration_min": 30,
+    "keywords": ["umetna inteligenca", "UI", "osnovni pojmi"],
+    "skills": [
+      "Razumevanje koncepta UI",
+      "Prepoznavanje primerov UI v vsakdanjem življenju"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_001_001",
+        "question": "Razumem osnovni koncept umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje koncepta UI"
+      },
+      {
+        "id": "q_ue_001_002",
+        "question": "Znam prepoznati primere umetne inteligence v vsakdanjem življenju.",
+        "type": "yes_no",
+        "related_skill": "Prepoznavanje primerov UI v vsakdanjem življenju"
+      }
+    ]
+  },
+  {
+    "id": "ue_002",
+    "title": "Kako deluje umetna inteligenca?",
+    "short_description": "Razumevanje osnov delovanja umetne inteligence in pomena podatkov.",
+    "duration_min": 30,
+    "keywords": ["umetna inteligenca", "UI", "podatki", "delovanje UI"],
+    "skills": [
+      "Pomembnost podatkov pri UI",
+      "Razumevanje delovanja UI"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_002_001",
+        "question": "Razumem, zakaj so podatki pomembni pri umetni inteligenci.",
+        "type": "yes_no",
+        "related_skill": "Pomembnost podatkov pri UI"
+      },
+      {
+        "id": "q_ue_002_002",
+        "question": "Razumem osnovno delovanje umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje delovanja UI"
+      }
+    ]
+  },
+  {
+    "id": "ue_003",
+    "title": "Generativna UI v praksi",
+    "short_description": "Uporaba generativne umetne inteligence v praktičnih primerih.",
+    "duration_min": 45,
+    "keywords": ["generativna UI", "GenUI", "pozivi", "orodja GenUI"],
+    "skills": [
+      "Prepoznavanje primerov GenUI",
+      "Uporaba orodij GenUI",
+      "Priprava pozivov za orodja GenUI",
+      "Kritična ocena in vrednotenje rezultatov orodij GenUI"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_003_001",
+        "question": "Znam prepoznati primere generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Prepoznavanje primerov GenUI"
+      },
+      {
+        "id": "q_ue_003_002",
+        "question": "Znam uporabljati orodja generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Uporaba orodij GenUI"
+      },
+      {
+        "id": "q_ue_003_003",
+        "question": "Znam pripraviti uporaben poziv za orodja generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Priprava pozivov za orodja GenUI"
+      },
+      {
+        "id": "q_ue_003_004",
+        "question": "Znam kritično oceniti rezultate, ki jih poda orodje generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Kritična ocena in vrednotenje rezultatov orodij GenUI"
+      }
+    ]
+  },
+  {
+    "id": "ue_004",
+    "title": "Etika UI in varna uporaba UI",
+    "short_description": "Razumevanje etičnih vidikov, tveganj in odgovorne uporabe umetne inteligence.",
+    "duration_min": 45,
+    "keywords": ["etika UI", "varna uporaba UI", "pristranskost", "tveganja"],
+    "skills": [
+      "Razumevanje pristranskosti UI",
+      "Prepoznavanje in razumevanje tveganj uporabe in delovanja UI",
+      "Stališče o odgovorni uporabi UI"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_004_001",
+        "question": "Razumem, da lahko umetna inteligenca vsebuje pristranskosti.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje pristranskosti UI"
+      },
+      {
+        "id": "q_ue_004_002",
+        "question": "Prepoznam tveganja pri uporabi umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Prepoznavanje in razumevanje tveganj uporabe in delovanja UI"
+      },
+      {
+        "id": "q_ue_004_003",
+        "question": "Razumem pomen odgovorne uporabe umetne inteligence.",
+        "type": "yes_no",
+        "related_skill": "Stališče o odgovorni uporabi UI"
+      }
+    ]
+  },
+  {
+    "id": "ue_005",
+    "title": "Osnove Excela",
+    "short_description": "Uvod v uporabo Excela in osnovno delo s preglednicami.",
+    "duration_min": 45,
+    "keywords": ["Excel", "preglednice", "podatki", "datoteke"],
+    "skills": [
+      "Razumevanje in učinkovita uporaba programskega vmesnika",
+      "Vnašanje, urejanje in hramba podatkov",
+      "Shranjevanje in odpiranje datotek v različnih formatih"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_005_001",
+        "question": "Znam uporabljati osnovni programski vmesnik Excela.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje in učinkovita uporaba programskega vmesnika"
+      },
+      {
+        "id": "q_ue_005_002",
+        "question": "Znam vnesti, urediti in shraniti podatke v Excelu.",
+        "type": "yes_no",
+        "related_skill": "Vnašanje, urejanje in hramba podatkov"
+      },
+      {
+        "id": "q_ue_005_003",
+        "question": "Znam shraniti in odpreti Excel datoteko v različnih formatih.",
+        "type": "yes_no",
+        "related_skill": "Shranjevanje in odpiranje datotek v različnih formatih"
+      }
+    ]
+  },
+  {
+    "id": "ue_006",
+    "title": "Formule in funkcije",
+    "short_description": "Uporaba osnovnih formul in funkcij v Excelu.",
+    "duration_min": 45,
+    "keywords": ["Excel", "formule", "funkcije", "celice"],
+    "skills": [
+      "Zapis in urejanje osnovnih formul",
+      "Uporaba vgrajenih funkcij",
+      "Razumevanje razlike med absolutnim in relativnim naslovom celice"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_006_001",
+        "question": "Znam zapisati in urediti osnovno formulo v Excelu.",
+        "type": "yes_no",
+        "related_skill": "Zapis in urejanje osnovnih formul"
+      },
+      {
+        "id": "q_ue_006_002",
+        "question": "Znam uporabiti osnovne vgrajene funkcije v Excelu.",
+        "type": "yes_no",
+        "related_skill": "Uporaba vgrajenih funkcij"
+      },
+      {
+        "id": "q_ue_006_003",
+        "question": "Razumem razliko med absolutnim in relativnim naslovom celice.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje razlike med absolutnim in relativnim naslovom celice"
+      }
+    ]
+  },
+  {
+    "id": "ue_007",
+    "title": "Oblikovanje preglednice",
+    "short_description": "Oblikovanje celic, pogojno oblikovanje in priprava preglednic za tisk.",
+    "duration_min": 40,
+    "keywords": ["Excel", "oblikovanje", "pogojno oblikovanje", "tiskanje"],
+    "skills": [
+      "Oblikovanje celic",
+      "Uporaba pogojnega oblikovanja",
+      "Priprava in tiskanje preglednic"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_007_001",
+        "question": "Znam oblikovati celice v Excelu.",
+        "type": "yes_no",
+        "related_skill": "Oblikovanje celic"
+      },
+      {
+        "id": "q_ue_007_002",
+        "question": "Znam uporabiti pogojno oblikovanje.",
+        "type": "yes_no",
+        "related_skill": "Uporaba pogojnega oblikovanja"
+      },
+      {
+        "id": "q_ue_007_003",
+        "question": "Znam pripraviti preglednico za tisk.",
+        "type": "yes_no",
+        "related_skill": "Priprava in tiskanje preglednic"
+      }
+    ]
+  },
+  {
+    "id": "ue_008",
+    "title": "Delo s podatki",
+    "short_description": "Uvoz, razvrščanje, filtriranje in iskanje podatkov v Excelu.",
+    "duration_min": 50,
+    "keywords": ["Excel", "podatki", "uvoz", "filtriranje", "razvrščanje"],
+    "skills": [
+      "Uvoz podatkov",
+      "Razvrščanje podatkov po kriterijih",
+      "Filtriranje podatkov",
+      "Iskanje in zamenjava vrednosti"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_008_001",
+        "question": "Znam uvoziti podatke v Excel.",
+        "type": "yes_no",
+        "related_skill": "Uvoz podatkov"
+      },
+      {
+        "id": "q_ue_008_002",
+        "question": "Znam razvrščati podatke po kriterijih.",
+        "type": "yes_no",
+        "related_skill": "Razvrščanje podatkov po kriterijih"
+      },
+      {
+        "id": "q_ue_008_003",
+        "question": "Znam filtrirati podatke.",
+        "type": "yes_no",
+        "related_skill": "Filtriranje podatkov"
+      },
+      {
+        "id": "q_ue_008_004",
+        "question": "Znam poiskati in zamenjati vrednosti v podatkih.",
+        "type": "yes_no",
+        "related_skill": "Iskanje in zamenjava vrednosti"
+      }
+    ]
+  },
+  {
+    "id": "ue_009",
+    "title": "Priprava podatkov za analizo",
+    "short_description": "Priprava in strukturiranje podatkov za nadaljnjo analizo.",
+    "duration_min": 45,
+    "keywords": ["Excel", "analiza podatkov", "strukturiranje podatkov", "napake"],
+    "skills": [
+      "Iskanje napak v podatkih",
+      "Strukturiranje podatkov v ustrezno obliko",
+      "Poimenovanje stolpcev in delovnih listov"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_009_001",
+        "question": "Znam poiskati napake v podatkih.",
+        "type": "yes_no",
+        "related_skill": "Iskanje napak v podatkih"
+      },
+      {
+        "id": "q_ue_009_002",
+        "question": "Znam strukturirati podatke v ustrezno obliko za analizo.",
+        "type": "yes_no",
+        "related_skill": "Strukturiranje podatkov v ustrezno obliko"
+      },
+      {
+        "id": "q_ue_009_003",
+        "question": "Znam ustrezno poimenovati stolpce in delovne liste.",
+        "type": "yes_no",
+        "related_skill": "Poimenovanje stolpcev in delovnih listov"
+      }
+    ]
+  },
+  {
+    "id": "ue_010",
+    "title": "Uvod v vrtilne tabele",
+    "short_description": "Razumevanje namena in osnovne uporabe vrtilnih tabel.",
+    "duration_min": 50,
+    "keywords": ["Excel", "vrtilne tabele", "podatki", "analiza"],
+    "skills": [
+      "Razumevanje vrtilnih tabel, namena in razlik",
+      "Ustvarjanje vrtilne tabele",
+      "Upravljanje področij vrtilne tabele"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_010_001",
+        "question": "Razumem namen vrtilnih tabel.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje vrtilnih tabel, namena in razlik"
+      },
+      {
+        "id": "q_ue_010_002",
+        "question": "Znam ustvariti osnovno vrtilno tabelo.",
+        "type": "yes_no",
+        "related_skill": "Ustvarjanje vrtilne tabele"
+      },
+      {
+        "id": "q_ue_010_003",
+        "question": "Znam upravljati področja vrtilne tabele.",
+        "type": "yes_no",
+        "related_skill": "Upravljanje področij vrtilne tabele"
+      }
+    ]
+  },
+  {
+    "id": "ue_011",
+    "title": "Napredne vrtilne tabele",
+    "short_description": "Napredna uporaba vrtilnih tabel za primerjavo in prikaz podatkov.",
+    "duration_min": 60,
+    "keywords": ["Excel", "vrtilne tabele", "deleži", "odstotki", "primerjava"],
+    "skills": [
+      "Združevanje podatkov po različnih kriterijih",
+      "Prikaz deležev in odstotkov",
+      "Primerjava več skupin podatkov"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_011_001",
+        "question": "Znam združevati podatke po različnih kriterijih v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_skill": "Združevanje podatkov po različnih kriterijih"
+      },
+      {
+        "id": "q_ue_011_002",
+        "question": "Znam prikazati deleže in odstotke v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_skill": "Prikaz deležev in odstotkov"
+      },
+      {
+        "id": "q_ue_011_003",
+        "question": "Znam primerjati več skupin podatkov.",
+        "type": "yes_no",
+        "related_skill": "Primerjava več skupin podatkov"
+      }
+    ]
+  },
+  {
+    "id": "ue_012",
+    "title": "Vizualizacija podatkov",
+    "short_description": "Ustvarjanje grafov in priprava rezultatov za predstavitev.",
+    "duration_min": 60,
+    "keywords": ["Excel", "grafi", "vizualizacija", "predstavitev", "interaktivni filter"],
+    "skills": [
+      "Ustvarjanje grafov iz podatkov in vrtilnih tabel",
+      "Razumevanje in uporaba interaktivnega filtra",
+      "Oblikovanje in izvoz rezultatov za predstavitev"
+    ],
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_012_001",
+        "question": "Znam ustvariti graf iz podatkov ali vrtilne tabele.",
+        "type": "yes_no",
+        "related_skill": "Ustvarjanje grafov iz podatkov in vrtilnih tabel"
+      },
+      {
+        "id": "q_ue_012_002",
+        "question": "Razumem uporabo interaktivnega filtra.",
+        "type": "yes_no",
+        "related_skill": "Razumevanje in uporaba interaktivnega filtra"
+      },
+      {
+        "id": "q_ue_012_003",
+        "question": "Znam oblikovati in izvoziti rezultate za predstavitev.",
+        "type": "yes_no",
+        "related_skill": "Oblikovanje in izvoz rezultatov za predstavitev"
+      }
+    ]
+  }
+]

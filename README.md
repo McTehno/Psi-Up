@@ -29,15 +29,22 @@ Sistem je namenjen različnim skupinam uporabnikov, kot so študenti, zaposleni,
 
 ```text
 psi-up/
-│
-├── frontend/
+├── README.md                 // glavni README za celoten projekt
 ├── backend/
-├── docs/
-│   └── glossary.md
-│
-└── README.md
-
+│   ├── README.md             // README za backend
+│   ├── app/
+│   ├── data/mongodb/
+│   ├── requirements.txt
+│   └── .env
+├── frontend/
+│   ├── README.md             // README za frontend
+│   ├── src/
+│   ├── package.json
+│   └── .env
+└── docs/
+    └── besednjak.md
 ```
+
 ## 6. Pravila poimenovanja in pisanja kode
 ### 6.1 Splošna pravila
 

@@ -1,33 +1,166 @@
-from fastapi import APIRouter, HTTPException
+from typing import List
 
-from app.schemas.questionnaire_schema import GroupQuestionnaireResponse
-from app.services.questionnaires.questionnaire_service import (
-    get_questionnaire_for_group,
-)
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.schemas.learning_path_schema import LearningPathResponse
+from app.schemas.questionnaire_schema import QuestionnaireResponse, QuestionnaireTargetType
+from app.services.learning_paths.learning_path_service import LearningPathService
+from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
-router = APIRouter(
-    prefix="/competency-groups",
-    tags=["Questionnaires"],
-)
+router = APIRouter(prefix="/learning-paths", tags=["Learning paths"])
 
 
-@router.get(
-    "/{group_id}/questionnaire",
-    response_model=GroupQuestionnaireResponse,
-)
+def get_learning_path_service() -> LearningPathService:
+    """
+    Vrne LearningPathService instanco.
 
-#pridobimo questionnaire za izbrano skupino kompetenc, da ga
-#prikažemo na frontend strani, ko uporabnik klikne na skupino kompetenc, 
-# da vidi vprašanja, ki jih mora odgovoriti, da dobi priporočila za kompetence.
+    TODO:
+    - Povezati z dejanskim LearningPathRepository.
+    - Povezati z ModuleService.
+    - Dodati dependency injection za database.
+    """
 
-def read_questionnaire_for_group(group_id: str):
-    questionnaire = get_questionnaire_for_group(group_id)
+    raise NotImplementedError("LearningPathService dependency še ni implementiran.")
 
-    if questionnaire is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Skupina kompetenc ni bila najdena.",
-        )
+
+def get_questionnaire_service() -> QuestionnaireService:
+    """
+    Vrne QuestionnaireService instanco.
+
+    TODO:
+    - Povezati z dejanskimi service-i za learning_paths, modules in learning_units.
+    - Dodati dependency injection za database.
+    """
+
+    raise NotImplementedError("QuestionnaireService dependency še ni implementiran.")
+
+
+@router.get("", response_model=List[LearningPathResponse])
+async def get_learning_paths(
+    learning_path_service: LearningPathService = Depends(get_learning_path_service),
+) -> List[LearningPathResponse]:
+    """
+    Vrne vse učne poti.
+
+    TODO:
+    - Poklicati LearningPathService.
+    - Dodati paginacijo, če bo podatkov veliko.
+    """
+
+    learning_paths = await learning_path_service.get_all_learning_paths()
+    return learning_paths
+
+
+@router.get("/{learning_path_id}", response_model=LearningPathResponse)
+async def get_learning_path_by_id(
+    learning_path_id: str,
+    learning_path_service: LearningPathService = Depends(get_learning_path_service),
+) -> LearningPathResponse:
+    """
+    Vrne eno učno pot po ID.
+
+    TODO:
+    - Dodati boljšo obravnavo napak.
+    - Preveriti, ali ID obstaja v bazi.
+    """
+
+    learning_path = await learning_path_service.get_learning_path_by_id(
+        learning_path_id
+    )
+
+    if not learning_path:
+        raise HTTPException(status_code=404, detail="Učna pot ni najdena.")
+
+    return learning_path
+
+
+@router.get("/{learning_path_id}/detail")
+async def get_learning_path_detail(
+    learning_path_id: str,
+    learning_path_service: LearningPathService = Depends(get_learning_path_service),
+):
+    """
+    Vrne podrobnosti učne poti za detail page.
+
+    TODO:
+    - Vrne osnovne podatke učne poti.
+    - Vrne tudi podrobnosti modulov znotraj učne poti.
+    - Po potrebi dodati response_model, ko bo končna oblika potrjena.
+    """
+
+    learning_path = await learning_path_service.get_learning_path_detail(
+        learning_path_id
+    )
+
+    if not learning_path:
+        raise HTTPException(status_code=404, detail="Učna pot ni najdena.")
+
+    return learning_path
+
+
+@router.get("/{learning_path_id}/modules")
+async def get_learning_path_modules(
+    learning_path_id: str,
+    learning_path_service: LearningPathService = Depends(get_learning_path_service),
+):
+    """
+    Vrne reference modulov znotraj učne poti.
+
+    TODO:
+    - Po potrebi vrniti tudi celotne podatke modulov, ne samo reference.
+    - Urediti prikaz glede na order in parallel_group.
+    - Dejanska logika dostopnosti mora temeljiti na prerequisites.
+    """
+
+    modules = await learning_path_service.get_module_references_for_learning_path(
+        learning_path_id
+    )
+
+    return modules
+
+
+@router.get("/{learning_path_id}/available-modules")
+async def get_available_modules_for_learning_path(
+    learning_path_id: str,
+    completed_module_ids: List[str] = Query(default=[]),
+    learning_path_service: LearningPathService = Depends(get_learning_path_service),
+):
+    """
+    Vrne module, ki jih uporabnik lahko začne glede na zaključene predpogoje.
+
+    TODO:
+    - completed_module_ids bo kasneje verjetno prišel iz user_progress.
+    - Trenutno je pripravljen kot query parameter za testiranje.
+    - Prerequisites so glavni vir logike dostopnosti.
+    """
+
+    available_modules = await learning_path_service.get_available_modules_for_learning_path(
+        learning_path_id=learning_path_id,
+        completed_module_ids=completed_module_ids,
+    )
+
+    return available_modules
+
+
+@router.get("/{learning_path_id}/questionnaire", response_model=QuestionnaireResponse)
+async def get_learning_path_questionnaire(
+    learning_path_id: str,
+    questionnaire_service: QuestionnaireService = Depends(get_questionnaire_service),
+) -> QuestionnaireResponse:
+    """
+    Vrne vprašalnik za izbrano učno pot.
+
+    TODO:
+    - Poklicati QuestionnaireService za target_type learning_path.
+    - Dodati obravnavo primera, ko vprašalnik ne obstaja.
+    """
+
+    questionnaire = await questionnaire_service.generate_questionnaire(
+        target_type=QuestionnaireTargetType.LEARNING_PATH,
+        target_id=learning_path_id,
+    )
+
+    if not questionnaire:
+        raise HTTPException(status_code=404, detail="Vprašalnik ni najden.")
 
     return questionnaire

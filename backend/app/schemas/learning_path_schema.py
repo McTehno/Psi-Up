@@ -1,32 +1,22 @@
-from pydantic import BaseModel
+from typing import List, Optional
+from pydantic import BaseModel, Field, ConfigDict
+
+from app.schemas.module_schema import ModuleReferenceResponse
 
 
-class GenerateLearningPathRequest(BaseModel):
-    competency_id: str
-    current_level: str
+class LearningPathResponse(BaseModel):
+    """
+    Shema za učno pot.
 
+    Učna pot predstavlja celotno priporočeno ali izbrano učno zaporedje.
+    V novi strukturi je učna pot sestavljena iz več modulov.
+    """
 
-class LearningUnitResponse(BaseModel):
-    id: str
+    id: str = Field(alias="_id")
     title: str
-    content: str
-    assessment_method: str
-    instructor: str
-    duration_min: int
+    short_description: str
+    duration_min: Optional[int] = None
+    keywords: List[str] = Field(default_factory=list)
+    modules: List[ModuleReferenceResponse] = Field(default_factory=list)
 
-
-class ModuleResponse(BaseModel):
-    id: str
-    title: str
-    description: str
-    learning_units: list[LearningUnitResponse]
-    prerequisites: list[str]
-
-
-class GeneratedLearningPathResponse(BaseModel):
-    competency_id: str
-    current_level: str
-    title: str
-    description: str
-    source: str
-    modules: list[ModuleResponse]
+    model_config = ConfigDict(populate_by_name=True)

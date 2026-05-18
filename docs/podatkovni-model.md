@@ -82,25 +82,34 @@ Modul je sestavljen iz več učnih enot.
 
 Modul vsebuje:
 ```text
-identifikator,
-naslov,
-kratek opis,
-trajanje,
-ključne besede,
-področja oziroma domene,
-seznam učnih enot,
-vrstni red učnih enot,
-informacijo, ali se učne enote izvajajo zaporedno ali vzporedno.
+- identifikator,
+- naslov,
+- kratek opis,
+- trajanje,
+- ključne besede,
+- področja oziroma domene,
+- seznam učnih enot,
+- vrstni red učnih enot,
+- informacijo, ali se učne enote izvajajo zaporedno ali vzporedno,
+- predpogoje za posamezne učne enote.
 ```
-### Pravilo za zaporedne in vzporedne učne enote
+### Pravilo za zaporedne, vzporedne učne enote in predpogoje
 
-Za zaporednost in vzporednost uporabljamo kombinacijo polj order in parallel_group.
+Za dejansko logiko vrstnega reda, dostopnosti in napredovanja uporabljamo polje `prerequisites`.
 
-order določa zaporedni korak.
-parallel_group določa, ali več elementov znotraj istega koraka pripada isti vzporedni skupini.
-Če je parallel_group enak null, se element obravnava kot samostojen korak.
-Če imata dve ali več učnih enot enak order in enak parallel_group, se lahko izvajata vzporedno.
-Primer strukture modula
+- `prerequisites` vsebuje seznam ID-jev učnih enot, ki morajo biti zaključene pred začetkom trenutne učne enote.
+- Če je `prerequisites` prazen seznam, učna enota nima posebnih predpogojev in jo lahko uporabnik začne brez predhodno zaključenih učnih enot.
+- Dejanski vrstni red izvajanja se določa na podlagi predpogojev.
+- Če imata dve ali več učnih enot enake predpogoje, se lahko izvajata vzporedno.
+
+Polji `order` in `parallel_group` se uporabljata kot pomoč pri trenutnem vizualnem prikazu:
+
+- `order` pomaga določiti osnovni vrstni red prikaza na uporabniškem vmesniku.
+- `parallel_group` pomaga označiti skupino učnih enot, ki se lahko vizualno prikažejo kot vzporedne.
+- `order` ni glavni vir resnice za logiko napredovanja.
+- Glavni vir resnice za logiko napredovanja je `prerequisites`.
+
+### Primer strukture modula
 ```json
 {
   "id": "mod_001",
@@ -114,19 +123,22 @@ Primer strukture modula
       "learning_unit_id": "ue_001",
       "order": 1,
       "parallel_group": null,
-      "is_required": true
+      "is_required": true,
+      "prerequisites": []
     },
     {
       "learning_unit_id": "ue_002",
       "order": 2,
       "parallel_group": null,
-      "is_required": true
+      "is_required": true,
+      "prerequisites": ["ue_001"]
     },
     {
       "learning_unit_id": "ue_003",
       "order": 3,
       "parallel_group": null,
-      "is_required": true
+      "is_required": true,
+      "prerequisites": ["ue_001", "ue_002"]
     }
   ]
 }
@@ -139,24 +151,33 @@ Učna pot je sestavljena iz več modulov.
 
 Učna pot vsebuje:
 ```text
-identifikator,
-naslov,
-kratek opis,
-trajanje,
-ključne besede,
-seznam modulov,
-vrstni red modulov,
-informacijo, ali se moduli izvajajo zaporedno ali vzporedno.
+- identifikator,
+- naslov,
+- kratek opis,
+- trajanje,
+- ključne besede,
+- seznam modulov,
+- vrstni red modulov,
+- informacijo, ali se moduli izvajajo zaporedno ali vzporedno,
+- predpogoje za posamezne module.
 ```
-### Pravilo za zaporedne in vzporedne module
+### Pravilo za zaporedne, vzporedne module in predpogoje
 
-Za zaporednost in vzporednost uporabljamo kombinacijo polj order in parallel_group.
+Za dejansko logiko vrstnega reda, dostopnosti in napredovanja uporabljamo polje `prerequisites`.
 
-order določa zaporedni korak.
-parallel_group določa, ali več modulov znotraj istega koraka pripada isti vzporedni skupini.
-Če je parallel_group enak null, se modul obravnava kot samostojen korak.
-Če imata dva ali več modulov enak order in enak parallel_group, se lahko izvajata vzporedno.
-Primer strukture učne poti
+- `prerequisites` vsebuje seznam ID-jev modulov, ki morajo biti zaključeni pred začetkom trenutnega modula.
+- Če je `prerequisites` prazen seznam, modul nima posebnih predpogojev in ga lahko uporabnik začne brez predhodno zaključenih modulov.
+- Dejanski vrstni red izvajanja se določa na podlagi predpogojev.
+- Če imata dva ali več modulov enake predpogoje, se lahko izvajata vzporedno.
+
+Polji `order` in `parallel_group` se uporabljata kot pomoč pri trenutnem vizualnem prikazu:
+
+- `order` pomaga določiti osnovni vrstni red prikaza na uporabniškem vmesniku.
+- `parallel_group` pomaga označiti skupino modulov, ki se lahko vizualno prikažejo kot vzporedni.
+- `order` ni glavni vir resnice za logiko napredovanja.
+- Glavni vir resnice za logiko napredovanja je `prerequisites`.
+
+### Primer strukture učne poti
 ```json
 {
   "id": "up_002",
@@ -169,31 +190,61 @@ Primer strukture učne poti
       "module_id": "mod_003",
       "order": 1,
       "parallel_group": null,
-      "is_required": true
+      "is_required": true,
+      "prerequisites": []
     },
     {
       "module_id": "mod_004",
       "order": 2,
       "parallel_group": null,
-      "is_required": true
+      "is_required": true,
+      "prerequisites": ["mod_003"]
     },
     {
       "module_id": "mod_005",
       "order": 3,
       "parallel_group": "excel_advanced_parallel",
-      "is_required": true
+      "is_required": true,
+      "prerequisites": ["mod_003", "mod_004"]
     },
     {
       "module_id": "mod_006",
       "order": 3,
       "parallel_group": "excel_advanced_parallel",
-      "is_required": false
+      "is_required": false,
+      "prerequisites": ["mod_003", "mod_004"]
     }
   ]
 }
 
 ```
-*V tem primeru sta mod_005 in mod_006 vzporedna, ker imata enak order in enak parallel_group.*
+*V tem primeru sta `mod_005` in `mod_006` vzporedna, ker imata enak `order` in enak `parallel_group`. Oba imata tudi enake predpogoje, zato se lahko začneta šele po zaključenih modulih `mod_003` in `mod_004`.*
+
+### Razlika med `order`, `parallel_group` in `prerequisites`
+
+- `prerequisites` določa dejansko logiko dostopnosti, vrstnega reda in napredovanja.
+- `order` se uporablja kot pomoč pri trenutnem vizualnem prikazu.
+- `parallel_group` se uporablja kot pomoč za vizualno označevanje vzporednih elementov.
+- Če pride do razlike med `order` in `prerequisites`, ima prednost `prerequisites`.
+
+Primer:
+
+```json
+{
+  "module_id": "mod_005",
+  "order": 3,
+  "parallel_group": "excel_advanced_parallel",
+  "is_required": true,
+  "prerequisites": ["mod_003", "mod_004"]
+}
+```
+To pomeni:
+
+- mod_005 se vizualno prikaže v tretjem koraku,
+- mod_005 je del vzporedne skupine excel_advanced_parallel,
+- mod_005 se dejansko lahko začne šele po zaključenih modulih mod_003 in mod_004.
+
+Zaključek: **dejanska logika po predpogojih**, `order` pa kot pomoč za prikaz.
 
 ## 5. Uporabnik
 

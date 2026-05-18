@@ -29,7 +29,7 @@ class SearchService:
     async def search(
         self,
         query: str,
-        types: List[SearchContentType]
+        types: List[SearchContentType] | None = None
     ) -> List[Dict[str, Any]]:
         """
         Izvede iskanje po izbranih tipih vsebin.

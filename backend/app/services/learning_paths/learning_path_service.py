@@ -111,7 +111,17 @@ def prepare_modules_with_learning_units(module_ids: list[str]):
     return prepared_modules
 
 
-def prepare_learning_units(learning_unit_ids: list[str]):
+def prepare_learning_units(learning_units_data: list[dict]):
+    sorted_learning_units = sorted(
+        learning_units_data,
+        key=lambda unit: unit.get("order", 0)
+    )
+
+    learning_unit_ids = [
+        unit["learning_unit_id"]
+        for unit in sorted_learning_units
+    ]
+
     prepared_learning_units = []
 
     for learning_unit_id in learning_unit_ids:

@@ -4,12 +4,30 @@
     "title": "Osnove obdelave besedil (Word)",
     "description": "Modul namenjen spoznavanju in osnovnemu oblikovanju besedil.",
     "learning_units": [
-      "ue_1",
-      "ue_2",
-      "ue_11",
-      "ue_12",
-      "ue_13",
-      "ue_14"
+      {
+        "learning_unit_id": "ue_1",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_2",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_11",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_12",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_13",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_14",
+        "order": 6
+      }
     ],
     "competency_id": "komp_1",
     "prerequisites": []
@@ -19,12 +37,30 @@
     "title": "Osnove dela s preglednicami (Excel)",
     "description": "Vnos podatkov in uporaba osnovnih aritmetičnih operacij.",
     "learning_units": [
-      "ue_3",
-      "ue_15",
-      "ue_16",
-      "ue_17",
-      "ue_18",
-      "ue_19"
+      {
+        "learning_unit_id": "ue_3",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_15",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_16",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_17",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_18",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_19",
+        "order": 6
+      }
     ],
     "competency_id": "komp_1",
     "prerequisites": [
@@ -38,12 +74,30 @@
     "title": "Izdelava predstavitev (PowerPoint)",
     "description": "Osnove postavljanja prosojnic in animacij.",
     "learning_units": [
-      "ue_20",
-      "ue_21",
-      "ue_22",
-      "ue_23",
-      "ue_24",
-      "ue_25"
+      {
+        "learning_unit_id": "ue_20",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_21",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_22",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_23",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_24",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_25",
+        "order": 6
+      }
     ],
     "competency_id": "komp_1",
     "prerequisites": [
@@ -57,12 +111,30 @@
     "title": "Komunikacija in sodelovanje na daljavo",
     "description": "Osnove uporabe Teams in deljenja datotek.",
     "learning_units": [
-      "ue_4",
-      "ue_26",
-      "ue_27",
-      "ue_28",
-      "ue_29",
-      "ue_30"
+      {
+        "learning_unit_id": "ue_4",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_26",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_27",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_28",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_29",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_30",
+        "order": 6
+      }
     ],
     "competency_id": "komp_3",
     "prerequisites": []
@@ -72,12 +144,30 @@
     "title": "Osnove oblačne hrambe (OneDrive)",
     "description": "Shranjevanje in sinhronizacija datotek v oblaku.",
     "learning_units": [
-      "ue_31",
-      "ue_32",
-      "ue_33",
-      "ue_34",
-      "ue_35",
-      "ue_36"
+      {
+        "learning_unit_id": "ue_31",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_32",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_33",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_34",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_35",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_36",
+        "order": 6
+      }
     ],
     "competency_id": "komp_1",
     "prerequisites": []
@@ -87,12 +177,30 @@
     "title": "Napredna obdelava podatkov (Excel)",
     "description": "Uporaba zahtevnejših funkcij in vrtilnih tabel.",
     "learning_units": [
-      "ue_37",
-      "ue_38",
-      "ue_39",
-      "ue_40",
-      "ue_41",
-      "ue_42"
+      {
+        "learning_unit_id": "ue_37",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_38",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_39",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_40",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_41",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_42",
+        "order": 6
+      }
     ],
     "competency_id": "komp_2",
     "prerequisites": [
@@ -106,12 +214,30 @@
     "title": "Avtomatizacija z makroji",
     "description": "Snemanje in osnovno urejanje makrojev za pohitritev dela.",
     "learning_units": [
-      "ue_43",
-      "ue_44",
-      "ue_45",
-      "ue_46",
-      "ue_47",
-      "ue_48"
+      {
+        "learning_unit_id": "ue_43",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_44",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_45",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_46",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_47",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_48",
+        "order": 6
+      }
     ],
     "competency_id": "komp_2",
     "prerequisites": [
@@ -125,12 +251,30 @@
     "title": "Napredno oblikovanje in spajanje dokumentov",
     "description": "Strukturiranje dolgih dokumentov in uporaba Mail Merge funkcije.",
     "learning_units": [
-      "ue_49",
-      "ue_50",
-      "ue_51",
-      "ue_52",
-      "ue_53",
-      "ue_54"
+      {
+        "learning_unit_id": "ue_49",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_50",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_51",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_52",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_53",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_54",
+        "order": 6
+      }
     ],
     "competency_id": "komp_2",
     "prerequisites": []
@@ -140,12 +284,30 @@
     "title": "Upravljanje SharePoint spletišč",
     "description": "Izdelava in administracija internih spletišč ter pravic.",
     "learning_units": [
-      "ue_55",
-      "ue_56",
-      "ue_57",
-      "ue_58",
-      "ue_59",
-      "ue_60"
+      {
+        "learning_unit_id": "ue_55",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_56",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_57",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_58",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_59",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_60",
+        "order": 6
+      }
     ],
     "competency_id": "komp_2",
     "prerequisites": []
@@ -155,12 +317,30 @@
     "title": "Uvod v PowerBI analitiko",
     "description": "Vizualizacija podatkov in priprava nadzornih plošč.",
     "learning_units": [
-      "ue_61",
-      "ue_62",
-      "ue_63",
-      "ue_64",
-      "ue_65",
-      "ue_66"
+      {
+        "learning_unit_id": "ue_61",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_62",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_63",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_64",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_65",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_66",
+        "order": 6
+      }
     ],
     "competency_id": "komp_2",
     "prerequisites": []
@@ -170,12 +350,30 @@
     "title": "Kibernetska varnost za končne uporabnike",
     "description": "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
     "learning_units": [
-      "ue_5",
-      "ue_67",
-      "ue_68",
-      "ue_69",
-      "ue_70",
-      "ue_71"
+      {
+        "learning_unit_id": "ue_5",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_67",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_68",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_69",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_70",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_71",
+        "order": 6
+      }
     ],
     "competency_id": "komp_3",
     "prerequisites": []
@@ -185,12 +383,30 @@
     "title": "Varno deljenje in zaščita podatkov",
     "description": "Enkripcija in varna distribucija občutljivih datotek.",
     "learning_units": [
-      "ue_72",
-      "ue_73",
-      "ue_74",
-      "ue_75",
-      "ue_76",
-      "ue_77"
+      {
+        "learning_unit_id": "ue_72",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_73",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_74",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_75",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_76",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_77",
+        "order": 6
+      }
     ],
     "competency_id": "komp_3",
     "prerequisites": []
@@ -200,12 +416,30 @@
     "title": "Digitalna identiteta in zasebnost",
     "description": "Varovanje osebnih podatkov in nastavitve zasebnosti na spletu.",
     "learning_units": [
-      "ue_78",
-      "ue_79",
-      "ue_80",
-      "ue_81",
-      "ue_82",
-      "ue_83"
+      {
+        "learning_unit_id": "ue_78",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_79",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_80",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_81",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_82",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_83",
+        "order": 6
+      }
     ],
     "competency_id": "komp_3",
     "prerequisites": []
@@ -215,12 +449,30 @@
     "title": "Prepoznavanje zlonamerne programske opreme",
     "description": "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
     "learning_units": [
-      "ue_84",
-      "ue_85",
-      "ue_86",
-      "ue_87",
-      "ue_88",
-      "ue_89"
+      {
+        "learning_unit_id": "ue_84",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_85",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_86",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_87",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_88",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_89",
+        "order": 6
+      }
     ],
     "competency_id": "komp_3",
     "prerequisites": []
@@ -230,12 +482,30 @@
     "title": "Uvod v AI orodja za delo",
     "description": "Razumevanje osnov generativne umetne inteligence in pravilna izbira orodij za vsakodnevne naloge.",
     "learning_units": [
-      "ue_90",
-      "ue_91",
-      "ue_92",
-      "ue_93",
-      "ue_94",
-      "ue_95"
+      {
+        "learning_unit_id": "ue_90",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_91",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_92",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_93",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_94",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_95",
+        "order": 6
+      }
     ],
     "competency_id": "komp_4",
     "prerequisites": [
@@ -249,12 +519,30 @@
     "title": "AI za pisanje in povzemanje vsebin",
     "description": "Uporaba AI za pripravo, izboljšanje in povzemanje besedilnih vsebin.",
     "learning_units": [
-      "ue_96",
-      "ue_97",
-      "ue_98",
-      "ue_99",
-      "ue_100",
-      "ue_101"
+      {
+        "learning_unit_id": "ue_96",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_97",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_98",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_99",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_100",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_101",
+        "order": 6
+      }
     ],
     "competency_id": "komp_4",
     "prerequisites": []
@@ -264,12 +552,30 @@
     "title": "AI za preglednice in podatkovne vpoglede",
     "description": "Pomoč AI pri čiščenju podatkov, iskanju formul in pripravi hitrih analiz.",
     "learning_units": [
-      "ue_102",
-      "ue_103",
-      "ue_104",
-      "ue_105",
-      "ue_106",
-      "ue_107"
+      {
+        "learning_unit_id": "ue_102",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_103",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_104",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_105",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_106",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_107",
+        "order": 6
+      }
     ],
     "competency_id": "komp_4",
     "prerequisites": []
@@ -279,12 +585,30 @@
     "title": "Odgovorna in varna uporaba AI",
     "description": "Preverjanje točnosti, varovanje podatkov in razumevanje omejitev AI orodij.",
     "learning_units": [
-      "ue_108",
-      "ue_109",
-      "ue_110",
-      "ue_111",
-      "ue_112",
-      "ue_113"
+      {
+        "learning_unit_id": "ue_108",
+        "order": 1
+      },
+      {
+        "learning_unit_id": "ue_109",
+        "order": 2
+      },
+      {
+        "learning_unit_id": "ue_110",
+        "order": 3
+      },
+      {
+        "learning_unit_id": "ue_111",
+        "order": 4
+      },
+      {
+        "learning_unit_id": "ue_112",
+        "order": 5
+      },
+      {
+        "learning_unit_id": "ue_113",
+        "order": 6
+      }
     ],
     "competency_id": "komp_4",
     "prerequisites": []

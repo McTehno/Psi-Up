@@ -26,9 +26,9 @@ class LearningUnitResponse(BaseModel):
     title: str
     short_description: str
     duration_min: Optional[int] = None
-    keywords: List[str] = []
-    skills: List[str] = []
-    self_assessment_questions: List[SelfAssessmentQuestionResponse] = []
+    keywords: List[str] = Field(default_factory=list)
+    skills: List[str] = Field(default_factory=list)
+    self_assessment_questions: List[SelfAssessmentQuestionResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -44,4 +44,4 @@ class LearningUnitReferenceResponse(BaseModel):
     order: Optional[int] = None
     parallel_group: Optional[str] = None
     is_required: bool = True
-    prerequisites: List[str] = []
+    prerequisites: List[str] = Field(default_factory=list)

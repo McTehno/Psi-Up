@@ -7,6 +7,9 @@ from app.schemas.questionnaire_schema import QuestionnaireResponse
 from app.services.learning_units.learning_unit_service import LearningUnitService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
+from app.database.mongodb import get_database
+from app.repositories.learning_unit_repository import LearningUnitRepository
+
 router = APIRouter(prefix="/learning-units", tags=["Learning units"])
 
 
@@ -14,12 +17,14 @@ def get_learning_unit_service() -> LearningUnitService:
     """
     Vrne LearningUnitService instanco.
 
-    TODO:
-    - Povezati z dejanskim LearningUnitRepository.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> LearningUnitRepository -> LearningUnitService.
     """
 
-    raise NotImplementedError("LearningUnitService dependency še ni implementiran.")
+    database = get_database()
+    learning_unit_repository = LearningUnitRepository(database)
+
+    return LearningUnitService(learning_unit_repository)
 
 
 def get_questionnaire_service() -> QuestionnaireService:

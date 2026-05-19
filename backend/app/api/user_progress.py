@@ -19,6 +19,7 @@ from app.repositories.user_progress.user_progress_repository import UserProgress
 from app.repositories.user_progress.saved_content_repository import SavedContentRepository
 from app.repositories.user_progress.favorite_content_repository import FavoriteContentRepository
 from app.repositories.user_progress.completed_content_repository import CompletedContentRepository
+from app.repositories.user_progress.current_position_repository import CurrentPositionRepository
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
 
@@ -83,12 +84,14 @@ def get_current_position_service() -> CurrentPositionService:
     """
     Vrne CurrentPositionService instanco.
 
-    TODO:
-    - Povezati s CurrentPositionRepository.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> CurrentPositionRepository -> CurrentPositionService.
     """
 
-    raise NotImplementedError("CurrentPositionService dependency še ni implementiran.")
+    database = get_database()
+    current_position_repository = CurrentPositionRepository(database)
+
+    return CurrentPositionService(current_position_repository)
 
 
 @router.get("/{user_id}", response_model=UserProgressResponse)

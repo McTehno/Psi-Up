@@ -26,9 +26,8 @@ class FavoriteContentService:
         Označi vsebino kot priljubljeno.
 
         TODO:
-        - Preveriti, ali je content_type veljaven.
-        - Poklicati repository metodo za dodajanje v priljubljene.
-        - Vrniti posodobljen napredek uporabnika.
+        - Kasneje preveriti, ali je content_type veljaven.
+        - Kasneje preveriti, ali content_id obstaja.
         """
 
         return await self.favorite_content_repository.favorite_content(
@@ -47,9 +46,8 @@ class FavoriteContentService:
         Odstrani vsebino iz priljubljenih.
 
         TODO:
-        - Preveriti, ali je content_type veljaven.
-        - Poklicati repository metodo za odstranjevanje iz priljubljenih.
-        - Vrniti posodobljen napredek uporabnika.
+        - Kasneje preveriti, ali je content_type veljaven.
+        - Kasneje preveriti, ali content_id obstaja.
         """
 
         return await self.favorite_content_repository.remove_favorite_content(

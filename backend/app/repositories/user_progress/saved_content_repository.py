@@ -5,8 +5,8 @@ class SavedContentRepository:
     """
     Repository za shranjene vsebine uporabnika.
 
-    Skrbi samo za dodajanje in odstranjevanje shranjenih
-    učnih poti, modulov in učnih enot.
+    Skrbi za dodajanje in odstranjevanje shranjenih
+    učnih poti, modulov in učnih enot v kolekciji user_progress.
     """
 
     def __init__(self, database: Any):
@@ -24,12 +24,9 @@ class SavedContentRepository:
         content_type: str
     ) -> Optional[Dict[str, Any]]:
         """
-        Shrani učno pot, modul ali učno enoto uporabniku.
+        Shrani vsebino uporabniku.
 
-        TODO:
-        - Glede na content_type izbrati pravi saved seznam.
-        - Dodati content_id samo, če še ni shranjen.
-        - Vrniti posodobljen napredek uporabnika.
+        content_type določi, v kateri seznam se shrani content_id.
         """
 
         field_name = self._get_saved_field_name(content_type)
@@ -39,14 +36,12 @@ class SavedContentRepository:
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB update logiko.
-        # Primer:
-        # await collection.update_one(
-        #     {"user_id": user_id},
-        #     {"$addToSet": {field_name: content_id}}
-        # )
+        collection.update_one(
+            {"user_id": user_id},
+            {"$addToSet": {field_name: content_id}}
+        )
 
-        return None
+        return collection.find_one({"user_id": user_id})
 
     async def remove_saved_content(
         self,
@@ -57,10 +52,7 @@ class SavedContentRepository:
         """
         Odstrani shranjeno vsebino uporabnika.
 
-        TODO:
-        - Glede na content_type izbrati pravi saved seznam.
-        - Odstraniti content_id iz seznama.
-        - Vrniti posodobljen napredek uporabnika.
+        content_type določi, iz katerega seznama se odstrani content_id.
         """
 
         field_name = self._get_saved_field_name(content_type)
@@ -70,21 +62,16 @@ class SavedContentRepository:
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB update logiko.
-        # Primer:
-        # await collection.update_one(
-        #     {"user_id": user_id},
-        #     {"$pull": {field_name: content_id}}
-        # )
+        collection.update_one(
+            {"user_id": user_id},
+            {"$pull": {field_name: content_id}}
+        )
 
-        return None
+        return collection.find_one({"user_id": user_id})
 
     def _get_saved_field_name(self, content_type: str) -> Optional[str]:
         """
         Vrne ime polja za shranjene vsebine glede na tip vsebine.
-
-        TODO:
-        - Po potrebi zamenjati stringe z Enum tipom.
         """
 
         mapping = {

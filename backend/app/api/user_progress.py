@@ -16,6 +16,8 @@ from app.services.user_progress.saved_content_service import SavedContentService
 from app.services.user_progress.user_progress_service import UserProgressService
 
 from app.repositories.user_progress.user_progress_repository import UserProgressRepository
+from app.repositories.user_progress.saved_content_repository import SavedContentRepository
+
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
 
@@ -38,12 +40,14 @@ def get_saved_content_service() -> SavedContentService:
     """
     Vrne SavedContentService instanco.
 
-    TODO:
-    - Povezati s SavedContentRepository.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> SavedContentRepository -> SavedContentService.
     """
 
-    raise NotImplementedError("SavedContentService dependency še ni implementiran.")
+    database = get_database()
+    saved_content_repository = SavedContentRepository(database)
+
+    return SavedContentService(saved_content_repository)
 
 
 def get_favorite_content_service() -> FavoriteContentService:

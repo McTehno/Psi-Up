@@ -5,8 +5,8 @@ class CompletedContentRepository:
     """
     Repository za dokončane vsebine uporabnika.
 
-    Skrbi samo za dodajanje in odstranjevanje dokončanih
-    učnih poti, modulov in učnih enot.
+    Skrbi za dodajanje in odstranjevanje dokončanih
+    učnih poti, modulov in učnih enot v kolekciji user_progress.
     """
 
     def __init__(self, database: Any):
@@ -26,10 +26,7 @@ class CompletedContentRepository:
         """
         Označi vsebino kot dokončano.
 
-        TODO:
-        - Glede na content_type izbrati pravi completed seznam.
-        - Dodati content_id samo, če še ni označen kot dokončan.
-        - Vrniti posodobljen napredek uporabnika.
+        content_type določi, v kateri seznam se shrani content_id.
         """
 
         field_name = self._get_completed_field_name(content_type)
@@ -39,14 +36,12 @@ class CompletedContentRepository:
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB update logiko.
-        # Primer:
-        # await collection.update_one(
-        #     {"user_id": user_id},
-        #     {"$addToSet": {field_name: content_id}}
-        # )
+        collection.update_one(
+            {"user_id": user_id},
+            {"$addToSet": {field_name: content_id}}
+        )
 
-        return None
+        return collection.find_one({"user_id": user_id})
 
     async def remove_completed_content(
         self,
@@ -57,10 +52,7 @@ class CompletedContentRepository:
         """
         Odstrani vsebino iz dokončanih.
 
-        TODO:
-        - Glede na content_type izbrati pravi completed seznam.
-        - Odstraniti content_id iz seznama.
-        - Vrniti posodobljen napredek uporabnika.
+        content_type določi, iz katerega seznama se odstrani content_id.
         """
 
         field_name = self._get_completed_field_name(content_type)
@@ -70,21 +62,16 @@ class CompletedContentRepository:
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB update logiko.
-        # Primer:
-        # await collection.update_one(
-        #     {"user_id": user_id},
-        #     {"$pull": {field_name: content_id}}
-        # )
+        collection.update_one(
+            {"user_id": user_id},
+            {"$pull": {field_name: content_id}}
+        )
 
-        return None
+        return collection.find_one({"user_id": user_id})
 
     def _get_completed_field_name(self, content_type: str) -> Optional[str]:
         """
         Vrne ime polja za dokončane vsebine glede na tip vsebine.
-
-        TODO:
-        - Po potrebi zamenjati stringe z Enum tipom.
         """
 
         mapping = {

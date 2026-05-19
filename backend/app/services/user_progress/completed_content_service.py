@@ -26,9 +26,8 @@ class CompletedContentService:
         Označi vsebino kot dokončano.
 
         TODO:
-        - Preveriti, ali je content_type veljaven.
-        - Poklicati repository metodo za označevanje kot dokončano.
-        - Vrniti posodobljen napredek uporabnika.
+        - Kasneje preveriti, ali je content_type veljaven.
+        - Kasneje preveriti, ali content_id obstaja.
         """
 
         return await self.completed_content_repository.complete_content(
@@ -47,9 +46,8 @@ class CompletedContentService:
         Odstrani vsebino iz dokončanih.
 
         TODO:
-        - Preveriti, ali je content_type veljaven.
-        - Poklicati repository metodo za odstranjevanje iz dokončanih.
-        - Vrniti posodobljen napredek uporabnika.
+        - Kasneje preveriti, ali je content_type veljaven.
+        - Kasneje preveriti, ali content_id obstaja.
         """
 
         return await self.completed_content_repository.remove_completed_content(

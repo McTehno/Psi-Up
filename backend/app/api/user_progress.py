@@ -18,6 +18,7 @@ from app.services.user_progress.user_progress_service import UserProgressService
 from app.repositories.user_progress.user_progress_repository import UserProgressRepository
 from app.repositories.user_progress.saved_content_repository import SavedContentRepository
 from app.repositories.user_progress.favorite_content_repository import FavoriteContentRepository
+from app.repositories.user_progress.completed_content_repository import CompletedContentRepository
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
 
@@ -68,12 +69,14 @@ def get_completed_content_service() -> CompletedContentService:
     """
     Vrne CompletedContentService instanco.
 
-    TODO:
-    - Povezati s CompletedContentRepository.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> CompletedContentRepository -> CompletedContentService.
     """
 
-    raise NotImplementedError("CompletedContentService dependency še ni implementiran.")
+    database = get_database()
+    completed_content_repository = CompletedContentRepository(database)
+
+    return CompletedContentService(completed_content_repository)
 
 
 def get_current_position_service() -> CurrentPositionService:

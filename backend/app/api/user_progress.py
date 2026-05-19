@@ -21,6 +21,12 @@ from app.repositories.user_progress.favorite_content_repository import FavoriteC
 from app.repositories.user_progress.completed_content_repository import CompletedContentRepository
 from app.repositories.user_progress.current_position_repository import CurrentPositionRepository
 
+from app.repositories.learning_path_repository import LearningPathRepository
+from app.repositories.learning_unit_repository import LearningUnitRepository
+from app.repositories.module_repository import ModuleRepository
+from app.services.validation.content_validation_service import ContentValidationService
+
+
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
 
 
@@ -93,6 +99,27 @@ def get_current_position_service() -> CurrentPositionService:
 
     return CurrentPositionService(current_position_repository)
 
+def get_content_validation_service() -> ContentValidationService:
+    """
+    Vrne ContentValidationService instanco.
+
+    Ustvari povezavo:
+    database -> repositories -> ContentValidationService.
+    """
+
+    database = get_database()
+
+    user_progress_repository = UserProgressRepository(database)
+    learning_path_repository = LearningPathRepository(database)
+    module_repository = ModuleRepository(database)
+    learning_unit_repository = LearningUnitRepository(database)
+
+    return ContentValidationService(
+        user_progress_repository=user_progress_repository,
+        learning_path_repository=learning_path_repository,
+        module_repository=module_repository,
+        learning_unit_repository=learning_unit_repository,
+    )
 
 @router.get("/{user_id}", response_model=UserProgressResponse)
 async def get_user_progress(
@@ -134,6 +161,7 @@ async def get_or_create_user_progress(
 async def save_content(
     request: SaveContentRequest,
     saved_content_service: SavedContentService = Depends(get_saved_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Shrani učno pot, modul ali učno enoto uporabniku.
@@ -142,7 +170,11 @@ async def save_content(
     - Preveriti, ali content_id obstaja.
     - Preveriti, ali je content_type veljaven.
     """
-
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
     progress = await saved_content_service.save_content(
         user_id=request.user_id,
         content_id=request.content_id,
@@ -159,6 +191,7 @@ async def save_content(
 async def remove_saved_content(
     request: SaveContentRequest,
     saved_content_service: SavedContentService = Depends(get_saved_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Odstrani shranjeno vsebino uporabnika.
@@ -167,6 +200,11 @@ async def remove_saved_content(
     - Preveriti, ali je vsebina res shranjena.
     - Vrniti posodobljen napredek.
     """
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
 
     progress = await saved_content_service.remove_saved_content(
         user_id=request.user_id,
@@ -184,6 +222,7 @@ async def remove_saved_content(
 async def favorite_content(
     request: FavoriteContentRequest,
     favorite_content_service: FavoriteContentService = Depends(get_favorite_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Označi vsebino kot priljubljeno.
@@ -192,7 +231,11 @@ async def favorite_content(
     - Preveriti, ali content_id obstaja.
     - Preveriti, ali je content_type veljaven.
     """
-
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
     progress = await favorite_content_service.favorite_content(
         user_id=request.user_id,
         content_id=request.content_id,
@@ -209,6 +252,7 @@ async def favorite_content(
 async def remove_favorite_content(
     request: FavoriteContentRequest,
     favorite_content_service: FavoriteContentService = Depends(get_favorite_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Odstrani vsebino iz priljubljenih.
@@ -217,6 +261,12 @@ async def remove_favorite_content(
     - Preveriti, ali je vsebina res označena kot priljubljena.
     - Vrniti posodobljen napredek.
     """
+
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
 
     progress = await favorite_content_service.remove_favorite_content(
         user_id=request.user_id,
@@ -234,6 +284,7 @@ async def remove_favorite_content(
 async def complete_content(
     request: CompleteContentRequest,
     completed_content_service: CompletedContentService = Depends(get_completed_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Označi vsebino kot dokončano.
@@ -243,6 +294,11 @@ async def complete_content(
     - Preveriti, ali je content_type veljaven.
     - Po potrebi samodejno posodobiti trenutno pozicijo.
     """
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
 
     progress = await completed_content_service.complete_content(
         user_id=request.user_id,
@@ -260,6 +316,7 @@ async def complete_content(
 async def remove_completed_content(
     request: CompleteContentRequest,
     completed_content_service: CompletedContentService = Depends(get_completed_content_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Odstrani vsebino iz dokončanih.
@@ -268,6 +325,11 @@ async def remove_completed_content(
     - Preveriti, ali je vsebina res dokončana.
     - Vrniti posodobljen napredek.
     """
+    await validation_service.validate_content_action(
+        user_id=request.user_id,
+        content_type=request.content_type,
+        content_id=request.content_id,
+    )
 
     progress = await completed_content_service.remove_completed_content(
         user_id=request.user_id,
@@ -285,6 +347,7 @@ async def remove_completed_content(
 async def update_current_position(
     request: UpdateCurrentPositionRequest,
     current_position_service: CurrentPositionService = Depends(get_current_position_service),
+    validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
     Posodobi trenutno pozicijo uporabnika.
@@ -293,7 +356,12 @@ async def update_current_position(
     - Preveriti, ali podani learning_path_id, current_module_id in current_learning_unit_id obstajajo.
     - Če uporabnik nima progress zapisa, ga ustvariti.
     """
-
+    await validation_service.validate_current_position(
+        user_id=request.user_id,
+        learning_path_id=request.learning_path_id,
+        current_module_id=request.current_module_id,
+        current_learning_unit_id=request.current_learning_unit_id,
+    )
     progress = await current_position_service.update_current_position(
         user_id=request.user_id,
         learning_path_id=request.learning_path_id,

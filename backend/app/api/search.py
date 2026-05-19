@@ -2,6 +2,10 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Query
 
+from app.database.mongodb import get_database
+from app.repositories.learning_path_repository import LearningPathRepository
+from app.repositories.learning_unit_repository import LearningUnitRepository
+from app.repositories.module_repository import ModuleRepository
 from app.schemas.search_schema import (
     SearchContentType,
     SearchResponse,
@@ -15,20 +19,21 @@ def get_search_service() -> SearchService:
     """
     Vrne SearchService instanco.
 
-    TODO:
-    - Povezati z dejanskimi repository-ji.
-    - Dodati dependency injection za database.
-    - Trenutno je funkcija pripravljena kot placeholder.
+    Ustvari povezavo:
+    database -> repositories -> SearchService.
     """
 
-    # TODO:
-    # Tukaj kasneje ustvarimo:
-    # - LearningPathRepository
-    # - ModuleRepository
-    # - LearningUnitRepository
-    # - SearchService
+    database = get_database()
 
-    raise NotImplementedError("SearchService dependency še ni implementiran.")
+    learning_path_repository = LearningPathRepository(database)
+    module_repository = ModuleRepository(database)
+    learning_unit_repository = LearningUnitRepository(database)
+
+    return SearchService(
+        learning_path_repository=learning_path_repository,
+        module_repository=module_repository,
+        learning_unit_repository=learning_unit_repository,
+    )
 
 
 @router.get("", response_model=SearchResponse)
@@ -42,11 +47,6 @@ async def search_content(
 ) -> SearchResponse:
     """
     Izvede iskanje po učnih poteh, modulih in učnih enotah.
-
-    TODO:
-    - Poklicati SearchService.
-    - Vrniti rezultate v enotni obliki.
-    - Dodati obravnavo praznega query-ja, če bo potrebno.
     """
 
     results = await search_service.search(query=query, types=types)

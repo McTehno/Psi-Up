@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from app.schemas.search_schema import SearchContentType
 
@@ -10,6 +10,8 @@ class SearchService:
     Ta razred združuje rezultate iz učnih poti, modulov in učnih enot.
     Search nima posebnega repository-ja, ker uporablja obstoječe repository-je
     za learning_paths, modules in learning_units.
+
+    Združuje rezultate iz učnih poti, modulov in učnih enot.
     """
 
     def __init__(
@@ -29,18 +31,10 @@ class SearchService:
     async def search(
         self,
         query: str,
-        types: List[SearchContentType] | None = None
+        types: Optional[List[SearchContentType]] = None
     ) -> List[Dict[str, Any]]:
         """
         Izvede iskanje po izbranih tipih vsebin.
-
-        TODO:
-        - Če types ni podan, iskati po vseh tipih.
-        - Če je izbran learning_path, iskati po učnih poteh.
-        - Če je izbran module, iskati po modulih.
-        - Če je izbran learning_unit, iskati po učnih enotah.
-        - Združiti rezultate v enoten seznam.
-        - Vsakemu rezultatu dodati type.
         """
 
         results: List[Dict[str, Any]] = []
@@ -52,26 +46,19 @@ class SearchService:
         ]
 
         if SearchContentType.LEARNING_PATH in selected_types:
-            learning_path_results = await self._search_learning_paths(query)
-            results.extend(learning_path_results)
+            results.extend(await self._search_learning_paths(query))
 
         if SearchContentType.MODULE in selected_types:
-            module_results = await self._search_modules(query)
-            results.extend(module_results)
+            results.extend(await self._search_modules(query))
 
         if SearchContentType.LEARNING_UNIT in selected_types:
-            learning_unit_results = await self._search_learning_units(query)
-            results.extend(learning_unit_results)
+            results.extend(await self._search_learning_units(query))
 
         return results
 
     async def _search_learning_paths(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče učne poti in jih pretvori v search result obliko.
-
-        TODO:
-        - Uporabiti learning_path_repository.search_learning_paths.
-        - Vsak rezultat pretvoriti v enotno obliko za search response.
         """
 
         learning_paths = await self.learning_path_repository.search_learning_paths(query)
@@ -84,10 +71,6 @@ class SearchService:
     async def _search_modules(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče module in jih pretvori v search result obliko.
-
-        TODO:
-        - Uporabiti module_repository.search_modules.
-        - Vsak rezultat pretvoriti v enotno obliko za search response.
         """
 
         modules = await self.module_repository.search_modules(query)
@@ -100,10 +83,6 @@ class SearchService:
     async def _search_learning_units(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče učne enote in jih pretvori v search result obliko.
-
-        TODO:
-        - Uporabiti learning_unit_repository.search_learning_units.
-        - Vsak rezultat pretvoriti v enotno obliko za search response.
         """
 
         learning_units = await self.learning_unit_repository.search_learning_units(query)
@@ -120,10 +99,6 @@ class SearchService:
     ) -> Dict[str, Any]:
         """
         Pretvori dokument iz baze v enotno search result obliko.
-
-        TODO:
-        - Preveriti, ali dokument uporablja id ali _id.
-        - Dodati dodatna polja, če jih bo frontend potreboval.
         """
 
         return {

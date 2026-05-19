@@ -169,39 +169,108 @@ deactivate
 
 ## API endpointi
 
-Backend uporablja FastAPI. Endpointi so organizirani po glavnih entitetah aplikacije.
+Backend uporablja **FastAPI**. Endpointi so organizirani po glavnih entitetah aplikacije: učne poti, moduli, učne enote, vprašalniki, ocenjevanje, uporabniki in napredek uporabnika.
 
-> Opomba: Del endpointov je trenutno pripravljen kot začetna struktura. Dejanska povezava z MongoDB in poslovna logika bosta implementirani v naslednjih korakih.
+Vsi endpointi imajo osnovni prefix:
+
+```text
+/api
+```
+
+Primer:
+
+```text
+/api/learning-units
+/api/search?query=Excel
+```
+
+---
 
 ### Search
+
+Search omogoča iskanje po učnih poteh, modulih in učnih enotah. Uporablja se kot začetna točka aplikacije, kjer uporabnik vnese ključni pojem, na primer `Excel`.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
 | GET | `/search` | Iskanje po učnih poteh, modulih in učnih enotah |
 
+Primer:
+
+```text
+/search?query=Excel
+```
+
+Primer z izbiro tipa vsebine:
+
+```text
+/search?query=Excel&types=module
+```
+
+Primer z več tipi vsebin:
+
+```text
+/search?query=Excel&types=learning_path&types=module
+```
+
+---
+
 ### Učne poti
+
+Učna pot predstavlja širše učno zaporedje, sestavljeno iz več modulov. Endpointi omogočajo pridobivanje učnih poti, njihovih modulov, podrobnosti, vprašalnika in dostopnih modulov glede na predpogoje.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
 | GET | `/learning-paths` | Pridobi vse učne poti |
 | GET | `/learning-paths/{learning_path_id}` | Pridobi eno učno pot |
-| GET | `/learning-paths/{learning_path_id}/detail` | Pridobi podrobnosti učne poti |
+| GET | `/learning-paths/{learning_path_id}/detail` | Pridobi podrobnosti učne poti skupaj s podatki o modulih |
 | GET | `/learning-paths/{learning_path_id}/modules` | Pridobi module znotraj učne poti |
-| GET | `/learning-paths/{learning_path_id}/available-modules` | Pridobi dostopne module glede na predpogoje |
+| GET | `/learning-paths/{learning_path_id}/available-modules` | Pridobi dostopne module glede na dokončane predpogoje |
 | GET | `/learning-paths/{learning_path_id}/questionnaire` | Pridobi vprašalnik za učno pot |
 
+Primer:
+
+```text
+/learning-paths/up_002
+```
+
+Primer za dostopne module:
+
+```text
+/learning-paths/up_002/available-modules?completed_module_ids=mod_003
+```
+
+---
+
 ### Moduli
+
+Modul je sestavljen iz več učnih enot. Endpointi omogočajo pridobivanje modulov, njihovih učnih enot, podrobnosti, vprašalnika in dostopnih učnih enot glede na predpogoje.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
 | GET | `/modules` | Pridobi vse module |
 | GET | `/modules/{module_id}` | Pridobi en modul |
-| GET | `/modules/{module_id}/detail` | Pridobi podrobnosti modula |
+| GET | `/modules/{module_id}/detail` | Pridobi podrobnosti modula skupaj s podatki o učnih enotah |
 | GET | `/modules/{module_id}/learning-units` | Pridobi učne enote znotraj modula |
-| GET | `/modules/{module_id}/available-learning-units` | Pridobi dostopne učne enote glede na predpogoje |
+| GET | `/modules/{module_id}/available-learning-units` | Pridobi dostopne učne enote glede na dokončane predpogoje |
 | GET | `/modules/{module_id}/questionnaire` | Pridobi vprašalnik za modul |
 
+Primer:
+
+```text
+/modules/mod_003
+```
+
+Primer za dostopne učne enote:
+
+```text
+/modules/mod_003/available-learning-units?completed_learning_unit_ids=ue_005
+```
+
+---
+
 ### Učne enote
+
+Učna enota je najmanjši del učne vsebine. Vsebuje osnovne podatke, spretnosti oziroma kompetence in vprašanja za samooceno.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -210,19 +279,45 @@ Backend uporablja FastAPI. Endpointi so organizirani po glavnih entitetah aplika
 | GET | `/learning-units/{learning_unit_id}/detail` | Pridobi podrobnosti učne enote |
 | GET | `/learning-units/{learning_unit_id}/questionnaire` | Pridobi vprašalnik za učno enoto |
 
+Primer:
+
+```text
+/learning-units/ue_005
+```
+
+---
+
 ### Vprašalniki
+
+Vprašalniki se generirajo iz vprašanj za samooceno, ki so shranjena znotraj učnih enot. Vprašalnik se lahko pridobi za učno pot, modul ali posamezno učno enoto.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
 | GET | `/questionnaires` | Pridobi vprašalnik za učno pot, modul ali učno enoto |
 
-Primer:
+Primer za učno pot:
 
 ```text
 /questionnaires?target_type=learning_path&target_id=up_002
 ```
 
+Primer za modul:
+
+```text
+/questionnaires?target_type=module&target_id=mod_003
+```
+
+Primer za učno enoto:
+
+```text
+/questionnaires?target_type=learning_unit&target_id=ue_005
+```
+
+---
+
 ### Ocenjevanje
+
+Ocenjevanje obdela odgovore uporabnika iz vprašalnika. Na podlagi odgovorov določi, katere učne enote ali module uporabnik že obvlada, katere lahko preskoči in kje naj začne z učenjem.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -245,7 +340,28 @@ Primer request body:
 }
 ```
 
+Primer rezultata:
+
+```json
+{
+  "user_id": "user_001",
+  "target_type": "learning_path",
+  "target_id": "up_002",
+  "start_module_id": "mod_004",
+  "start_learning_unit_id": "ue_009",
+  "skipped_modules": ["mod_003"],
+  "skipped_learning_units": ["ue_005", "ue_006", "ue_007"],
+  "recommended_next_modules": ["mod_004"],
+  "recommended_next_learning_units": ["ue_009"],
+  "summary": "Uporabnik naj začne pri modulu mod_004."
+}
+```
+
+---
+
 ### Uporabniki
+
+Uporabniki predstavljajo lokalni aplikacijski profil. Prijava in registracija bosta izvedeni prek zunanjega auth sistema, na primer Auth0. Backend ne hrani gesel, ampak samo poveže zunanjega uporabnika z lokalnim profilom.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -254,12 +370,28 @@ Primer request body:
 | GET | `/users/{user_id}` | Pridobi uporabnika po lokalnem ID |
 | PUT | `/users/{user_id}` | Posodobi uporabniški profil |
 
+Primer lokalnega uporabnika:
+
+```json
+{
+  "_id": "user_001",
+  "auth_provider": "auth0",
+  "auth_user_id": "auth0|123456789",
+  "name": "Testni uporabnik",
+  "email": "test@example.com"
+}
+```
+
+---
+
 ### Napredek uporabnika
+
+Napredek uporabnika hrani informacije o tem, katere vsebine je uporabnik shranil, označil kot priljubljene, dokončal in kje se trenutno nahaja.
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
 | GET | `/user-progress/{user_id}` | Pridobi napredek uporabnika |
-| POST | `/user-progress/{user_id}/ensure` | Vrne ali ustvari napredek uporabnika |
+| POST | `/user-progress/{user_id}/ensure` | Vrne obstoječ ali ustvari nov zapis napredka |
 | POST | `/user-progress/save` | Shrani učno pot, modul ali učno enoto |
 | DELETE | `/user-progress/save` | Odstrani shranjeno vsebino |
 | POST | `/user-progress/favorite` | Označi vsebino kot priljubljeno |
@@ -267,3 +399,41 @@ Primer request body:
 | POST | `/user-progress/complete` | Označi vsebino kot dokončano |
 | DELETE | `/user-progress/complete` | Odstrani vsebino iz dokončanih |
 | PUT | `/user-progress/current-position` | Posodobi trenutno pozicijo uporabnika |
+
+Primer za shranjevanje učne poti:
+
+```json
+{
+  "user_id": "user_001",
+  "content_id": "up_002",
+  "content_type": "learning_path"
+}
+```
+
+Primer za trenutno pozicijo:
+
+```json
+{
+  "user_id": "user_001",
+  "learning_path_id": "up_002",
+  "current_module_id": "mod_004",
+  "current_learning_unit_id": "ue_008"
+}
+```
+
+---
+
+### Opomba o Auth0
+
+Registracija in prijava uporabnika se ne izvajata neposredno v backendu. Za to bo uporabljen zunanji auth sistem, na primer Auth0.
+
+Predviden flow:
+
+1. Uporabnik se prijavi ali registrira na frontendu prek Auth0.
+2. Frontend pridobi Auth0 podatke oziroma token.
+3. Frontend pokliče backend endpoint `/users/profile`.
+4. Backend preveri, ali uporabnik že obstaja v lokalni bazi.
+5. Če uporabnik ne obstaja, backend ustvari lokalni profil in začetni zapis `user_progress`.
+6. Gesla ostanejo v Auth0 in se ne hranijo v naši bazi.
+
+---

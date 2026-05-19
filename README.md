@@ -20,10 +20,40 @@ Sistem je namenjen različnim skupinam uporabnikov, kot so študenti, zaposleni,
 - prikaz napredovanja od začetnega stanja do končnega cilja.
 
 ## 4. Tehnološki sklad
-- Frontend: React, TypeScript, Vite
-- Backend: Python
-- Baza podatkov: MongoDB
-- ORM: še ni določeno
+
+Projekt je razdeljen na frontend, backend in podatkovno bazo. Spodaj so navedene glavne tehnologije in verzije, ki se trenutno uporabljajo v projektu.
+
+### 4.1 Frontend
+
+| Tehnologija | Verzija | Namen |
+|---|---:|---|
+| React | 19.2.6 | Izdelava uporabniškega vmesnika |
+| React DOM | 19.2.6 | Prikaz React komponent v brskalniku |
+| React Router DOM | 7.15.1 | Usmerjanje med stranmi na frontendu |
+| TypeScript | 6.0.2 | Tipizacija frontend kode |
+| Vite | 8.0.12 | Razvojno okolje in build orodje |
+| Tailwind CSS | 4.3.0 | Stiliziranje uporabniškega vmesnika |
+| Lucide React | 1.16.0 | Ikone v uporabniškem vmesniku |
+| ESLint | 10.3.0 | Preverjanje kakovosti frontend kode |
+
+### 4.2 Backend
+
+| Tehnologija | Verzija | Namen |
+|---|---:|---|
+| Python | 3.13 | Backend programski jezik |
+| FastAPI | 0.136.1 | Izdelava REST API endpointov |
+| Uvicorn | 0.46.0 | Zagon FastAPI aplikacije |
+| Pydantic | 2.13.4 | Validacija requestov in response sheme |
+| PyMongo | 4.17.0 | Povezava z MongoDB |
+| email-validator | 2.3.0 | Validacija email naslovov v Pydantic shemah |
+
+### 4.3 Podatkovna baza
+
+| Tehnologija | Verzija | Namen |
+|---|---:|---|
+| MongoDB Atlas | cloud storitev | Glavna podatkovna baza |
+| MongoDB Compass | lokalno orodje | Pregled in uvoz podatkov v MongoDB |
+| JSON | / | Začetni podatki za uvoz v MongoDB |
 
 ## 5. Struktura projekta
 

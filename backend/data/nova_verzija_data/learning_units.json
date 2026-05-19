@@ -1,6 +1,6 @@
 [
   {
-    "id": "ue_001",
+    "_id": "ue_001",
     "title": "Osnovni pojmi umetne inteligence",
     "short_description": "Uvod v osnovne pojme umetne inteligence.",
     "duration_min": 30,
@@ -25,7 +25,7 @@
     ]
   },
   {
-    "id": "ue_002",
+    "_id": "ue_002",
     "title": "Kako deluje umetna inteligenca?",
     "short_description": "Razumevanje osnov delovanja umetne inteligence in pomena podatkov.",
     "duration_min": 30,
@@ -50,7 +50,7 @@
     ]
   },
   {
-    "id": "ue_003",
+    "_id": "ue_003",
     "title": "Generativna UI v praksi",
     "short_description": "Uporaba generativne umetne inteligence v praktičnih primerih.",
     "duration_min": 45,
@@ -89,7 +89,7 @@
     ]
   },
   {
-    "id": "ue_004",
+    "_id": "ue_004",
     "title": "Etika UI in varna uporaba UI",
     "short_description": "Razumevanje etičnih vidikov, tveganj in odgovorne uporabe umetne inteligence.",
     "duration_min": 45,
@@ -121,7 +121,7 @@
     ]
   },
   {
-    "id": "ue_005",
+    "_id": "ue_005",
     "title": "Osnove Excela",
     "short_description": "Uvod v uporabo Excela in osnovno delo s preglednicami.",
     "duration_min": 45,
@@ -153,7 +153,7 @@
     ]
   },
   {
-    "id": "ue_006",
+    "_id": "ue_006",
     "title": "Formule in funkcije",
     "short_description": "Uporaba osnovnih formul in funkcij v Excelu.",
     "duration_min": 45,
@@ -185,7 +185,7 @@
     ]
   },
   {
-    "id": "ue_007",
+    "_id": "ue_007",
     "title": "Oblikovanje preglednice",
     "short_description": "Oblikovanje celic, pogojno oblikovanje in priprava preglednic za tisk.",
     "duration_min": 40,
@@ -217,7 +217,7 @@
     ]
   },
   {
-    "id": "ue_008",
+    "_id": "ue_008",
     "title": "Delo s podatki",
     "short_description": "Uvoz, razvrščanje, filtriranje in iskanje podatkov v Excelu.",
     "duration_min": 50,
@@ -256,7 +256,7 @@
     ]
   },
   {
-    "id": "ue_009",
+    "_id": "ue_009",
     "title": "Priprava podatkov za analizo",
     "short_description": "Priprava in strukturiranje podatkov za nadaljnjo analizo.",
     "duration_min": 45,
@@ -288,7 +288,7 @@
     ]
   },
   {
-    "id": "ue_010",
+    "_id": "ue_010",
     "title": "Uvod v vrtilne tabele",
     "short_description": "Razumevanje namena in osnovne uporabe vrtilnih tabel.",
     "duration_min": 50,
@@ -320,7 +320,7 @@
     ]
   },
   {
-    "id": "ue_011",
+    "_id": "ue_011",
     "title": "Napredne vrtilne tabele",
     "short_description": "Napredna uporaba vrtilnih tabel za primerjavo in prikaz podatkov.",
     "duration_min": 60,
@@ -352,7 +352,7 @@
     ]
   },
   {
-    "id": "ue_012",
+    "_id": "ue_012",
     "title": "Vizualizacija podatkov",
     "short_description": "Ustvarjanje grafov in priprava rezultatov za predstavitev.",
     "duration_min": 60,

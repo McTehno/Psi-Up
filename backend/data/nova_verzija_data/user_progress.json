@@ -1,6 +1,6 @@
 [
   {
-    "id": "progress_001",
+    "_id": "progress_001",
     "user_id": "user_001",
     "saved_learning_paths": ["up_001"],
     "saved_modules": ["mod_001"],

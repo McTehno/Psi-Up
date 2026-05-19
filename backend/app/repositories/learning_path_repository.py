@@ -5,8 +5,8 @@ class LearningPathRepository:
     """
     Repository za učne poti.
 
-    Ta razred je odgovoren za dostop do podatkov učnih poti.
-    Kasneje bo bral podatke iz MongoDB kolekcije learning_paths.
+    Ta razred je odgovoren za dostop do podatkov učnih poti
+    iz MongoDB kolekcije learning_paths.
     """
 
     def __init__(self, database: Any):
@@ -19,62 +19,59 @@ class LearningPathRepository:
 
     async def get_all_learning_paths(self) -> List[Dict[str, Any]]:
         """
-        Vrne vse učne poti.
+        Vrne vse učne poti iz MongoDB.
 
         TODO:
-        - Prebrati vse dokumente iz kolekcije learning_paths.
-        - Pretvoriti MongoDB dokumente v navadne dictionary objekte.
+        - Kasneje dodati paginacijo, če bo učnih poti veliko.
+        - Kasneje dodati sortiranje, če bo potrebno.
         """
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer kasneje:
-        # cursor = collection.find({})
-        # return await cursor.to_list(length=None)
+        return list(collection.find({}))
 
-        return []
-
-    async def get_learning_path_by_id(self, learning_path_id: str) -> Optional[Dict[str, Any]]:
+    async def get_learning_path_by_id(
+        self,
+        learning_path_id: str
+    ) -> Optional[Dict[str, Any]]:
         """
-        Vrne eno učno pot glede na njen ID.
+        Vrne eno učno pot glede na njen _id.
 
         TODO:
-        - Poiskati učno pot po _id ali id.
-        - Vrniti None, če učna pot ne obstaja.
+        - Kasneje dodati dodatno validacijo ID-ja, če bo potrebno.
         """
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer kasneje:
-        # return await collection.find_one({"_id": learning_path_id})
-
-        return None
+        return collection.find_one({"_id": learning_path_id})
 
     async def search_learning_paths(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče učne poti po iskalnem nizu.
 
+        Išče po:
+        - title,
+        - short_description,
+        - keywords.
+
         TODO:
-        - Iskati po title, short_description in keywords.
-        - Dodati case-insensitive search.
-        - Kasneje lahko dodamo MongoDB text index.
+        - Kasneje lahko dodamo MongoDB text index za boljše iskanje.
         """
+
+        if not query:
+            return []
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo search poizvedbo.
-        # Primer kasneje:
-        # cursor = collection.find({
-        #     "$or": [
-        #         {"title": {"$regex": query, "$options": "i"}},
-        #         {"short_description": {"$regex": query, "$options": "i"}},
-        #         {"keywords": {"$regex": query, "$options": "i"}}
-        #     ]
-        # })
+        search_filter = {
+            "$or": [
+                {"title": {"$regex": query, "$options": "i"}},
+                {"short_description": {"$regex": query, "$options": "i"}},
+                {"keywords": {"$regex": query, "$options": "i"}},
+            ]
+        }
 
-        return []
+        return list(collection.find(search_filter))
 
     async def get_module_references_for_learning_path(
         self,
@@ -84,10 +81,7 @@ class LearningPathRepository:
         Vrne reference modulov znotraj učne poti.
 
         TODO:
-        - Poiskati učno pot po ID.
-        - Iz učne poti vrniti modules.
-        - Upoštevati, da modules vsebujejo:
-          module_id, order, parallel_group, is_required, prerequisites.
+        - Kasneje po potrebi urediti prikaz glede na order.
         """
 
         learning_path = await self.get_learning_path_by_id(learning_path_id)
@@ -106,9 +100,7 @@ class LearningPathRepository:
         Vrne predpogoje za določen modul znotraj učne poti.
 
         TODO:
-        - Poiskati učno pot.
-        - Najti modul z module_id znotraj učne poti.
-        - Vrniti njegov seznam prerequisites.
+        - Kasneje dodati obravnavo, če module_id ni del učne poti.
         """
 
         modules = await self.get_module_references_for_learning_path(learning_path_id)
@@ -127,10 +119,7 @@ class LearningPathRepository:
         """
         Vrne module, ki jih uporabnik lahko začne znotraj učne poti.
 
-        TODO:
-        - Upoštevati prerequisites posameznega modula.
-        - Modul je dostopen, če so vsi njegovi prerequisites že dokončani.
-        - Ta funkcija bo koristna za prikaz napredka in naslednjih korakov.
+        Modul je dostopen, če so vsi njegovi prerequisites že dokončani.
         """
 
         modules = await self.get_module_references_for_learning_path(learning_path_id)
@@ -140,9 +129,6 @@ class LearningPathRepository:
         for module in modules:
             prerequisites = module.get("prerequisites", [])
 
-            # TODO:
-            # Kasneje preveriti, ali so vsi prerequisites v completed_module_ids.
-            # To je osnovna priprava logike, ki že upošteva predpogoje.
             all_prerequisites_completed = all(
                 prerequisite_id in completed_module_ids
                 for prerequisite_id in prerequisites

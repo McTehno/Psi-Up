@@ -5,8 +5,8 @@ class ModuleRepository:
     """
     Repository za module.
 
-    Ta razred je odgovoren za dostop do podatkov modulov.
-    Kasneje bo bral podatke iz MongoDB kolekcije modules.
+    Ta razred je odgovoren za dostop do podatkov modulov
+    iz MongoDB kolekcije modules.
     """
 
     def __init__(self, database: Any):
@@ -19,91 +19,100 @@ class ModuleRepository:
 
     async def get_all_modules(self) -> List[Dict[str, Any]]:
         """
-        Vrne vse module.
+        Vrne vse module iz MongoDB.
 
         TODO:
-        - Prebrati vse dokumente iz kolekcije modules.
-        - Pretvoriti MongoDB dokumente v navadne dictionary objekte.
+        - Kasneje dodati paginacijo, če bo modulov veliko.
+        - Kasneje dodati sortiranje, če bo potrebno.
         """
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer kasneje:
-        # cursor = collection.find({})
-        # return await cursor.to_list(length=None)
-
-        return []
+        return list(collection.find({}))
 
     async def get_module_by_id(self, module_id: str) -> Optional[Dict[str, Any]]:
         """
-        Vrne en modul glede na njegov ID.
+        Vrne en modul glede na njegov _id.
 
         TODO:
-        - Poiskati modul po _id ali id.
-        - Vrniti None, če modul ne obstaja.
+        - Kasneje dodati dodatno validacijo ID-ja, če bo potrebno.
         """
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer kasneje:
-        # return await collection.find_one({"_id": module_id})
-
-        return None
+        return collection.find_one({"_id": module_id})
 
     async def get_modules_by_ids(self, module_ids: List[str]) -> List[Dict[str, Any]]:
         """
         Vrne več modulov glede na seznam ID-jev.
 
         TODO:
-        - Poiskati vse module, katerih ID je v seznamu module_ids.
-        - Ohraniti vrstni red, če bo to potrebno za prikaz učne poti.
+        - Kasneje optimizirati, če bo seznam ID-jev zelo velik.
         """
+
+        if not module_ids:
+            return []
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer kasneje:
-        # cursor = collection.find({"_id": {"$in": module_ids}})
-        # return await cursor.to_list(length=None)
+        modules = list(
+            collection.find({
+                "_id": {
+                    "$in": module_ids
+                }
+            })
+        )
 
-        return []
+        modules_by_id = {
+            module["_id"]: module
+            for module in modules
+        }
+
+        return [
+            modules_by_id[module_id]
+            for module_id in module_ids
+            if module_id in modules_by_id
+        ]
 
     async def search_modules(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče module po iskalnem nizu.
 
+        Išče po:
+        - title,
+        - short_description,
+        - keywords,
+        - domains.
+
         TODO:
-        - Iskati po title, short_description, keywords in domains.
-        - Dodati case-insensitive search.
-        - Kasneje lahko dodamo MongoDB text index.
+        - Kasneje lahko dodamo MongoDB text index za boljše iskanje.
         """
+
+        if not query:
+            return []
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo search poizvedbo.
-        # Primer kasneje:
-        # cursor = collection.find({
-        #     "$or": [
-        #         {"title": {"$regex": query, "$options": "i"}},
-        #         {"short_description": {"$regex": query, "$options": "i"}},
-        #         {"keywords": {"$regex": query, "$options": "i"}},
-        #         {"domains": {"$regex": query, "$options": "i"}}
-        #     ]
-        # })
+        search_filter = {
+            "$or": [
+                {"title": {"$regex": query, "$options": "i"}},
+                {"short_description": {"$regex": query, "$options": "i"}},
+                {"keywords": {"$regex": query, "$options": "i"}},
+                {"domains": {"$regex": query, "$options": "i"}},
+            ]
+        }
 
-        return []
+        return list(collection.find(search_filter))
 
-    async def get_learning_unit_references_for_module(self, module_id: str) -> List[Dict[str, Any]]:
+    async def get_learning_unit_references_for_module(
+        self,
+        module_id: str
+    ) -> List[Dict[str, Any]]:
         """
         Vrne reference učnih enot znotraj modula.
 
         TODO:
-        - Poiskati modul po ID.
-        - Iz modula vrniti learning_units.
-        - Upoštevati, da learning_units vsebujejo:
-          learning_unit_id, order, parallel_group, is_required, prerequisites.
+        - Kasneje po potrebi urediti prikaz glede na order.
         """
 
         module = await self.get_module_by_id(module_id)
@@ -122,9 +131,7 @@ class ModuleRepository:
         Vrne predpogoje za določeno učno enoto znotraj modula.
 
         TODO:
-        - Poiskati modul.
-        - Najti učno enoto z learning_unit_id znotraj modula.
-        - Vrniti njen seznam prerequisites.
+        - Kasneje dodati obravnavo, če learning_unit_id ni del modula.
         """
 
         learning_units = await self.get_learning_unit_references_for_module(module_id)
@@ -143,10 +150,7 @@ class ModuleRepository:
         """
         Vrne učne enote, ki jih uporabnik lahko začne znotraj modula.
 
-        TODO:
-        - Upoštevati prerequisites posamezne učne enote.
-        - Učna enota je dostopna, če so vsi njeni prerequisites že dokončani.
-        - Ta funkcija bo koristna za prikaz napredka in naslednjih korakov.
+        Učna enota je dostopna, če so vsi njeni prerequisites že dokončani.
         """
 
         learning_units = await self.get_learning_unit_references_for_module(module_id)
@@ -156,9 +160,6 @@ class ModuleRepository:
         for learning_unit in learning_units:
             prerequisites = learning_unit.get("prerequisites", [])
 
-            # TODO:
-            # Kasneje preveriti, ali so vsi prerequisites v completed_learning_unit_ids.
-            # Za zdaj pustimo osnovno strukturo.
             all_prerequisites_completed = all(
                 prerequisite_id in completed_learning_unit_ids
                 for prerequisite_id in prerequisites

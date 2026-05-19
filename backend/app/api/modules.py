@@ -7,6 +7,12 @@ from app.schemas.questionnaire_schema import QuestionnaireResponse, Questionnair
 from app.services.modules.module_service import ModuleService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
+from app.database.mongodb import get_database
+from app.repositories.learning_unit_repository import LearningUnitRepository
+from app.repositories.module_repository import ModuleRepository
+from app.services.learning_units.learning_unit_service import LearningUnitService
+
+
 router = APIRouter(prefix="/modules", tags=["Modules"])
 
 
@@ -14,14 +20,20 @@ def get_module_service() -> ModuleService:
     """
     Vrne ModuleService instanco.
 
-    TODO:
-    - Povezati z dejanskim ModuleRepository.
-    - Povezati z LearningUnitService.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> ModuleRepository + LearningUnitRepository -> ModuleService.
     """
 
-    raise NotImplementedError("ModuleService dependency še ni implementiran.")
+    database = get_database()
 
+    module_repository = ModuleRepository(database)
+    learning_unit_repository = LearningUnitRepository(database)
+    learning_unit_service = LearningUnitService(learning_unit_repository)
+
+    return ModuleService(
+        module_repository=module_repository,
+        learning_unit_service=learning_unit_service,
+    )
 
 def get_questionnaire_service() -> QuestionnaireService:
     """

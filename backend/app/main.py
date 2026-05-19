@@ -10,11 +10,23 @@ from app.api.search import router as search_router
 from app.api.users import router as users_router
 from app.api.user_progress import router as user_progress_router
 
+from fastapi import HTTPException
+from fastapi.exceptions import RequestValidationError
+
+from app.core.error_handlers import (
+    http_exception_handler,
+    unexpected_exception_handler,
+    validation_exception_handler,
+)
+
 app = FastAPI(
     title="Psi-Up API",
     description="Backend API for the Psi-Up learning path recommendation system.",
     version="0.1.0",
 )
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, unexpected_exception_handler)
 
 app.add_middleware(
     CORSMiddleware,

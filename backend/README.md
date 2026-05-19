@@ -1,6 +1,14 @@
-# Backend struktura
+# Backend dokumentacija
 
-Backend je organiziran tako, da so ločeni API endpointi, poslovna logika, dostop do podatkov, podatkovne sheme in povezava z bazo. Takšna struktura omogoča lažje vzdrževanje, testiranje in kasnejše razširitve sistema.
+Backend je zgrajen z uporabo **FastAPI** in služi kot API plast za aplikacijo Psi-Up. Namen backenda je pridobivanje učnih poti, modulov, učnih enot, generiranje vprašalnikov, obdelava odgovorov, določanje začetne točke uporabnika ter hranjenje uporabniškega napredka.
+
+Backend uporablja **MongoDB** kot podatkovno bazo.
+
+---
+
+## Backend struktura
+
+Backend je organiziran po slojih, da je koda bolj pregledna, lažja za vzdrževanje in pripravljena za nadaljnje razširitve.
 
 ```text
 backend/
@@ -10,168 +18,401 @@ backend/
 │   ├── config.py
 │   │
 │   ├── api/
-│   │   ├── competency_groups.py
-│   │   ├── questionnaires.py
-│   │   ├── recommendations.py
 │   │   ├── assessments.py
 │   │   ├── learning_paths.py
-│   │   ├── competencies.py
+│   │   ├── learning_units.py
 │   │   ├── modules.py
-│   │   └── learning_units.py
+│   │   ├── questionnaires.py
+│   │   ├── search.py
+│   │   ├── users.py
+│   │   └── user_progress.py
 │   │
 │   ├── services/
-│   │   ├── competency_groups/
-│   │   │   ├── __init__.py
-│   │   │   └── competency_group_service.py
-│   │   │
-│   │   ├── competencies/
-│   │   │   ├── __init__.py
-│   │   │   └── competency_service.py
-│   │   │
-│   │   ├── questionnaires/
-│   │   │   ├── __init__.py
-│   │   │   └── questionnaire_service.py
-│   │   │
-│   │   ├── recommendations/
-│   │   │   ├── __init__.py
-│   │   │   └── recommendation_service.py
-│   │   │
 │   │   ├── assessments/
-│   │   │   ├── __init__.py
-│   │   │   └── assessment_service.py
-│   │   │
 │   │   ├── learning_paths/
-│   │   │   ├── __init__.py
-│   │   │   └── learning_path_service.py
-│   │   │
+│   │   ├── learning_units/
 │   │   ├── modules/
-│   │   │   ├── __init__.py
-│   │   │   └── module_service.py
-│   │   │
-│   │   └── learning_units/
-│   │       ├── __init__.py
-│   │       └── learning_unit_service.py
+│   │   ├── questionnaires/
+│   │   ├── search/
+│   │   ├── users/
+│   │   ├── user_progress/
+│   │   └── validation/
 │   │
 │   ├── repositories/
-│   │   ├── competency_group_repository.py
-│   │   ├── competency_repository.py
 │   │   ├── learning_path_repository.py
+│   │   ├── learning_unit_repository.py
 │   │   ├── module_repository.py
-│   │   └── learning_unit_repository.py
+│   │   ├── user_repository.py
+│   │   └── user_progress/
 │   │
 │   ├── schemas/
-│   │   ├── competency_group_schema.py
-│   │   ├── questionnaire_schema.py
-│   │   ├── recommendation_schema.py
-│   │   ├── competency_schema.py
 │   │   ├── assessment_schema.py
 │   │   ├── learning_path_schema.py
+│   │   ├── learning_unit_schema.py
 │   │   ├── module_schema.py
-│   │   └── learning_unit_schema.py
+│   │   ├── questionnaire_schema.py
+│   │   ├── search_schema.py
+│   │   ├── user_schema.py
+│   │   └── user_progress_schema.py
 │   │
 │   └── database/
 │       └── mongodb.py
 │
 ├── data/
-│   └── mongodb/
-│       ├── competencies.json
-│       ├── competency_groups.json
+│   └── nova_verzija_data/
 │       ├── learning_paths.json
 │       ├── learning_units.json
-│       └── modules.json
+│       ├── modules.json
+│       ├── user_progress.json
+│       └── users.json
 │
 ├── tests/
 ├── .env.example
 └── requirements.txt
 ```
 
-## Namen datoteke
+---
+
+## Namen glavnih map
+
 | Mapa/datoteka | Namen |
-| :-- | :-- |
-| `backend/` | Glavna mapa za backend del aplikacije. |
-| `app/` | Vsebuje glavno Python aplikacijo in njene notranje module. |
-| `app/main.py` | Vstopna točka backend aplikacije. Tukaj se zažene aplikacija in povežejo glavni deli sistema. |
-| `app/config.py` | Konfiguracijske nastavitve aplikacije, na primer nastavitve okolja, povezave in osnovne vrednosti. |
-| `app/api/` | Vsebuje API endpoint-e, prek katerih frontend komunicira z backendom. |
-| `app/services/` | Vsebuje poslovno logiko aplikacije, na primer logiko za priporočila, vprašalnik in učne poti. |
-| `app/repositories/` | Skrbi za dostop do podatkov. Ta plast loči poslovno logiko od konkretnega vira podatkov, na primer JSON datotek ali MongoDB. |
-| `app/schemas/` | Vsebuje podatkovne sheme za vhodne in izhodne podatke API-ja. |
-| `app/database/` | Vsebuje konfiguracijo in povezavo s podatkovno bazo. |
-| `data/` | Vsebuje začasne oziroma razvojne podatke, ki se uporabljajo pred povezavo s pravo bazo podatkov. 
-| `tests/` | Vsebuje teste za backend funkcionalnosti. |
+|---|---|
+| `app/main.py` | Glavna vstopna točka aplikacije. Tukaj se registrirajo routerji in middleware. |
+| `app/api/` | API endpointi, prek katerih frontend komunicira z backendom. |
+| `app/services/` | Poslovna logika aplikacije. |
+| `app/repositories/` | Dostop do MongoDB kolekcij. |
+| `app/schemas/` | Pydantic sheme za requeste in response. |
+| `app/database/` | Povezava z MongoDB. |
+| `app/services/validation/` | Validacija podatkov pred zapisovanjem v bazo. |
+| `data/nova_verzija_data/` | JSON podatki za uvoz v MongoDB Compass. |
+| `tests/` | Testi za backend funkcionalnosti. |
 
-# Navodila za zagon
+---
 
-## Povezava do MongoDB Atlas Cluster
+## Podatkovni model
 
-1. Odpri MongoDB Compass.
-2. Klikni New Connection.
-3. V polje za povezavo prilepi connection string:
-  ```text
-    mongodb+srv://<username>:<password>@cluster0.g0ntvzk.mongodb.net/
-  ```
+Podatkovni model je podrobno opisan v glavnem dokumentu projekta:
 
-4. Zamenjaj:
-<username> in <password>
-
-5. Klikni Connect.
-6. Po povezavi poišči bazo: psi_up
-
-V bazi morajo biti kolekcije:
 ```text
-competencies
-competency_groups
-learning_paths
+../podatkovni-model.md
+```
+
+Backend trenutno uporablja naslednje glavne MongoDB kolekcije:
+
+```text
 learning_units
 modules
+learning_paths
+users
+user_progress
 ```
 
-# Zagon backend aplikacije
-1. Premik v backend mapo
+Kolekciji `competencies` in `competency_groups` se v novi strukturi ne uporabljata več kot glavni entiteti. Kompetence oziroma spretnosti so zapisane znotraj učnih enot.
+
+---
+
+## MongoDB kolekcije
+
+### `learning_units`
+
+Hrani učne enote. Učna enota je najmanjši del učne vsebine.
+
+Vsebuje:
+- `_id`
+- `title`
+- `short_description`
+- `duration_min`
+- `keywords`
+- `skills`
+- `self_assessment_questions`
+
+### `modules`
+
+Hrani module. Modul je sestavljen iz več učnih enot.
+
+Vsebuje:
+- `_id`
+- `title`
+- `short_description`
+- `duration_min`
+- `keywords`
+- `domains`
+- `learning_units`
+
+Vsaka učna enota znotraj modula ima tudi:
+- `learning_unit_id`
+- `order`
+- `parallel_group`
+- `is_required`
+- `prerequisites`
+
+### `learning_paths`
+
+Hrani učne poti. Učna pot je sestavljena iz več modulov.
+
+Vsebuje:
+- `_id`
+- `title`
+- `short_description`
+- `duration_min`
+- `keywords`
+- `modules`
+
+Vsak modul znotraj učne poti ima tudi:
+- `module_id`
+- `order`
+- `parallel_group`
+- `is_required`
+- `prerequisites`
+
+### `users`
+
+Hrani lokalne uporabniške profile.
+
+Prijava in registracija se izvajata prek zunanjega auth sistema, na primer Auth0. Backend ne hrani gesel.
+
+### `user_progress`
+
+Hrani napredek uporabnika.
+
+Vsebuje:
+- shranjene učne poti, module in učne enote,
+- priljubljene učne poti, module in učne enote,
+- dokončane učne poti, module in učne enote,
+- trenutno pozicijo uporabnika.
+
+---
+
+## Prerequisites logika
+
+Polje `prerequisites` določa, kateri elementi morajo biti dokončani, preden lahko uporabnik začne naslednjo vsebino.
+
+Primer pri učnih enotah v modulu:
+
+```json
+{
+  "learning_unit_id": "ue_006",
+  "order": 2,
+  "parallel_group": null,
+  "is_required": true,
+  "prerequisites": ["ue_005"]
+}
+```
+
+To pomeni, da mora uporabnik najprej dokončati `ue_005`, preden lahko začne `ue_006`.
+
+Primer pri modulih v učni poti:
+
+```json
+{
+  "module_id": "mod_004",
+  "order": 2,
+  "parallel_group": null,
+  "is_required": true,
+  "prerequisites": ["mod_003"]
+}
+```
+
+To pomeni, da mora uporabnik najprej dokončati `mod_003`, preden lahko začne `mod_004`.
+
+`order` ostaja kot pomoč za prikaz vrstnega reda, glavna logika dostopnosti pa temelji na `prerequisites`.
+
+---
+
+## Search logika
+
+Search omogoča iskanje po:
+
 ```text
+learning_paths
+modules
+learning_units
+```
+
+Iskanje preverja:
+- naslov,
+- kratek opis,
+- ključne besede,
+- pri modulih tudi področja,
+- pri učnih enotah tudi spretnosti.
+
+Primer:
+
+```text
+/api/search?query=Excel
+```
+
+Primer iskanja samo po modulih:
+
+```text
+/api/search?query=Excel&types=module
+```
+
+Primer iskanja po več tipih vsebin:
+
+```text
+/api/search?query=Excel&types=learning_path&types=module
+```
+
+---
+
+## Assessment logika
+
+Assessment obdela odgovore uporabnika iz vprašalnika.
+
+Osnovna logika:
+
+```text
+answer = true  → uporabnik spretnost zna
+answer = false → uporabniku spretnost manjka
+```
+
+Učna enota je pokrita, če so vsa njena vprašanja odgovorjena z `true`.
+
+Modul je pokrit, če so pokrite vse njegove obvezne učne enote.
+
+Učna pot določi:
+- kateri moduli se lahko preskočijo,
+- katere učne enote se lahko preskočijo,
+- pri katerem modulu naj uporabnik začne,
+- pri kateri učni enoti naj uporabnik začne.
+
+Assessment trenutno ne zapisuje rezultata neposredno v `user_progress`. Za zdaj samo vrne rezultat, frontend ali kasnejša backend logika pa lahko rezultat uporabi za posodobitev napredka.
+
+---
+
+## User progress logika
+
+`user_progress` hrani stanje uporabnika v aplikaciji.
+
+Omogoča:
+- shranjevanje vsebin,
+- označevanje priljubljenih vsebin,
+- označevanje dokončanih vsebin,
+- posodobitev trenutne pozicije uporabnika.
+
+Primer:
+
+```json
+{
+  "_id": "progress_user_001",
+  "user_id": "user_001",
+  "saved_learning_paths": ["up_002"],
+  "saved_modules": ["mod_003"],
+  "saved_learning_units": ["ue_005"],
+  "favorite_learning_paths": ["up_002"],
+  "favorite_modules": [],
+  "favorite_learning_units": ["ue_006"],
+  "completed_learning_paths": [],
+  "completed_modules": ["mod_003"],
+  "completed_learning_units": ["ue_005", "ue_006", "ue_007"],
+  "current_positions": [
+    {
+      "learning_path_id": "up_002",
+      "current_module_id": "mod_004",
+      "current_learning_unit_id": "ue_008"
+    }
+  ]
+}
+```
+
+---
+
+## Validacija podatkov
+
+Pred zapisovanjem v `user_progress` backend preveri:
+
+- ali `user_progress` za uporabnika obstaja,
+- ali je `content_type` veljaven,
+- ali `content_id` obstaja v pravilni kolekciji,
+- ali trenutna učna pot obstaja,
+- ali trenutni modul obstaja,
+- ali trenutna učna enota obstaja.
+
+Dovoljene vrednosti za `content_type` so:
+
+```text
+learning_path
+module
+learning_unit
+```
+
+Primer napačne zahteve:
+
+```json
+{
+  "user_id": "user_001",
+  "content_id": "ue_999",
+  "content_type": "learning_unit"
+}
+```
+
+Backend v tem primeru ne shrani podatka in vrne napako, ker `ue_999` ne obstaja.
+
+---
+
+# Navodila za zagon backend-a
+
+## 1. Premik v backend mapo
+
+```bash
 cd backend
 ```
-2. Ustvarjanje virtualnega okolja
-```text
+
+## 2. Ustvarjanje virtualnega okolja
+
+```bash
 python -m venv venv
 ```
-3. Aktiviranje virtualnega okolja
-```text
+
+## 3. Aktiviranje virtualnega okolja
+
+Windows:
+
+```bash
 venv\Scripts\activate
 ```
-4. Namestitev knjižnic
-```text
+
+## 4. Namestitev knjižnic
+
+```bash
 pip install -r requirements.txt
 ```
-5. Zagon backend aplikacije
+
+## 5. Nastavitev `.env`
+
+V backend mapi mora obstajati `.env` datoteka.
+
+Primer:
+
 ```text
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.g0ntvzk.mongodb.net/
+DATABASE_NAME=psi_up
+```
+
+## 6. Zagon backend aplikacije
+
+```bash
 uvicorn app.main:app --reload
 ```
 
 Backend se zažene na naslovu:
+
 ```text
 http://127.0.0.1:8000
 ```
 
-Dokumentacija API-ja je dostopna na:
+Swagger dokumentacija je dostopna na:
+
 ```text
 http://127.0.0.1:8000/docs
 ```
 
-Izklop virtualnega okolja
-```text
-deactivate
-```
+---
 
+# API endpointi
 
-
-# Trenutno zamišljen flow aplikacije
-
-## API endpointi
-
-Backend uporablja **FastAPI**. Endpointi so organizirani po glavnih entitetah aplikacije: učne poti, moduli, učne enote, vprašalniki, ocenjevanje, uporabniki in napredek uporabnika.
-
-Vsi endpointi imajo osnovni prefix:
+Backend uporablja osnovni prefix:
 
 ```text
 /api
@@ -186,9 +427,7 @@ Primer:
 
 ---
 
-### Search
-
-Search omogoča iskanje po učnih poteh, modulih in učnih enotah. Uporablja se kot začetna točka aplikacije, kjer uporabnik vnese ključni pojem, na primer `Excel`.
+## Search
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -200,23 +439,15 @@ Primer:
 /search?query=Excel
 ```
 
-Primer z izbiro tipa vsebine:
+Primer:
 
 ```text
 /search?query=Excel&types=module
 ```
 
-Primer z več tipi vsebin:
-
-```text
-/search?query=Excel&types=learning_path&types=module
-```
-
 ---
 
-### Učne poti
-
-Učna pot predstavlja širše učno zaporedje, sestavljeno iz več modulov. Endpointi omogočajo pridobivanje učnih poti, njihovih modulov, podrobnosti, vprašalnika in dostopnih modulov glede na predpogoje.
+## Učne poti
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -241,9 +472,7 @@ Primer za dostopne module:
 
 ---
 
-### Moduli
-
-Modul je sestavljen iz več učnih enot. Endpointi omogočajo pridobivanje modulov, njihovih učnih enot, podrobnosti, vprašalnika in dostopnih učnih enot glede na predpogoje.
+## Moduli
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -268,9 +497,7 @@ Primer za dostopne učne enote:
 
 ---
 
-### Učne enote
-
-Učna enota je najmanjši del učne vsebine. Vsebuje osnovne podatke, spretnosti oziroma kompetence in vprašanja za samooceno.
+## Učne enote
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -287,9 +514,7 @@ Primer:
 
 ---
 
-### Vprašalniki
-
-Vprašalniki se generirajo iz vprašanj za samooceno, ki so shranjena znotraj učnih enot. Vprašalnik se lahko pridobi za učno pot, modul ali posamezno učno enoto.
+## Vprašalniki
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -315,9 +540,7 @@ Primer za učno enoto:
 
 ---
 
-### Ocenjevanje
-
-Ocenjevanje obdela odgovore uporabnika iz vprašalnika. Na podlagi odgovorov določi, katere učne enote ali module uporabnik že obvlada, katere lahko preskoči in kje naj začne z učenjem.
+## Ocenjevanje
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -340,7 +563,7 @@ Primer request body:
 }
 ```
 
-Primer rezultata:
+Primer response:
 
 ```json
 {
@@ -359,9 +582,7 @@ Primer rezultata:
 
 ---
 
-### Uporabniki
-
-Uporabniki predstavljajo lokalni aplikacijski profil. Prijava in registracija bosta izvedeni prek zunanjega auth sistema, na primer Auth0. Backend ne hrani gesel, ampak samo poveže zunanjega uporabnika z lokalnim profilom.
+## Uporabniki
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -370,23 +591,20 @@ Uporabniki predstavljajo lokalni aplikacijski profil. Prijava in registracija bo
 | GET | `/users/{user_id}` | Pridobi uporabnika po lokalnem ID |
 | PUT | `/users/{user_id}` | Posodobi uporabniški profil |
 
-Primer lokalnega uporabnika:
+Primer request body:
 
 ```json
 {
-  "_id": "user_001",
   "auth_provider": "auth0",
-  "auth_user_id": "auth0|123456789",
-  "name": "Testni uporabnik",
-  "email": "test@example.com"
+  "auth_user_id": "auth0|test_001",
+  "name": "Testni uporabnik Auth0",
+  "email": "test.auth0@example.com"
 }
 ```
 
 ---
 
-### Napredek uporabnika
-
-Napredek uporabnika hrani informacije o tem, katere vsebine je uporabnik shranil, označil kot priljubljene, dokončal in kje se trenutno nahaja.
+## Napredek uporabnika
 
 | Metoda | Endpoint | Namen |
 |---|---|---|
@@ -400,7 +618,7 @@ Napredek uporabnika hrani informacije o tem, katere vsebine je uporabnik shranil
 | DELETE | `/user-progress/complete` | Odstrani vsebino iz dokončanih |
 | PUT | `/user-progress/current-position` | Posodobi trenutno pozicijo uporabnika |
 
-Primer za shranjevanje učne poti:
+Primer za shranjevanje, priljubljene ali dokončane vsebine:
 
 ```json
 {
@@ -423,7 +641,7 @@ Primer za trenutno pozicijo:
 
 ---
 
-### Opomba o Auth0
+# Auth0 opomba
 
 Registracija in prijava uporabnika se ne izvajata neposredno v backendu. Za to bo uporabljen zunanji auth sistem, na primer Auth0.
 
@@ -435,5 +653,97 @@ Predviden flow:
 4. Backend preveri, ali uporabnik že obstaja v lokalni bazi.
 5. Če uporabnik ne obstaja, backend ustvari lokalni profil in začetni zapis `user_progress`.
 6. Gesla ostanejo v Auth0 in se ne hranijo v naši bazi.
+
+Trenutno je pripravljena lokalna povezava prek:
+
+```text
+auth_provider
+auth_user_id
+```
+
+Prava Auth0 token validacija še ni implementirana.
+
+---
+
+# Testiranje backend-a
+
+Backend se lahko testira na dva načina:
+
+## 1. Swagger
+
+Po zagonu backend-a odpri:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Tam lahko testiraš vse API endpoint-e.
+
+## 2. Postman
+
+Za testiranje je pripravljena Postman kolekcija z API requesti.
+
+V Postmanu so requesti organizirani po sklopih:
+
+```text
+Learning Units
+Modules
+Learning Paths
+Search
+Questionnaires
+Assessments
+Users
+User Progress
+Errors / Validation
+```
+
+Primeri testiranja:
+- pridobivanje učnih enot,
+- iskanje po vsebinah,
+- pridobivanje vprašalnikov,
+- assessment logika,
+- shranjevanje/priljubljene/dokončane vsebine,
+- trenutna pozicija uporabnika,
+- validacija napačnih podatkov.
+
+Primer error testa:
+
+```json
+{
+  "user_id": "user_001",
+  "content_id": "ue_999",
+  "content_type": "learning_unit"
+}
+```
+
+Pričakovano: backend vrne napako, ker učna enota `ue_999` ne obstaja.
+
+---
+
+# Trenutno stanje implementacije
+
+Implementirano:
+
+- osnovni API za učne enote,
+- osnovni API za module,
+- osnovni API za učne poti,
+- search API,
+- vprašalniki,
+- assessment logika,
+- user progress API,
+- uporabniški profil,
+- validacija za user progress,
+- povezava z MongoDB.
+
+Delno implementirano:
+
+- povezava z zunanjim auth sistemom prek `auth_provider` in `auth_user_id`.
+
+Še ni implementirano:
+
+- prava Auth0 konfiguracija,
+- preverjanje Auth0 tokena,
+- zaščita endpointov glede na prijavljenega uporabnika,
+- avtomatsko zapisovanje assessment rezultata v `user_progress`.
 
 ---

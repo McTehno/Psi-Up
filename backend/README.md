@@ -167,125 +167,103 @@ deactivate
 
 # Trenutno zamišljen flow aplikacije
 
-1. Uporabnik izbere skupino kompetenc.
-2. Sistem prikaže vprašalnik za to skupino.
-3. Uporabnik odgovori na vprašanja.
-4. Backend na podlagi odgovorov določi eno ali več kompetenc znotraj te skupine.
-5. Uporabnik se samooceni za izbrano kompetenco oziroma kompetence.
-6. Backend določi trenutno raven znanja.
-7. Backend poišče module za izbrane kompetence.
-8. Backend upošteva predpogoje modulov.
-9. Backend določi vrstni red modulov.
-10. Backend vrne pripravljeno učno pot.
+## API endpointi
 
+Backend uporablja FastAPI. Endpointi so organizirani po glavnih entitetah aplikacije.
 
-# Samoocenjevanje
-Sistem ugotovi: uporabnik je najbližje kompetenci "AI podpora pri vsakdanjem delu".
+> Opomba: Del endpointov je trenutno pripravljen kot začetna struktura. Dejanska povezava z MongoDB in poslovna logika bosta implementirani v naslednjih korakih.
 
-Potem vpraša:
-Kako bi ocenili svoje trenutno znanje uporabe AI orodij?
+### Search
 
-- Nimam izkušenj
-- Znam osnovno uporabljati AI orodja
-- Znam pisati jasne pozive
-- Znam uporabljati AI pri kompleksnih delovnih nalogah
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/search` | Iskanje po učnih poteh, modulih in učnih enotah |
 
-Backend dobi:
+### Učne poti
 
-{
-  "competency_id": "komp_4",
-  "self_assessment_level": "basic"
-}
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/learning-paths` | Pridobi vse učne poti |
+| GET | `/learning-paths/{learning_path_id}` | Pridobi eno učno pot |
+| GET | `/learning-paths/{learning_path_id}/detail` | Pridobi podrobnosti učne poti |
+| GET | `/learning-paths/{learning_path_id}/modules` | Pridobi module znotraj učne poti |
+| GET | `/learning-paths/{learning_path_id}/available-modules` | Pridobi dostopne module glede na predpogoje |
+| GET | `/learning-paths/{learning_path_id}/questionnaire` | Pridobi vprašalnik za učno pot |
 
-Potem iz tega sestavi pot.
+### Moduli
 
-# Načrtovani API endpointi
-GET  /api/competency-groups
-GET  /api/competency-groups/{groupId}
-GET  /api/competency-groups/{groupId}/questionnaire
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/modules` | Pridobi vse module |
+| GET | `/modules/{module_id}` | Pridobi en modul |
+| GET | `/modules/{module_id}/detail` | Pridobi podrobnosti modula |
+| GET | `/modules/{module_id}/learning-units` | Pridobi učne enote znotraj modula |
+| GET | `/modules/{module_id}/available-learning-units` | Pridobi dostopne učne enote glede na predpogoje |
+| GET | `/modules/{module_id}/questionnaire` | Pridobi vprašalnik za modul |
 
-POST /api/recommendations/competencies
-POST /api/assessments/self-assessment
-POST /api/learning-paths/generate
+### Učne enote
 
-GET  /api/competencies
-GET  /api/competencies/{competencyId}
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/learning-units` | Pridobi vse učne enote |
+| GET | `/learning-units/{learning_unit_id}` | Pridobi eno učno enoto |
+| GET | `/learning-units/{learning_unit_id}/detail` | Pridobi podrobnosti učne enote |
+| GET | `/learning-units/{learning_unit_id}/questionnaire` | Pridobi vprašalnik za učno enoto |
 
-GET  /api/learning-paths
-GET  /api/learning-paths/{learningPathId}
+### Vprašalniki
 
-GET  /api/modules
-GET  /api/modules/{moduleId}
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/questionnaires` | Pridobi vprašalnik za učno pot, modul ali učno enoto |
 
-GET  /api/learning-units
-GET  /api/learning-units/{learningUnitId}
-
-
-# Trenutna primitivna logika za določanje kompetence
-
-Ker testni podatki trenutno nimajo direktne povezave:
-```text
-odgovor → določena kompetenca
-```
-
-ima vsak odgovor samo:
-```text
-weight
-```
-Zato backend trenutno naredi to:
-```text
-1. vzame vse izbrane odgovore,
-2. pogleda njihove weight vrednosti,
-3. sešteje weight,
-4. glede na skupni rezultat izbere kompetenco iz skupine.
-```
 Primer:
-```text
-odgovor 1 = weight 3
-odgovor 2 = weight 2
-odgovor 3 = weight 1
-
-total_score = 6
-```
-Potem backend uporabi preprosto pravilo:
-```text
-nižji rezultat → prva kompetenca v skupini
-srednji rezultat → druga kompetenca v skupini
-višji rezultat → zadnja kompetenca v skupini
-```
-
-Za skupino skup_1 to pomeni približno:
-```text 
-komp_1 → osnovna Office 365 kompetenca
-komp_2 → napredna Office 365 kompetenca
-komp_4 → AI podpora pri delu
-```
-Za skupino skup_2, kjer je samo ena kompetenca, backend vedno vrne to eno kompetenco.
-
-## Pomembna omejitev trenutne logike
-
-Trenutna logika je primerna samo za delujoč prototip.
-
-Ni še dovolj natančna za končno verzijo, ker:
-
-- odgovori niso neposredno povezani s kompetencami,
-- weight pove samo “moč” odgovora, ne pa področja kompetence,
-- sistem trenutno izbere eno kompetenco na podlagi skupnega rezultata,
-- še ne podpira več enakovredno priporočenih kompetenc,
-- še ne uporablja realnih podatkov.
-
-
-## Generiranje učne poti
 
 ```text
-POST /api/learning-paths/generate
+/questionnaires?target_type=learning_path&target_id=up_002
 ```
 
-Sprejme izbrano kompetenco in trenutno raven znanja ter vrne pripravljeno učno pot z moduli in učnimi enotami.
+### Ocenjevanje
 
-V trenutni MVP verziji backend poišče obstoječo učno pot, ki vsebuje izbrano kompetenco, nato iz nje vzame module za to kompetenco. Module razvrsti po polju order, za vsak modul pridobi pripadajoče učne enote in vrne pripravljeno strukturo za frontend.
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| POST | `/assessments/evaluate` | Oceni odgovore in določi začetno točko uporabnika |
 
-Predpogoji modulov se trenutno vrnejo v odgovoru, vendar se vrstni red še ne izračunava dinamično iz predpogojev. Za začetno verzijo se uporablja vrstni red iz testnih podatkov.
+Primer request body:
 
-Backend vsebuje tudi pripravljene funkcije za preverjanje, ali zgenerirana učna pot že obstaja, vendar se dejansko shranjevanje novih zgeneriranih poti trenutno še ne izvaja. Ta del je pripravljen za kasnejšo nadgradnjo.
+```json
+{
+  "user_id": "user_001",
+  "target_type": "learning_path",
+  "target_id": "up_002",
+  "answers": [
+    {
+      "question_id": "q_ue_005_001",
+      "learning_unit_id": "ue_005",
+      "answer": true
+    }
+  ]
+}
+```
 
+### Uporabniki
+
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| POST | `/users/profile` | Vrne ali ustvari uporabniški profil po zunanji prijavi |
+| GET | `/users/by-auth/{auth_user_id}` | Pridobi uporabnika po zunanjem auth ID |
+| GET | `/users/{user_id}` | Pridobi uporabnika po lokalnem ID |
+| PUT | `/users/{user_id}` | Posodobi uporabniški profil |
+
+### Napredek uporabnika
+
+| Metoda | Endpoint | Namen |
+|---|---|---|
+| GET | `/user-progress/{user_id}` | Pridobi napredek uporabnika |
+| POST | `/user-progress/{user_id}/ensure` | Vrne ali ustvari napredek uporabnika |
+| POST | `/user-progress/save` | Shrani učno pot, modul ali učno enoto |
+| DELETE | `/user-progress/save` | Odstrani shranjeno vsebino |
+| POST | `/user-progress/favorite` | Označi vsebino kot priljubljeno |
+| DELETE | `/user-progress/favorite` | Odstrani vsebino iz priljubljenih |
+| POST | `/user-progress/complete` | Označi vsebino kot dokončano |
+| DELETE | `/user-progress/complete` | Odstrani vsebino iz dokončanih |
+| PUT | `/user-progress/current-position` | Posodobi trenutno pozicijo uporabnika |

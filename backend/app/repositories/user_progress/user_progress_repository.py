@@ -21,32 +21,25 @@ class UserProgressRepository:
         """
         Vrne napredek uporabnika glede na user_id.
 
-        TODO:
-        - Poiskati dokument v kolekciji user_progress po user_id.
-        - Vrniti None, če napredek še ne obstaja.
+        Če napredek za uporabnika ne obstaja, vrne None.
         """
 
         collection = self.database[self.collection_name]
 
-        # TODO: Dodati pravo MongoDB poizvedbo.
-        # Primer:
-        # return await collection.find_one({"user_id": user_id})
+        return collection.find_one({"user_id": user_id})
 
-        return None
-
-    async def create_empty_progress(self, user_id: str) -> Dict[str, Any]:
+    async def create_progress(self, user_id: str) -> Dict[str, Any]:
         """
-        Ustvari prazen zapis napredka za novega uporabnika.
+        Ustvari začetni zapis napredka za uporabnika.
 
-        TODO:
-        - Ustvariti začetni dokument za user_progress.
-        - Shraniti ga v kolekcijo user_progress.
-        - Vrniti ustvarjen dokument.
+        Zapis je začetni zato, ker uporabnik na začetku še nima
+        shranjenih, priljubljenih ali dokončanih vsebin.
         """
 
         collection = self.database[self.collection_name]
 
         new_progress = {
+            "_id": f"progress_{user_id}",
             "user_id": user_id,
             "saved_learning_paths": [],
             "saved_modules": [],
@@ -60,21 +53,16 @@ class UserProgressRepository:
             "current_positions": [],
         }
 
-        # TODO: Dodati pravo MongoDB insert logiko.
-        # Primer:
-        # result = await collection.insert_one(new_progress)
-        # new_progress["_id"] = str(result.inserted_id)
+        collection.insert_one(new_progress)
 
         return new_progress
-
+    
     async def get_or_create_progress(self, user_id: str) -> Dict[str, Any]:
         """
         Vrne obstoječ napredek uporabnika ali ustvari novega.
 
-        TODO:
-        - Najprej poiskati napredek po user_id.
-        - Če obstaja, ga vrniti.
-        - Če ne obstaja, ustvariti prazen napredek.
+        Če uporabnik že ima user_progress zapis, ga vrne.
+        Če ga nima, ustvari začetni zapis.
         """
 
         existing_progress = await self.get_progress_by_user_id(user_id)
@@ -82,4 +70,4 @@ class UserProgressRepository:
         if existing_progress:
             return existing_progress
 
-        return await self.create_empty_progress(user_id)
+        return await self.create_progress(user_id)

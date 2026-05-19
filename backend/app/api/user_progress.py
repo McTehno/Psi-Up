@@ -7,11 +7,15 @@ from app.schemas.user_progress_schema import (
     UpdateCurrentPositionRequest,
     UserProgressResponse,
 )
+from app.database.mongodb import get_database
+
 from app.services.user_progress.completed_content_service import CompletedContentService
 from app.services.user_progress.current_position_service import CurrentPositionService
 from app.services.user_progress.favorite_content_service import FavoriteContentService
 from app.services.user_progress.saved_content_service import SavedContentService
 from app.services.user_progress.user_progress_service import UserProgressService
+
+from app.repositories.user_progress.user_progress_repository import UserProgressRepository
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
 
@@ -20,12 +24,14 @@ def get_user_progress_service() -> UserProgressService:
     """
     Vrne UserProgressService instanco.
 
-    TODO:
-    - Povezati z UserProgressRepository.
-    - Dodati dependency injection za database.
+    Ustvari povezavo:
+    database -> UserProgressRepository -> UserProgressService.
     """
 
-    raise NotImplementedError("UserProgressService dependency še ni implementiran.")
+    database = get_database()
+    user_progress_repository = UserProgressRepository(database)
+
+    return UserProgressService(user_progress_repository)
 
 
 def get_saved_content_service() -> SavedContentService:

@@ -20,31 +20,27 @@ class UserProgressService:
         """
         Vrne napredek uporabnika glede na user_id.
 
-        TODO:
-        - Poklicati repository metodo za pridobivanje napredka.
-        - Dodati obravnavo primera, ko napredek ne obstaja.
+        Če zapis napredka ne obstaja, vrne None.
         """
 
         return await self.user_progress_repository.get_progress_by_user_id(user_id)
 
-    async def create_empty_progress(self, user_id: str) -> Dict[str, Any]:
+    async def create_progress(self, user_id: str) -> Dict[str, Any]:
         """
-        Ustvari prazen napredek za uporabnika.
+        Ustvari začetni zapis napredka za uporabnika.
 
-        TODO:
-        - Poklicati repository metodo za ustvarjanje praznega napredka.
-        - Kasneje preveriti, da za uporabnika še ne obstaja progress.
+        Uporabi se ob prvem ustvarjanju uporabniškega profila
+        ali ko želimo ročno ustvariti progress zapis.
         """
 
-        return await self.user_progress_repository.create_empty_progress(user_id)
-
+        return await self.user_progress_repository.create_progress(user_id)
+    
     async def get_or_create_progress(self, user_id: str) -> Dict[str, Any]:
         """
         Vrne obstoječ napredek uporabnika ali ustvari novega.
 
-        TODO:
-        - Poklicati repository get_or_create logiko.
-        - Po potrebi dodati dodatno validacijo uporabnika.
+        Uporabi se, kadar želimo zagotoviti, da uporabnik ima
+        user_progress zapis v bazi.
         """
 
         return await self.user_progress_repository.get_or_create_progress(user_id)

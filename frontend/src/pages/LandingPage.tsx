@@ -1,10 +1,21 @@
 import { Fragment, useState, useEffect } from 'react'
 
 import { landingAnchors } from '../app/router'
-
-type IconProps = {
-	className?: string
-}
+import {
+	ArrowRightIcon,
+	SearchIcon,
+	PathIcon,
+	CircleIcon,
+	DotIcon,
+} from '../components/ui/Icons'
+import {
+	focusTags,
+	processSteps,
+	outcomeCards,
+	digcompAreas,
+	searchFilters,
+} from './LandingPage/constants'
+import { useSearch } from '../hooks/useSearch'
 
 function BookOpenIcon({ className = 'h-5 w-5' }: IconProps) {
 	return (
@@ -107,6 +118,35 @@ function UsersIcon({ className = 'h-5 w-5' }: IconProps) {
 	)
 }
 
+function PathIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<path d="M4 19V9a2 2 0 0 1 2-2h4a2 2 0 0 0 2-2V4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+			<circle cx="4" cy="20" r="1.5" fill="currentColor" />
+			<circle cx="12" cy="3" r="1.5" fill="currentColor" />
+			<path d="M16 19v-4a2 2 0 0 1 2-2h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+			<circle cx="16" cy="20" r="1.5" fill="currentColor" />
+		</svg>
+	)
+}
+
+function CircleIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+			<circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
+		</svg>
+	)
+}
+
+function DotIcon({ className = 'h-5 w-5' }: IconProps) {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+			<circle cx="12" cy="12" r="4" fill="currentColor" />
+		</svg>
+	)
+}
+
 function EditIcon({ className = 'h-5 w-5' }: IconProps) {
 	return (
 		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
@@ -204,9 +244,22 @@ const digcompAreas = [
 	},
 ] as const
 
+
 function LandingPage() {
 	const [activeIndex, setActiveIndex] = useState(0)
 	const [rotationCount, setRotationCount] = useState(0)
+	
+	const {
+		isSearchActive,
+		setIsSearchActive,
+		activeFilter,
+		setActiveFilter,
+		searchQuery,
+		setSearchQuery,
+		searchResults,
+		setSearchResults,
+		isSearching,
+	} = useSearch()
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -218,6 +271,14 @@ function LandingPage() {
 
 	return (
 		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-brown-900">
+			{/* Backdrop Overlay for Search */}
+			<div
+				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${
+					isSearchActive ? 'bg-sand-50/60 backdrop-blur-md' : 'pointer-events-none bg-transparent backdrop-blur-none'
+				}`}
+				onClick={() => setIsSearchActive(false)}
+				aria-hidden="true"
+			/>
 			<div
 				className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(139,115,85,0.16),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(139,115,85,0.12),_transparent_22%),radial-gradient(circle_at_90%_80%,_rgba(114,93,67,0.08),_transparent_30%),linear-gradient(180deg,_rgba(245,240,232,0.98),_rgba(224,213,195,0.98))]"
 				aria-hidden="true"
@@ -262,8 +323,48 @@ function LandingPage() {
 					id="top"
 					className="grid gap-12 pt-8 pb-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:pt-10 lg:pb-20"
 				>
-					<div className="max-w-xl">
+					<div className="max-w-xl relative">
+						<div className={`relative mb-8 max-w-sm transition-all duration-500 ease-in-out z-50 ${isSearchActive ? 'scale-105 origin-left' : ''}`}>
+							<div className="relative">
+								<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+									<SearchIcon className="h-5 w-5 text-brown-400" />
+								</div>
+								<input
+									type="text"
+									placeholder="Kaj se hočete naučiti?"
+									className="w-full rounded-2xl border border-sand-300 bg-sand-50 py-3 pl-12 pr-4 text-sm text-brown-900 shadow-sm placeholder:text-brown-400 focus:border-forest-500 focus:outline-none focus:ring-1 focus:ring-forest-500 transition-all duration-300"
+									onFocus={() => setIsSearchActive(true)}
+									value={searchQuery}
+									onChange={(e) => {
+										setSearchQuery(e.target.value)
+										if (!e.target.value) setSearchResults([])
+									}}
+								/>
+							</div>
 
+							{/* Filters Dropdown */}
+							<div
+								className={`absolute left-0 right-0 top-full mt-4 flex flex-wrap gap-2 transition-all duration-500 ease-in-out origin-top ${
+									isSearchActive
+										? 'opacity-100 translate-y-0 visible'
+										: 'opacity-0 -translate-y-4 invisible'
+								}`}
+							>
+								{searchFilters.map((filter) => (
+									<button
+										key={filter}
+										onClick={() => setActiveFilter(filter)}
+										className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+											activeFilter === filter
+												? 'bg-forest-700 text-white border-forest-700 hover:bg-forest-800'
+												: 'bg-white text-brown-600 hover:bg-sand-100 border-sand-300'
+										} shadow-sm border`}
+									>
+										{filter}
+									</button>
+								))}
+							</div>
+						</div>
 
 						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-brown-900 sm:text-6xl xl:text-7xl">
 							Pot do cilja je lažja, ko je najprej mirna.
@@ -302,8 +403,82 @@ function LandingPage() {
 					</div>
 
 					<div className="relative min-h-[30rem] sm:min-h-[40rem] w-full flex flex-col">
-						{/* Foreground Info Layer */}
-						<div className="absolute inset-x-0 top-16 sm:top-20 z-10 flex flex-col items-center text-center px-4 sm:px-6">
+						{/* Search Results Display */}
+						<div
+							className={`absolute inset-0 z-50 flex flex-col gap-4 pr-2 pb-10 transition-all duration-500 ease-in-out ${
+								isSearchActive
+									? 'opacity-100 translate-y-0 visible'
+									: 'opacity-0 translate-y-8 invisible'
+							}`}
+						>
+							{isSearchActive && searchQuery ? (
+								isSearching ? (
+									<div className="flex h-full items-center justify-center text-brown-500 animate-pulse">
+										Iščem...
+									</div>
+								) : searchResults.length > 0 ? (
+									<>
+										{searchResults.slice(0, 4).map((result, idx) => (
+											<div
+												key={result.id}
+												className="group flex cursor-pointer items-start gap-4 rounded-3xl border border-sand-300 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-forest-200 hover:bg-white hover:shadow-md animate-fade-in-up opacity-0"
+												style={{ animationDelay: `${idx * 75}ms` }}
+											>
+												<div className="mt-1 flex-shrink-0">
+													{result.type === 'learning_path' ? (
+														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-forest-100 text-forest-700">
+															<PathIcon className="h-5 w-5" />
+														</span>
+													) : result.type === 'module' ? (
+														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+															<CircleIcon className="h-5 w-5" />
+														</span>
+													) : (
+														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+															<DotIcon className="h-5 w-5" />
+														</span>
+													)}
+												</div>
+												<div>
+													<h3 className="font-display text-lg font-medium tracking-tight text-brown-900 transition-colors group-hover:text-forest-700">
+														{result.title}
+													</h3>
+													{result.short_description && (
+														<p className="mt-1 text-sm leading-relaxed text-brown-600 line-clamp-2">
+															{result.short_description}
+														</p>
+													)}
+												</div>
+											</div>
+										))}
+										{searchResults.length > 4 && (
+											<div 
+												className="mt-2 flex justify-center animate-fade-in-up opacity-0" 
+												style={{ animationDelay: '300ms' }}
+											>
+												<button className="flex items-center gap-2 rounded-full border border-sand-300 bg-white/60 px-6 py-2.5 text-sm font-semibold text-brown-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:border-forest-200 hover:text-forest-700">
+													Prikaži več zadetkov
+													<ArrowRightIcon className="h-4 w-4" />
+												</button>
+											</div>
+										)}
+									</>
+								) : (
+									<div className="flex h-full items-center justify-center text-brown-500">
+										Ni zadetkov...
+									</div>
+								)
+							) : null}
+						</div>
+
+						{/* Original Content fades out on search */}
+						<div
+							className={`absolute inset-0 transition-opacity duration-500 ${
+								isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+							}`}
+						>
+							{/* Foreground Info Layer */}
+							<div className="absolute inset-x-0 top-16 sm:top-20 z-10 flex flex-col items-center text-center px-4 sm:px-6">
 							{digcompAreas.map((area, idx) => {
 								const isActive = activeIndex === idx;
 								const isPast = idx === (activeIndex - 1 + digcompAreas.length) % digcompAreas.length;
@@ -371,6 +546,7 @@ function LandingPage() {
 								)
 							})}
 						</svg>
+						</div>
 					</div>
 				</section>
 

@@ -12,3 +12,11 @@ export interface LearningPathData {
   targetCompetency: string;
   modules: Module[];
 }
+
+export type SearchResult = {
+	id: string
+	type: 'learning_path' | 'module' | 'learning_unit'
+	title: string
+	short_description?: string
+	keywords?: string[]
+}

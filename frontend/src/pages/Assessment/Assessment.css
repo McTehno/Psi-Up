@@ -21,15 +21,20 @@
 	position: relative;
 	display: flex;
 	justify-content: center;
-	align-items: flex-end;
+	align-items: stretch;
 	overflow: hidden;
 
-	background: #f5efe5;
+	background: #f2e8da;
 	border-right: 1px solid #ded5c6;
+	padding: 0;
 }
 
 .woman-image {
+	display: block;
+	width: 100%;
 	height: 100%;
+	object-fit: cover;
+	object-position: center bottom;
 }
 
 .assistant-note {
@@ -510,18 +515,20 @@
 
 .assessment-journey__mountain {
 	position: relative;
-	min-height: 630px;
+	min-height: clamp(520px, 42vw, 620px);
 	border-radius: 24px;
 	overflow: hidden;
+	background-color: #f7f1e6;
 	background-image:
 		linear-gradient(
 			to bottom,
-			rgba(255, 250, 242, 0.08),
-			rgba(255, 250, 242, 0.32)
+			rgba(255, 250, 242, 0.02),
+			rgba(255, 250, 242, 0.1)
 		),
 		url('../../assets/mountain-journey-bg.png');
-	background-size: cover;
-	background-position: center;
+	background-size: 100% auto;
+	background-position: center bottom;
+	background-repeat: no-repeat;
 	border: 1px solid rgba(47, 74, 49, 0.12);
 }
 
@@ -595,7 +602,7 @@
 		),
 		url('../../assets/mountain-journey-bg.png');
 	background-size: cover;
-	background-position: center;
+	background-position: center 18%;
 	border: 1px solid rgba(47, 74, 49, 0.12);
 }
 
@@ -618,14 +625,14 @@
 	text-align: left;
 	cursor: pointer;
 	padding: 0;
-	transform: translate(-50%, -50%);
+	transform: translate(-23px, -23px);
 	transition:
 		transform 0.2s ease,
 		filter 0.2s ease;
 }
 
 .journey-step:hover {
-	transform: translate(-50%, -50%) translateY(-4px);
+	transform: translate(-23px, -27px);
 }
 
 .journey-step span {

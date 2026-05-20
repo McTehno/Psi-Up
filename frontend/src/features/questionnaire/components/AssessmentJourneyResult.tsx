@@ -40,6 +40,11 @@ type AssessmentJourneyResultProps = {
 
 type JourneyStepStatus = 'skipped' | 'current' | 'recommended' | 'upcoming'
 
+type JourneyPoint = {
+	left: number
+	top: number
+}
+
 type JourneyStep = {
 	id: string
 	number: number
@@ -48,47 +53,109 @@ type JourneyStep = {
 	durationMin?: number
 	skills: string[]
 	status: JourneyStepStatus
-	position: {
-		left: string
-		top: string
+	position: JourneyPoint
+}
+
+const JOURNEY_ROUTE_POINTS: JourneyPoint[] = [
+	{ left: 6, top: 90 },
+	{ left: 21, top: 87 },
+	{ left: 34, top: 80 },
+	{ left: 47, top: 65 },
+	{ left: 59, top: 45 },
+	{ left: 68, top: 30 },
+	{ left: 74.5, top: 9 },
+]
+
+const LABEL_ABOVE_LAST_LOCATION = JOURNEY_ROUTE_POINTS[2]
+
+function shouldShowStepLabelAbove(position: JourneyPoint) {
+	return (
+		position.left <= LABEL_ABOVE_LAST_LOCATION.left &&
+		position.top >= LABEL_ABOVE_LAST_LOCATION.top
+	)
+}
+
+function getStepDetailText(step: JourneyStep) {
+	return step.durationMin ? `${step.durationMin} min` : step.description
+}
+
+function getPointOnJourneyRoute(progress: number): JourneyPoint {
+	const exactIndex = progress * (JOURNEY_ROUTE_POINTS.length - 1)
+	const lowerIndex = Math.floor(exactIndex)
+	const upperIndex = Math.min(
+		Math.ceil(exactIndex),
+		JOURNEY_ROUTE_POINTS.length - 1,
+	)
+
+	const lowerPoint = JOURNEY_ROUTE_POINTS[lowerIndex]
+	const upperPoint = JOURNEY_ROUTE_POINTS[upperIndex]
+	const localProgress = exactIndex - lowerIndex
+
+	return {
+		left:
+			lowerPoint.left +
+			(upperPoint.left - lowerPoint.left) * localProgress,
+		top:
+			lowerPoint.top +
+			(upperPoint.top - lowerPoint.top) * localProgress,
 	}
 }
 
-function getStepPosition(index: number, total: number) {
+function getStepPosition(index: number, total: number): JourneyPoint {
 	if (total <= 1) {
-		return {
-			left: '12%',
-			top: '68%',
-		}
+		return JOURNEY_ROUTE_POINTS[0]
 	}
 
-	const progress = index / (total - 1)
+	return getPointOnJourneyRoute(index / (total - 1))
+}
 
-	const left = 9 + progress * 78
+const JOURNEY_PATH_VIEW_BOX = {
+	width: 1000,
+	height: 420,
+}
 
-	const yPoints = [
-		70,
-		58,
-		46,
-		34,
-		22,
-		10,
-	]
-
-	const exactIndex = progress * (yPoints.length - 1)
-	const lowerIndex = Math.floor(exactIndex)
-	const upperIndex = Math.ceil(exactIndex)
-
-	const lowerValue = yPoints[lowerIndex]
-	const upperValue = yPoints[upperIndex]
-
-	const localProgress = exactIndex - lowerIndex
-	const top = lowerValue + (upperValue - lowerValue) * localProgress
-
+function toSvgPoint(point: JourneyPoint) {
 	return {
-		left: `${left}%`,
-		top: `${top}%`,
+		x: (point.left / 100) * JOURNEY_PATH_VIEW_BOX.width,
+		y: (point.top / 100) * JOURNEY_PATH_VIEW_BOX.height,
 	}
+}
+
+function getJourneyPath(points: JourneyPoint[]) {
+	if (points.length < 2) {
+		return ''
+	}
+
+	const svgPoints = points.map(toSvgPoint)
+
+	if (svgPoints.length === 2) {
+		return `M ${svgPoints[0].x} ${svgPoints[0].y} L ${svgPoints[1].x} ${svgPoints[1].y}`
+	}
+
+	const pathCommands = [`M ${svgPoints[0].x} ${svgPoints[0].y}`]
+
+	for (let index = 0; index < svgPoints.length - 1; index += 1) {
+		const previousPoint = svgPoints[index - 1] ?? svgPoints[index]
+		const currentPoint = svgPoints[index]
+		const nextPoint = svgPoints[index + 1]
+		const followingPoint = svgPoints[index + 2] ?? nextPoint
+
+		const controlPointOne = {
+			x: currentPoint.x + (nextPoint.x - previousPoint.x) / 6,
+			y: currentPoint.y + (nextPoint.y - previousPoint.y) / 6,
+		}
+
+		const controlPointTwo = {
+			x: nextPoint.x - (followingPoint.x - currentPoint.x) / 6,
+			y: nextPoint.y - (followingPoint.y - currentPoint.y) / 6,
+		}
+
+		pathCommands.push(
+			`C ${controlPointOne.x} ${controlPointOne.y}, ${controlPointTwo.x} ${controlPointTwo.y}, ${nextPoint.x} ${nextPoint.y}`,
+		)
+	}
+
+	return pathCommands.join(' ')
 }
 
 function getStatusLabel(status: JourneyStepStatus) {
@@ -146,6 +213,11 @@ function AssessmentJourneyResult({
 		})
 	}, [moduleDetail, result])
 
+	const journeyPath = useMemo(
+		() => getJourneyPath(steps.map((step) => step.position)),
+		[steps],
+	)
+
 	const [selectedStepId, setSelectedStepId] = useState<string | null>(null)
 
 	const selectedStep =
@@ -197,20 +269,22 @@ function AssessmentJourneyResult({
 			</div>
 
 			<div className="assessment-journey__mountain">
-				<svg
-					className="assessment-journey__path"
-					viewBox="0 0 1000 420"
-					preserveAspectRatio="none"
-				>
-					<path
-						d="M70 330 C150 280, 190 320, 250 255 S350 245, 400 190 S520 200, 570 140 S700 120, 760 75 S850 85, 910 45"
-						fill="none"
-						stroke="rgba(47, 74, 49, 0.58)"
-						strokeWidth="4"
-						strokeDasharray="12 12"
-						strokeLinecap="round"
-					/>
-				</svg>
+				{journeyPath && (
+					<svg
+						className="assessment-journey__path"
+						viewBox="0 0 1000 420"
+						preserveAspectRatio="none"
+					>
+						<path
+							d={journeyPath}
+							fill="none"
+							stroke="rgba(47, 74, 49, 0.58)"
+							strokeWidth="4"
+							strokeDasharray="12 12"
+							strokeLinecap="round"
+						/>
+					</svg>
+				)}
 
 				{steps.map((step) => (
 					<button
@@ -219,16 +293,25 @@ function AssessmentJourneyResult({
 						className={`journey-step journey-step--${step.status} ${
 							selectedStep.id === step.id ? 'journey-step--selected' : ''
 						}`}
-						style={step.position}
+						style={{
+							left: `${step.position.left}%`,
+							top: `${step.position.top}%`,
+						}}
 						onClick={() => setSelectedStepId(step.id)}
 					>
-						<span>{step.number}</span>
-						<strong>{step.title}</strong>
-						<p>
-							{step.durationMin
-								? `${step.durationMin} min`
-								: step.description}
-						</p>
+						{shouldShowStepLabelAbove(step.position) ? (
+							<>
+								<strong>{step.title}</strong>
+								<p>{getStepDetailText(step)}</p>
+								<span>{step.number}</span>
+							</>
+						) : (
+							<>
+								<span>{step.number}</span>
+								<strong>{step.title}</strong>
+								<p>{getStepDetailText(step)}</p>
+							</>
+						)}
 					</button>
 				))}
 			</div>

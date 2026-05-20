@@ -165,7 +165,7 @@ function Assessment() {
 	const [searchParams] = useSearchParams()
 
 	const targetType = normalizeTargetType(searchParams.get('target_type'))
-	const targetId = searchParams.get('target_id') ?? 'mod_003'
+	const targetId = searchParams.get('target_id') ?? 'mod_002'
 
 	const [phase, setPhase] = useState<AssessmentPhase>('questionnaire')
 	const [questionnaireTitle, setQuestionnaireTitle] = useState('')

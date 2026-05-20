@@ -1,47 +1,47 @@
 import {
-	BookOpenIcon,
-	CompassIcon,
-	TargetIcon,
-	UserIcon,
-	LeafIcon,
-	SearchIcon,
-	UsersIcon,
-	EditIcon,
-	ShieldIcon,
-	LightbulbIcon,
-} from '../../components/ui/Icons'
+	BookOpen,
+	Compass,
+	Target,
+	User,
+	Leaf,
+	Search,
+	Users,
+	Edit,
+	Shield,
+	Lightbulb,
+} from 'lucide-react'
 
 export const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
 
 export const processSteps = [
 	{
-		icon: BookOpenIcon,
+		icon: BookOpen,
 		title: 'Vprašalnik',
 		text: 'Pokaže izhodišče.',
 	},
 	{
-		icon: CompassIcon,
+		icon: Compass,
 		title: 'Priporočilo',
 		text: 'Uredi naslednji korak.',
 	},
 	{
-		icon: TargetIcon,
+		icon: Target,
 		title: 'Napredek',
 		text: 'Drži smer do cilja.',
 	},
 ] as const
 
 export const outcomeCards = [
-	{ icon: LeafIcon, title: 'Predznanje' },
-	{ icon: TargetIcon, title: 'Cilj' },
-	{ icon: UserIcon, title: 'Vloga' },
-	{ icon: CompassIcon, title: 'DigComp' },
+	{ icon: Leaf, title: 'Predznanje' },
+	{ icon: Target, title: 'Cilj' },
+	{ icon: User, title: 'Vloga' },
+	{ icon: Compass, title: 'DigComp' },
 ] as const
 
 export const digcompAreas = [
 	{
 		title: 'Iskanje, vrednotenje in upravljanje',
-		icon: SearchIcon,
+		icon: Search,
 		description: 'Iskanje, vrednotenje in upravljanje podatkov ter informacij.',
 		themeBg: 'bg-[#FACA3A]',
 		themeText: 'text-white',
@@ -49,7 +49,7 @@ export const digcompAreas = [
 	},
 	{
 		title: 'Komunikacija in sodelovanje',
-		icon: UsersIcon,
+		icon: Users,
 		description: 'Interakcija, deljenje in sodelovanje v digitalnem okolju.',
 		themeBg: 'bg-[#4888C9]',
 		themeText: 'text-white',
@@ -57,7 +57,7 @@ export const digcompAreas = [
 	},
 	{
 		title: 'Ustvarjanje digitalnih vsebin',
-		icon: EditIcon,
+		icon: Edit,
 		description: 'Razvoj, integracija in obdelava digitalnih virov.',
 		themeBg: 'bg-[#F29111]',
 		themeText: 'text-white',
@@ -65,7 +65,7 @@ export const digcompAreas = [
 	},
 	{
 		title: 'Varnost in odgovorna raba',
-		icon: ShieldIcon,
+		icon: Shield,
 		description: 'Zaščita naprav, podatkov, zasebnosti in zdravja.',
 		themeBg: 'bg-[#4AAA4B]',
 		themeText: 'text-white',
@@ -73,7 +73,7 @@ export const digcompAreas = [
 	},
 	{
 		title: 'Prepoznavanje in reševanje težav',
-		icon: LightbulbIcon,
+		icon: Lightbulb,
 		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
 		themeBg: 'bg-[#F05A4E]',
 		themeText: 'text-white',
@@ -81,4 +81,10 @@ export const digcompAreas = [
 	},
 ] as const
 
-export const searchFilters = ['Vse', 'Moduli', 'Učne poti', 'Učne enote'] as const
+// Centralized navigation and filters definitions
+export const searchFilters = [
+	{ label: 'Vse', value: null },
+	{ label: 'Moduli', value: 'module' },
+	{ label: 'Učne poti', value: 'learning_path' },
+	{ label: 'Učne enote', value: 'learning_unit' },
+] as const

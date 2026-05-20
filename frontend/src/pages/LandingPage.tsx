@@ -10,6 +10,7 @@ import {
     Route as PathIcon,
     Circle as CircleIcon,
     CircleDot as DotIcon,
+    X as XIcon,
 } from 'lucide-react'
 
 import {
@@ -43,6 +44,19 @@ function LandingPage() {
 		}, 4000)
 		return () => clearInterval(interval)
 	}, [])
+
+	// No scrolling while the search is active
+	useEffect(() => {
+		if (isSearchActive) {
+			document.body.style.overflow = 'hidden'
+		} else {
+			document.body.style.overflow = 'unset'
+		}
+		
+		return () => {
+			document.body.style.overflow = 'unset'
+		}
+	}, [isSearchActive])
 
 	return (
 		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-brown-900">
@@ -107,14 +121,30 @@ function LandingPage() {
 								<input
 									type="text"
 									placeholder="Kaj se hočete naučiti?"
-									className="w-full rounded-2xl border border-sand-300 bg-sand-50 py-3 pl-12 pr-4 text-sm text-brown-900 shadow-sm placeholder:text-brown-400 focus:border-forest-500 focus:outline-none focus:ring-1 focus:ring-forest-500 transition-all duration-300"
-									onFocus={() => setIsSearchActive(true)}
+									className="w-full rounded-2xl border border-sand-300 bg-sand-50 py-3 pl-12 pr-12 text-sm text-brown-900 shadow-sm placeholder:text-brown-400 focus:border-forest-500 focus:outline-none focus:ring-1 focus:ring-forest-500 transition-all duration-300"
+									onFocus={() => {
+										setIsSearchActive(true)
+										window.scrollTo({ top: 0, behavior: 'smooth' })
+									}}
 									value={searchQuery}
 									onChange={(e) => {
 										setSearchQuery(e.target.value)
 										if (!e.target.value) setSearchResults([])
 									}}
 								/>
+								{isSearchActive && (
+									<button
+										onClick={() => {
+											setIsSearchActive(false);
+											setSearchQuery('');
+											setSearchResults([]);
+										}}
+										className="absolute inset-y-0 right-0 flex items-center pr-4 text-brown-400 hover:text-brown-700 transition"
+										aria-label="Zapri iskanje"
+									>
+										<XIcon className="h-5 w-5" />
+									</button>
+								)}
 							</div>
 
 							{/* Filters Dropdown */}
@@ -186,64 +216,87 @@ function LandingPage() {
 									: 'opacity-0 translate-y-8 invisible'
 							}`}
 						>
-							{isSearchActive && searchQuery ? (
-								isSearching ? (
-									<div className="flex h-full items-center justify-center text-brown-500 animate-pulse">
-										Iščem...
-									</div>
-								) : searchResults.length > 0 ? (
-									<>
-										{searchResults.slice(0, 4).map((result, idx) => (
-											<div
-												key={result.id}
-												className="group flex cursor-pointer items-start gap-4 rounded-3xl border border-sand-300 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-forest-200 hover:bg-white hover:shadow-md animate-fade-in-up opacity-0"
-												style={{ animationDelay: `${idx * 75}ms` }}
-											>
-												<div className="mt-1 flex-shrink-0">
-													{result.type === 'learning_path' ? (
-														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-forest-100 text-forest-700">
-															<PathIcon className="h-5 w-5" />
-														</span>
-													) : result.type === 'module' ? (
-														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
-															<CircleIcon className="h-5 w-5" />
-														</span>
-													) : (
-														<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
-															<DotIcon className="h-5 w-5" />
-														</span>
-													)}
+							{isSearchActive && searchQuery && (
+								<div className="flex flex-col gap-3">
+									{isSearching ? (
+										<div className="flex h-32 items-center justify-center text-brown-500 animate-pulse bg-white/50 backdrop-blur-sm rounded-3xl border border-sand-300">
+											Iščem...
+										</div>
+									) : (
+										<>
+											{searchResults.length > 0 ? (
+												searchResults.slice(0, 3).map((result, idx) => (
+													<div
+														key={result.id}
+														className="group flex flex-col sm:flex-row cursor-pointer items-start gap-4 rounded-2xl border border-sand-300 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-forest-300 hover:shadow-md animate-fade-in-up"
+														style={{ animationDelay: `${idx * 75}ms`, animationFillMode: 'both' }}
+													>
+														<div className="flex-shrink-0">
+															{result.type === 'learning_path' ? (
+																<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-forest-100 text-forest-700">
+																	<PathIcon className="h-6 w-6" />
+																</span>
+															) : result.type === 'module' ? (
+																<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+																	<CircleIcon className="h-6 w-6" />
+																</span>
+															) : (
+																<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+																	<DotIcon className="h-6 w-6" />
+																</span>
+															)}
+														</div>
+														<div className="flex-1 w-full">
+															<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+																<h3 className="font-display text-lg font-semibold tracking-tight text-brown-900 group-hover:text-forest-700 transition-colors">
+																	{result.title}
+																</h3>
+																<span className="inline-flex shrink-0 items-center rounded-full bg-sand-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-brown-600">
+																	{result.type === 'learning_path' ? 'Učna pot' : result.type === 'module' ? 'Modul' : 'Učna enota'}
+																</span>
+															</div>
+															{result.shortDescription && (
+																<p className="mt-2 text-sm leading-relaxed text-brown-600 line-clamp-2">
+																	{result.shortDescription}
+																</p>
+															)}
+															{result.keywords && result.keywords.length > 0 && (
+																<div className="mt-3 flex flex-wrap gap-2">
+																	{result.keywords.slice(0, 3).map((kw) => (
+																		<span key={kw} className="rounded-md bg-forest-50 px-2 py-1 text-xs font-medium text-forest-700">
+																			#{kw}
+																		</span>
+																	))}
+																	{result.keywords.length > 3 && (
+																		<span className="rounded-md bg-sand-100 px-2 py-1 text-xs font-medium text-brown-500">
+																			+{result.keywords.length - 3}
+																		</span>
+																	)}
+																</div>
+															)}
+														</div>
+													</div>
+												))
+											) : (
+												<div className="flex h-32 items-center justify-center text-brown-500 bg-white/50 backdrop-blur-sm rounded-3xl border border-sand-300">
+													Ni bilo najdenih zadetkov za "{searchQuery}".
 												</div>
-												<div>
-													<h3 className="font-display text-lg font-medium tracking-tight text-brown-900 transition-colors group-hover:text-forest-700">
-														{result.title}
-													</h3>
-													{result.shortDescription && (
-														<p className="mt-1 text-sm leading-relaxed text-brown-600 line-clamp-2">
-															{result.shortDescription}
-														</p>
-													)}
-												</div>
-											</div>
-										))}
-										{searchResults.length > 4 && (
+											)}
+											
+											{/* Always show this button now when finished searching */}
 											<div 
-												className="mt-2 flex justify-center animate-fade-in-up opacity-0" 
-												style={{ animationDelay: '300ms' }}
+												className="mt-2 flex justify-center animate-fade-in-up relative z-10" 
+												style={{ animationDelay: '300ms', animationFillMode: 'both' }}
 											>
-												<button className="flex items-center gap-2 rounded-full border border-sand-300 bg-white/60 px-6 py-2.5 text-sm font-semibold text-brown-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:border-forest-200 hover:text-forest-700">
-													Prikaži več zadetkov
+												<button className="flex items-center gap-2 rounded-full border border-sand-300 bg-forest-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-forest-800 hover:shadow-lg">
+													{searchResults.length > 0 ? 'Prikaži vse zadetke' : 'Napredno iskanje'}
 													<ArrowRightIcon className="h-4 w-4" />
 												</button>
 											</div>
-										)}
-									</>
-								) : (
-									<div className="flex h-full items-center justify-center text-brown-500">
-										Ni zadetkov...
-									</div>
-								)
-							) : null}
+										</>
+									)}
+								</div>
+							)}
 						</div>
 
 						{/* Original Content fades out on search */}

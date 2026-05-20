@@ -1,25 +1,16 @@
+import type { ErrorResponse } from '../types/api'
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
-
-type ApiErrorResponse = {
-  success?: false
-  error?: {
-    code?: string
-    message?: string
-    details?: unknown
-  }
-  detail?: string
-}
 
 async function parseResponse<T>(response: Response): Promise<T> {
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    const errorData = data as ApiErrorResponse | null
+    const errorData = data as ErrorResponse | null
 
     const message =
       errorData?.error?.message ||
-      errorData?.detail ||
       'Prišlo je do napake pri komunikaciji s strežnikom.'
 
     throw new Error(message)
@@ -69,4 +60,19 @@ export async function apiDelete<T>(path: string): Promise<T> {
   })
 
   return parseResponse<T>(response)
+}
+
+export async function apiDeleteWithBody<TResponse, TBody>(
+  path: string,
+  body: TBody
+): Promise<TResponse> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  return parseResponse<TResponse>(response)
 }

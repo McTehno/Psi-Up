@@ -1,12 +1,8 @@
 import { apiGet } from './api-client'
-import type { SearchResult } from '../types/domain'
-
-export type SearchContentType = 'learning_path' | 'module' | 'learning_unit'
-
-export type SearchResponse = {
-  query: string
-  results: SearchResult[]
-}
+import type {
+  SearchContentType,
+  SearchResponse,
+} from '../types/search'
 
 export async function searchContent(
   query: string,

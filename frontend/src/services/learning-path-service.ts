@@ -1,46 +1,46 @@
 import { apiGet } from './api-client'
+import type { LearningPathResponse } from '../types/learning-path'
+import type { ModuleResponse } from '../types/module'
+import type { QuestionnaireResponse } from '../types/questionnaire'
 
-export type LearningPath = {
-  id: string
-  title: string
-  description?: string
-}
-
-export type LearningPathDetail = {
-  id: string
-  title: string
-  description?: string
-  modules?: unknown[]
-}
-
-export async function getLearningPaths(): Promise<LearningPath[]> {
-  return apiGet<LearningPath[]>('/learning-paths')
+export async function getLearningPaths(): Promise<LearningPathResponse[]> {
+  return apiGet<LearningPathResponse[]>('/learning-paths')
 }
 
 export async function getLearningPathById(
   learningPathId: string
-): Promise<LearningPath> {
-  return apiGet<LearningPath>(`/learning-paths/${learningPathId}`)
+): Promise<LearningPathResponse> {
+  return apiGet<LearningPathResponse>(`/learning-paths/${learningPathId}`)
 }
 
 export async function getLearningPathDetail(
   learningPathId: string
-): Promise<LearningPathDetail> {
-  return apiGet<LearningPathDetail>(
+): Promise<LearningPathResponse> {
+  return apiGet<LearningPathResponse>(
     `/learning-paths/${learningPathId}/detail`
   )
 }
 
 export async function getLearningPathModules(
   learningPathId: string
-): Promise<unknown[]> {
-  return apiGet<unknown[]>(`/learning-paths/${learningPathId}/modules`)
+): Promise<ModuleResponse[]> {
+  return apiGet<ModuleResponse[]>(
+    `/learning-paths/${learningPathId}/modules`
+  )
+}
+
+export async function getLearningPathAvailableModules(
+  learningPathId: string
+): Promise<ModuleResponse[]> {
+  return apiGet<ModuleResponse[]>(
+    `/learning-paths/${learningPathId}/available-modules`
+  )
 }
 
 export async function getLearningPathQuestionnaire(
   learningPathId: string
-): Promise<unknown> {
-  return apiGet<unknown>(
+): Promise<QuestionnaireResponse> {
+  return apiGet<QuestionnaireResponse>(
     `/learning-paths/${learningPathId}/questionnaire`
   )
 }

@@ -1,40 +1,31 @@
 import { apiGet } from './api-client'
+import type { LearningUnitResponse } from '../types/learning-unit'
+import type { QuestionnaireResponse } from '../types/questionnaire'
 
-export type LearningUnit = {
-  id: string
-  title: string
-  description?: string
-}
-
-export type LearningUnitDetail = {
-  id: string
-  title: string
-  description?: string
-  content?: unknown
-}
-
-export async function getLearningUnits(): Promise<LearningUnit[]> {
-  return apiGet<LearningUnit[]>('/learning-units')
+export async function getLearningUnits(): Promise<LearningUnitResponse[]> {
+  return apiGet<LearningUnitResponse[]>('/learning-units')
 }
 
 export async function getLearningUnitById(
   learningUnitId: string
-): Promise<LearningUnit> {
-  return apiGet<LearningUnit>(`/learning-units/${learningUnitId}`)
+): Promise<LearningUnitResponse> {
+  return apiGet<LearningUnitResponse>(
+    `/learning-units/${learningUnitId}`
+  )
 }
 
 export async function getLearningUnitDetail(
   learningUnitId: string
-): Promise<LearningUnitDetail> {
-  return apiGet<LearningUnitDetail>(
+): Promise<LearningUnitResponse> {
+  return apiGet<LearningUnitResponse>(
     `/learning-units/${learningUnitId}/detail`
   )
 }
 
 export async function getLearningUnitQuestionnaire(
   learningUnitId: string
-): Promise<unknown> {
-  return apiGet<unknown>(
+): Promise<QuestionnaireResponse> {
+  return apiGet<QuestionnaireResponse>(
     `/learning-units/${learningUnitId}/questionnaire`
   )
 }

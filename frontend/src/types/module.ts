@@ -1,0 +1,19 @@
+import type { LearningUnitReferenceResponse } from './learning-unit'
+
+export type ModuleResponse = {
+  id: string
+  title: string
+  short_description: string
+  duration_min?: number | null
+  keywords: string[]
+  domains: string[]
+  learning_units: LearningUnitReferenceResponse[]
+}
+
+export type ModuleReferenceResponse = {
+  module_id: string
+  order?: number | null
+  parallel_group?: string | null
+  is_required: boolean
+  prerequisites: string[]
+}

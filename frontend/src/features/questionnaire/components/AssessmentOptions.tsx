@@ -1,4 +1,4 @@
-import CompetencyCard from './CompetencyCard'
+import CompetencyCard from '../../competencies/components/CompetencyCard'
 
 type CompetencyGroup = {
 	_id: string

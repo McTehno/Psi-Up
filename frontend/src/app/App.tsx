@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import Assessment from './app/subpages/Assessment/Assessment';
-import PathResultPage from './pages/PathResultPage';
+import LandingPage from '../pages/LandingPage';
+import Assessment from '../pages/Assessment/Assessment';
+import PathResultPage from '../pages/PathResultPage';
 
 function App() {
   return (

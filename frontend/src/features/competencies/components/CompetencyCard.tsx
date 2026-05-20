@@ -1,5 +1,5 @@
 import './CompetencyCard.css'
-import icon from '../../../../../public/lamp.png'
+import icon from '../../../../public/lamp.png'
 
 type CompetencyCardProps = {
 	title: string

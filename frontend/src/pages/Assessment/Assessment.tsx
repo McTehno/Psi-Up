@@ -3,24 +3,24 @@ import { useNavigate } from 'react-router-dom'
 import {
 	getCompetencyGroups,
 	getCompetencyGroupQuestionnaire,
-} from '../../../api/competencyGroups'
-import { getCompetencyRecommendations, generateLearningPath } from '../../../api/learningPaths'
-import womanImage from '../../../../public/woman.png'
-import { assessmentCopy } from './assessmentSteps'
-import AssessmentLayout from './modules/AssessmentLayout'
-import AssessmentHeader from './modules/AssessmentHeader'
-import AssessmentIntro from './modules/AssessmentIntro'
-import AssessmentOptions from './modules/AssessmentOptions'
-import AssessmentContextBox from './modules/AssessmentContextBox'
-import AssessmentActions from './modules/AssessmentActions'
-import QuestionnaireQuestion from './modules/QuestionnaireQuestion'
-import { getAssessmentVoice } from './assessmentVoice'
-import { useAudioPlayer } from './hooks/useAudioPlayer'
+} from '../../features/competencies/api/competencyGroups'
+import { getCompetencyRecommendations, generateLearningPath } from '../../features/learning-paths/api/learningPaths'
+import womanImage from '../../../public/woman.png'
+import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
+import AssessmentLayout from '../../features/questionnaire/components/AssessmentLayout'
+import AssessmentHeader from '../../features/questionnaire/components/AssessmentHeader'
+import AssessmentIntro from '../../features/questionnaire/components/AssessmentIntro'
+import AssessmentOptions from '../../features/questionnaire/components/AssessmentOptions'
+import AssessmentContextBox from '../../features/questionnaire/components/AssessmentContextBox'
+import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
+import QuestionnaireQuestion from '../../features/questionnaire/components/QuestionnaireQuestion'
+import { getAssessmentVoice } from '../../features/questionnaire/utils/assessmentVoice'
+import { useAudioPlayer } from '../../features/questionnaire/hooks/useAudioPlayer'
 import './Assessment.css'
 
 type Competency = {
-	competency_id: string
-	title?: string
+        competency_id: string
+        title?: string
 }
 
 type AnswerOption = {

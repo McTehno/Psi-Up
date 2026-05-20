@@ -28,8 +28,8 @@ function LandingPage() {
 	const {
 		isSearchActive,
 		setIsSearchActive,
-		activeFilter,
-		setActiveFilter,
+		activeFilters,
+		toggleFilter,
 		searchQuery,
 		setSearchQuery,
 		searchResults,
@@ -158,9 +158,9 @@ function LandingPage() {
 								{searchFilters.map((filter) => (
 									<button
 										key={filter.label}
-										onClick={() => setActiveFilter(filter.label)}
+										onClick={() => toggleFilter(filter.label)}
 										className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-											activeFilter === filter.label
+											activeFilters.includes(filter.label)
 												? 'bg-forest-700 text-white border-forest-700 hover:bg-forest-800'
 												: 'bg-white text-brown-600 hover:bg-sand-100 border-sand-300'
 										} shadow-sm border`}

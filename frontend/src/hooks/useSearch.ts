@@ -4,7 +4,13 @@ import { searchFilters } from '../pages/LandingPage/constants';
 
 export function useSearch() {
 	const [isSearchActive, setIsSearchActive] = useState(false)
-	const [activeFilters, setActiveFilters] = useState<string[]>([searchFilters[0].label])
+	const [activeFilters, setActiveFilters] = useState<string[]>(['Vse'])
+	// Naprednejši filtri - Placeholder za prihodnost
+	const [advancedFilters, setAdvancedFilters] = useState<any>({
+		query: '',
+		types: []
+	})
+
 	const [searchQuery, setSearchQuery] = useState('')
 	const [searchResults, setSearchResults] = useState<SearchResult[]>([])
 	const [isSearching, setIsSearching] = useState(false)
@@ -16,24 +22,20 @@ export function useSearch() {
 		}
 
 		setActiveFilters(prev => {
-			// Remove 'Vse' if a specific filter is clicked
 			let next = prev.filter(f => f !== 'Vse');
-			
 			if (next.includes(label)) {
-				// Deselect the filter
 				next = next.filter(f => f !== label);
-				// If nothing is selected anymore, revert to 'Vse'
 				return next.length === 0 ? ['Vse'] : next;
 			} else {
-				// Select the new filter (enforcing a max layout of 2 specific filters)
 				if (next.length >= 2) {
-					next = next.slice(1); // Drop the oldest selected filter to make room
+					next = next.slice(1);
 				}
 				return [...next, label];
 			}
 		});
 	}, []);
 
+	// Poslušanja za enostavno iskanje
 	useEffect(() => {
 		if (!searchQuery) {
 			return
@@ -41,26 +43,28 @@ export function useSearch() {
 		const timeoutId = setTimeout(async () => {
 			setIsSearching(true)
 			try {
-				const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-				let url = `${baseUrl}/api/search?query=${encodeURIComponent(searchQuery)}`
-				
+				let types: string[] = [];
 				if (!activeFilters.includes('Vse')) {
-					const activeDefs = searchFilters.filter(f => activeFilters.includes(f.label) && f.value);
-					activeDefs.forEach(def => {
-						url += `&types=${def.value}`
-					});
+					types = searchFilters
+                        .filter(f => activeFilters.includes(f.label) && f.value)
+                        .map(f => f.value as string);
 				}
 
-				const response = await fetch(url)
-				const data = await response.json()
-				if (data.results) {
-					// Map snake_case from backend to camelCase for frontend, makes sense for constant naming (db uses snake_case, frontend uses camelCase)
-					const mappedResults = data.results.map((r: any) => ({
-						...r,
-						shortDescription: r.short_description
-					}));
-					setSearchResults(mappedResults)
-				}
+				const urlParams = new URLSearchParams();
+				if (searchQuery) urlParams.append('query', searchQuery);
+				types.forEach(t => urlParams.append('types', t));
+				
+				const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/search?${urlParams.toString()}`);
+				if (!response.ok) throw new Error('Network response was not ok');
+				const data = await response.json();
+				
+				// Map snake case to camel case
+				const mappedData = (data.results || []).map((item: any) => ({
+					...item,
+					shortDescription: item.short_description
+				}));
+
+				setSearchResults(mappedData);
 			} catch (error) {
 				console.error('Failed to fetch search results', error)
 			} finally {
@@ -75,10 +79,13 @@ export function useSearch() {
 		setIsSearchActive,
 		activeFilters,
 		toggleFilter,
+		advancedFilters,
+		setAdvancedFilters,
 		searchQuery,
 		setSearchQuery,
 		searchResults,
 		setSearchResults,
 		isSearching,
+		setIsSearching,
 	}
 }

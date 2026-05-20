@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { landingAnchors } from '../app/navigation'
 
@@ -22,6 +23,7 @@ import {
 } from './LandingPage/constants'
 
 function LandingPage() {
+	const navigate = useNavigate()
 	const [activeIndex, setActiveIndex] = useState(0)
 	const [rotationCount, setRotationCount] = useState(0)
 	
@@ -288,7 +290,10 @@ function LandingPage() {
 												className="mt-2 flex justify-center animate-fade-in-up relative z-10" 
 												style={{ animationDelay: '300ms', animationFillMode: 'both' }}
 											>
-												<button className="flex items-center gap-2 rounded-full border border-sand-300 bg-forest-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-forest-800 hover:shadow-lg">
+												<button 
+													onClick={() => navigate(`/search${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`)}
+													className="flex items-center gap-2 rounded-full border border-sand-300 bg-forest-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-forest-800 hover:shadow-lg"
+												>
 													{searchResults.length > 0 ? 'Prikaži vse zadetke' : 'Napredno iskanje'}
 													<ArrowRightIcon className="h-4 w-4" />
 												</button>

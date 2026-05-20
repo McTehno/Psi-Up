@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import LandingPage from '../pages/LandingPage';
 import Assessment from '../pages/Assessment/Assessment';
 import PathResultPage from '../pages/PathResultPage';
+import AdvancedSearchPage from '../pages/AdvancedSearchPage';
 import { SearchProvider } from '../contexts/SearchContext';
 
 function RootLayout() {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <LandingPage />,
+      },
+      {
+        path: 'search',
+        element: <AdvancedSearchPage />,
       },
       {
         path: 'assessment',

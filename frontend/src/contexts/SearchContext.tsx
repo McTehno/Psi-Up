@@ -1,4 +1,5 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { useSearch } from '../hooks/useSearch';
 // SearchContext provides global state for search functionality, allowing any component to access search state and actions without prop drilling.
 const SearchContext = createContext<ReturnType<typeof useSearch> | null>(null);

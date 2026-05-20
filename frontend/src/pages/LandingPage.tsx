@@ -1,23 +1,14 @@
 import { Fragment, useState, useEffect } from 'react'
 
 import { landingAnchors } from '../app/router'
-import {
-	ArrowRightIcon,
-	SearchIcon,
-	PathIcon,
-	CircleIcon,
-	DotIcon,
-} from '../components/ui/Icons'
-import {
-	focusTags,
-	processSteps,
-	outcomeCards,
-	digcompAreas,
-	searchFilters,
-} from './LandingPage/constants'
-import { useSearch } from '../hooks/useSearch'
 
+import { useSearch } from '../hooks/useSearch'
+type IconProps = {
+	className?: string
+}
+const searchFilters = ['Vse', 'Učne poti', 'Moduli', 'Kompetence'] as const
 function BookOpenIcon({ className = 'h-5 w-5' }: IconProps) {
+	
 	return (
 		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
 			<path

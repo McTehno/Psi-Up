@@ -5,7 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.database.mongodb import get_database
 
 from app.schemas.learning_unit_schema import LearningUnitResponse
-from app.schemas.questionnaire_schema import QuestionnaireResponse
+from app.schemas.questionnaire_schema import (
+    QuestionnaireResponse,
+    QuestionnaireTargetType,
+)
 
 from app.services.learning_units.learning_unit_service import LearningUnitService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
@@ -15,8 +18,6 @@ from app.services.modules.module_service import ModuleService
 from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
 from app.repositories.module_repository import ModuleRepository
-
-
 
 
 router = APIRouter(prefix="/learning-units", tags=["Learning units"])
@@ -75,10 +76,6 @@ async def get_learning_units(
 ) -> List[LearningUnitResponse]:
     """
     Vrne vse učne enote.
-
-    TODO:
-    - Poklicati LearningUnitService.
-    - Dodati paginacijo, če bo podatkov veliko.
     """
 
     learning_units = await learning_unit_service.get_all_learning_units()
@@ -93,9 +90,7 @@ async def get_learning_unit_by_id(
     """
     Vrne eno učno enoto po ID.
 
-    TODO:
-    - Dodati boljšo obravnavo napak.
-    - Preveriti, ali ID obstaja v bazi.
+    Če učna enota ne obstaja, vrne 404.
     """
 
     learning_unit = await learning_unit_service.get_learning_unit_by_id(
@@ -116,9 +111,7 @@ async def get_learning_unit_detail(
     """
     Vrne podrobnosti učne enote za detail page.
 
-    TODO:
-    - Po potrebi dodati podatke o napredku uporabnika.
-    - Po potrebi dodati povezane module ali učne poti.
+    Trenutno vrne enako strukturo kot osnovni endpoint za eno učno enoto.
     """
 
     learning_unit = await learning_unit_service.get_learning_unit_detail(
@@ -139,12 +132,8 @@ async def get_learning_unit_questionnaire(
     """
     Vrne vprašalnik za izbrano učno enoto.
 
-    TODO:
-    - Poklicati QuestionnaireService za target_type learning_unit.
-    - Dodati obravnavo primera, ko vprašalnik ne obstaja.
+    Vprašalnik se generira iz vprašanj za samooceno znotraj učne enote.
     """
-
-    from app.schemas.questionnaire_schema import QuestionnaireTargetType
 
     questionnaire = await questionnaire_service.generate_questionnaire(
         target_type=QuestionnaireTargetType.LEARNING_UNIT,

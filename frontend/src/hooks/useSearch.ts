@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { SearchResult } from '../../types/domain'
+import type {SearchResult}  from "../types/domain";
 
 export function useSearch() {
 	const [isSearchActive, setIsSearchActive] = useState(false)

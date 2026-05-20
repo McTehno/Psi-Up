@@ -1,6 +1,6 @@
 type AnswerOption = {
 	answer: string
-	weight: number
+	weight: boolean
 }
 
 type QuestionnaireItem = {

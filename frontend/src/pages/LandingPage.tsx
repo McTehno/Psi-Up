@@ -1,240 +1,24 @@
 import { Fragment, useState, useEffect } from 'react'
 
-import { landingAnchors } from '../app/router'
+import { landingAnchors } from '../app/navigation'
 
-import { useSearch } from '../hooks/useSearch'
-type IconProps = {
-	className?: string
-}
-const searchFilters = ['Vse', 'Učne poti', 'Moduli', 'Kompetence'] as const
-function BookOpenIcon({ className = 'h-5 w-5' }: IconProps) {
-	
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path
-				d="M12 5.5c-1.7-1.1-3.8-1.7-6-1.7a1.5 1.5 0 0 0-1.5 1.5V18a1 1 0 0 0 1.3.95c1.9-.6 4-.8 6.2-.4V5.5Z"
-				stroke="currentColor"
-				strokeWidth="1.7"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M12 5.5c1.7-1.1 3.8-1.7 6-1.7a1.5 1.5 0 0 1 1.5 1.5V18a1 1 0 0 1-1.3.95c-1.9-.6-4-.8-6.2-.4V5.5Z"
-				stroke="currentColor"
-				strokeWidth="1.7"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	)
-}
+import { useGlobalSearch } from '../contexts/SearchContext'
 
-function CompassIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.7" />
-			<path d="m14.6 9.4-1.1 3.1-3.1 1.1 1.1-3.1 3.1-1.1Z" fill="currentColor" />
-		</svg>
-	)
-}
+import {
+    ArrowRight as ArrowRightIcon,
+    Search as SearchIcon,
+    Route as PathIcon,
+    Circle as CircleIcon,
+    CircleDot as DotIcon,
+} from 'lucide-react'
 
-function TargetIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.7" />
-			<circle cx="12" cy="12" r="3" fill="currentColor" />
-		</svg>
-	)
-}
-
-function UserIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path
-				d="M12 12.2a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0 0 7.6Z"
-				stroke="currentColor"
-				strokeWidth="1.7"
-			/>
-			<path
-				d="M5.8 19.2a6.2 6.2 0 0 1 12.4 0"
-				stroke="currentColor"
-				strokeWidth="1.7"
-				strokeLinecap="round"
-			/>
-		</svg>
-	)
-}
-
-function LeafIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path
-				d="M18.5 5.5c-6.2-.4-11.5 3.9-11.9 10.1 0 .6.2 1.2.6 1.6.4.4 1 .6 1.6.6 6.2-.4 10.5-5.7 10.1-11.9Z"
-				stroke="currentColor"
-				strokeWidth="1.7"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path d="M7.5 16.5c2.3-2.1 4.8-3.8 7.5-5.1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-		</svg>
-	)
-}
-
-function ArrowRightIcon({ className = 'h-4 w-4' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
-			<path d="m13 6 6 6-6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-		</svg>
-	)
-}
-
-function SearchIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.7" />
-			<path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-		</svg>
-	)
-}
-
-function UsersIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-			<circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.7" />
-			<path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-			<path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-		</svg>
-	)
-}
-
-function PathIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M4 19V9a2 2 0 0 1 2-2h4a2 2 0 0 0 2-2V4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-			<circle cx="4" cy="20" r="1.5" fill="currentColor" />
-			<circle cx="12" cy="3" r="1.5" fill="currentColor" />
-			<path d="M16 19v-4a2 2 0 0 1 2-2h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-			<circle cx="16" cy="20" r="1.5" fill="currentColor" />
-		</svg>
-	)
-}
-
-function CircleIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-			<circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
-		</svg>
-	)
-}
-
-function DotIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<circle cx="12" cy="12" r="4" fill="currentColor" />
-		</svg>
-	)
-}
-
-function EditIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M12 20h9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-			<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-		</svg>
-	)
-}
-
-function ShieldIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-		</svg>
-	)
-}
-
-function LightbulbIcon({ className = 'h-5 w-5' }: IconProps) {
-	return (
-		<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-			<path d="M9 18h6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-			<path d="M10 22h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-			<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A6 6 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-		</svg>
-	)
-}
-
-const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
-
-const processSteps = [
-	{
-		icon: BookOpenIcon,
-		title: 'Vprašalnik',
-		text: 'Pokaže izhodišče.',
-	},
-	{
-		icon: CompassIcon,
-		title: 'Priporočilo',
-		text: 'Uredi naslednji korak.',
-	},
-	{
-		icon: TargetIcon,
-		title: 'Napredek',
-		text: 'Drži smer do cilja.',
-	},
-] as const
-
-const outcomeCards = [
-	{ icon: LeafIcon, title: 'Predznanje' },
-	{ icon: TargetIcon, title: 'Cilj' },
-	{ icon: UserIcon, title: 'Vloga' },
-	{ icon: CompassIcon, title: 'DigComp' },
-] as const
-
-const digcompAreas = [
-	{
-		title: 'Iskanje, vrednotenje in upravljanje',
-		icon: SearchIcon,
-		description: 'Iskanje, vrednotenje in upravljanje podatkov ter informacij.',
-		themeBg: 'bg-[#FACA3A]',
-		themeText: 'text-white',
-		svgFill: '#FACA3A',
-	},
-	{
-		title: 'Komunikacija in sodelovanje',
-		icon: UsersIcon,
-		description: 'Interakcija, deljenje in sodelovanje v digitalnem okolju.',
-		themeBg: 'bg-[#4888C9]',
-		themeText: 'text-white',
-		svgFill: '#4888C9',
-	},
-	{
-		title: 'Ustvarjanje digitalnih vsebin',
-		icon: EditIcon,
-		description: 'Razvoj, integracija in obdelava digitalnih virov.',
-		themeBg: 'bg-[#F29111]',
-		themeText: 'text-white',
-		svgFill: '#F29111',
-	},
-	{
-		title: 'Varnost in odgovorna raba',
-		icon: ShieldIcon,
-		description: 'Zaščita naprav, podatkov, zasebnosti in zdravja.',
-		themeBg: 'bg-[#4AAA4B]',
-		themeText: 'text-white',
-		svgFill: '#4AAA4B',
-	},
-	{
-		title: 'Prepoznavanje in reševanje težav',
-		icon: LightbulbIcon,
-		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
-		themeBg: 'bg-[#F05A4E]',
-		themeText: 'text-white',
-		svgFill: '#F05A4E',
-	},
-] as const
-
+import {
+    searchFilters,
+    focusTags,
+    processSteps,
+    outcomeCards,
+    digcompAreas
+} from './LandingPage/constants'
 
 function LandingPage() {
 	const [activeIndex, setActiveIndex] = useState(0)
@@ -250,7 +34,7 @@ function LandingPage() {
 		searchResults,
 		setSearchResults,
 		isSearching,
-	} = useSearch()
+	} = useGlobalSearch()
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -343,15 +127,15 @@ function LandingPage() {
 							>
 								{searchFilters.map((filter) => (
 									<button
-										key={filter}
-										onClick={() => setActiveFilter(filter)}
+										key={filter.label}
+										onClick={() => setActiveFilter(filter.label)}
 										className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-											activeFilter === filter
+											activeFilter === filter.label
 												? 'bg-forest-700 text-white border-forest-700 hover:bg-forest-800'
 												: 'bg-white text-brown-600 hover:bg-sand-100 border-sand-300'
 										} shadow-sm border`}
 									>
-										{filter}
+										{filter.label}
 									</button>
 								))}
 							</div>
@@ -434,9 +218,9 @@ function LandingPage() {
 													<h3 className="font-display text-lg font-medium tracking-tight text-brown-900 transition-colors group-hover:text-forest-700">
 														{result.title}
 													</h3>
-													{result.short_description && (
+													{result.shortDescription && (
 														<p className="mt-1 text-sm leading-relaxed text-brown-600 line-clamp-2">
-															{result.short_description}
+															{result.shortDescription}
 														</p>
 													)}
 												</div>

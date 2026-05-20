@@ -5,7 +5,7 @@ type Competency = {
 
 type AnswerOption = {
 	answer: string
-	weight: number
+	weight: boolean
 }
 
 type QuestionnaireItem = {
@@ -42,7 +42,7 @@ function AssessmentLayout({
 	children,
 }: AssessmentLayoutProps) {
 	const selectedCompetencies = selectedGroup?.competencies ?? []
-
+	
 	return (
 		<main className="assessment-page">
 			<div className="assessment-panel">

@@ -1,61 +1,188 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import {
-	getCompetencyGroups,
-	getCompetencyGroupQuestionnaire,
-} from '../../features/competencies/api/competencyGroups'
-import { getCompetencyRecommendations, generateLearningPath } from '../../features/learning-paths/api/learningPaths'
+import { useSearchParams } from 'react-router-dom'
 import womanImage from '../../../public/woman.png'
 import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
 import AssessmentLayout from '../../features/questionnaire/components/AssessmentLayout'
 import AssessmentHeader from '../../features/questionnaire/components/AssessmentHeader'
 import AssessmentIntro from '../../features/questionnaire/components/AssessmentIntro'
-import AssessmentOptions from '../../features/questionnaire/components/AssessmentOptions'
 import AssessmentContextBox from '../../features/questionnaire/components/AssessmentContextBox'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
 import QuestionnaireQuestion from '../../features/questionnaire/components/QuestionnaireQuestion'
 import { getAssessmentVoice } from '../../features/questionnaire/utils/assessmentVoice'
 import { useAudioPlayer } from '../../features/questionnaire/hooks/useAudioPlayer'
+import AssessmentJourneyResult from '../../features/questionnaire/components/AssessmentJourneyResult'
 import './Assessment.css'
 
-type Competency = {
-        competency_id: string
-        title?: string
-}
+type QuestionnaireTargetType = 'learning_unit' | 'module' | 'learning_path'
 
 type AnswerOption = {
 	answer: string
-	weight: number
+	weight: boolean
+}
+
+type BackendQuestion = {
+	id: string
+	question: string
+	type: 'yes_no'
+	learning_unit_id: string
+	related_skill: string
 }
 
 type QuestionnaireItem = {
+	id: string
 	question: string
+	type: 'yes_no'
+	learning_unit_id: string
+	related_skill: string
 	answers: AnswerOption[]
+}
+
+type QuestionnaireResponse = {
+	target_type: QuestionnaireTargetType
+	target_id: string
+	title: string
+	questions: BackendQuestion[]
+}
+
+type AssessmentResult = {
+	user_id: string
+	target_type: QuestionnaireTargetType
+	target_id: string
+	start_module_id: string | null
+	start_learning_unit_id: string | null
+	skipped_modules: string[]
+	skipped_learning_units: string[]
+	recommended_next_modules: string[]
+	recommended_next_learning_units: string[]
+	summary: string
 }
 
 type CompetencyGroup = {
 	_id: string
 	title: string
 	description?: string
-	competencies?: Competency[]
+	competencies?: {
+		competency_id: string
+		title?: string
+	}[]
+}
+
+type ModuleDetail = {
+	_id: string
+	title: string
+	short_description: string
+	duration_min: number
+	learning_units: {
+		learning_unit_id: string
+		order: number
+		parallel_group: string | null
+		is_required: boolean
+		prerequisites: string[]
+	}[]
+	learning_unit_details: {
+		_id: string
+		title: string
+		short_description: string
+		duration_min: number
+		keywords: string[]
+		skills: string[]
+	}[]
 }
 
 type AssessmentPhase = 'group-selection' | 'questionnaire' | 'completed'
 
+const API_BASE_URL = 'http://127.0.0.1:8000/api'
+const USER_ID = 'user_001'
+
+const yesNoAnswers: AnswerOption[] = [
+	{ answer: 'Da', weight: true },
+	{ answer: 'Ne', weight: false },
+]
+
+function normalizeTargetType(value: string | null): QuestionnaireTargetType {
+	if (
+		value === 'learning_unit' ||
+		value === 'module' ||
+		value === 'learning_path'
+	) {
+		return value
+	}
+
+	return 'module'
+}
+
+async function getModuleDetail(moduleId: string): Promise<ModuleDetail> {
+	const response = await fetch(`${API_BASE_URL}/modules/${moduleId}/detail`)
+
+	if (!response.ok) {
+		throw new Error('Podrobnosti modula ni bilo mogoče naložiti.')
+	}
+
+	return response.json()
+}
+
+async function getQuestionnaire(
+	targetType: QuestionnaireTargetType,
+	targetId: string,
+): Promise<QuestionnaireResponse> {
+	const response = await fetch(
+		`${API_BASE_URL}/questionnaires?target_type=${targetType}&target_id=${targetId}`,
+	)
+
+	if (!response.ok) {
+		throw new Error('Vprašalnika ni bilo mogoče naložiti.')
+	}
+
+	return response.json()
+}
+
+async function evaluateAssessment(payload: {
+	user_id: string
+	target_type: QuestionnaireTargetType
+	target_id: string
+	answers: {
+		question_id: string
+		learning_unit_id: string
+		answer: boolean
+	}[]
+}): Promise<AssessmentResult> {
+	const response = await fetch(`${API_BASE_URL}/assessments/evaluate`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(payload),
+	})
+
+	if (!response.ok) {
+		throw new Error('Ocene ni bilo mogoče poslati.')
+	}
+
+	return response.json()
+}
+
 function Assessment() {
-	const navigate = useNavigate()
-	const [phase, setPhase] = useState<AssessmentPhase>('group-selection')
-	const [competencyGroups, setCompetencyGroups] = useState<CompetencyGroup[]>([])
-	const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
+	const [searchParams] = useSearchParams()
+
+	const targetType = normalizeTargetType(searchParams.get('target_type'))
+	const targetId = searchParams.get('target_id') ?? 'mod_002'
+
+	const [phase, setPhase] = useState<AssessmentPhase>('questionnaire')
+	const [questionnaireTitle, setQuestionnaireTitle] = useState('')
 	const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([])
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 	const [selectedAnswers, setSelectedAnswers] = useState<Record<number, AnswerOption>>({})
-	const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(false)
-	const [isGeneratingPath, setIsGeneratingPath] = useState(false)
+	const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null)
+	const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(true)
+	const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false)
 	const [error, setError] = useState<string | null>(null)
+
+	const [isChatOpen, setIsChatOpen] = useState(false)
+	const [moduleDetail, setModuleDetail] = useState<ModuleDetail | null>(null)
+
 	const currentAudioSrc = getAssessmentVoice({
 		phase,
-		groupId: selectedGroupId,
+		groupId: targetId,
 		questionIndex: currentQuestionIndex,
 	})
 
@@ -65,87 +192,85 @@ function Assessment() {
 		hasAudio,
 	} = useAudioPlayer(currentAudioSrc)
 
-	const selectedGroup = useMemo(() => {
-		if (!selectedGroupId) return undefined
+	const selectedGroup = useMemo<CompetencyGroup | undefined>(() => {
+		if (!questionnaireTitle) return undefined
 
-		return competencyGroups.find((group) => group._id === selectedGroupId)
-	}, [competencyGroups, selectedGroupId])
+		return {
+			_id: targetId,
+			title: questionnaireTitle,
+			description: `Vprašalnik za ${targetType}`,
+			competencies: [],
+		}
+	}, [questionnaireTitle, targetId, targetType])
 
 	const currentQuestion = questionnaire[currentQuestionIndex]
 	const selectedAnswer = selectedAnswers[currentQuestionIndex]
 
-	const totalSteps =
-		phase === 'group-selection'
-			? 1
-			: questionnaire.length + 1
-
+	const totalSteps = questionnaire.length || 1
 	const currentStepNumber =
-		phase === 'group-selection'
-			? 1
-			: currentQuestionIndex + 2
+		phase === 'completed'
+			? totalSteps
+			: Math.min(currentQuestionIndex + 1, totalSteps)
 
-	const currentLabel =
-		phase === 'group-selection'
-			? assessmentCopy.groupSelection.label
-			: assessmentCopy.questionnaire.label
+	const currentLabel = assessmentCopy.questionnaire.label
 
 	const currentTitle =
-		phase === 'group-selection'
-			? assessmentCopy.groupSelection.title
-			: currentQuestion?.question ?? 'Vprašanje ni na voljo.'
+		phase === 'completed'
+			? ''
+			: currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
 	const currentDescription =
-		phase === 'group-selection'
-			? assessmentCopy.groupSelection.description
+		phase === 'completed'
+			? ''
 			: assessmentCopy.questionnaire.description
 
-	const canGoPrevious = phase === 'questionnaire' || phase === 'completed'
+	const canGoPrevious =
+		phase === 'completed' || (phase === 'questionnaire' && currentQuestionIndex > 0)
 
 	const canGoNext =
-		phase === 'group-selection'
-			? Boolean(selectedGroupId) && !isLoadingQuestionnaire
-			: phase === 'questionnaire'
-				? Boolean(selectedAnswer)
-				: phase === 'completed'
-					? !isGeneratingPath
-					: false
+		phase === 'questionnaire'
+			? Boolean(selectedAnswer) && !isSubmittingAssessment
+			: false
 
 	const nextButtonLabel =
-		phase === 'group-selection' && isLoadingQuestionnaire
-			? 'Nalaganje...'
-			: phase === 'questionnaire' &&
-					currentQuestionIndex === questionnaire.length - 1
+		isSubmittingAssessment
+			? 'Pošiljanje ...'
+			: currentQuestionIndex === questionnaire.length - 1
 				? 'Zaključi →'
-				: phase === 'completed'
-					? (isGeneratingPath ? 'Generiranje...' : 'Ustvari učno pot →')
-					: 'Naslednjo →'
+				: 'Naslednjo →'
 
 	useEffect(() => {
-		const loadCompetencyGroups = async () => {
-			try {
-				const data = await getCompetencyGroups()
+		async function loadQuestionnaire() {
+			setIsLoadingQuestionnaire(true)
+			setError(null)
 
-				setCompetencyGroups(data)
-				setSelectedGroupId(null)
-				setQuestionnaire([])
+			try {
+				const data = await getQuestionnaire(targetType, targetId)
+				if (targetType === 'module') {
+					const detail = await getModuleDetail(targetId)
+					setModuleDetail(detail)
+				}
+				setQuestionnaireTitle(data.title)
+				setQuestionnaire(
+					data.questions.map((question) => ({
+						...question,
+						answers: yesNoAnswers,
+					})),
+				)
 				setCurrentQuestionIndex(0)
 				setSelectedAnswers({})
-				setPhase('group-selection')
+				setAssessmentResult(null)
+				setPhase('questionnaire')
 			} catch (error) {
-				setError('Podatkov ni bilo mogoče naložiti.')
 				console.error(error)
+				setError('Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.')
+			} finally {
+				setIsLoadingQuestionnaire(false)
 			}
 		}
 
-		loadCompetencyGroups()
-	}, [])
-
-	function handleSelectGroup(groupId: string) {
-		setSelectedGroupId(groupId)
-		setQuestionnaire([])
-		setCurrentQuestionIndex(0)
-		setSelectedAnswers({})
-	}
+		loadQuestionnaire()
+	}, [targetType, targetId])
 
 	function handleSelectAnswer(answer: AnswerOption) {
 		setSelectedAnswers((currentAnswers) => ({
@@ -154,88 +279,45 @@ function Assessment() {
 		}))
 	}
 
-	async function loadQuestionnaireForSelectedGroup() {
-		if (!selectedGroupId) return
-
-		setIsLoadingQuestionnaire(true)
+	async function submitAssessment() {
+		setIsSubmittingAssessment(true)
+		setError(null)
 
 		try {
-			const data = await getCompetencyGroupQuestionnaire(selectedGroupId)
+			const answers = questionnaire.map((question, index) => ({
+				question_id: question.id,
+				learning_unit_id: question.learning_unit_id,
+				answer: selectedAnswers[index]?.weight ?? false,
+			}))
 
-			const fetchedQuestionnaire = Array.isArray(data)
-				? data
-				: data.questionnaire ?? []
+			const result = await evaluateAssessment({
+				user_id: USER_ID,
+				target_type: targetType,
+				target_id: targetId,
+				answers,
+			})
 
-			setQuestionnaire(fetchedQuestionnaire)
-			setCurrentQuestionIndex(0)
-			setSelectedAnswers({})
-			setPhase('questionnaire')
+			setAssessmentResult(result)
+			setPhase('completed')
 		} catch (error) {
-			setError('Vprašalnika ni bilo mogoče naložiti.')
 			console.error(error)
+			setError('Napaka pri pošiljanju vprašalnika. Preverite, če backend deluje.')
 		} finally {
-			setIsLoadingQuestionnaire(false)
+			setIsSubmittingAssessment(false)
 		}
 	}
 
 	async function goToNextStep() {
-		if (phase === 'group-selection') {
-			if (!selectedGroupId) return
+		if (phase !== 'questionnaire' || !selectedAnswer) return
 
-			await loadQuestionnaireForSelectedGroup()
+		const isLastQuestion = currentQuestionIndex >= questionnaire.length - 1
+
+		if (isLastQuestion) {
+			await submitAssessment()
 			return
 		}
 
-		if (phase === 'questionnaire') {
-			if (!selectedAnswer) return
-
-			const isLastQuestion = currentQuestionIndex >= questionnaire.length - 1
-
-			if (isLastQuestion) {
-				setPhase('completed')
-
-				console.log('Assessment result:', {
-					selectedGroup,
-					selectedAnswers,
-				})
-
-				return
-			}
-
-			setCurrentQuestionIndex((index) => index + 1)
-		}
-
-		if (phase === 'completed') {
-			if (!selectedGroupId) return;
-			setIsGeneratingPath(true);
-			setError(null);
-			try {
-				const answersPayload = questionnaire.map((item, index) => {
-					const answerObj = selectedAnswers[index];
-					const answerIndex = item.answers.findIndex(a => a.answer === answerObj.answer);
-					return {
-						question_index: index,
-						answer_index: answerIndex !== -1 ? answerIndex : 0
-					};
-				});
-
-				const recommendation = await getCompetencyRecommendations(selectedGroupId, answersPayload);
-				
-				if (recommendation.recommended_competencies && recommendation.recommended_competencies.length > 0) {
-					const firstRec = recommendation.recommended_competencies[0];
-					const learningPath = await generateLearningPath(firstRec.competency_id, firstRec.level);
-					
-					navigate('/path', { state: { learningPath } });
-				} else {
-					setError('Ni bilo mogoče najti priporočenih kompetenc.');
-				}
-			} catch (err) {
-				console.error(err);
-				setError('Napaka pri generiranju učne poti. Preverite, če strežnik deluje.');
-			} finally {
-				setIsGeneratingPath(false);
-			}
-		}
+		setCurrentQuestionIndex((index) => index + 1)
 	}
 
 	function goToPreviousStep() {
@@ -245,18 +327,17 @@ function Assessment() {
 			return
 		}
 
-		if (phase === 'questionnaire') {
-			if (currentQuestionIndex === 0) {
-				setPhase('group-selection')
-				return
-			}
-
+		if (phase === 'questionnaire' && currentQuestionIndex > 0) {
 			setCurrentQuestionIndex((index) => index - 1)
 		}
 	}
 
 	if (error) {
 		return <p>{error}</p>
+	}
+
+	if (isLoadingQuestionnaire) {
+		return <p>Nalaganje vprašalnika ...</p>
 	}
 
 	return (
@@ -278,25 +359,9 @@ function Assessment() {
 			/>
 
 			<AssessmentIntro
-				title={
-					phase === 'completed'
-						? 'Hvala, vprašalnik je zaključen.'
-						: currentTitle
-				}
-				description={
-					phase === 'completed'
-						? 'Na podlagi odgovorov lahko zdaj pripravimo priporočeno učno pot.'
-						: currentDescription
-				}
+				title={currentTitle}
+				description={currentDescription}
 			/>
-
-			{phase === 'group-selection' && (
-				<AssessmentOptions
-					groups={competencyGroups}
-					selectedGroupId={selectedGroupId}
-					onSelectGroup={handleSelectGroup}
-				/>
-			)}
 
 			{phase === 'questionnaire' && currentQuestion && (
 				<QuestionnaireQuestion
@@ -307,24 +372,24 @@ function Assessment() {
 			)}
 
 			{phase === 'completed' && (
-				<div className="assessment-summary">
-					<h2>Izbrana skupina</h2>
-					<p>{selectedGroup?.title}</p>
-
-					<h2>Vaši odgovori</h2>
-
-					<ul>
-						{questionnaire.map((item, index) => (
-							<li key={item.question}>
-								<strong>{item.question}</strong>
-								<span>{selectedAnswers[index]?.answer ?? 'Brez odgovora'}</span>
-							</li>
-						))}
-					</ul>
-				</div>
+				<AssessmentJourneyResult
+					title={questionnaireTitle}
+					result={assessmentResult}
+					moduleDetail={moduleDetail}
+				/>
 			)}
 
-			<AssessmentContextBox />
+			<div className="assessment-chat-toggle">
+				<button
+					type="button"
+					className="assessment-chat-toggle__button"
+					onClick={() => setIsChatOpen((value) => !value)}
+				>
+					{isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
+				</button>
+
+				{isChatOpen && <AssessmentContextBox />}
+			</div>
 
 			<AssessmentActions
 				canGoPrevious={canGoPrevious}

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import type {SearchResult}  from "../types/domain";
+import { searchFilters } from '../pages/LandingPage/constants';
 
 export function useSearch() {
 	const [isSearchActive, setIsSearchActive] = useState(false)
-	const [activeFilter, setActiveFilter] = useState('Vse')
+	const [activeFilter, setActiveFilter] = useState(searchFilters[0].label)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [searchResults, setSearchResults] = useState<SearchResult[]>([])
 	const [isSearching, setIsSearching] = useState(false)
@@ -15,19 +16,23 @@ export function useSearch() {
 		const timeoutId = setTimeout(async () => {
 			setIsSearching(true)
 			try {
-				let url = `http://localhost:8000/api/search?query=${encodeURIComponent(searchQuery)}`
-				if (activeFilter === 'Moduli') {
-					url += `&types=module`
-				} else if (activeFilter === 'Učne poti') {
-					url += `&types=learning_path`
-				} else if (activeFilter === 'Učne enote') {
-					url += `&types=learning_unit`
+				const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+				let url = `${baseUrl}/api/search?query=${encodeURIComponent(searchQuery)}`
+				
+				const filterDef = searchFilters.find(f => f.label === activeFilter);
+				if (filterDef && filterDef.value) {
+					url += `&types=${filterDef.value}`
 				}
 
 				const response = await fetch(url)
 				const data = await response.json()
 				if (data.results) {
-					setSearchResults(data.results)
+					// Map snake_case from backend to camelCase for frontend, makes sense for constant naming (db uses snake_case, frontend uses camelCase)
+					const mappedResults = data.results.map((r: any) => ({
+						...r,
+						shortDescription: r.short_description
+					}));
+					setSearchResults(mappedResults)
 				}
 			} catch (error) {
 				console.error('Failed to fetch search results', error)

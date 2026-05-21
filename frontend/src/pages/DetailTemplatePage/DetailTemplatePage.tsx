@@ -1,54 +1,113 @@
+import {
+  DetailHero,
+  DetailMeta,
+  DetailPageShell,
+  DetailRouteMap,
+  DetailSection,
+  DetailTags,
+} from '../../components/detail'
+import { AssistantChat } from '../../features/assistant'
+
 function DetailTemplatePage() {
   return (
-    <main className="min-h-screen bg-sand-50 px-6 py-12 text-brown-900">
-      <div className="mx-auto max-w-5xl space-y-8">
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-forest-600">
-            Detail template
-          </p>
-          <h1 className="font-display text-4xl font-bold">
-            Predloga za detail strani
-          </h1>
-          <p className="mt-4 max-w-3xl text-brown-600">
-            Ta stran je referenca za prihodnje strani s podrobnostmi učne poti,
-            modula in učne enote. Namenjena je samo dogovoru o strukturi, ne
-            končnemu dizajnu.
-          </p>
-        </section>
+    <DetailPageShell
+      sidebar={
+        <AssistantChat
+          contextType="general"
+          title="Pomočnik za detail stran"
+        />
+      }
+    >
+      <DetailHero
+        eyebrow="Detail template"
+        title="Predloga za detail strani"
+        description="Ta stran prikazuje dogovorjeno strukturo za prihodnje strani s podrobnostmi učne poti, modula in učne enote."
+      >
+        <DetailMeta
+          items={[
+            { label: 'Tip strani', value: 'Template' },
+            { label: 'Namen', value: 'Referenca' },
+            { label: 'Status', value: 'Osnova' },
+          ]}
+        />
+      </DetailHero>
 
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <h2 className="font-display text-2xl font-semibold">Hero sekcija</h2>
-          <p className="mt-2 text-brown-600">
-            Tukaj bodo naslov, kratek opis, trajanje, ključne besede in osnovne
-            akcije.
-          </p>
-        </section>
+      <DetailSection
+        title="Ključne besede"
+        description="Primer prikaza ključnih besed, ki se lahko uporabijo pri učni poti, modulu ali učni enoti."
+      >
+        <DetailTags
+          tags={[
+            'digitalne kompetence',
+            'učna pot',
+            'modul',
+            'učna enota',
+          ]}
+        />
+      </DetailSection>
 
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <h2 className="font-display text-2xl font-semibold">Pot vsebine</h2>
-          <p className="mt-2 text-brown-600">
-            Za učno pot bo tukaj prikaz modulov. Za modul bo tukaj prikaz učnih
-            enot. Za učno enoto bodo tukaj lahko prikazane spretnosti ali
-            vprašanja za samooceno.
-          </p>
-        </section>
+      <DetailSection
+        title="Pot vsebine"
+        description="Za učno pot bodo tukaj prikazani moduli. Za modul bodo tukaj prikazane učne enote."
+      >
+        <DetailRouteMap
+          items={[
+            {
+              id: 'step-1',
+              title: 'Prvi korak',
+              description: 'Primer prvega elementa v poti.',
+              order: 1,
+              isRequired: true,
+              status: 'completed',
+            },
+            {
+              id: 'step-2',
+              title: 'Drugi korak',
+              description: 'Primer trenutnega elementa v poti.',
+              order: 2,
+              isRequired: true,
+              status: 'current',
+            },
+            {
+              id: 'step-3',
+              title: 'Tretji korak',
+              description: 'Primer naslednjega elementa v poti.',
+              order: 3,
+              isRequired: false,
+              status: 'available',
+            },
+          ]}
+        />
+      </DetailSection>
 
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <h2 className="font-display text-2xl font-semibold">Glavna vsebina</h2>
-          <p className="mt-2 text-brown-600">
-            Tukaj pridejo specifični podatki za izbrano vsebino.
-          </p>
-        </section>
+      <DetailSection
+        title="Glavna vsebina"
+        description="Tukaj bodo specifični podatki glede na tip vsebine."
+      >
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl bg-sand-50 p-4">
+            <h3 className="font-semibold text-brown-900">Učna pot</h3>
+            <p className="mt-2 text-sm text-brown-600">
+              Prikazuje module, trajanje in priporočeno zaporedje.
+            </p>
+          </div>
 
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <h2 className="font-display text-2xl font-semibold">Assistant</h2>
-          <p className="mt-2 text-brown-600">
-            Tukaj bo kasneje ponovno uporabljiv LLM chat za kontekst učne poti,
-            modula ali učne enote.
-          </p>
-        </section>
-      </div>
-    </main>
+          <div className="rounded-2xl bg-sand-50 p-4">
+            <h3 className="font-semibold text-brown-900">Modul</h3>
+            <p className="mt-2 text-sm text-brown-600">
+              Prikazuje učne enote, pogoje in vrstni red.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-sand-50 p-4">
+            <h3 className="font-semibold text-brown-900">Učna enota</h3>
+            <p className="mt-2 text-sm text-brown-600">
+              Prikazuje spretnosti in vprašanja za samooceno.
+            </p>
+          </div>
+        </div>
+      </DetailSection>
+    </DetailPageShell>
   )
 }
 

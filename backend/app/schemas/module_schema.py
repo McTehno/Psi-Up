@@ -1,5 +1,6 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.learning_unit_schema import LearningUnitReferenceResponse
 
@@ -15,12 +16,12 @@ class ModuleResponse(BaseModel):
     id: str = Field(alias="_id")
     title: str
     short_description: str
-    duration_min: Optional[int] = None
+    duration_hours: Optional[float] = None
     keywords: List[str] = Field(default_factory=list)
     domains: List[str] = Field(default_factory=list)
     learning_units: List[LearningUnitReferenceResponse] = Field(default_factory=list)
 
-    model_config = ConfigDict(populate_by_name=True) # pomeni, da lahko schema sprejme podatke tako z imenom polja kot tudi z aliasom.
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class ModuleReferenceResponse(BaseModel):
@@ -37,5 +38,5 @@ class ModuleReferenceResponse(BaseModel):
     parallel_group: Optional[str] = None
     is_required: bool = True
 
-    #primer  "prerequisites": ["mod_003", "mod_004"]
+    # primer: "prerequisites": ["mod_003", "mod_004"]
     prerequisites: List[str] = Field(default_factory=list)

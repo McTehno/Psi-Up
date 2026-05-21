@@ -20,13 +20,13 @@ class LearningUnitAssessmentResult(BaseModel):
     """
     Shema za rezultat ocenjevanja posamezne učne enote.
 
-    Uporabi se za določanje, ali uporabnik določeno učno enoto že zna
+    Uporabi se za določanje, ali uporabnik določeno učno enoto že pozna
     ali jo mora še opraviti.
     """
 
     learning_unit_id: str
-    known_skills: List[str] = Field(default_factory=list)
-    missing_skills: List[str] = Field(default_factory=list)
+    known_topics: List[str] = Field(default_factory=list)
+    missing_topics: List[str] = Field(default_factory=list)
     is_completed_by_assessment: bool = False
 
 

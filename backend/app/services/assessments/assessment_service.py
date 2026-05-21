@@ -37,8 +37,8 @@ class AssessmentService:
         Oceni odgovore uporabnika in določi začetno točko.
 
         Logika:
-        - true pomeni, da uporabnik spretnost zna,
-        - false pomeni, da uporabniku spretnost manjka,
+        - true pomeni, da uporabnik temo zna oziroma potrdi,
+        - false pomeni, da uporabniku tema manjka,
         - učna enota je opravljena, če so vsa njena vprašanja odgovorjena true.
         """
 
@@ -315,8 +315,8 @@ class AssessmentService:
 
         questions = learning_unit.get("self_assessment_questions", [])
 
-        known_skills: List[str] = []
-        missing_skills: List[str] = []
+        known_topics: List[str] = []
+        missing_topics: List[str] = []
 
         answer_map = {
             answer.get("question_id"): answer.get("answer")
@@ -325,18 +325,18 @@ class AssessmentService:
 
         for question in questions:
             question_id = question.get("id")
-            related_skill = question.get("related_skill")
+            related_topic = question.get("related_topic")
 
             answer_value = answer_map.get(question_id)
 
             if answer_value is True:
-                if related_skill:
-                    known_skills.append(related_skill)
+                if related_topic:
+                    known_topics.append(related_topic)
             else:
-                if related_skill:
-                    missing_skills.append(related_skill)
+                if related_topic:
+                    missing_topics.append(related_topic)
 
-        is_completed_by_assessment = bool(questions) and len(missing_skills) == 0
+        is_completed_by_assessment = bool(questions) and len(missing_topics) == 0
 
         start_learning_unit_id = None if is_completed_by_assessment else learning_unit_id
 
@@ -362,8 +362,8 @@ class AssessmentService:
             "learning_unit_results": [
                 {
                     "learning_unit_id": learning_unit_id,
-                    "known_skills": known_skills,
-                    "missing_skills": missing_skills,
+                    "known_topics": known_topics,
+                    "missing_topics": missing_topics,
                     "is_completed_by_assessment": is_completed_by_assessment,
                 }
             ],

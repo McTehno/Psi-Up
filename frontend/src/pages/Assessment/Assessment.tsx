@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import womanImage from '../../../public/woman.png'
+import womanImage from '../../assets/woman.png'
 import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
 import AssessmentLayout from '../../features/questionnaire/components/AssessmentLayout'
 import AssessmentHeader from '../../features/questionnaire/components/AssessmentHeader'

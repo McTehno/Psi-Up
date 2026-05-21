@@ -18,7 +18,7 @@ function AssessmentHeader({
 	return (
 		<header className="assessment-header">
 			<div className="assessment-step">
-				<span className="assessment-step__icon">◌</span>
+				<span className="assessment-step__icon">ⓘ</span>
 				<span>
 					Korak {stepNumber} od {totalSteps}
 				</span>

@@ -1,8 +1,8 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
-import LandingPage from '../pages/LandingPage';
-import Assessment from '../pages/Assessment/Assessment';
-import PathResultPage from '../pages/PathResultPage';
-import AdvancedSearchPage from '../pages/AdvancedSearchPage';
+import HomePage from '../pages/HomePage';
+import QuestionnairePage from '../pages/QuestionnairePage';
+import PathResultPage from '../pages/PathResultPage/PathResultPage';
+import SearchPage from '../pages/SearchPage';
 import { SearchProvider } from '../contexts/SearchContext';
 
 function RootLayout() {
@@ -20,15 +20,15 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LandingPage />,
+        element: <HomePage />,
       },
       {
         path: 'search',
-        element: <AdvancedSearchPage />,
+        element: <SearchPage />,
       },
       {
         path: 'assessment',
-        element: <Assessment />,
+        element: <QuestionnairePage />,
       },
       {
         path: 'path',

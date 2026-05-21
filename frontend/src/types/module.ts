@@ -1,4 +1,7 @@
-import type { LearningUnitReferenceResponse } from './learning-unit'
+import type {
+  LearningUnitReferenceResponse,
+  LearningUnitResponse,
+} from './learning-unit'
 
 export type ModuleResponse = {
   id: string
@@ -8,6 +11,7 @@ export type ModuleResponse = {
   keywords: string[]
   domains: string[]
   learning_units: LearningUnitReferenceResponse[]
+  learning_unit_details?: LearningUnitResponse[]
 }
 
 export type ModuleReferenceResponse = {

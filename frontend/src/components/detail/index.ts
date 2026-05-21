@@ -1,0 +1,7 @@
+export { default as DetailPageShell } from './DetailPageShell'
+export { default as DetailHero } from './DetailHero'
+export { default as DetailMeta } from './DetailMeta'
+export { default as DetailTags } from './DetailTags'
+export { default as DetailSection } from './DetailSection'
+export { default as DetailActions } from './DetailActions'
+export { default as DetailRouteMap } from './DetailRouteMap'

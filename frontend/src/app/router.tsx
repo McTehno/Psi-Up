@@ -4,6 +4,12 @@ import QuestionnairePage from '../pages/QuestionnairePage';
 import PathResultPage from '../pages/PathResultPage/PathResultPage';
 import SearchPage from '../pages/SearchPage';
 import { SearchProvider } from '../contexts/SearchContext';
+import DetailTemplatePage from '../pages/DetailTemplatePage'
+import LearningPathDetailPage from '../pages/LearningPathDetailPage'
+import ModuleDetailPage from '../pages/ModuleDetailPage'
+import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
+
+
 
 function RootLayout() {
   return (
@@ -33,6 +39,22 @@ export const router = createBrowserRouter([
       {
         path: 'path',
         element: <PathResultPage />,
+      },
+      {
+        path: 'detail-template',
+        element: <DetailTemplatePage />,
+      },
+      {
+        path: 'learning-paths/:learningPathId',
+        element: <LearningPathDetailPage />,
+      },
+      {
+        path: 'modules/:moduleId',
+        element: <ModuleDetailPage />,
+      },
+      {
+        path: 'learning-units/:learningUnitId',
+        element: <LearningUnitDetailPage />,
       },
     ],
   },

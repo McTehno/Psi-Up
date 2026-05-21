@@ -3,7 +3,7 @@
     "_id": "up_001",
     "title": "Iskanje informacij z umetno inteligenco",
     "short_description": "Učna pot za uporabo umetne inteligence pri iskanju in razumevanju informacij.",
-    "duration_min": 255,
+    "duration_hours": 4.25,
     "keywords": ["umetna inteligenca", "UI", "iskanje informacij", "GenUI"],
     "modules": [
       {
@@ -26,7 +26,7 @@
     "_id": "up_002",
     "title": "Ustvarjanje vrtilnih tabel v Excel",
     "short_description": "Učna pot za pripravo podatkov in uporabo vrtilnih tabel v Excelu.",
-    "duration_min": 335,
+    "duration_hours": 14.5,
     "keywords": ["Excel", "vrtilne tabele", "podatki", "analiza"],
     "modules": [
       {
@@ -63,7 +63,7 @@
     "_id": "up_003",
     "title": "Ustvarjanje grafov v Excel",
     "short_description": "Učna pot za pripravo podatkov in izdelavo grafov v Excelu.",
-    "duration_min": 285,
+    "duration_hours": 12.5,
     "keywords": ["Excel", "grafi", "vizualizacija podatkov", "predstavitev"],
     "modules": [
       {

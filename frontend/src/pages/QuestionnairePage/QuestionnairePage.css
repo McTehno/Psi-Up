@@ -513,25 +513,6 @@
 	font-size: 16px;
 }
 
-.assessment-journey__mountain {
-	position: relative;
-	min-height: clamp(520px, 42vw, 620px);
-	border-radius: 24px;
-	overflow: hidden;
-	background-color: #f7f1e6;
-	background-image:
-		linear-gradient(
-			to bottom,
-			rgba(255, 250, 242, 0.02),
-			rgba(255, 250, 242, 0.1)
-		),
-		url('../../assets/mountain-journey-bg.png');
-	background-size: 100% auto;
-	background-position: center bottom;
-	background-repeat: no-repeat;
-	border: 1px solid rgba(47, 74, 49, 0.12);
-}
-
 .assessment-journey__path {
 	position: absolute;
 	inset: 0;
@@ -618,6 +599,7 @@
 .journey-step {
 	position: absolute;
 	z-index: 2;
+	width: 220px;
 	max-width: 220px;
 	color: #2f4a31;
 	background: transparent;
@@ -631,11 +613,26 @@
 		filter 0.2s ease;
 }
 
-.journey-step:hover {
+.journey-step:hover,
+.journey-step:focus-visible {
 	transform: translate(-23px, -27px);
 }
 
+.journey-step--label-above {
+  transform: translate(-23px, calc(-100% + 23px));
+}
+
+.journey-step--label-above:hover {
+  transform: translate(-23px, calc(-100% + 19px));
+}
+
+.journey-step--label-above span {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
 .journey-step span {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -653,47 +650,95 @@
 
 .journey-step strong {
 	display: block;
-	font-size: 20px;
+	max-width: 210px;
+	font-size: 18px;
 	line-height: 1.15;
-	margin-bottom: 6px;
+	margin-bottom: 5px;
+	color: #2f4a31;
+	text-wrap: balance;
 }
 
 .journey-step p {
+	max-width: 210px;
 	color: #4f594d;
 	font-size: 14px;
 	line-height: 1.35;
 	margin: 0;
 }
 
-.journey-step--selected span {
-	outline: 4px solid rgba(47, 74, 49, 0.18);
-}
-
-.journey-step--selected strong {
-	text-decoration: underline;
-	text-underline-offset: 4px;
-}
-
 .journey-step--skipped span {
-	background: rgba(255, 250, 242, 0.92);
-	color: #7b766c;
+  background: #31583b;
+  color: #fffdf8;
+  border-color: #fffdf8;
+  box-shadow:
+    0 8px 22px rgba(49, 88, 59, 0.28),
+    0 0 0 5px rgba(49, 88, 59, 0.12);
+}
+
+.journey-step--skipped span::after {
+  content: '✓';
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fffdf8;
+  color: #31583b;
+  border: 2px solid #31583b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.journey-step--skipped strong,
+.journey-step--skipped p {
+  color: #31583b;
 }
 
 .journey-step--current span {
-	background: #2f4a31;
-	color: #fffaf2;
-	border-color: #fffaf2;
+  background: #8d5033;
+  color: #fffdf8;
+  border-color: #fffdf8;
+  box-shadow:
+    0 10px 28px rgba(141, 80, 51, 0.34),
+    0 0 0 7px rgba(141, 80, 51, 0.16);
+}
+
+.journey-step--current strong {
+  color: #8d5033;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.journey-step--current p {
+  color: #5c4a35;
 }
 
 .journey-step--recommended span {
-	background: #8fa38f;
-	color: #fffaf2;
-	border-color: #fffaf2;
+  background: #c2b49e;
+  color: #2c2417;
+  border-color: #fffdf8;
+  box-shadow:
+    0 8px 20px rgba(92, 74, 53, 0.18),
+    0 0 0 5px rgba(194, 180, 158, 0.18);
 }
 
 .journey-step--upcoming span {
-	background: #fffaf2;
-	color: #2f4a31;
+  background: rgba(255, 250, 242, 0.92);
+  color: #6d6a61;
+  border-color: rgba(47, 74, 49, 0.16);
+  box-shadow: 0 6px 18px rgba(47, 74, 49, 0.12);
+}
+
+.journey-step--upcoming strong,
+.journey-step--upcoming p {
+  color: #6d6a61;
+}
+
+.journey-step--selected span {
+  outline: 4px solid rgba(141, 80, 51, 0.2);
 }
 
 .assessment-journey-detail {
@@ -732,25 +777,24 @@
 }
 
 .assessment-journey-detail__badge--skipped {
-	background: rgba(123, 118, 108, 0.12);
-	color: #6d6a61;
+  background: rgba(49, 88, 59, 0.14);
+  color: #31583b;
 }
 
 .assessment-journey-detail__badge--current {
-	background: rgba(47, 74, 49, 0.12);
-	color: #2f4a31;
+  background: rgba(141, 80, 51, 0.16);
+  color: #8d5033;
 }
 
 .assessment-journey-detail__badge--recommended {
-	background: rgba(143, 163, 143, 0.18);
-	color: #2f4a31;
+  background: rgba(194, 180, 158, 0.28);
+  color: #5c4a35;
 }
 
 .assessment-journey-detail__badge--upcoming {
-	background: rgba(219, 210, 195, 0.5);
-	color: #5f665d;
+  background: rgba(219, 210, 195, 0.5);
+  color: #6d6a61;
 }
-
 .assessment-journey-detail h3 {
 	margin: 0 0 6px;
 	color: #2f4a31;
@@ -817,4 +861,84 @@
 	.journey-step:hover {
 		transform: translateY(-4px);
 	}
+}
+
+.journey-step--skipped span {
+  background: #31583b;
+  color: #fffaf2;
+  border-color: #fffaf2;
+  box-shadow:
+    0 8px 22px rgba(49, 88, 59, 0.24),
+    0 0 0 4px rgba(49, 88, 59, 0.12);
+}
+
+.journey-step--skipped span::after {
+  content: '✓';
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fffaf2;
+  color: #31583b;
+  border: 2px solid #31583b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.journey-step--current span {
+  background: #8d5033;
+  color: #fffaf2;
+  border-color: #fffaf2;
+  box-shadow:
+    0 10px 26px rgba(141, 80, 51, 0.34),
+    0 0 0 6px rgba(141, 80, 51, 0.16);
+}
+
+.journey-step--recommended span {
+  background: #8fa38f;
+  color: #fffaf2;
+  border-color: #fffaf2;
+  box-shadow:
+    0 8px 20px rgba(47, 74, 49, 0.18),
+    0 0 0 4px rgba(143, 163, 143, 0.16);
+}
+
+.journey-step--upcoming span {
+  background: rgba(255, 250, 242, 0.94);
+  color: #2f4a31;
+  border-color: rgba(47, 74, 49, 0.2);
+  box-shadow: 0 6px 18px rgba(47, 74, 49, 0.12);
+}
+
+.journey-step--selected span {
+  outline: 4px solid rgba(141, 80, 51, 0.18);
+  outline-offset: 3px;
+}
+
+.journey-step--selected strong {
+  text-decoration: none;
+}
+
+.assessment-journey-detail__badge--skipped {
+  background: rgba(49, 88, 59, 0.14);
+  color: #31583b;
+}
+
+.assessment-journey-detail__badge--current {
+  background: rgba(141, 80, 51, 0.16);
+  color: #8d5033;
+}
+
+.assessment-journey-detail__badge--recommended {
+  background: rgba(143, 163, 143, 0.2);
+  color: #2f4a31;
+}
+
+.assessment-journey-detail__badge--upcoming {
+  background: rgba(219, 210, 195, 0.5);
+  color: #5f665d;
 }

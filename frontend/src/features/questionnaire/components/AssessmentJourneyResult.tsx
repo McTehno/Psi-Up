@@ -6,7 +6,7 @@ type ModuleDetail = {
   _id: string
   title: string
   short_description: string
-  duration_min: number
+  duration_hours: number
   learning_units: {
     learning_unit_id: string
     order: number
@@ -18,9 +18,9 @@ type ModuleDetail = {
     _id: string
     title: string
     short_description: string
-    duration_min: number
+    duration_hours: number
     keywords: string[]
-    skills: string[]
+    content_topics: string[]
   }[]
 }
 
@@ -42,8 +42,8 @@ type JourneyStep = {
   number: number
   title: string
   description: string
-  durationMin?: number
-  skills: string[]
+  durationHours?: number
+  contentTopics: string[]
   status: JourneyStepStatus
   position: JourneyPoint
 }
@@ -67,8 +67,32 @@ function shouldShowStepLabelAbove(position: JourneyPoint) {
   )
 }
 
+function formatDuration(durationHours?: number | null) {
+  if (!durationHours) {
+    return null
+  }
+
+  if (!Number.isInteger(durationHours)) {
+    return `${durationHours} h`
+  }
+
+  if (durationHours === 1) {
+    return '1 ura'
+  }
+
+  if (durationHours === 2) {
+    return '2 uri'
+  }
+
+  if (durationHours === 3 || durationHours === 4) {
+    return `${durationHours} ure`
+  }
+
+  return `${durationHours} ur`
+}
+
 function getStepDetailText(step: JourneyStep) {
-  return step.durationMin ? `${step.durationMin} min` : step.description
+  return formatDuration(step.durationHours) ?? step.description
 }
 
 function getPointOnJourneyRoute(progress: number): JourneyPoint {
@@ -76,7 +100,7 @@ function getPointOnJourneyRoute(progress: number): JourneyPoint {
   const lowerIndex = Math.floor(exactIndex)
   const upperIndex = Math.min(
     Math.ceil(exactIndex),
-    JOURNEY_ROUTE_POINTS.length - 1,
+    JOURNEY_ROUTE_POINTS.length - 1
   )
   const lowerPoint = JOURNEY_ROUTE_POINTS[lowerIndex]
   const upperPoint = JOURNEY_ROUTE_POINTS[upperIndex]
@@ -142,7 +166,7 @@ function getJourneyPath(points: JourneyPoint[]) {
     }
 
     pathCommands.push(
-      `C ${controlPointOne.x} ${controlPointOne.y}, ${controlPointTwo.x} ${controlPointTwo.y}, ${nextPoint.x} ${nextPoint.y}`,
+      `C ${controlPointOne.x} ${controlPointOne.y}, ${controlPointTwo.x} ${controlPointTwo.y}, ${nextPoint.x} ${nextPoint.y}`
     )
   }
 
@@ -170,18 +194,18 @@ function AssessmentJourneyResult({
       result?.learning_unit_results
         .filter(
           (learningUnitResult) =>
-            learningUnitResult.is_completed_by_assessment,
+            learningUnitResult.is_completed_by_assessment
         )
-        .map((learningUnitResult) => learningUnitResult.learning_unit_id) ?? [],
+        .map((learningUnitResult) => learningUnitResult.learning_unit_id) ?? []
     )
 
     const sortedUnits = [...moduleDetail.learning_units].sort(
-      (a, b) => a.order - b.order,
+      (a, b) => a.order - b.order
     )
 
     return sortedUnits.map((unit, index) => {
       const detail = moduleDetail.learning_unit_details.find(
-        (item) => item._id === unit.learning_unit_id,
+        (item) => item._id === unit.learning_unit_id
       )
 
       const unitId = unit.learning_unit_id
@@ -207,8 +231,8 @@ function AssessmentJourneyResult({
         number: index + 1,
         title: detail?.title ?? unitId,
         description: detail?.short_description ?? 'Opis ni na voljo.',
-        durationMin: detail?.duration_min,
-        skills: detail?.skills ?? [],
+        durationHours: detail?.duration_hours,
+        contentTopics: detail?.content_topics ?? [],
         status,
         position: getStepPosition(index, sortedUnits.length),
       }
@@ -217,7 +241,7 @@ function AssessmentJourneyResult({
 
   const journeyPath = useMemo(
     () => getJourneyPath(steps.map((step) => step.position)),
-    [steps],
+    [steps]
   )
 
   const [selectedStepId, setSelectedStepId] = useState<string | null>(null)
@@ -286,7 +310,7 @@ function AssessmentJourneyResult({
 
         <div>
           <span>Trajanje modula</span>
-          <strong>{moduleDetail.duration_min} min</strong>
+          <strong>{formatDuration(moduleDetail.duration_hours) ?? 'Ni določeno'}</strong>
         </div>
       </div>
 
@@ -308,38 +332,38 @@ function AssessmentJourneyResult({
           </svg>
         )}
 
-		{steps.map((step) => {
-		const showLabelAbove = shouldShowStepLabelAbove(step.position)
+        {steps.map((step) => {
+          const showLabelAbove = shouldShowStepLabelAbove(step.position)
 
-		return (
-			<button
-			key={step.id}
-			type="button"
-			className={`journey-step journey-step--${step.status} ${
-				showLabelAbove ? 'journey-step--label-above' : ''
-			} ${selectedStep.id === step.id ? 'journey-step--selected' : ''}`}
-			style={{
-				left: `${step.position.left}%`,
-				top: `${step.position.top}%`,
-			}}
-			onClick={() => setSelectedStepId(step.id)}
-			>
-			{showLabelAbove ? (
-				<>
-				<strong>{step.title}</strong>
-				<p>{getStepDetailText(step)}</p>
-				<span>{step.number}</span>
-				</>
-			) : (
-				<>
-				<span>{step.number}</span>
-				<strong>{step.title}</strong>
-				<p>{getStepDetailText(step)}</p>
-				</>
-			)}
-			</button>
-		)
-		})}
+          return (
+            <button
+              key={step.id}
+              type="button"
+              className={`journey-step journey-step--${step.status} ${
+                showLabelAbove ? 'journey-step--label-above' : ''
+              } ${selectedStep.id === step.id ? 'journey-step--selected' : ''}`}
+              style={{
+                left: `${step.position.left}%`,
+                top: `${step.position.top}%`,
+              }}
+              onClick={() => setSelectedStepId(step.id)}
+            >
+              {showLabelAbove ? (
+                <>
+                  <strong>{step.title}</strong>
+                  <p>{getStepDetailText(step)}</p>
+                  <span>{step.number}</span>
+                </>
+              ) : (
+                <>
+                  <span>{step.number}</span>
+                  <strong>{step.title}</strong>
+                  <p>{getStepDetailText(step)}</p>
+                </>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       <div className="assessment-journey-detail">
@@ -357,19 +381,19 @@ function AssessmentJourneyResult({
           <h3>{selectedStep.title}</h3>
           <p>{selectedStep.description}</p>
 
-          {selectedStep.durationMin && (
+          {selectedStep.durationHours && (
             <p>
-              <strong>Predvideno trajanje:</strong> {selectedStep.durationMin}{' '}
-              min
+              <strong>Predvideno trajanje:</strong>{' '}
+              {formatDuration(selectedStep.durationHours)}
             </p>
           )}
 
-          {selectedStep.skills.length > 0 && (
+          {selectedStep.contentTopics.length > 0 && (
             <div className="assessment-journey-detail__skills">
-              <strong>Spretnosti:</strong>
+              <strong>Teme:</strong>
               <ul>
-                {selectedStep.skills.map((skill) => (
-                  <li key={skill}>{skill}</li>
+                {selectedStep.contentTopics.map((topic) => (
+                  <li key={topic}>{topic}</li>
                 ))}
               </ul>
             </div>

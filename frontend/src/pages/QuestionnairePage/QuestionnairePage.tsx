@@ -11,6 +11,7 @@ import QuestionnaireQuestion from '../../features/questionnaire/components/Quest
 import { getAssessmentVoice } from '../../features/questionnaire/utils/assessmentVoice'
 import { useAudioPlayer } from '../../features/questionnaire/hooks/useAudioPlayer'
 import AssessmentJourneyResult from '../../features/questionnaire/components/AssessmentJourneyResult'
+import type { AssessmentResultResponse } from '../../types/assessment'
 import './QuestionnairePage.css'
 
 type QuestionnaireTargetType = 'learning_unit' | 'module' | 'learning_path'
@@ -25,7 +26,7 @@ type BackendQuestion = {
 	question: string
 	type: 'yes_no'
 	learning_unit_id: string
-	related_skill: string
+	related_topic?: string | null
 }
 
 type QuestionnaireItem = {
@@ -33,7 +34,7 @@ type QuestionnaireItem = {
 	question: string
 	type: 'yes_no'
 	learning_unit_id: string
-	related_skill: string
+	related_topic?: string | null
 	answers: AnswerOption[]
 }
 
@@ -42,19 +43,6 @@ type QuestionnaireResponse = {
 	target_id: string
 	title: string
 	questions: BackendQuestion[]
-}
-
-type AssessmentResult = {
-	user_id: string
-	target_type: QuestionnaireTargetType
-	target_id: string
-	start_module_id: string | null
-	start_learning_unit_id: string | null
-	skipped_modules: string[]
-	skipped_learning_units: string[]
-	recommended_next_modules: string[]
-	recommended_next_learning_units: string[]
-	summary: string
 }
 
 type CompetencyGroup = {
@@ -71,7 +59,7 @@ type ModuleDetail = {
 	_id: string
 	title: string
 	short_description: string
-	duration_min: number
+	duration_hours: number
 	learning_units: {
 		learning_unit_id: string
 		order: number
@@ -83,9 +71,9 @@ type ModuleDetail = {
 		_id: string
 		title: string
 		short_description: string
-		duration_min: number
+		duration_hours: number
 		keywords: string[]
-		skills: string[]
+		content_topics: string[]
 	}[]
 }
 
@@ -123,10 +111,10 @@ async function getModuleDetail(moduleId: string): Promise<ModuleDetail> {
 
 async function getQuestionnaire(
 	targetType: QuestionnaireTargetType,
-	targetId: string,
+	targetId: string
 ): Promise<QuestionnaireResponse> {
 	const response = await fetch(
-		`${API_BASE_URL}/questionnaires?target_type=${targetType}&target_id=${targetId}`,
+		`${API_BASE_URL}/questionnaires?target_type=${targetType}&target_id=${targetId}`
 	)
 
 	if (!response.ok) {
@@ -145,7 +133,7 @@ async function evaluateAssessment(payload: {
 		learning_unit_id: string
 		answer: boolean
 	}[]
-}): Promise<AssessmentResult> {
+}): Promise<AssessmentResultResponse> {
 	const response = await fetch(`${API_BASE_URL}/assessments/evaluate`, {
 		method: 'POST',
 		headers: {
@@ -171,8 +159,11 @@ function QuestionnairePage() {
 	const [questionnaireTitle, setQuestionnaireTitle] = useState('')
 	const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([])
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-	const [selectedAnswers, setSelectedAnswers] = useState<Record<number, AnswerOption>>({})
-	const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null)
+	const [selectedAnswers, setSelectedAnswers] = useState<
+		Record<number, AnswerOption>
+	>({})
+	const [assessmentResult, setAssessmentResult] =
+		useState<AssessmentResultResponse | null>(null)
 	const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(true)
 	const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false)
 	const [error, setError] = useState<string | null>(null)
@@ -220,24 +211,22 @@ function QuestionnairePage() {
 			: currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
 	const currentDescription =
-		phase === 'completed'
-			? ''
-			: assessmentCopy.questionnaire.description
+		phase === 'completed' ? '' : assessmentCopy.questionnaire.description
 
 	const canGoPrevious =
-		phase === 'completed' || (phase === 'questionnaire' && currentQuestionIndex > 0)
+		phase === 'completed' ||
+		(phase === 'questionnaire' && currentQuestionIndex > 0)
 
 	const canGoNext =
 		phase === 'questionnaire'
 			? Boolean(selectedAnswer) && !isSubmittingAssessment
 			: false
 
-	const nextButtonLabel =
-		isSubmittingAssessment
-			? 'Pošiljanje ...'
-			: currentQuestionIndex === questionnaire.length - 1
-				? 'Zaključi →'
-				: 'Naslednjo →'
+	const nextButtonLabel = isSubmittingAssessment
+		? 'Pošiljanje ...'
+		: currentQuestionIndex === questionnaire.length - 1
+			? 'Zaključi →'
+			: 'Naslednjo →'
 
 	useEffect(() => {
 		async function loadQuestionnaire() {
@@ -246,16 +235,18 @@ function QuestionnairePage() {
 
 			try {
 				const data = await getQuestionnaire(targetType, targetId)
+
 				if (targetType === 'module') {
 					const detail = await getModuleDetail(targetId)
 					setModuleDetail(detail)
 				}
+
 				setQuestionnaireTitle(data.title)
 				setQuestionnaire(
 					data.questions.map((question) => ({
 						...question,
 						answers: yesNoAnswers,
-					})),
+					}))
 				)
 				setCurrentQuestionIndex(0)
 				setSelectedAnswers({})
@@ -263,7 +254,9 @@ function QuestionnairePage() {
 				setPhase('questionnaire')
 			} catch (error) {
 				console.error(error)
-				setError('Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.')
+				setError(
+					'Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.'
+				)
 			} finally {
 				setIsLoadingQuestionnaire(false)
 			}
@@ -358,10 +351,7 @@ function QuestionnairePage() {
 				hasAudio={hasAudio}
 			/>
 
-			<AssessmentIntro
-				title={currentTitle}
-				description={currentDescription}
-			/>
+			<AssessmentIntro title={currentTitle} description={currentDescription} />
 
 			{phase === 'questionnaire' && currentQuestion && (
 				<QuestionnaireQuestion

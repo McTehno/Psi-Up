@@ -1,197 +1,174 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-
-import EmptyState from '../../components/common/EmptyState'
-import ErrorState from '../../components/common/ErrorState'
-import LoadingState from '../../components/common/LoadingState'
-import {
-  DetailHero,
-  DetailMeta,
-  DetailPageShell,
-  DetailRouteMap,
-  DetailSection,
-  DetailTags,
-} from '../../components/detail'
-import { AssistantChat } from '../../features/assistant'
-import {
-  buildDetailViewState,
-  type DetailTargetInfo,
-  type DetailViewState,
-} from '../../features/detail/utils'
+import { ClipboardList, Route } from 'lucide-react'
+import mountainJourneyBg from '../../assets/mountain-journey-bg.png'
+import { appStyles } from '../../design'
 
 function DetailTemplatePage() {
-  const navigate = useNavigate()
-  const { learningPathId, moduleId, learningUnitId } = useParams<{
-    learningPathId?: string
-    moduleId?: string
-    learningUnitId?: string
-  }>()
-
-  const targetInfo = useMemo<DetailTargetInfo | null>(() => {
-    if (learningPathId) {
-      return {
-        type: 'learning_path',
-        id: learningPathId,
-      }
-    }
-
-    if (moduleId) {
-      return {
-        type: 'module',
-        id: moduleId,
-      }
-    }
-
-    if (learningUnitId) {
-      return {
-        type: 'learning_unit',
-        id: learningUnitId,
-      }
-    }
-
-    return null
-  }, [learningPathId, moduleId, learningUnitId])
-
-  const [viewState, setViewState] = useState<DetailViewState | null>(null)
-  const [isLoading, setIsLoading] = useState(Boolean(targetInfo))
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  useEffect(() => {
-    let isActive = true
-
-    async function loadDetail() {
-      if (!targetInfo) {
-        setViewState(null)
-        setIsLoading(false)
-        return
-      }
-
-      try {
-        setIsLoading(true)
-        setErrorMessage(null)
-
-        const nextViewState = await buildDetailViewState(targetInfo)
-
-        if (isActive) {
-          setViewState(nextViewState)
-        }
-      } catch (error) {
-        if (!isActive) {
-          return
-        }
-
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Podrobnosti ni bilo mogoče naložiti.'
-
-        setErrorMessage(message)
-      } finally {
-        if (isActive) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    loadDetail()
-
-    return () => {
-      isActive = false
-    }
-  }, [targetInfo])
-
-  if (isLoading) {
-    return <LoadingState message="Nalaganje podrobnosti..." />
-  }
-
-  if (errorMessage) {
-    return (
-      <ErrorState
-        title="Podrobnosti ni bilo mogoče naložiti"
-        message={errorMessage}
-      />
-    )
-  }
-
-  if (!targetInfo) {
-    return (
-      <EmptyState
-        title="Ni izbrane vsebine"
-        message="Odpri podrobnosti učne poti, modula ali učne enote."
-      />
-    )
-  }
-
-  if (!viewState) {
-    return (
-      <EmptyState
-        title="Ni podatkov"
-        message="Za izbrano vsebino ni bilo mogoče pripraviti prikaza."
-      />
-    )
-  }
+  const demoJourneySteps = [
+    {
+      number: 1,
+      title: 'Začetek',
+      left: '18%',
+      top: '68%',
+      status: 'Opravljeno',
+    },
+    {
+      number: 2,
+      title: 'Trenutni korak',
+      left: '44%',
+      top: '48%',
+      status: 'Trenutno',
+    },
+    {
+      number: 3,
+      title: 'Naslednji korak',
+      left: '70%',
+      top: '30%',
+      status: 'Na voljo',
+    },
+  ]
 
   return (
-    <DetailPageShell
-      sidebar={
-        <AssistantChat
-          contextType={viewState.assistantContextType}
-          contextId={viewState.targetId}
-        />
-      }
-    >
-      <DetailHero
-        eyebrow={viewState.eyebrow}
-        title={viewState.title}
-        description={viewState.description}
-      >
-        <DetailMeta items={viewState.metaItems} />
-      </DetailHero>
+    <main className={appStyles.page.base}>
+      <div className={appStyles.layout.fullWidthPanel}>
+        <section className={appStyles.page.content}>
+          <div className={appStyles.header.row}>
+            <div className={appStyles.header.step}>
+              <div className={appStyles.header.stepIcon}>
+                <Route className="h-5 w-5" />
+              </div>
+              Detail template
+            </div>
 
-      {viewState.tagsSection && (
-        <DetailSection
-          title={viewState.tagsSection.title}
-          description={viewState.tagsSection.description}
-        >
-          <DetailTags
-            tags={viewState.tagsSection.tags}
-            emptyMessage={viewState.tagsSection.emptyMessage}
-          />
-        </DetailSection>
-      )}
+            <span className={appStyles.button.smallSecondary}>
+              Predogled stila
+            </span>
+          </div>
 
-      <DetailSection
-        title={viewState.routeMapTitle}
-        description={viewState.routeMapDescription}
-      >
-        <div className="rounded-3xl border border-sand-200 bg-white p-4 shadow-sm">
-          <DetailRouteMap
-            items={viewState.routeMapItems}
-            emptyMessage="Za prikaz poti ni bilo najdenih povezanih elementov."
-          />
-        </div>
-      </DetailSection>
+          <section className="mb-10">
+            <p className={`mb-3 ${appStyles.text.eyebrow}`}>
+              Podrobnosti vsebine
+            </p>
 
-      <DetailSection
-        title="Pozicioniranje v učni poti"
-        description="Sistem lahko na podlagi odgovorov predlaga ustrezno začetno točko."
-      >
-        <div className="rounded-3xl border border-forest-100 bg-forest-50 p-5">
-          <p className="text-sm leading-6 text-brown-700">
-            Če želiš, da te sistem postavi na ustrezno vozlišče v učni poti,
-            izpolni kratek vprašalnik.
-          </p>
+            <h1 className={`max-w-[860px] ${appStyles.text.pageTitle}`}>
+              Predloga za strani s podrobnostmi
+            </h1>
 
-          <button
-            type="button"
-            onClick={() => navigate(viewState.assessmentUrl)}
-            className="mt-4 rounded-full bg-forest-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-forest-700"
-          >
-            Izpolni vprašalnik
-          </button>
-        </div>
-      </DetailSection>
-    </DetailPageShell>
+            <p className={`mt-4 max-w-[860px] ${appStyles.text.bodyLarge}`}>
+              Ta stran prikazuje, kako bi lahko izgledale strani za podrobnosti
+              učne poti, modula in učne enote v istem vizualnem slogu kot
+              vprašalnik.
+            </p>
+          </section>
+
+          <section className={`mb-8 ${appStyles.card.base}`}>
+            <h2 className={`mb-4 ${appStyles.text.sectionTitle}`}>
+              Osnovni podatki
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className={appStyles.card.soft}>
+                <span className="text-sm text-[#7b766c]">Tip</span>
+                <strong className={`mt-1 block ${appStyles.text.green}`}>
+                  Učna enota / Modul / Učna pot
+                </strong>
+              </div>
+
+              <div className={appStyles.card.soft}>
+                <span className="text-sm text-[#7b766c]">Trajanje</span>
+                <strong className={`mt-1 block ${appStyles.text.green}`}>
+                  25 min
+                </strong>
+              </div>
+
+              <div className={appStyles.card.soft}>
+                <span className="text-sm text-[#7b766c]">Status</span>
+                <strong className={`mt-1 block ${appStyles.text.green}`}>
+                  Na voljo
+                </strong>
+              </div>
+            </div>
+          </section>
+
+          <section className={`mb-8 ${appStyles.card.base}`}>
+            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className={`mb-2 ${appStyles.text.eyebrow}`}>
+                  Struktura učenja
+                </p>
+
+                <h2 className="font-serif text-3xl text-[#33442f]">
+                  Pot vsebine
+                </h2>
+
+                <p className={`mt-2 max-w-[760px] ${appStyles.text.body}`}>
+                  Pri učni poti bodo tukaj prikazani moduli. Pri modulu bodo
+                  tukaj prikazane učne enote. Prikaz bo vizualen, zato uporabnik
+                  lažje razume zaporedje in napredovanje.
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={appStyles.journey.mountain}
+              style={{
+                backgroundImage: `linear-gradient(
+                  to bottom,
+                  rgba(255, 250, 242, 0.08),
+                  rgba(255, 250, 242, 0.32)
+                ), url(${mountainJourneyBg})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center 18%',
+                backgroundRepeat: 'no-repeat',
+              }}
+            >
+              {demoJourneySteps.map((item) => (
+                <button
+                  key={item.number}
+                  type="button"
+                  className={appStyles.journey.step}
+                  style={{
+                    left: item.left,
+                    top: item.top,
+                  }}
+                >
+                  <span className={appStyles.journey.stepMarker}>
+                    {item.number}
+                  </span>
+
+                  <strong className={appStyles.journey.stepTitle}>
+                    {item.title}
+                  </strong>
+
+                  <p className={appStyles.journey.stepDescription}>
+                    {item.status}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className={appStyles.card.base}>
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className={appStyles.text.sectionTitle}>
+                  Preveri predznanje
+                </h2>
+
+                <p className={`mt-2 max-w-[720px] ${appStyles.text.body}`}>
+                  Uporabnik lahko pred začetkom odpre vprašalnik, da sistem
+                  oceni, kje naj začne in katere dele lahko preskoči.
+                </p>
+              </div>
+
+              <button type="button" className={appStyles.button.primary}>
+                <ClipboardList className="h-5 w-5" />
+                Odpri vprašalnik
+              </button>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
   )
 }
 

@@ -3,22 +3,21 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-'''
+"""
 Vprašalnik se bo kasneje generiral tako:
 
 Če je target_type = learning_path:
-backend najde vse module v učni poti
-potem najde vse učne enote v teh modulih
-potem zbere self_assessment_questions iz učnih enot
+backend najde vse module v učni poti,
+potem najde vse učne enote v teh modulih,
+potem zbere self_assessment_questions iz učnih enot.
 
 Če je target_type = module:
-backend najde vse učne enote v modulu
-potem zbere self_assessment_questions
+backend najde vse učne enote v modulu,
+potem zbere self_assessment_questions.
 
 Če je target_type = learning_unit:
-backend vzame vprašanja samo iz te učne enote
-
-'''
+backend vzame vprašanja samo iz te učne enote.
+"""
 
 
 class QuestionnaireTargetType(str, Enum):
@@ -35,7 +34,7 @@ class QuestionnaireQuestionResponse(BaseModel):
     """
     Shema za posamezno vprašanje v vprašalniku.
 
-    Vprašanje je povezano z učno enoto in spretnostjo,
+    Vprašanje je povezano z učno enoto in vsebinsko temo,
     da lahko kasneje ocenimo, kaj uporabnik že zna.
     """
 
@@ -43,7 +42,7 @@ class QuestionnaireQuestionResponse(BaseModel):
     question: str
     type: str = "yes_no"
     learning_unit_id: Optional[str] = None
-    related_skill: Optional[str] = None
+    related_topic: Optional[str] = None
 
 
 class QuestionnaireResponse(BaseModel):

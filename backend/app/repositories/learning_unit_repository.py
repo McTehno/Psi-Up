@@ -88,7 +88,14 @@ class LearningUnitRepository:
         - title,
         - short_description,
         - keywords,
-        - skills.
+        - content_topics,
+        - acquired_competencies,
+        - digcomp_competencies,
+        - delivery_mode,
+        - provider,
+        - target_audience,
+        - knowledge_assessment,
+        - certificate.
 
         TODO:
         - Kasneje lahko dodamo MongoDB text index za boljše iskanje.
@@ -104,7 +111,16 @@ class LearningUnitRepository:
                 {"title": {"$regex": query, "$options": "i"}},
                 {"short_description": {"$regex": query, "$options": "i"}},
                 {"keywords": {"$regex": query, "$options": "i"}},
-                {"skills": {"$regex": query, "$options": "i"}},
+                {"content_topics": {"$regex": query, "$options": "i"}},
+                {"acquired_competencies": {"$regex": query, "$options": "i"}},
+                {"digcomp_competencies.code": {"$regex": query, "$options": "i"}},
+                {"digcomp_competencies.title": {"$regex": query, "$options": "i"}},
+                {"digcomp_competencies.description": {"$regex": query, "$options": "i"}},
+                {"delivery_mode": {"$regex": query, "$options": "i"}},
+                {"provider": {"$regex": query, "$options": "i"}},
+                {"target_audience": {"$regex": query, "$options": "i"}},
+                {"knowledge_assessment": {"$regex": query, "$options": "i"}},
+                {"certificate": {"$regex": query, "$options": "i"}},
             ]
         }
 

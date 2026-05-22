@@ -3,7 +3,7 @@
     "_id": "mod_001",
     "title": "Razumevanje umetne inteligence",
     "short_description": "Modul predstavlja osnovne pojme, primere in delovanje umetne inteligence.",
-    "duration_min": 105,
+    "duration_hours": 1.75,
     "keywords": ["umetna inteligenca", "UI", "GenUI", "podatki"],
     "domains": ["Umetna inteligenca"],
     "learning_units": [
@@ -34,7 +34,7 @@
     "_id": "mod_002",
     "title": "Umetna inteligenca v praksi",
     "short_description": "Modul povezuje razumevanje umetne inteligence s praktično in odgovorno uporabo.",
-    "duration_min": 150,
+    "duration_hours": 2.5,
     "keywords": ["umetna inteligenca", "UI", "GenUI", "etika", "digitalne vsebine"],
     "domains": ["Umetna inteligenca", "Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
@@ -72,7 +72,7 @@
     "_id": "mod_003",
     "title": "Osnove Excela",
     "short_description": "Modul zajema osnovno uporabo Excela, formule in oblikovanje preglednic.",
-    "duration_min": 130,
+    "duration_hours": 9.75,
     "keywords": ["Excel", "preglednice", "formule", "oblikovanje"],
     "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
@@ -103,7 +103,7 @@
     "_id": "mod_004",
     "title": "Delo s podatki",
     "short_description": "Modul vključuje uvoz, urejanje, filtriranje in pripravo podatkov za analizo.",
-    "duration_min": 95,
+    "duration_hours": 1.75,
     "keywords": ["Excel", "podatki", "analiza", "filtriranje", "razvrščanje"],
     "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
@@ -127,7 +127,7 @@
     "_id": "mod_005",
     "title": "Vrtilne tabele",
     "short_description": "Modul zajema osnovno in napredno uporabo vrtilnih tabel.",
-    "duration_min": 110,
+    "duration_hours": 2,
     "keywords": ["Excel", "vrtilne tabele", "analiza podatkov", "odstotki"],
     "domains": [
       "Ustvarjanje in uporaba digitalnih vsebin",
@@ -154,7 +154,7 @@
     "_id": "mod_006",
     "title": "Vizualizacija in predstavitev",
     "short_description": "Modul vključuje izdelavo grafov in pripravo rezultatov za predstavitev.",
-    "duration_min": 60,
+    "duration_hours": 1,
     "keywords": ["Excel", "grafi", "vizualizacija", "predstavitev"],
     "domains": [
       "Ustvarjanje in uporaba digitalnih vsebin",

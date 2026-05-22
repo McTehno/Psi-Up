@@ -7,8 +7,8 @@ export type AssessmentStatus =
 
 export type LearningUnitAssessmentResult = {
   learning_unit_id: string
-  known_skills: string[]
-  missing_skills: string[]
+  known_topics: string[]
+  missing_topics: string[]
   is_completed_by_assessment: boolean
 }
 

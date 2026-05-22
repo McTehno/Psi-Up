@@ -1,17 +1,34 @@
+export type DigCompCompetencyResponse = {
+  code: string
+  title: string
+  description: string
+}
+
 export type SelfAssessmentQuestionResponse = {
   id: string
   question: string
   type: string
-  related_skill?: string | null
+  related_topic?: string | null
 }
 
 export type LearningUnitResponse = {
   id: string
   title: string
   short_description: string
-  duration_min?: number | null
+  duration_hours?: number | null
   keywords: string[]
-  skills: string[]
+
+  content_topics: string[]
+  acquired_competencies: string[]
+  digcomp_competencies: DigCompCompetencyResponse[]
+
+  delivery_mode?: string | null
+  provider?: string | null
+  target_audience?: string | null
+  prerequisites: string[]
+  knowledge_assessment?: string | null
+  certificate?: string | null
+
   self_assessment_questions: SelfAssessmentQuestionResponse[]
 }
 

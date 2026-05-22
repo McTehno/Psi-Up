@@ -90,7 +90,7 @@ function buildModuleRouteItem(
     title: module.title,
     description: module.short_description,
     typeLabel: 'Modul',
-    durationMin: module.duration_min,
+    durationMin: module.duration_hours,
     order: reference.order,
     parallelGroup: reference.parallel_group,
     isRequired: reference.is_required,
@@ -110,7 +110,7 @@ function buildLearningUnitRouteItem(
     title: learningUnit.title,
     description: learningUnit.short_description,
     typeLabel: 'Učna enota',
-    durationMin: learningUnit.duration_min,
+    durationMin: learningUnit.duration_hours,
     order: reference.order,
     parallelGroup: reference.parallel_group,
     isRequired: reference.is_required,
@@ -129,15 +129,15 @@ export function buildLearningPathRouteMapItems({
   userProgress,
 }: BuildLearningPathRouteMapParams): DetailRouteItem[] {
   const currentPosition = findCurrentPosition(
-  getResponseId(learningPath),
-  userProgress
-)
+    getResponseId(learningPath),
+    userProgress
+  )
 
   return sortByOrder(learningPath.modules)
     .map((reference) => {
       const module = modules.find(
         (moduleItem) => getResponseId(moduleItem) === reference.module_id
-    )
+      )
 
       if (!module) {
         return null
@@ -161,10 +161,10 @@ export function buildModuleRouteMapItems({
 }: BuildModuleRouteMapParams): DetailRouteItem[] {
   return sortByOrder(module.learning_units)
     .map((reference) => {
-        const learningUnit = learningUnits.find(
+      const learningUnit = learningUnits.find(
         (learningUnitItem) =>
-            getResponseId(learningUnitItem) === reference.learning_unit_id
-        )
+          getResponseId(learningUnitItem) === reference.learning_unit_id
+      )
 
       if (!learningUnit) {
         return null

@@ -7,7 +7,7 @@ export type ModuleResponse = {
   id: string
   title: string
   short_description: string
-  duration_min?: number | null
+  duration_hours?: number | null
   keywords: string[]
   domains: string[]
   learning_units: LearningUnitReferenceResponse[]

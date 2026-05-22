@@ -61,12 +61,28 @@ export type DetailViewState = {
 
 const DEFAULT_USER_ID = 'user_001'
 
-function formatDuration(durationMin?: number | null) {
-  if (!durationMin) {
+function formatDuration(durationHours?: number | null) {
+  if (!durationHours) {
     return null
   }
 
-  return `${durationMin} min`
+  if (!Number.isInteger(durationHours)) {
+    return `${durationHours} h`
+  }
+
+  if (durationHours === 1) {
+    return '1 ura'
+  }
+
+  if (durationHours === 2) {
+    return '2 uri'
+  }
+
+  if (durationHours === 3 || durationHours === 4) {
+    return `${durationHours} ure`
+  }
+
+  return `${durationHours} ur`
 }
 
 function buildAssessmentUrl(targetType: DetailTargetType, targetId: string) {
@@ -121,8 +137,8 @@ function findCurrentPositionByLearningUnit(
   )
 }
 
-function buildDurationMeta(durationMin?: number | null): DetailMetaItem[] {
-  const duration = formatDuration(durationMin)
+function buildDurationMeta(durationHours?: number | null): DetailMetaItem[] {
+  const duration = formatDuration(durationHours)
 
   if (!duration) {
     return []
@@ -136,7 +152,7 @@ function buildLearningPathMeta(
   modules: ModuleResponse[]
 ): DetailMetaItem[] {
   return [
-    ...buildDurationMeta(learningPath.duration_min),
+    ...buildDurationMeta(learningPath.duration_hours),
     { label: 'Moduli', value: modules.length },
   ]
 }
@@ -146,7 +162,7 @@ function buildModuleMeta(
   learningUnits: LearningUnitResponse[]
 ): DetailMetaItem[] {
   return [
-    ...buildDurationMeta(module.duration_min),
+    ...buildDurationMeta(module.duration_hours),
     { label: 'Učne enote', value: learningUnits.length },
   ]
 }
@@ -156,8 +172,8 @@ function buildLearningUnitMeta(
   parentModule?: ModuleResponse | null
 ): DetailMetaItem[] {
   return [
-    ...buildDurationMeta(learningUnit.duration_min),
-    { label: 'Spretnosti', value: learningUnit.skills.length },
+    ...buildDurationMeta(learningUnit.duration_hours),
+    { label: 'Teme', value: learningUnit.content_topics.length },
     {
       label: 'Vprašanja za samooceno',
       value: learningUnit.self_assessment_questions.length,
@@ -315,10 +331,10 @@ async function buildLearningUnitView(
     description: learningUnit.short_description,
     metaItems: buildLearningUnitMeta(learningUnit, parentModule),
     tagsSection: {
-      title: 'Spretnosti',
-      description: 'Spretnosti, ki jih razvija ta učna enota.',
-      tags: learningUnit.skills,
-      emptyMessage: 'Ta učna enota nima dodanih spretnosti.',
+      title: 'Teme',
+      description: 'Vsebinske teme, ki jih pokriva ta učna enota.',
+      tags: learningUnit.content_topics,
+      emptyMessage: 'Ta učna enota nima dodanih vsebinskih tem.',
     },
     routeMapTitle: 'Kontekst učne enote',
     routeMapDescription,

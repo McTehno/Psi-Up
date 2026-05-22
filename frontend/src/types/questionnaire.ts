@@ -8,7 +8,7 @@ export type QuestionnaireQuestionResponse = {
   question: string
   type: string
   learning_unit_id?: string | null
-  related_skill?: string | null
+  related_topic?: string | null
 }
 
 export type QuestionnaireResponse = {

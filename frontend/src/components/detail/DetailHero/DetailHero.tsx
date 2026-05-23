@@ -17,32 +17,32 @@ function DetailHero({
   children,
 }: DetailHeroProps) {
   return (
-    <section className="mb-10">
+    <section className="mb-12">
       <div
         className={
           visual
             ? 'grid gap-10 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-start'
-            : 'max-w-[900px]'
+            : 'max-w-[1120px]'
         }
       >
         <div>
           {eyebrow && (
-            <p className={`mb-3 ${appStyles.text.eyebrow}`}>
+            <p className={`mb-4 ${appStyles.text.eyebrow}`}>
               {eyebrow}
             </p>
           )}
 
-          <h1 className="max-w-[720px] font-serif text-[clamp(46px,6vw,78px)] leading-[0.98] tracking-[-0.035em] text-[#111111]">
+          <h1 className="max-w-[980px] font-serif text-[clamp(48px,6.5vw,82px)] leading-[0.96] tracking-[-0.04em] text-[#111111]">
             {title}
           </h1>
 
           {description && (
-            <p className="mt-5 max-w-[680px] text-[19px] leading-relaxed text-[#2f3328]">
+            <p className="mt-6 max-w-[820px] text-[21px] leading-relaxed text-[#2f3328]">
               {description}
             </p>
           )}
 
-          {children && <div className="mt-8">{children}</div>}
+          {children && <div className="mt-9">{children}</div>}
         </div>
 
         {visual && (

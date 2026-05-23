@@ -27,7 +27,6 @@ import type { LearningUnitResponse } from '../../types/learning-unit'
 import { getLearningUnitDetail } from '../../services/learning-unit-service'
 import LearningUnitDetailContent from '../../features/learning-units/components/LearningUnitDetailContent'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
-
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
     return 'Ni določeno'
@@ -137,15 +136,6 @@ function LearningUnitDetailPage() {
         eyebrow="Podrobnosti učne enote"
         title={learningUnit.title}
         description={learningUnit.short_description}
-        visual={
-          <div className="flex h-[360px] items-center justify-center rounded-[28px] border border-[#eadfce] bg-[linear-gradient(135deg,#fff7ec,#f2dfc8)] p-8 shadow-[0_18px_45px_rgba(57,47,35,0.08)]">
-            <img
-              src={questionnaireIllustration}
-              alt="Prikaz vprašalnika"
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
-        }
       >
         <DetailMeta
           variant="compact"
@@ -176,67 +166,69 @@ function LearningUnitDetailPage() {
         </div>
       </DetailHero>
 
-      <DetailSection
-        title="Osnovni podatki"
-        description="Kratek pregled informacij o izvedbi, izvajalcu in preverjanju znanja."
-      >
-        <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
-          <div className="grid md:grid-cols-4">
-            {[
-              {
-                label: 'Ciljna publika',
-                value: learningUnit.target_audience ?? 'Ni določeno',
-                icon: <Users className="h-5 w-5" />,
-              },
-              {
-                label: 'Izvajalec',
-                value: learningUnit.provider ?? 'Ni določeno',
-                icon: <Building2 className="h-5 w-5" />,
-              },
-              {
-                label: 'Preverjanje znanja',
-                value: learningUnit.knowledge_assessment ?? 'Ni določeno',
-                icon: <ClipboardCheck className="h-5 w-5" />,
-              },
-              {
-                label: 'Potrdilo',
-                value: learningUnit.certificate ?? 'Ni določeno',
-                icon: <Award className="h-5 w-5" />,
-              },
-            ].map((item, index) => (
-              <div
-                key={item.label}
-                className={[
-                  'flex items-start gap-4 px-5 py-5',
-                  index !== 0
-                    ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
-                    : '',
-                ].join(' ')}
-              >
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
-                  {item.icon}
-                </div>
+<DetailSection
+  title="Osnovni podatki"
+  description="Kratek pregled informacij o izvedbi, izvajalcu in preverjanju znanja."
+>
+  <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
+    <div className="grid md:grid-cols-2 xl:grid-cols-4">
+      {[
+        {
+          label: 'Ciljna publika',
+          value: learningUnit.target_audience ?? 'Ni določeno',
+          icon: <Users className="h-5 w-5" />,
+        },
+        {
+          label: 'Izvajalec',
+          value: learningUnit.provider ?? 'Ni določeno',
+          icon: <Building2 className="h-5 w-5" />,
+        },
+        {
+          label: 'Preverjanje znanja',
+          value: learningUnit.knowledge_assessment ?? 'Ni določeno',
+          icon: <ClipboardCheck className="h-5 w-5" />,
+        },
+        {
+          label: 'Potrdilo',
+          value: learningUnit.certificate ?? 'Ni določeno',
+          icon: <Award className="h-5 w-5" />,
+        },
+      ].map((item, index) => (
+        <div
+          key={item.label}
+          className={[
+            'flex min-w-0 items-start gap-4 px-5 py-5',
+            index !== 0
+              ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
+              : '',
+            index === 2
+              ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
+              : '',
+          ].join(' ')}
+        >
+          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
+            {item.icon}
+          </div>
 
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#706b60]">
-                    {item.label}
-                  </p>
+          <div className="min-w-0">
+            <p className="text-[13px] font-bold uppercase tracking-wide text-[#706b60]">
+              {item.label}
+            </p>
 
-                  <strong className="mt-1 block text-[15px] leading-snug text-[#111111]">
-                    {item.value}
-                  </strong>
-                </div>
-              </div>
-            ))}
+            <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[#111111]">
+              {item.value}
+            </strong>
           </div>
         </div>
-      </DetailSection>
-
+      ))}
+    </div>
+  </div>
+</DetailSection>
       <LearningUnitDetailContent
         learningUnit={learningUnit}
       />
 
-      <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[linear-gradient(90deg,#fffdf8_0%,#fffdf8_55%,#fffaf5_82%,#fff6eb_100%)] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
+      <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
         <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
           <div>
             <div className="mb-4 flex items-center gap-3">
@@ -264,7 +256,7 @@ function LearningUnitDetailPage() {
             </button>
           </div>
 
-            
+
           <div className="hidden items-center justify-center md:flex">
             <div className="flex h-[190px] w-[240px] items-center justify-center">
               <img

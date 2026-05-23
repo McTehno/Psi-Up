@@ -23,19 +23,20 @@ function DetailMeta({ items, variant = 'cards' }: DetailMetaProps) {
         {items.map((item) => (
           <div
             key={`${item.label}-${item.value}`}
-            className="flex h-[74px] min-w-[150px] items-center gap-3 rounded-[14px] border border-[#eadfce] bg-[#fffdf8] px-4"
+            className="flex h-[86px] min-w-[175px] items-center gap-4 rounded-[16px] border border-[#eadfce] bg-[#fffdf8] px-5"
           >
             {item.icon && (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[#d07a12]">
-                {item.icon}
-              </div>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center text-[#d07a12] [&_svg]:h-7 [&_svg]:w-7">
+  {item.icon}
+</div>
             )}
 
             <div>
-              <strong className="block text-[15px] leading-tight text-[#111111]">
+              <strong className="block text-[20px] font-bold leading-tight text-[#111111]">
                 {item.value}
               </strong>
-              <span className="mt-1 block text-xs text-[#706b60]">
+
+              <span className="mt-1 block text-[14px] font-semibold text-[#706b60]">
                 {item.label}
               </span>
             </div>

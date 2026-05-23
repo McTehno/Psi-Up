@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { appStyles } from '../../../design'
 
 type DetailPageShellProps = {
   children: ReactNode
@@ -7,17 +8,25 @@ type DetailPageShellProps = {
 
 function DetailPageShell({ children, sidebar }: DetailPageShellProps) {
   return (
-    <div className="min-h-screen bg-sand-50 px-4 py-10 text-brown-900 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <main className="min-w-0 space-y-8">{children}</main>
+    <main className={appStyles.page.base}>
+      <div className={appStyles.layout.fullWidthPanel}>
+        <section className={appStyles.page.content}>
+          <div className="mx-auto max-w-[1180px]">
+            {sidebar ? (
+              <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+                <div className="min-w-0 space-y-8">{children}</div>
 
-        {sidebar && (
-          <aside className="space-y-6 lg:sticky lg:top-8 lg:self-start">
-            {sidebar}
-          </aside>
-        )}
+                <aside className="space-y-6 xl:sticky xl:top-8 xl:self-start">
+                  {sidebar}
+                </aside>
+              </div>
+            ) : (
+              <div className="space-y-8">{children}</div>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   )
 }
 

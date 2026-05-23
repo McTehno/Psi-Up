@@ -90,7 +90,7 @@ function buildModuleRouteItem(
     title: module.title,
     description: module.short_description,
     typeLabel: 'Modul',
-    durationMin: module.duration_hours,
+    durationLabel: formatDuration(module.duration_hours),
     order: reference.order,
     parallelGroup: reference.parallel_group,
     isRequired: reference.is_required,
@@ -110,7 +110,7 @@ function buildLearningUnitRouteItem(
     title: learningUnit.title,
     description: learningUnit.short_description,
     typeLabel: 'Učna enota',
-    durationMin: learningUnit.duration_hours,
+    durationLabel: formatDuration(learningUnit.duration_hours),
     order: reference.order,
     parallelGroup: reference.parallel_group,
     isRequired: reference.is_required,
@@ -152,7 +152,29 @@ export function buildLearningPathRouteMapItems({
     })
     .filter((item): item is DetailRouteItem => item !== null)
 }
+function formatDuration(durationHours?: number | null) {
+  if (!durationHours) {
+    return null
+  }
 
+  if (!Number.isInteger(durationHours)) {
+    return `${durationHours} h`
+  }
+
+  if (durationHours === 1) {
+    return '1 ura'
+  }
+
+  if (durationHours === 2) {
+    return '2 uri'
+  }
+
+  if (durationHours === 3 || durationHours === 4) {
+    return `${durationHours} ure`
+  }
+
+  return `${durationHours} ur`
+}
 export function buildModuleRouteMapItems({
   module,
   learningUnits,

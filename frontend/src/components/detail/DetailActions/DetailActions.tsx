@@ -1,35 +1,46 @@
 import type { ReactNode } from 'react'
+import { appStyles } from '../../../design'
 
 type DetailAction = {
   label: string
   onClick?: () => void
   icon?: ReactNode
   variant?: 'primary' | 'secondary'
+  disabled?: boolean
 }
 
 type DetailActionsProps = {
   actions: DetailAction[]
+  align?: 'left' | 'right' | 'between'
 }
 
-function DetailActions({ actions }: DetailActionsProps) {
+function DetailActions({ actions, align = 'left' }: DetailActionsProps) {
   if (actions.length === 0) {
     return null
   }
 
+  const alignmentClass =
+    align === 'right'
+      ? 'justify-end'
+      : align === 'between'
+        ? 'justify-between'
+        : 'justify-start'
+
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className={`flex flex-wrap gap-3 ${alignmentClass}`}>
       {actions.map((action) => {
         const className =
           action.variant === 'primary'
-            ? 'bg-forest-600 text-white hover:bg-forest-700'
-            : 'bg-sand-100 text-brown-800 hover:bg-sand-200'
+            ? appStyles.button.primary
+            : appStyles.button.secondary
 
         return (
           <button
             key={action.label}
             type="button"
             onClick={action.onClick}
-            className={`inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors ${className}`}
+            disabled={action.disabled}
+            className={className}
           >
             {action.icon}
             {action.label}

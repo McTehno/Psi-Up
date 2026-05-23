@@ -18,7 +18,13 @@ function DetailHero({
 }: DetailHeroProps) {
   return (
     <section className="mb-10">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-start">
+      <div
+        className={
+          visual
+            ? 'grid gap-10 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-start'
+            : 'max-w-[900px]'
+        }
+      >
         <div>
           {eyebrow && (
             <p className={`mb-3 ${appStyles.text.eyebrow}`}>
@@ -39,11 +45,11 @@ function DetailHero({
           {children && <div className="mt-8">{children}</div>}
         </div>
 
-        <div className="hidden lg:block">
-          {visual ?? (
-            <div className="h-[360px] rounded-[28px] border border-[#eadfce] bg-[linear-gradient(135deg,#fff7ec,#f2dfc8)]" />
-          )}
-        </div>
+        {visual && (
+          <div className="hidden lg:block">
+            {visual}
+          </div>
+        )}
       </div>
     </section>
   )

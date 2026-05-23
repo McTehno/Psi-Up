@@ -20,8 +20,8 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
   const location = useLocation()
 
   return (
-    <header className="fixed top-6 left-1/2 z-50 w-[95%] max-w-5xl -translate-x-1/2">
-      <nav className="relative flex items-center justify-between rounded-full bg-sand-50/30 px-4 py-3 backdrop-blur-xl border border-white/30 shadow-[0_8px_32px_rgba(139,115,85,0.06)] transition-all duration-500 hover:bg-sand-50/40 hover:border-white/40 hover:shadow-[0_8px_32px_rgba(139,115,85,0.12)]">
+    <header className="fixed top-6 left-1/2 z-50 w-[95%] max-w-5xl -translate-x-1/2 rounded-full p-[1px] bg-gradient-to-b from-white/80 to-brown-900/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-500">
+      <nav className="relative flex items-center justify-between rounded-full bg-sand-50/40 px-4 py-3 backdrop-blur-xl transition-colors duration-500 hover:bg-sand-50/50">
         
         {/* Logo - Full Left */}
         <div className="flex shrink-0 items-center pl-1">

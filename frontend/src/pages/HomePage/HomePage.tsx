@@ -19,6 +19,7 @@ import HeroSearchResults from './components/HeroSearchResults'
 import HomeBackground from './components/HomeBackground'
 import HomeFlowSlide from './components/HomeFlowSlide'
 import HomeInfoSlide from './components/HomeInfoSlide'
+import HomeContactSlide from './components/HomeContactSlide'
 
 function HomePage() {
 	const navigate = useNavigate()
@@ -168,6 +169,7 @@ function HomePage() {
 				/>
 
 				<HomeFlowSlide flowSteps={flowSteps} />
+				<HomeContactSlide />
 			</div>
 		</main>
 	)

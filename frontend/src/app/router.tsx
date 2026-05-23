@@ -4,6 +4,7 @@ import QuestionnairePage from '../pages/QuestionnairePage';
 import PathResultPage from '../pages/PathResultPage/PathResultPage';
 import SearchPage from '../pages/SearchPage';
 import { SearchProvider } from '../contexts/SearchContext';
+import AppShell from '../components/layout/AppShell';
 import DetailTemplatePage from '../pages/DetailTemplatePage'
 import LearningPathDetailPage from '../pages/LearningPathDetailPage'
 import ModuleDetailPage from '../pages/ModuleDetailPage'
@@ -14,7 +15,9 @@ import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 function RootLayout() {
   return (
     <SearchProvider>
-      <Outlet /> {/* So search can remain available even after navigating to other pages */}
+      <AppShell>
+        <Outlet /> {/* So search can remain available even after navigating to other pages */}
+      </AppShell>
     </SearchProvider>
   );
 }

@@ -6,27 +6,27 @@ import { landingAnchors } from '../../app/navigation'
 import { useGlobalSearch } from '../../contexts/SearchContext'
 
 import {
-    ArrowRight as ArrowRightIcon,
-    Search as SearchIcon,
-    Route as PathIcon,
-    Circle as CircleIcon,
-    CircleDot as DotIcon,
-    X as XIcon,
+	ArrowRight as ArrowRightIcon,
+	Search as SearchIcon,
+	Route as PathIcon,
+	Circle as CircleIcon,
+	CircleDot as DotIcon,
+	X as XIcon,
 } from 'lucide-react'
 
 import {
-    searchFilters,
-    focusTags,
-    processSteps,
-    outcomeCards,
-    digcompAreas
+	searchFilters,
+	focusTags,
+	processSteps,
+	outcomeCards,
+	digcompAreas
 } from './constants'
 
 function HomePage() {
 	const navigate = useNavigate()
 	const [activeIndex, setActiveIndex] = useState(0)
 	const [rotationCount, setRotationCount] = useState(0)
-	
+
 	const {
 		isSearchActive,
 		setIsSearchActive,
@@ -54,7 +54,7 @@ function HomePage() {
 		} else {
 			document.body.style.overflow = 'unset'
 		}
-		
+
 		return () => {
 			document.body.style.overflow = 'unset'
 		}
@@ -64,9 +64,8 @@ function HomePage() {
 		<main className="relative isolate min-h-screen overflow-hidden bg-sand-50 text-brown-900">
 			{/* Backdrop Overlay for Search */}
 			<div
-				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${
-					isSearchActive ? 'bg-sand-50/60 backdrop-blur-md' : 'pointer-events-none bg-transparent backdrop-blur-none'
-				}`}
+				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive ? 'bg-sand-50/60 backdrop-blur-md' : 'pointer-events-none bg-transparent backdrop-blur-none'
+					}`}
 				onClick={() => setIsSearchActive(false)}
 				aria-hidden="true"
 			/>
@@ -84,6 +83,7 @@ function HomePage() {
 			/>
 
 			<div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
+				{/* 
 				<header className="flex items-center justify-between gap-4 border-b border-brown-200/60 pb-5">
 					<a href="#top" className="inline-flex items-center gap-3">
 						<span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brown-700 text-sm font-semibold tracking-[0.25em] text-sand-50 shadow-lg shadow-brown-700/20">
@@ -109,6 +109,7 @@ function HomePage() {
 						))}
 					</nav>
 				</header>
+				*/}
 
 				<section
 					id="top"
@@ -151,21 +152,19 @@ function HomePage() {
 
 							{/* Filters Dropdown */}
 							<div
-								className={`absolute left-0 right-0 top-full mt-4 flex flex-wrap gap-2 transition-all duration-500 ease-in-out origin-top ${
-									isSearchActive
+								className={`absolute left-0 right-0 top-full mt-4 flex flex-wrap gap-2 transition-all duration-500 ease-in-out origin-top ${isSearchActive
 										? 'opacity-100 translate-y-0 visible'
 										: 'opacity-0 -translate-y-4 invisible'
-								}`}
+									}`}
 							>
 								{searchFilters.map((filter) => (
 									<button
 										key={filter.label}
 										onClick={() => toggleFilter(filter.label)}
-										className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-											activeFilters.includes(filter.label)
+										className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${activeFilters.includes(filter.label)
 												? 'bg-forest-700 text-white border-forest-700 hover:bg-forest-800'
 												: 'bg-white text-brown-600 hover:bg-sand-100 border-sand-300'
-										} shadow-sm border`}
+											} shadow-sm border`}
 									>
 										{filter.label}
 									</button>
@@ -212,11 +211,10 @@ function HomePage() {
 					<div className="relative min-h-[30rem] sm:min-h-[40rem] w-full flex flex-col">
 						{/* Search Results Display */}
 						<div
-							className={`absolute inset-0 z-50 flex flex-col gap-4 pr-2 pb-10 transition-all duration-500 ease-in-out ${
-								isSearchActive
+							className={`absolute inset-0 z-50 flex flex-col gap-4 pr-2 pb-10 transition-all duration-500 ease-in-out ${isSearchActive
 									? 'opacity-100 translate-y-0 visible'
 									: 'opacity-0 translate-y-8 invisible'
-							}`}
+								}`}
 						>
 							{isSearchActive && searchQuery && (
 								<div className="flex flex-col gap-3">
@@ -284,13 +282,13 @@ function HomePage() {
 													Ni bilo najdenih zadetkov za "{searchQuery}".
 												</div>
 											)}
-											
+
 											{/* Always show this button now when finished searching */}
-											<div 
-												className="mt-2 flex justify-center animate-fade-in-up relative z-10" 
+											<div
+												className="mt-2 flex justify-center animate-fade-in-up relative z-10"
 												style={{ animationDelay: '300ms', animationFillMode: 'both' }}
 											>
-												<button 
+												<button
 													onClick={() => navigate(`/search${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`)}
 													className="flex items-center gap-2 rounded-full border border-sand-300 bg-forest-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-forest-800 hover:shadow-lg"
 												>
@@ -306,79 +304,78 @@ function HomePage() {
 
 						{/* Original Content fades out on search */}
 						<div
-							className={`absolute inset-0 transition-opacity duration-500 ${
-								isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-							}`}
+							className={`absolute inset-0 transition-opacity duration-500 ${isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+								}`}
 						>
 							{/* Foreground Info Layer */}
 							<div className="absolute inset-x-0 top-16 sm:top-20 z-10 flex flex-col items-center text-center px-4 sm:px-6">
-							{digcompAreas.map((area, idx) => {
-								const isActive = activeIndex === idx;
-								const isPast = idx === (activeIndex - 1 + digcompAreas.length) % digcompAreas.length;
-								
-								let positionClass = 'translate-x-16 -translate-y-16 rotate-12 opacity-0 pointer-events-none scale-95'; // coming from top-right arc
-								if (isActive) {
-									positionClass = 'translate-x-0 translate-y-0 rotate-0 opacity-100 z-10 scale-100'; // active in center
-								} else if (isPast) {
-									positionClass = '-translate-x-12 translate-y-24 -rotate-12 opacity-0 pointer-events-none scale-95'; // exiting down and left, around the edge
-								}
+								{digcompAreas.map((area, idx) => {
+									const isActive = activeIndex === idx;
+									const isPast = idx === (activeIndex - 1 + digcompAreas.length) % digcompAreas.length;
 
-								return (
-									<div
-										key={area.title}
-										className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-1000 ease-in-out origin-center ${positionClass}`}
-										aria-hidden={!isActive}
-									>
-										<span className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg border border-white/20 ${area.themeBg} ${area.themeText}`}>
-											<area.icon className="h-8 w-8" />
-										</span>
-										<h2 className="mt-6 font-display text-3xl sm:text-4xl font-semibold leading-tight text-brown-900 max-w-[28rem]">
-											{area.title}
-										</h2>
-										<p className="mt-4 text-sm sm:text-base leading-relaxed text-brown-600 max-w-[24rem]">
-											{area.description}
-										</p>
-									</div>
-								)
-							})}
-						</div>
+									let positionClass = 'translate-x-16 -translate-y-16 rotate-12 opacity-0 pointer-events-none scale-95'; // coming from top-right arc
+									if (isActive) {
+										positionClass = 'translate-x-0 translate-y-0 rotate-0 opacity-100 z-10 scale-100'; // active in center
+									} else if (isPast) {
+										positionClass = '-translate-x-12 translate-y-24 -rotate-12 opacity-0 pointer-events-none scale-95'; // exiting down and left, around the edge
+									}
 
-						{/* The Rotating Wheel (Massive background element bleeding off screen) */}
-						<svg
-							viewBox="-120 -120 240 240"
-							className="absolute top-24 lg:top-24 -right-[270%] sm:-right-[170%] md:-right-[140%] lg:-right-[120%] w-[350%] sm:w-[250%] md:w-[200%] lg:w-[180%] max-w-[1400px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
-							style={{ transform: `rotate(${-81 - rotationCount * 72}deg)` }}
-						>
-							{digcompAreas.map((area, idx) => {
-								const startAngle = (idx * 72 - 90) * (Math.PI / 180)
-								const endAngle = ((idx + 1) * 72 - 90) * (Math.PI / 180)
+									return (
+										<div
+											key={area.title}
+											className={`absolute inset-x-0 top-0 flex flex-col items-center transition-all duration-1000 ease-in-out origin-center ${positionClass}`}
+											aria-hidden={!isActive}
+										>
+											<span className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg border border-white/20 ${area.themeBg} ${area.themeText}`}>
+												<area.icon className="h-8 w-8" />
+											</span>
+											<h2 className="mt-6 font-display text-3xl sm:text-4xl font-semibold leading-tight text-brown-900 max-w-[28rem]">
+												{area.title}
+											</h2>
+											<p className="mt-4 text-sm sm:text-base leading-relaxed text-brown-600 max-w-[24rem]">
+												{area.description}
+											</p>
+										</div>
+									)
+								})}
+							</div>
 
-								// Use a slightly larger radius for the pentagon placement
-								const v1x = Math.cos(startAngle) * 95
-								const v1y = Math.sin(startAngle) * 95
-								const v2x = Math.cos(endAngle) * 95
-								const v2y = Math.sin(endAngle) * 95
+							{/* The Rotating Wheel (Massive background element bleeding off screen) */}
+							<svg
+								viewBox="-120 -120 240 240"
+								className="absolute top-24 lg:top-24 -right-[270%] sm:-right-[170%] md:-right-[140%] lg:-right-[120%] w-[350%] sm:w-[250%] md:w-[200%] lg:w-[180%] max-w-[1400px] aspect-square transition-transform duration-1000 ease-in-out -z-10"
+								style={{ transform: `rotate(${-81 - rotationCount * 72}deg)` }}
+							>
+								{digcompAreas.map((area, idx) => {
+									const startAngle = (idx * 72 - 90) * (Math.PI / 180)
+									const endAngle = ((idx + 1) * 72 - 90) * (Math.PI / 180)
 
-								// Increased spacing (gap) between the lines
-								const x1 = v1x + (v2x - v1x) * 0.2
-								const y1 = v1y + (v2y - v1y) * 0.2
-								const x2 = v1x + (v2x - v1x) * 0.8
-								const y2 = v1y + (v2y - v1y) * 0.8
+									// Use a slightly larger radius for the pentagon placement
+									const v1x = Math.cos(startAngle) * 95
+									const v1y = Math.sin(startAngle) * 95
+									const v2x = Math.cos(endAngle) * 95
+									const v2y = Math.sin(endAngle) * 95
 
-								return (
-									<line
-										key={area.title}
-										x1={x1}
-										y1={y1}
-										x2={x2}
-										y2={y2}
-										stroke={area.svgFill}
-										strokeWidth="18"
-										strokeLinecap="round"
-									/>
-								)
-							})}
-						</svg>
+									// Increased spacing (gap) between the lines
+									const x1 = v1x + (v2x - v1x) * 0.2
+									const y1 = v1y + (v2y - v1y) * 0.2
+									const x2 = v1x + (v2x - v1x) * 0.8
+									const y2 = v1y + (v2y - v1y) * 0.8
+
+									return (
+										<line
+											key={area.title}
+											x1={x1}
+											y1={y1}
+											x2={x2}
+											y2={y2}
+											stroke={area.svgFill}
+											strokeWidth="18"
+											strokeLinecap="round"
+										/>
+									)
+								})}
+							</svg>
 						</div>
 					</div>
 				</section>

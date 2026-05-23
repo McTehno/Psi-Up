@@ -12,7 +12,7 @@ export type SelfAssessmentQuestionResponse = {
 }
 
 export type LearningUnitResponse = {
-  id: string
+  _id: string
   title: string
   short_description: string
   duration_hours?: number | null

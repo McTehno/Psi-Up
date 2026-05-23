@@ -1,14 +1,16 @@
 import {
 	BookOpen,
+	ClipboardList,
 	Compass,
+	Edit,
+	Leaf,
+	Lightbulb,
+	Map,
+	Search,
+	Shield,
 	Target,
 	User,
-	Leaf,
-	Search,
 	Users,
-	Edit,
-	Shield,
-	Lightbulb,
 } from 'lucide-react'
 
 export const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
@@ -81,7 +83,40 @@ export const digcompAreas = [
 	},
 ] as const
 
-// Centralized navigation and filters definitions
+export const learningPathCards = [
+	{
+		icon: Map,
+		title: 'Preglej izbrano učno pot',
+		text: 'Najprej si ogledaš, kaj pot vključuje: module, učne enote, kompetence in vsebine, ki te vodijo proti cilju.',
+	},
+	{
+		icon: Target,
+		title: 'Začni iz svoje pozicije',
+		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj že znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
+	},
+] as const
+
+export const positionCards = [
+	{
+		icon: ClipboardList,
+		title: 'Izpolni vprašalnik',
+		text: 'Vprašanja so povezana z vsebino izbrane učne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
+	},
+	{
+		icon: Compass,
+		title: 'Odkrij svojo pozicijo',
+		text: 'Rezultat pokaže, katere dele poti že obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
+	},
+] as const
+
+export const flowSteps = [
+	'Izbira poti',
+	'Pregled vsebine',
+	'Vprašalnik',
+	'Tvoja pozicija',
+	'Naslednji korak',
+] as const
+
 export const searchFilters = [
 	{ label: 'Vse', value: null },
 	{ label: 'Moduli', value: 'module' },

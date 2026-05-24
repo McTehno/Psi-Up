@@ -74,7 +74,7 @@ function HomePage() {
 			<div className="mx-auto flex max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
 				<section
 					id="top"
-					className="grid min-h-screen snap-start gap-12 pb-16 pt-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:pb-20 lg:pt-10"
+					className="grid min-h-screen snap-start gap-12 pb-16 pt-28 sm:pt-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:pb-20 lg:pt-10"
 				>
 					<div className="relative max-w-xl">
 						<HeroSearch

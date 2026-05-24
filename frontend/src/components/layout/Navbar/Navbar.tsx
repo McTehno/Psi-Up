@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
+
 import Logo from '../Logo'
 
 type NavbarLink = {
@@ -18,9 +21,58 @@ const defaultLinks: NavbarLink[] = [
 
 function Navbar({ links = defaultLinks }: NavbarProps) {
 	const location = useLocation()
+	const [isMenuOpen, setIsMenuOpen] = useState(false)
+	const [isNavbarVisible, setIsNavbarVisible] = useState(true)
+
+	useEffect(() => {
+		let lastScrollTop = 0
+
+		function handleScroll(event: Event) {
+			const isMobile = window.matchMedia('(max-width: 767px)').matches
+
+			if (!isMobile || isMenuOpen) {
+				setIsNavbarVisible(true)
+				return
+			}
+
+			const target = event.target as HTMLElement | Document
+			const scrollElement =
+				target instanceof Document ? document.documentElement : target
+
+			const currentScrollTop = scrollElement.scrollTop
+
+			if (currentScrollTop <= 40) {
+				setIsNavbarVisible(true)
+				lastScrollTop = currentScrollTop
+				return
+			}
+
+			if (currentScrollTop > lastScrollTop + 8) {
+				setIsNavbarVisible(false)
+			}
+
+			if (currentScrollTop < lastScrollTop - 8) {
+				setIsNavbarVisible(true)
+			}
+
+			lastScrollTop = currentScrollTop
+		}
+
+		window.addEventListener('scroll', handleScroll, true)
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll, true)
+		}
+	}, [isMenuOpen])
 
 	return (
-		<header className="fixed inset-x-0 top-0 z-50 border-b border-white/35 bg-white/18 shadow-[0_12px_40px_rgba(57,47,35,0.10)] backdrop-blur-2xl">
+		<header
+			className={[
+				'fixed inset-x-0 top-0 z-50 border-b border-white/35 bg-white/18 shadow-[0_12px_40px_rgba(57,47,35,0.10)] backdrop-blur-2xl transition-transform duration-300',
+				isNavbarVisible ? 'translate-y-0' : '-translate-y-full',
+				'md:translate-y-0',
+			].join(' ')}
+		>
 			<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.42),rgba(255,255,255,0.12)_45%,rgba(208,122,18,0.08))]" />
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/70" />
 
@@ -28,6 +80,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				<Link
 					to="/"
 					aria-label="NIDiKo domov"
+					onClick={() => setIsMenuOpen(false)}
 					className="group inline-flex min-w-0 shrink-0 items-center gap-3 justify-self-start"
 				>
 					<Logo
@@ -73,14 +126,59 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 											: 'w-0 bg-[#d07a12]/70 group-hover:w-5',
 									].join(' ')}
 								/>
-
 							</Link>
 						)
 					})}
 				</div>
 
 				<div className="hidden justify-self-end md:block" aria-hidden="true" />
+
+				<button
+					type="button"
+					onClick={() => setIsMenuOpen((current) => !current)}
+					className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 md:hidden"
+					aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
+					aria-expanded={isMenuOpen}
+				>
+					{isMenuOpen ? (
+						<X className="h-5 w-5" />
+					) : (
+						<Menu className="h-5 w-5" />
+					)}
+				</button>
 			</nav>
+
+			<div
+				className={[
+					'relative z-50 border-t border-[#eadfce] bg-[#fffdf8] shadow-[0_14px_34px_rgba(57,47,35,0.10)] transition-all duration-300 md:hidden',
+					isMenuOpen
+						? 'max-h-64 opacity-100'
+						: 'pointer-events-none max-h-0 overflow-hidden opacity-0',
+				].join(' ')}
+			>
+				<nav className="space-y-1 px-4 pb-4 pt-3">
+					{links.map((link) => {
+						const isActive = location.pathname === link.to
+
+						return (
+							<Link
+								key={link.to}
+								to={link.to}
+								onClick={() => setIsMenuOpen(false)}
+								aria-current={isActive ? 'page' : undefined}
+								className={[
+									'block rounded-[10px] px-4 py-3 text-base font-semibold tracking-wide transition',
+									isActive
+										? 'bg-[#fff4e6] text-[#111111]'
+										: 'text-[#5f5a52] hover:bg-[#fff6eb] hover:text-[#111111]',
+								].join(' ')}
+							>
+								{link.label}
+							</Link>
+						)
+					})}
+				</nav>
+			</div>
 		</header>
 	)
 }

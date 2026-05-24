@@ -116,6 +116,7 @@ function LearningUnitDetailPage() {
   }
 
   return (
+    <div className="pt-24 sm:pt-28 lg:pt-28">
     <DetailPageShell>
       <div className="mb-8 flex items-center justify-between gap-4">
         <div className={appStyles.header.step}>
@@ -302,6 +303,7 @@ function LearningUnitDetailPage() {
         </div>
       </DetailSection>
     </DetailPageShell>
+    </div>
   )
 }
 

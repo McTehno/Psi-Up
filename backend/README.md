@@ -256,28 +256,126 @@ Primer iskanja po več tipih vsebin:
 
 ---
 
-## Assessment logika
+## Logika ocenjevanja vprašalnika
 
-Assessment obdela odgovore uporabnika iz vprašalnika.
+Vprašalnik se ocenjuje različno glede na nivo, za katerega se izvaja: učna enota, modul ali učna pot.
 
-Osnovna logika:
+### 1. Ocenjevanje učne enote
 
-```text
-answer = true  → uporabnik spretnost zna
-answer = false → uporabniku spretnost manjka
+Pri ocenjevanju posamezne učne enote je cilj ugotoviti, katere vsebinske teme (`content_topics`) uporabnik že obvlada in katere mu še manjkajo.
+
+Vsako vprašanje v `self_assessment_questions` je povezano z eno temo prek polja `related_topic`.
+
+Če uporabnik na vprašanje odgovori `true`, se pripadajoči `related_topic` označi kot pokrit.
+
+Če uporabnik na vprašanje odgovori `false`, se pripadajoči `related_topic` označi kot manjkajoč.
+
+Status učne enote se določi glede na pokritost tem:
+
+- če so pokrite vse teme, je učna enota `covered`;
+- če je pokrita vsaj ena tema, vendar ne vse, je učna enota `partially_covered`;
+- če ni pokrita nobena tema, je učna enota `not_covered`.
+
+Primer rezultata za učno enoto:
+
+```json
+{
+  "learning_unit_id": "ue_005",
+  "status": "partially_covered",
+  "covered_topics": [
+    "Razumevanje in učinkovita uporaba programskega vmesnika"
+  ],
+  "missing_topics": [
+    "Vnašanje, urejanje in hramba podatkov",
+    "Shranjevanje in odpiranje datotek v različnih formatih"
+  ]
+}
 ```
+## Logika ocenjevanja vprašalnika
 
-Učna enota je pokrita, če so vsa njena vprašanja odgovorjena z `true`.
+Vprašalnik se ocenjuje različno glede na nivo, za katerega se izvaja: učna enota, modul ali učna pot.
 
-Modul je pokrit, če so pokrite vse njegove obvezne učne enote.
+### 1. Ocenjevanje učne enote
 
-Učna pot določi:
-- kateri moduli se lahko preskočijo,
-- katere učne enote se lahko preskočijo,
-- pri katerem modulu naj uporabnik začne,
-- pri kateri učni enoti naj uporabnik začne.
+Pri ocenjevanju posamezne učne enote je cilj ugotoviti, katere vsebinske teme (`content_topics`) uporabnik že obvlada in katere mu še manjkajo.
 
-Assessment trenutno ne zapisuje rezultata neposredno v `user_progress`. Za zdaj samo vrne rezultat, frontend ali kasnejša backend logika pa lahko rezultat uporabi za posodobitev napredka.
+Vsako vprašanje v `self_assessment_questions` je povezano z eno temo prek polja `related_topic`.
+
+Če uporabnik na vprašanje odgovori `true`, se pripadajoči `related_topic` označi kot pokrit.
+
+Če uporabnik na vprašanje odgovori `false`, se pripadajoči `related_topic` označi kot manjkajoč.
+
+Status učne enote se določi glede na pokritost tem:
+
+- če so pokrite vse teme, je učna enota `covered`;
+- če je pokrita vsaj ena tema, vendar ne vse, je učna enota `partially_covered`;
+- če ni pokrita nobena tema, je učna enota `not_covered`.
+
+Primer rezultata za učno enoto:
+
+```json
+{
+  "learning_unit_id": "ue_005",
+  "status": "partially_covered",
+  "covered_topics": [
+    "Razumevanje in učinkovita uporaba programskega vmesnika"
+  ],
+  "missing_topics": [
+    "Vnašanje, urejanje in hramba podatkov",
+    "Shranjevanje in odpiranje datotek v različnih formatih"
+  ]
+}
+```
+### 4. Začasna progresivna logika brez spremembe podatkovnega modela
+
+Za trenutno implementacijo ne spreminjamo podatkovnega modela.
+
+Ne dodajamo še polja `question_role` ali `level` v vprašanja.
+
+Namesto tega se uporabi dogovor:
+
+- prvo vprašanje v seznamu `self_assessment_questions` se obravnava kot osnovno vprašanje učne enote;
+- ostala vprašanja se obravnavajo kot dodatna vprašanja;
+- ta logika se uporablja predvsem pri ocenjevanju modulov in učnih poti;
+- pri ocenjevanju posamezne učne enote se lahko prikažejo vsa vprašanja, ker želimo natančno ugotoviti, kateri `content_topics` so pokriti in kateri manjkajo.
+
+Ta odločitev omogoča progresivno ocenjevanje brez poseganja v trenutno bazo podatkov.
+
+Pri tej začasni rešitvi je pomembno, da je prvo vprašanje v seznamu `self_assessment_questions` smiselno izbrano kot osnovno vprašanje. To vprašanje mora preverjati osnovno razumevanje učne enote. Če uporabnik nanj odgovori negativno, sistem predpostavi, da uporabnik učne enote ne pozna dovolj za nadaljnje preverjanje.
+
+### 5. Možna prihodnja izboljšava
+
+V prihodnji verziji se lahko v podatkovni model doda eksplicitno polje `question_role`.
+
+To polje bi določalo, ali je vprašanje osnovno vprašanje ali dodatno vprašanje.
+
+Možni vrednosti sta:
+
+- `primary` – osnovno vprašanje učne enote;
+- `follow_up` – dodatno vprašanje, ki se prikaže samo, če uporabnik na osnovno vprašanje odgovori pritrdilno.
+
+Primer osnovnega vprašanja:
+
+```json
+{
+  "id": "q_ue_005_001",
+  "question": "Znam uporabljati osnovni programski vmesnik Excela.",
+  "type": "yes_no",
+  "related_topic": "Razumevanje in učinkovita uporaba programskega vmesnika",
+  "question_role": "primary"
+}
+
+```
+Primer dodatnega vprašanja:
+```json
+{
+  "id": "q_ue_005_002",
+  "question": "Znam vnesti, urediti in shraniti podatke v Excelu.",
+  "type": "yes_no",
+  "related_topic": "Vnašanje, urejanje in hramba podatkov",
+  "question_role": "follow_up"
+}
+```
 
 ---
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
-import { BookOpen, Check, ArrowRight } from 'lucide-react';
+import { BookOpen, Check, ArrowRight, Award } from 'lucide-react';
 
 interface LearningUnitVisualizerProps {
   references: LearningUnitReferenceResponse[];
@@ -51,7 +51,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     const order = sortedOrders[i];
     const units = groupedUnits[order];
     const numUnits = units.length;
-    
+
     const isRightRow = i % 2 === 0;
 
     if (numUnits === 1) {
@@ -71,7 +71,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     } else {
       const spread = 560;
       for (let j = 0; j < numUnits; j++) {
-        const x = CENTER_X - spread/2 + (spread / (numUnits - 1)) * j;
+        const x = CENTER_X - spread / 2 + (spread / (numUnits - 1)) * j;
         nodePositions.push({ unit: units[j], order, x, y: currentY, isSingle: false, isOnRightSide: false });
       }
       currentY += 320;
@@ -91,7 +91,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
     for (let i = 0; i < numRows - 1; i++) {
       const currOrder = sortedOrders[i];
-      const nextOrder = sortedOrders[i+1];
+      const nextOrder = sortedOrders[i + 1];
       const currNodes = nodePositions.filter(n => n.order === currOrder);
       const nextNodes = nodePositions.filter(n => n.order === nextOrder);
 
@@ -122,9 +122,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
         </div>
       ) : (
         <div className="relative w-full max-w-[800px] overflow-visible" style={{ height: `${totalHeight}px` }}>
-          
-          <svg 
-            className="absolute inset-0 w-full h-full pointer-events-none" 
+
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox={`0 0 800 ${totalHeight}`}
             preserveAspectRatio="xMidYMin meet"
           >
@@ -135,7 +135,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 <stop offset="100%" stopColor="#C4B491" />
               </linearGradient>
             </defs>
-            <path 
+            <path
               d={pathD}
               fill="none"
               stroke="url(#lu-path-gradient)"
@@ -148,9 +148,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const ref = pos.unit;
             const detail = details.find(d => d._id === ref.learning_unit_id);
             const isUnitCompleted = completedUnitIds.includes(ref.learning_unit_id);
-            
+
             return (
-              <div 
+              <div
                 key={`${ref.learning_unit_id}-${idx}`}
                 className="absolute z-10 flex flex-col items-center justify-start transform -translate-x-1/2"
                 style={{ left: `${(pos.x / 800) * 100}%`, top: `${pos.y - 28}px` }}
@@ -162,8 +162,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   className={`
                     w-[56px] h-[56px] shrink-0 rounded-full flex items-center justify-center relative z-20 shadow-sm cursor-pointer
                     hover:ring-8 transition-all duration-300
-                    ${isUnitCompleted 
-                      ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105' 
+                    ${isUnitCompleted
+                      ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
                       : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
                   `}
                 >
@@ -173,7 +173,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />
                   )}
                 </button>
-                
+
                 {/* Card */}
                 {pos.isSingle ? (
                   <button
@@ -184,7 +184,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <div className={`uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2 w-full ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
                       Stopnja {ref.order}
                     </div>
-                    
+
                     <div className={`w-full flex items-start gap-2 ${pos.isOnRightSide ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
                       <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
                         {detail?.title || 'Neznana učna enota'}
@@ -217,7 +217,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <div className="uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2">
                       Stopnja {ref.order}
                     </div>
-                    
+
                     <div className="w-full flex items-start justify-between gap-2">
                       <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
                         {detail?.title || 'Neznana učna enota'}
@@ -247,19 +247,28 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
           })}
 
           {/* Goal Node */}
-          <div 
-            className="absolute z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2"
+          <div
+            className="absolute z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2 group"
             style={{ left: '50%', top: `${finalGoalY}px` }}
           >
-            <div className="w-[64px] h-[64px] bg-[#F2EDE1] rounded-full flex items-center justify-center p-1.5 z-20 shadow-sm">
-              <div className="w-full h-full bg-[#D5BE9E] rounded-full flex items-center justify-center shadow-inner">
-                <Check className="w-7 h-7 text-white" strokeWidth={3}/>
+            {/* Main Node */}
+            <div className="w-[72px] h-[72px] bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center p-2 z-20 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-[#eadfce] transition-transform duration-300 group-hover:scale-105">
+              <div className="w-full h-full bg-gradient-to-br from-[#EACE9B] to-[#C98A43] rounded-full flex items-center justify-center shadow-inner relative overflow-hidden">
+                {/* Shine effect that moves on hover */}
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+                <Award className="w-8 h-8 text-white relative z-10 drop-shadow-md" strokeWidth={2.5} />
               </div>
             </div>
-            <div className="absolute top-[76px] w-64 text-center">
-              <h3 className="font-serif font-bold text-lg text-[#5c3724]">
-                 Konec modula
-              </h3>
+
+            {/* Badge Label */}
+            <div className="mt-3 flex flex-col items-center z-20">
+              <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md px-7 py-3 rounded-2xl border border-[#DECFB3] shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1 group-hover:border-[#C98A43]/40">
+                <div className="w-8 h-[1.5px] bg-gradient-to-r from-transparent to-[#C98A43]/60" />
+                <h3 className="font-serif text-[1.15rem] font-bold text-[#5c3724] tracking-wide">
+                  Konec modula
+                </h3>
+                <div className="w-8 h-[1.5px] bg-gradient-to-l from-transparent to-[#C98A43]/60" />
+              </div>
             </div>
           </div>
 

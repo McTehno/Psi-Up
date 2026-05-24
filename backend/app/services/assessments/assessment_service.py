@@ -60,7 +60,8 @@ class AssessmentService:
             return await self._evaluate_learning_unit(
                 user_id=user_id,
                 learning_unit_id=target_id,
-                answers=answers
+                answers=answers,
+                use_progressive_logic=False
             )
 
         return self._empty_result(
@@ -213,7 +214,8 @@ class AssessmentService:
             unit_result = await self._evaluate_learning_unit(
                 user_id=user_id,
                 learning_unit_id=learning_unit_id,
-                answers=answers
+                answers=answers,
+                use_progressive_logic=True
             )
 
             unit_results = unit_result.get("learning_unit_results", [])
@@ -292,13 +294,18 @@ class AssessmentService:
         self,
         user_id: str,
         learning_unit_id: str,
-        answers: List[Dict[str, Any]]
+        answers: List[Dict[str, Any]],
+        use_progressive_logic: bool = False
     ) -> Dict[str, Any]:
         """
         Oceni odgovore za eno učno enoto.
 
-        Učna enota je opravljena, če so vsa vprašanja te učne enote
-        odgovorjena z true.
+        Pri ocenjevanju posamezne učne enote se ocenjujejo posamezni content_topics.
+
+        Če je use_progressive_logic=True, se uporabi pravilo:
+        - prvo vprašanje učne enote je osnovno vprašanje,
+        - če je odgovor na prvo vprašanje false, se učna enota označi kot nepokrita,
+        - vsi content_topics učne enote se štejejo kot missing_topics.
         """
 
         learning_unit = await self.learning_unit_service.get_learning_unit_by_id(
@@ -314,6 +321,7 @@ class AssessmentService:
             )
 
         questions = learning_unit.get("self_assessment_questions", [])
+        content_topics = learning_unit.get("content_topics", [])
 
         known_topics: List[str] = []
         missing_topics: List[str] = []
@@ -321,22 +329,64 @@ class AssessmentService:
         answer_map = {
             answer.get("question_id"): answer.get("answer")
             for answer in answers
+            if answer.get("learning_unit_id") == learning_unit_id
         }
+
+        if use_progressive_logic and questions:
+            primary_question = questions[0]
+            primary_question_id = primary_question.get("id")
+            primary_answer = answer_map.get(primary_question_id)
+
+            if primary_answer is False:
+                known_topics = []
+                missing_topics = list(content_topics)
+
+                is_completed_by_assessment = False
+                start_learning_unit_id = learning_unit_id
+
+                return {
+                    "user_id": user_id,
+                    "target_type": QuestionnaireTargetType.LEARNING_UNIT,
+                    "target_id": learning_unit_id,
+                    "start_module_id": None,
+                    "start_learning_unit_id": start_learning_unit_id,
+                    "skipped_modules": [],
+                    "skipped_learning_units": [],
+                    "recommended_next_modules": [],
+                    "recommended_next_learning_units": [learning_unit_id],
+                    "learning_unit_results": [
+                        {
+                            "learning_unit_id": learning_unit_id,
+                            "known_topics": known_topics,
+                            "missing_topics": missing_topics,
+                            "is_completed_by_assessment": is_completed_by_assessment,
+                        }
+                    ],
+                    "module_results": [],
+                    "summary": f"Uporabniku priporočamo učno enoto {learning_unit_id}.",
+                }
 
         for question in questions:
             question_id = question.get("id")
             related_topic = question.get("related_topic")
 
+            if not related_topic:
+                continue
+
             answer_value = answer_map.get(question_id)
 
             if answer_value is True:
-                if related_topic:
+                if related_topic not in known_topics:
                     known_topics.append(related_topic)
             else:
-                if related_topic:
+                if related_topic not in missing_topics:
                     missing_topics.append(related_topic)
 
-        is_completed_by_assessment = bool(questions) and len(missing_topics) == 0
+        for topic in content_topics:
+            if topic not in known_topics and topic not in missing_topics:
+                missing_topics.append(topic)
+
+        is_completed_by_assessment = bool(content_topics) and len(missing_topics) == 0
 
         start_learning_unit_id = None if is_completed_by_assessment else learning_unit_id
 

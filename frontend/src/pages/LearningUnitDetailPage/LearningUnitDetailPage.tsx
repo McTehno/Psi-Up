@@ -61,6 +61,8 @@ function LearningUnitDetailPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // Had to make the page scroll to top when href-ing to it from ModuleDetailPage.tsx
+    window.scrollTo(0, 0)
     async function loadLearningUnit() {
       if (!learningUnitId) {
         setError('ID učne enote ni podan.')
@@ -166,64 +168,64 @@ function LearningUnitDetailPage() {
         </div>
       </DetailHero>
 
-<DetailSection
-  title="Osnovni podatki"
-  description="Kratek pregled informacij o izvedbi, izvajalcu in preverjanju znanja."
->
-  <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
-    <div className="grid md:grid-cols-2 xl:grid-cols-4">
-      {[
-        {
-          label: 'Ciljna publika',
-          value: learningUnit.target_audience ?? 'Ni določeno',
-          icon: <Users className="h-5 w-5" />,
-        },
-        {
-          label: 'Izvajalec',
-          value: learningUnit.provider ?? 'Ni določeno',
-          icon: <Building2 className="h-5 w-5" />,
-        },
-        {
-          label: 'Preverjanje znanja',
-          value: learningUnit.knowledge_assessment ?? 'Ni določeno',
-          icon: <ClipboardCheck className="h-5 w-5" />,
-        },
-        {
-          label: 'Potrdilo',
-          value: learningUnit.certificate ?? 'Ni določeno',
-          icon: <Award className="h-5 w-5" />,
-        },
-      ].map((item, index) => (
-        <div
-          key={item.label}
-          className={[
-            'flex min-w-0 items-start gap-4 px-5 py-5',
-            index !== 0
-              ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
-              : '',
-            index === 2
-              ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
-              : '',
-          ].join(' ')}
-        >
-          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
-            {item.icon}
-          </div>
+      <DetailSection
+        title="Osnovni podatki"
+        description="Kratek pregled informacij o izvedbi, izvajalcu in preverjanju znanja."
+      >
+        <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
+          <div className="grid md:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                label: 'Ciljna publika',
+                value: learningUnit.target_audience ?? 'Ni določeno',
+                icon: <Users className="h-5 w-5" />,
+              },
+              {
+                label: 'Izvajalec',
+                value: learningUnit.provider ?? 'Ni določeno',
+                icon: <Building2 className="h-5 w-5" />,
+              },
+              {
+                label: 'Preverjanje znanja',
+                value: learningUnit.knowledge_assessment ?? 'Ni določeno',
+                icon: <ClipboardCheck className="h-5 w-5" />,
+              },
+              {
+                label: 'Potrdilo',
+                value: learningUnit.certificate ?? 'Ni določeno',
+                icon: <Award className="h-5 w-5" />,
+              },
+            ].map((item, index) => (
+              <div
+                key={item.label}
+                className={[
+                  'flex min-w-0 items-start gap-4 px-5 py-5',
+                  index !== 0
+                    ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
+                    : '',
+                  index === 2
+                    ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
+                    : '',
+                ].join(' ')}
+              >
+                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
+                  {item.icon}
+                </div>
 
-          <div className="min-w-0">
-            <p className="text-[13px] font-bold uppercase tracking-wide text-[#706b60]">
-              {item.label}
-            </p>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold uppercase tracking-wide text-[#706b60]">
+                    {item.label}
+                  </p>
 
-            <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[#111111]">
-              {item.value}
-            </strong>
+                  <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[#111111]">
+                    {item.value}
+                  </strong>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</DetailSection>
+      </DetailSection>
       <LearningUnitDetailContent
         learningUnit={learningUnit}
       />

@@ -4,8 +4,15 @@
     "title": "Razumevanje umetne inteligence",
     "short_description": "Modul predstavlja osnovne pojme, primere in delovanje umetne inteligence.",
     "duration_hours": 1.75,
-    "keywords": ["umetna inteligenca", "UI", "GenUI", "podatki"],
-    "domains": ["Umetna inteligenca"],
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "GenUI",
+      "podatki"
+    ],
+    "domains": [
+      "Umetna inteligenca"
+    ],
     "learning_units": [
       {
         "learning_unit_id": "ue_001",
@@ -19,14 +26,19 @@
         "order": 2,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_001"]
+        "prerequisites": [
+          "ue_001"
+        ]
       },
       {
         "learning_unit_id": "ue_003",
         "order": 3,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_001", "ue_002"]
+        "prerequisites": [
+          "ue_001",
+          "ue_002"
+        ]
       }
     ]
   },
@@ -35,8 +47,17 @@
     "title": "Umetna inteligenca v praksi",
     "short_description": "Modul povezuje razumevanje umetne inteligence s praktično in odgovorno uporabo.",
     "duration_hours": 2.5,
-    "keywords": ["umetna inteligenca", "UI", "GenUI", "etika", "digitalne vsebine"],
-    "domains": ["Umetna inteligenca", "Ustvarjanje in uporaba digitalnih vsebin"],
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "GenUI",
+      "etika",
+      "digitalne vsebine"
+    ],
+    "domains": [
+      "Umetna inteligenca",
+      "Ustvarjanje in uporaba digitalnih vsebin"
+    ],
     "learning_units": [
       {
         "learning_unit_id": "ue_001",
@@ -50,21 +71,29 @@
         "order": 2,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_001"]
+        "prerequisites": [
+          "ue_001"
+        ]
       },
       {
         "learning_unit_id": "ue_003",
         "order": 3,
-        "parallel_group": null,
+        "parallel_group": "skupina_A",
         "is_required": true,
-        "prerequisites": ["ue_001", "ue_002"]
+        "prerequisites": [
+          "ue_001",
+          "ue_002"
+        ]
       },
       {
         "learning_unit_id": "ue_004",
-        "order": 4,
-        "parallel_group": null,
+        "order": 3,
+        "parallel_group": "skupina_A",
         "is_required": true,
-        "prerequisites": ["ue_001", "ue_002", "ue_003"]
+        "prerequisites": [
+          "ue_001",
+          "ue_002"
+        ]
       }
     ]
   },
@@ -73,8 +102,15 @@
     "title": "Osnove Excela",
     "short_description": "Modul zajema osnovno uporabo Excela, formule in oblikovanje preglednic.",
     "duration_hours": 9.75,
-    "keywords": ["Excel", "preglednice", "formule", "oblikovanje"],
-    "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
+    "keywords": [
+      "Excel",
+      "preglednice",
+      "formule",
+      "oblikovanje"
+    ],
+    "domains": [
+      "Ustvarjanje in uporaba digitalnih vsebin"
+    ],
     "learning_units": [
       {
         "learning_unit_id": "ue_005",
@@ -88,14 +124,19 @@
         "order": 2,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_005"]
+        "prerequisites": [
+          "ue_005"
+        ]
       },
       {
         "learning_unit_id": "ue_007",
         "order": 3,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_005", "ue_006"]
+        "prerequisites": [
+          "ue_005",
+          "ue_006"
+        ]
       }
     ]
   },
@@ -104,8 +145,16 @@
     "title": "Delo s podatki",
     "short_description": "Modul vključuje uvoz, urejanje, filtriranje in pripravo podatkov za analizo.",
     "duration_hours": 1.75,
-    "keywords": ["Excel", "podatki", "analiza", "filtriranje", "razvrščanje"],
-    "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
+    "keywords": [
+      "Excel",
+      "podatki",
+      "analiza",
+      "filtriranje",
+      "razvrščanje"
+    ],
+    "domains": [
+      "Ustvarjanje in uporaba digitalnih vsebin"
+    ],
     "learning_units": [
       {
         "learning_unit_id": "ue_008",
@@ -119,7 +168,9 @@
         "order": 2,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_008"]
+        "prerequisites": [
+          "ue_008"
+        ]
       }
     ]
   },
@@ -128,7 +179,12 @@
     "title": "Vrtilne tabele",
     "short_description": "Modul zajema osnovno in napredno uporabo vrtilnih tabel.",
     "duration_hours": 2,
-    "keywords": ["Excel", "vrtilne tabele", "analiza podatkov", "odstotki"],
+    "keywords": [
+      "Excel",
+      "vrtilne tabele",
+      "analiza podatkov",
+      "odstotki"
+    ],
     "domains": [
       "Ustvarjanje in uporaba digitalnih vsebin",
       "Uporaba naprednih domenskih digitalnih orodij"
@@ -146,7 +202,9 @@
         "order": 2,
         "parallel_group": null,
         "is_required": true,
-        "prerequisites": ["ue_010"]
+        "prerequisites": [
+          "ue_010"
+        ]
       }
     ]
   },
@@ -155,7 +213,12 @@
     "title": "Vizualizacija in predstavitev",
     "short_description": "Modul vključuje izdelavo grafov in pripravo rezultatov za predstavitev.",
     "duration_hours": 1,
-    "keywords": ["Excel", "grafi", "vizualizacija", "predstavitev"],
+    "keywords": [
+      "Excel",
+      "grafi",
+      "vizualizacija",
+      "predstavitev"
+    ],
     "domains": [
       "Ustvarjanje in uporaba digitalnih vsebin",
       "Digitalna komunikacija in sodelovanje"

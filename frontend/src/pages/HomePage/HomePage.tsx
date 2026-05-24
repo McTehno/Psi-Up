@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowRight as ArrowRightIcon } from 'lucide-react'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
-
+import ScrollDownHint from './components/ScrollDownHint'
 import {
 	digcompAreas,
 	flowSteps,
-	focusTags,
 	learningPathCards,
 	positionCards,
 } from './constants'
@@ -64,11 +63,10 @@ function HomePage() {
 			<HomeBackground />
 
 			<div
-				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${
-					isSearchActive
-						? 'bg-[#fffdf8]/60 backdrop-blur-md'
-						: 'pointer-events-none bg-transparent backdrop-blur-none'
-				}`}
+				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive
+					? 'bg-[#fffdf8]/60 backdrop-blur-md'
+					: 'pointer-events-none bg-transparent backdrop-blur-none'
+					}`}
 				onClick={() => setIsSearchActive(false)}
 				aria-hidden="true"
 			/>
@@ -94,7 +92,7 @@ function HomePage() {
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							Psi-Up poveže vprašalnik, DigComp in učno pot v eno jasno
+							NIDiKo poveže vprašalnik, DigComp in učno pot v eno jasno
 							priporočilo.
 						</p>
 
@@ -108,23 +106,13 @@ function HomePage() {
 							</a>
 
 							<a
-								href="#position"
+								href="#contact"
 								className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-[#fff6eb] px-6 py-3 text-sm font-semibold text-[#111111] shadow-sm transition hover:border-[#d07a12]/45 hover:bg-[#fffdf8]"
 							>
-								Kaj upošteva
+								Kontakt
 							</a>
 						</div>
 
-						<div className="mt-10 flex flex-wrap gap-2">
-							{focusTags.map((tag) => (
-								<span
-									key={tag}
-									className="rounded-full border border-[#d8e8da] bg-[#f2f8f1] px-3 py-2 text-sm font-medium text-[#31583b]"
-								>
-									{tag}
-								</span>
-							))}
-						</div>
 					</div>
 
 					<div className="relative flex min-h-[30rem] w-full flex-col sm:min-h-[40rem]">
@@ -144,34 +132,39 @@ function HomePage() {
 					</div>
 				</section>
 
-				<HomeInfoSlide
-					id="how-it-works"
-					label="Začni z zanimanjem"
-					title="Izberi učno pot, ki te pritegne."
-					description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj približa cilju."
-					labelColor="text-[#d07a12]"
-					cards={learningPathCards}
-					cardBackground="bg-[#fffdf8]"
-					iconBackground="bg-[#f2f8f1]"
-					iconColor="text-[#31583b]"
-				/>
+				<div className="relative">
+					<HomeInfoSlide
+						id="how-it-works"
+						label="Začni z zanimanjem"
+						title="Izberi učno pot, ki te pritegne."
+						description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj približa cilju."
+						labelColor="text-[#d07a12]"
+						cards={learningPathCards}
+						cardBackground="bg-[#fffdf8]"
+						iconBackground="bg-[#f2f8f1]"
+						iconColor="text-[#31583b]"
+					/>
+					<ScrollDownHint href="#position" />
+				</div>
+				<div className="relative">
+					<HomeInfoSlide
+						id="position"
+						label="Tvoja trenutna pozicija"
+						title="Ugotovi, kje si na izbrani poti."
+						description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek."
+						labelColor="text-[#31583b]"
+						cards={positionCards}
+						cardBackground="bg-[#fff6eb]"
+						iconBackground="bg-[#fffdf8]"
+						iconColor="text-[#d07a12]"
+					/>
+					<ScrollDownHint href="#digcomp" />
+				</div>
 
-				<HomeInfoSlide
-					id="position"
-					label="Tvoja trenutna pozicija"
-					title="Ugotovi, kje si na izbrani poti."
-					description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek."
-					labelColor="text-[#31583b]"
-					cards={positionCards}
-					cardBackground="bg-[#fff6eb]"
-					iconBackground="bg-[#fffdf8]"
-					iconColor="text-[#d07a12]"
-				/>
-
-				<HomeFlowSlide flowSteps={flowSteps} />
-				<HomeContactSlide />
-			</div>
-		</main>
+			<HomeFlowSlide flowSteps={flowSteps} />
+			<HomeContactSlide />
+		</div>
+		</main >
 	)
 }
 

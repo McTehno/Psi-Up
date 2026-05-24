@@ -4,15 +4,25 @@ import type {
   QuestionnaireTargetType,
 } from '../types/questionnaire'
 
+function getQuestionnaireEndpoint(
+  targetType: QuestionnaireTargetType,
+  targetId: string,
+) {
+  switch (targetType) {
+    case 'learning_path':
+      return `/learning-paths/${targetId}/questionnaire`
+    case 'module':
+      return `/modules/${targetId}/questionnaire`
+    case 'learning_unit':
+      return `/learning-units/${targetId}/questionnaire`
+    default:
+      throw new Error('Nepodprt tip vprašalnika.')
+  }
+}
+
 export async function getQuestionnaire(
   targetType: QuestionnaireTargetType,
-  targetId: string
+  targetId: string,
 ): Promise<QuestionnaireResponse> {
-  const params = new URLSearchParams()
-  params.set('target_type', targetType)
-  params.set('target_id', targetId)
-
-  return apiGet<QuestionnaireResponse>(
-    `/questionnaires?${params.toString()}`
-  )
+  return apiGet(getQuestionnaireEndpoint(targetType, targetId))
 }

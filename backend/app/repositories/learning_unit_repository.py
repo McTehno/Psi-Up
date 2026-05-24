@@ -101,10 +101,10 @@ class LearningUnitRepository:
         - Kasneje lahko dodamo MongoDB text index za boljše iskanje.
         """
 
-        if not query:
-            return []
-
         collection = self.database[self.collection_name]
+
+        if not query:
+            return list(collection.find({}))
 
         search_filter = {
             "$or": [

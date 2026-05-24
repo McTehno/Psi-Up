@@ -46,10 +46,7 @@ export function useSearch() {
   }, [])
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults([])
-      return
-    }
+
 
     const timeoutId = window.setTimeout(async () => {
       setIsSearching(true)

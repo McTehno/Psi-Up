@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader2, Search as SearchIcon } from 'lucide-react';
 import { SearchFilters } from '../../features/search/components/SearchFilters';
 import { SearchResultCard } from '../../features/search/components/SearchResultCard';
@@ -9,6 +9,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 export default function SearchPage() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
     
     // Uporabimo debounce na query stringu, da ne requestamo ob vsakem pritisku na tipko
     const initialQuery = searchParams.get('q') || '';
@@ -34,10 +35,7 @@ export default function SearchPage() {
     // Glavni iskalni učinek
     useEffect(() => {
         const fetchResults = async () => {
-            if (!filters.query && filters.types.length === 0) {
-                setResults(null); // Če ni nobenega filtra/upita, ne iščemo takoj apriorij
-                return;
-            }
+
 
             try {
                 setIsLoading(true);
@@ -66,10 +64,14 @@ export default function SearchPage() {
         setFilters(newFilters);
     };
 
-    const handleResultClick = (id: string) => {
-        // Navigirajte do podrobnosti - tu bi morali navigirati na specifično entiteto
-        console.log("Navigacija na rezultat z ID:", id);
-        // navigate(`/dodaj-pravi-link-za/${id}`);
+    const handleResultClick = (result: any) => {
+        if (result.type === 'learning_path') {
+            navigate(`/learning-paths/${result.id}`);
+        } else if (result.type === 'module') {
+            navigate(`/modules/${result.id}`);
+        } else if (result.type === 'learning_unit') {
+            navigate(`/learning-units/${result.id}`);
+        }
     };
 
     return (

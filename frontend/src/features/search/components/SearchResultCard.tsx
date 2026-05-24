@@ -3,13 +3,13 @@ import { Route as PathIcon, Circle as CircleIcon, CircleDot as DotIcon } from 'l
 
 interface SearchResultCardProps {
     result: SearchResult;
-    onClick?: (id: string) => void;
+    onClick?: (result: SearchResult) => void;
 }
 
 export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
     return (
         <article 
-            onClick={() => onClick && onClick(result.id)}
+            onClick={() => onClick && onClick(result)}
             className="group flex flex-col sm:flex-row cursor-pointer items-start gap-5 rounded-2xl border border-sand-300 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-forest-300 hover:shadow-md animate-fade-in-up"
         >
             <div className="flex-shrink-0">

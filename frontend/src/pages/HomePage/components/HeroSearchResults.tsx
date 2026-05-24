@@ -37,7 +37,7 @@ function HeroSearchResults({
 					: 'invisible translate-y-8 opacity-0'
 			}`}
 		>
-			{isSearchActive && searchQuery && (
+			{isSearchActive && (
 				<div className="flex flex-col gap-3">
 					{isSearching ? (
 						<div className="flex h-32 animate-pulse items-center justify-center rounded-3xl border border-[#eadfce] bg-white/60 text-[#706b60] backdrop-blur-sm">
@@ -49,6 +49,15 @@ function HeroSearchResults({
 								searchResults.slice(0, 3).map((result, index) => (
 									<div
 										key={result.id}
+										onClick={() => {
+											if (result.type === 'learning_path') {
+												navigate(`/learning-paths/${result.id}`)
+											} else if (result.type === 'module') {
+												navigate(`/modules/${result.id}`)
+											} else if (result.type === 'learning_unit') {
+												navigate(`/learning-units/${result.id}`)
+											}
+										}}
 										className="group flex cursor-pointer flex-col items-start gap-4 rounded-2xl border border-[#eadfce] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#31583b]/35 hover:shadow-md sm:flex-row"
 										style={{
 											animationDelay: `${index * 75}ms`,

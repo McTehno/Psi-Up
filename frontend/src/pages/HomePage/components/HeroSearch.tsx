@@ -43,10 +43,6 @@ function HeroSearch({
 					value={searchQuery}
 					onChange={(event) => {
 						setSearchQuery(event.target.value)
-
-						if (!event.target.value) {
-							setSearchResults([])
-						}
 					}}
 				/>
 

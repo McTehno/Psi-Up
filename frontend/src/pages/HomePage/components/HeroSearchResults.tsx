@@ -31,11 +31,10 @@ function HeroSearchResults({
 }: HeroSearchResultsProps) {
 	return (
 		<div
-			className={`absolute inset-0 z-50 flex flex-col gap-4 pb-10 pr-2 transition-all duration-500 ease-in-out ${
-				isSearchActive
+			className={`absolute inset-x-0 bottom-0 top-[96px] z-50 flex flex-col gap-4 pb-10 pr-2 transition-all duration-500 ease-in-out ${isSearchActive
 					? 'visible translate-y-0 opacity-100'
 					: 'invisible translate-y-8 opacity-0'
-			}`}
+				}`}
 		>
 			{isSearchActive && (
 				<div className="flex flex-col gap-3">
@@ -139,10 +138,9 @@ function HeroSearchResults({
 									type="button"
 									onClick={() =>
 										navigate(
-											`/search${
-												searchQuery
-													? `?q=${encodeURIComponent(searchQuery)}`
-													: ''
+											`/search${searchQuery
+												? `?q=${encodeURIComponent(searchQuery)}`
+												: ''
 											}`,
 										)
 									}

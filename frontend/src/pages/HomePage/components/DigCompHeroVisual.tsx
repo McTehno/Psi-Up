@@ -13,9 +13,8 @@ function DigCompHeroVisual({
 }: DigCompHeroVisualProps) {
 	return (
 		<div
-			className={`absolute inset-0 transition-opacity duration-500 ${
-				isSearchActive ? 'pointer-events-none opacity-0' : 'opacity-100'
-			}`}
+			className={`absolute inset-0 transition-opacity duration-500 ${isSearchActive ? 'pointer-events-none opacity-0' : 'opacity-100'
+				}`}
 		>
 			<div className="absolute inset-x-0 top-16 z-10 flex flex-col items-center px-4 text-center sm:top-20 sm:px-6">
 				{digcompAreas.map((area, index) => {
@@ -61,7 +60,7 @@ function DigCompHeroVisual({
 
 			<svg
 				viewBox="-120 -120 240 240"
-				className="absolute top-24 -right-[270%] -z-10 aspect-square w-[350%] max-w-[1400px] transition-transform duration-1000 ease-in-out sm:-right-[170%] sm:w-[250%] md:-right-[140%] md:w-[200%] lg:-right-[120%] lg:top-24 lg:w-[180%]"
+				className="absolute top-24 -right-[270%] -z-10 aspect-square w-[350%] max-w-[1400px] transition-transform duration-1000 ease-in-out sm:-right-[170%] sm:w-[250%] md:-right-[140%] md:w-[200%] lg:-right-[120%] lg:top-42 lg:w-[180%]"
 				style={{
 					transform: `rotate(${-81 - rotationCount * 72}deg)`,
 				}}

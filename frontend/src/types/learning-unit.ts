@@ -5,7 +5,7 @@ export type DigCompCompetencyResponse = {
 }
 
 export type SelfAssessmentQuestionResponse = {
-  id: string
+  _id: string
   question: string
   type: string
   related_topic?: string | null

@@ -1,5 +1,8 @@
 import { apiGet } from './api-client'
-import type { LearningPathResponse } from '../types/learning-path'
+import type {
+  LearningPathDetailResponse,
+  LearningPathResponse,
+} from '../types/learning-path'
 import type { ModuleResponse } from '../types/module'
 import type { QuestionnaireResponse } from '../types/questionnaire'
 
@@ -14,11 +17,9 @@ export async function getLearningPathById(
 }
 
 export async function getLearningPathDetail(
-  learningPathId: string
-): Promise<LearningPathResponse> {
-  return apiGet<LearningPathResponse>(
-    `/learning-paths/${learningPathId}/detail`
-  )
+  learningPathId: string,
+): Promise<LearningPathDetailResponse> {
+  return apiGet(`/learning-paths/${learningPathId}/detail`)
 }
 
 export async function getLearningPathModules(

@@ -4,7 +4,7 @@ import type {
 } from './learning-unit'
 
 export type ModuleResponse = {
-  id: string
+  _id: string
   title: string
   short_description: string
   duration_hours?: number | null

@@ -14,6 +14,7 @@ import { getLearningUnitById } from '../../services/learning-unit-service'
 import type { LearningPathDetailResponse } from '../../types/learning-path'
 import type { LearningUnitResponse } from '../../types/learning-unit'
 import type { ModuleResponse } from '../../types/module'
+import { LearningPathMobileSteps } from '../../features/learning-paths/components/LearningPathMobileSteps'
 
 const MAX_VISIBLE_NODES = 7
 
@@ -205,9 +206,19 @@ function LearningPathDetailPage() {
     )
   }
 
-  return (
-    <main className="min-h-screen bg-[#F7F1E6] px-4 pb-6 pt-24 sm:px-6 lg:px-8">
-      <div className="relative mx-auto h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px]">
+return (
+  <main className="min-h-screen bg-[#F7F1E6] px-4 pb-6 pt-24 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1800px]">
+      <div className="block min-[1500px]:hidden">
+        <LearningPathMobileSteps
+          title={learningPath.title}
+          description={learningPath.short_description}
+          targetLabel={targetLabel}
+          nodes={mountainNodes}
+        />
+      </div>
+
+      <div className="relative hidden h-[calc(100vh-7.5rem)] min-h-[720px] min-[1500px]:block">
         <div
           className={`h-full transition-[width] duration-300 ease-out ${
             isChatPanelExpanded ? 'w-[calc(100%-384px)]' : 'w-full'
@@ -229,8 +240,9 @@ function LearningPathDetailPage() {
           onExpandedChange={setIsChatPanelExpanded}
         />
       </div>
-    </main>
-  )
+    </div>
+  </main>
+)
 }
 
 export default LearningPathDetailPage

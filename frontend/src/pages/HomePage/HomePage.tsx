@@ -160,8 +160,10 @@ function HomePage() {
 					/>
 					<ScrollDownHint href="#digcomp" />
 				</div>
-
-			<HomeFlowSlide flowSteps={flowSteps} />
+				<div className="relative">
+					<HomeFlowSlide flowSteps={flowSteps} />
+					<ScrollDownHint href="#contact" />
+				</div>
 			<HomeContactSlide />
 		</div>
 		</main >

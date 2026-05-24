@@ -1,616 +1,173 @@
 [
   {
-    "_id": "mod_1",
-    "title": "Osnove obdelave besedil (Word)",
-    "description": "Modul namenjen spoznavanju in osnovnemu oblikovanju besedil.",
+    "_id": "mod_001",
+    "title": "Razumevanje umetne inteligence",
+    "short_description": "Modul predstavlja osnovne pojme, primere in delovanje umetne inteligence.",
+    "duration_hours": 1.75,
+    "keywords": ["umetna inteligenca", "UI", "GenUI", "podatki"],
+    "domains": ["Umetna inteligenca"],
     "learning_units": [
       {
-        "learning_unit_id": "ue_1",
-        "order": 1
+        "learning_unit_id": "ue_001",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       },
       {
-        "learning_unit_id": "ue_2",
-        "order": 2
+        "learning_unit_id": "ue_002",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_001"]
       },
       {
-        "learning_unit_id": "ue_11",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_12",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_13",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_14",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_1",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_2",
-    "title": "Osnove dela s preglednicami (Excel)",
-    "description": "Vnos podatkov in uporaba osnovnih aritmetičnih operacij.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_3",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_15",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_16",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_17",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_18",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_19",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_1",
-    "prerequisites": [
-      {
-        "module_id": "mod_1"
+        "learning_unit_id": "ue_003",
+        "order": 3,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_001", "ue_002"]
       }
     ]
   },
   {
-    "_id": "mod_3",
-    "title": "Izdelava predstavitev (PowerPoint)",
-    "description": "Osnove postavljanja prosojnic in animacij.",
+    "_id": "mod_002",
+    "title": "Umetna inteligenca v praksi",
+    "short_description": "Modul povezuje razumevanje umetne inteligence s praktično in odgovorno uporabo.",
+    "duration_hours": 2.5,
+    "keywords": ["umetna inteligenca", "UI", "GenUI", "etika", "digitalne vsebine"],
+    "domains": ["Umetna inteligenca", "Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
       {
-        "learning_unit_id": "ue_20",
-        "order": 1
+        "learning_unit_id": "ue_001",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       },
       {
-        "learning_unit_id": "ue_21",
-        "order": 2
+        "learning_unit_id": "ue_002",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_001"]
       },
       {
-        "learning_unit_id": "ue_22",
-        "order": 3
+        "learning_unit_id": "ue_003",
+        "order": 3,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_001", "ue_002"]
       },
       {
-        "learning_unit_id": "ue_23",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_24",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_25",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_1",
-    "prerequisites": [
-      {
-        "module_id": "mod_1"
+        "learning_unit_id": "ue_004",
+        "order": 4,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_001", "ue_002", "ue_003"]
       }
     ]
   },
   {
-    "_id": "mod_4",
-    "title": "Komunikacija in sodelovanje na daljavo",
-    "description": "Osnove uporabe Teams in deljenja datotek.",
+    "_id": "mod_003",
+    "title": "Osnove Excela",
+    "short_description": "Modul zajema osnovno uporabo Excela, formule in oblikovanje preglednic.",
+    "duration_hours": 9.75,
+    "keywords": ["Excel", "preglednice", "formule", "oblikovanje"],
+    "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
       {
-        "learning_unit_id": "ue_4",
-        "order": 1
+        "learning_unit_id": "ue_005",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       },
       {
-        "learning_unit_id": "ue_26",
-        "order": 2
+        "learning_unit_id": "ue_006",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_005"]
       },
       {
-        "learning_unit_id": "ue_27",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_28",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_29",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_30",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_3",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_5",
-    "title": "Osnove oblačne hrambe (OneDrive)",
-    "description": "Shranjevanje in sinhronizacija datotek v oblaku.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_31",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_32",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_33",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_34",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_35",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_36",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_1",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_6",
-    "title": "Napredna obdelava podatkov (Excel)",
-    "description": "Uporaba zahtevnejših funkcij in vrtilnih tabel.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_37",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_38",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_39",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_40",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_41",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_42",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_2",
-    "prerequisites": [
-      {
-        "module_id": "mod_2"
+        "learning_unit_id": "ue_007",
+        "order": 3,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_005", "ue_006"]
       }
     ]
   },
   {
-    "_id": "mod_7",
-    "title": "Avtomatizacija z makroji",
-    "description": "Snemanje in osnovno urejanje makrojev za pohitritev dela.",
+    "_id": "mod_004",
+    "title": "Delo s podatki",
+    "short_description": "Modul vključuje uvoz, urejanje, filtriranje in pripravo podatkov za analizo.",
+    "duration_hours": 1.75,
+    "keywords": ["Excel", "podatki", "analiza", "filtriranje", "razvrščanje"],
+    "domains": ["Ustvarjanje in uporaba digitalnih vsebin"],
     "learning_units": [
       {
-        "learning_unit_id": "ue_43",
-        "order": 1
+        "learning_unit_id": "ue_008",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       },
       {
-        "learning_unit_id": "ue_44",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_45",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_46",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_47",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_48",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_2",
-    "prerequisites": [
-      {
-        "module_id": "mod_6"
+        "learning_unit_id": "ue_009",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_008"]
       }
     ]
   },
   {
-    "_id": "mod_8",
-    "title": "Napredno oblikovanje in spajanje dokumentov",
-    "description": "Strukturiranje dolgih dokumentov in uporaba Mail Merge funkcije.",
+    "_id": "mod_005",
+    "title": "Vrtilne tabele",
+    "short_description": "Modul zajema osnovno in napredno uporabo vrtilnih tabel.",
+    "duration_hours": 2,
+    "keywords": ["Excel", "vrtilne tabele", "analiza podatkov", "odstotki"],
+    "domains": [
+      "Ustvarjanje in uporaba digitalnih vsebin",
+      "Uporaba naprednih domenskih digitalnih orodij"
+    ],
     "learning_units": [
       {
-        "learning_unit_id": "ue_49",
-        "order": 1
+        "learning_unit_id": "ue_010",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       },
       {
-        "learning_unit_id": "ue_50",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_51",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_52",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_53",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_54",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_2",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_9",
-    "title": "Upravljanje SharePoint spletišč",
-    "description": "Izdelava in administracija internih spletišč ter pravic.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_55",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_56",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_57",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_58",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_59",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_60",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_2",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_10",
-    "title": "Uvod v PowerBI analitiko",
-    "description": "Vizualizacija podatkov in priprava nadzornih plošč.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_61",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_62",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_63",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_64",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_65",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_66",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_2",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_11",
-    "title": "Kibernetska varnost za končne uporabnike",
-    "description": "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_5",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_67",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_68",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_69",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_70",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_71",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_3",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_12",
-    "title": "Varno deljenje in zaščita podatkov",
-    "description": "Enkripcija in varna distribucija občutljivih datotek.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_72",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_73",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_74",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_75",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_76",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_77",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_3",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_13",
-    "title": "Digitalna identiteta in zasebnost",
-    "description": "Varovanje osebnih podatkov in nastavitve zasebnosti na spletu.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_78",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_79",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_80",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_81",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_82",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_83",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_3",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_14",
-    "title": "Prepoznavanje zlonamerne programske opreme",
-    "description": "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_84",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_85",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_86",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_87",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_88",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_89",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_3",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_15",
-    "title": "Uvod v AI orodja za delo",
-    "description": "Razumevanje osnov generativne umetne inteligence in pravilna izbira orodij za vsakodnevne naloge.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_90",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_91",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_92",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_93",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_94",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_95",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_4",
-    "prerequisites": [
-      {
-        "module_id": "mod_1"
+        "learning_unit_id": "ue_011",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["ue_010"]
       }
     ]
   },
   {
-    "_id": "mod_16",
-    "title": "AI za pisanje in povzemanje vsebin",
-    "description": "Uporaba AI za pripravo, izboljšanje in povzemanje besedilnih vsebin.",
+    "_id": "mod_006",
+    "title": "Vizualizacija in predstavitev",
+    "short_description": "Modul vključuje izdelavo grafov in pripravo rezultatov za predstavitev.",
+    "duration_hours": 1,
+    "keywords": ["Excel", "grafi", "vizualizacija", "predstavitev"],
+    "domains": [
+      "Ustvarjanje in uporaba digitalnih vsebin",
+      "Digitalna komunikacija in sodelovanje"
+    ],
     "learning_units": [
       {
-        "learning_unit_id": "ue_96",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_97",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_98",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_99",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_100",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_101",
-        "order": 6
+        "learning_unit_id": "ue_012",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
       }
-    ],
-    "competency_id": "komp_4",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_17",
-    "title": "AI za preglednice in podatkovne vpoglede",
-    "description": "Pomoč AI pri čiščenju podatkov, iskanju formul in pripravi hitrih analiz.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_102",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_103",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_104",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_105",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_106",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_107",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_4",
-    "prerequisites": []
-  },
-  {
-    "_id": "mod_18",
-    "title": "Odgovorna in varna uporaba AI",
-    "description": "Preverjanje točnosti, varovanje podatkov in razumevanje omejitev AI orodij.",
-    "learning_units": [
-      {
-        "learning_unit_id": "ue_108",
-        "order": 1
-      },
-      {
-        "learning_unit_id": "ue_109",
-        "order": 2
-      },
-      {
-        "learning_unit_id": "ue_110",
-        "order": 3
-      },
-      {
-        "learning_unit_id": "ue_111",
-        "order": 4
-      },
-      {
-        "learning_unit_id": "ue_112",
-        "order": 5
-      },
-      {
-        "learning_unit_id": "ue_113",
-        "order": 6
-      }
-    ],
-    "competency_id": "komp_4",
-    "prerequisites": []
+    ]
   }
 ]

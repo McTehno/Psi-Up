@@ -13,9 +13,10 @@ function DigCompHeroVisual({
 }: DigCompHeroVisualProps) {
 	return (
 		<div
-			className={`absolute inset-0 transition-opacity duration-500 ${isSearchActive ? 'pointer-events-none opacity-0' : 'opacity-100'
-				}`}
-		>
+	className={`absolute inset-0 hidden transition-opacity duration-500 md:block ${
+		isSearchActive ? 'pointer-events-none opacity-0' : 'opacity-100'
+	}`}
+>
 			<div className="absolute inset-x-0 top-16 z-10 flex flex-col items-center px-4 text-center sm:top-20 sm:px-6">
 				{digcompAreas.map((area, index) => {
 					const isActive = activeIndex === index

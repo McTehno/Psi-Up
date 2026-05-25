@@ -19,6 +19,7 @@ import HomeBackground from './components/HomeBackground'
 import HomeFlowSlide from './components/HomeFlowSlide'
 import HomeInfoSlide from './components/HomeInfoSlide'
 import HomeContactSlide from './components/HomeContactSlide'
+import MobileDigCompVisual from './components/MobileDigCompVisual'
 
 function HomePage() {
 	const navigate = useNavigate()
@@ -59,7 +60,7 @@ function HomePage() {
 	}, [isSearchActive])
 
 	return (
-		<main className="relative isolate h-screen snap-y snap-mandatory overflow-y-auto overflow-x-hidden scroll-smooth bg-[#fffdf8] text-[#111111]">
+		<main className="relative isolate overflow-x-hidden bg-[#fffdf8] text-[#111111] lg:h-screen lg:snap-y lg:snap-mandatory lg:overflow-y-auto lg:scroll-smooth">
 			<HomeBackground />
 
 			<div
@@ -74,7 +75,7 @@ function HomePage() {
 			<div className="mx-auto flex max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
 				<section
 					id="top"
-					className="grid min-h-screen snap-start gap-12 pb-16 pt-28 sm:pt-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:pb-20 lg:pt-10"
+					className="grid gap-8 pb-16 pt-24 lg:h-screen lg:snap-start lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:pb-10 lg:pt-10"
 				>
 					<div className="relative max-w-xl">
 						<HeroSearch
@@ -114,8 +115,12 @@ function HomePage() {
 						</div>
 
 					</div>
+					<MobileDigCompVisual
+						activeIndex={activeIndex}
+						rotationCount={rotationCount}
+					/>
 
-					<div className="relative flex min-h-[30rem] w-full flex-col sm:min-h-[40rem]">
+					<div className="relative hidden h-[40rem] w-full flex-col lg:flex">
 						<HeroSearchResults
 							isSearchActive={isSearchActive}
 							searchQuery={searchQuery}
@@ -144,7 +149,9 @@ function HomePage() {
 						iconBackground="bg-[#f2f8f1]"
 						iconColor="text-[#31583b]"
 					/>
-					<ScrollDownHint href="#position" />
+					<div className="hidden lg:block">
+						<ScrollDownHint href="#position" />
+					</div>
 				</div>
 				<div className="relative">
 					<HomeInfoSlide
@@ -158,14 +165,18 @@ function HomePage() {
 						iconBackground="bg-[#fffdf8]"
 						iconColor="text-[#d07a12]"
 					/>
-					<ScrollDownHint href="#digcomp" />
+					<div className="hidden lg:block">
+						<ScrollDownHint href="#digcomp" />
+					</div>
 				</div>
 				<div className="relative">
 					<HomeFlowSlide flowSteps={flowSteps} />
-					<ScrollDownHint href="#contact" />
+					<div className="hidden lg:block">
+						<ScrollDownHint href="#contact" />
+					</div>
 				</div>
-			<HomeContactSlide />
-		</div>
+				<HomeContactSlide />
+			</div>
 		</main >
 	)
 }

@@ -31,9 +31,9 @@ function HomeInfoSlide({
 }: HomeInfoSlideProps) {
 	return (
 		<section
-			id={id}
-			className="flex min-h-screen snap-start items-center py-16 sm:py-20"
-		>
+	id={id}
+	className="flex py-12 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+>
 			<div className="w-full">
 				<div className="mx-auto max-w-3xl text-center">
 					<p
@@ -55,7 +55,7 @@ function HomeInfoSlide({
 					{cards.map(({ icon: Icon, title: cardTitle, text }) => (
 						<article
 							key={cardTitle}
-							className={`rounded-[2rem] border border-[#eadfce] ${cardBackground} p-7 text-center shadow-[0_14px_40px_rgba(57,47,35,0.06)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_18px_46px_rgba(57,47,35,0.09)]`}
+							className="rounded-[2rem] border border-[#d8cbb8]/80 bg-white/25 p-7 text-center shadow-[0_18px_55px_rgba(57,47,35,0.08)] backdrop-blur-2xl transition duration-500 hover:-translate-y-1 hover:border-[#cdbb9f] hover:bg-white/35 hover:shadow-[0_22px_60px_rgba(57,47,35,0.11)]"
 						>
 							<span
 								className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${iconBackground} ${iconColor}`}

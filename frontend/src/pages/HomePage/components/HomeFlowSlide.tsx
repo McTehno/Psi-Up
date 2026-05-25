@@ -11,9 +11,9 @@ type HomeFlowSlideProps = {
 function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 	return (
 		<section
-			id="digcomp"
-			className="flex min-h-screen snap-start items-center py-16 sm:py-20"
-		>
+	id="digcomp"
+	className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+>
 			<div className="w-full">
 				<div className="rounded-[2.5rem] border border-[#eadfce] bg-[#fffdf8] px-6 py-10 text-center shadow-[0_18px_55px_rgba(57,47,35,0.07)] sm:px-10 sm:py-12">
 					<div className="mx-auto max-w-3xl">

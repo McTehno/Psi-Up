@@ -3,9 +3,9 @@ import { Mail, MessageCircle, Quote } from 'lucide-react'
 function HomeContactSlide() {
 	return (
 		<section
-			id="contact"
-			className="flex min-h-screen snap-start items-center py-16 sm:py-20"
-		>
+	id="contact"
+	className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+>
 			<div className="w-full">
 				<div className="mx-auto max-w-5xl text-center">
 					<p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a12]">

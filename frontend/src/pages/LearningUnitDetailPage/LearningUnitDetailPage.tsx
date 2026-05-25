@@ -10,7 +10,7 @@ import {
   Clock,
   ExternalLink,
   Heart,
-  Route,
+  CircleDot,
   Users,
 } from 'lucide-react'
 
@@ -117,25 +117,49 @@ function LearningUnitDetailPage() {
 
   return (
     <DetailPageShell>
-      <div className="mb-8 flex items-center justify-between gap-4">
+      <div className="relative mb-8">
         <div className={appStyles.header.step}>
-          <div className={appStyles.header.stepIcon}>
-            <Route className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff4cc] text-[#c94f3d]">
+            <CircleDot className="h-5 w-5" />
           </div>
           Učna enota
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className={appStyles.button.smallSecondary}
-        >
-          Nazaj
-        </button>
+        <div className="mt-5 flex flex-nowrap gap-2 overflow-x-auto pb-1 lg:absolute lg:right-0 lg:top-0 lg:z-10 lg:mt-0 lg:flex-col lg:items-end lg:gap-2.5 lg:overflow-visible lg:pb-0">
+          <button
+            type="button"
+            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#d8e8da] bg-[#f2f8f1]/95 px-3 py-2.5 text-xs font-bold text-[#31583b] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#31583b]/35 hover:bg-[#fffdf8] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#fffdf8] text-[#31583b] shadow-sm transition group-hover:bg-[#31583b] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
+              <Heart className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
+            </span>
+            Priljubljeno
+          </button>
+
+          <button
+            type="button"
+            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#eadfce] bg-[#fff6eb]/95 px-3 py-2.5 text-xs font-bold text-[#111111] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d07a12]/45 hover:bg-[#fffdf8] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#fffdf8] text-[#d07a12] shadow-sm transition group-hover:bg-[#d07a12] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
+              <Bookmark className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
+            </span>
+            Shrani
+          </button>
+
+          <button
+            type="button"
+            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#d8e8da] bg-[#fffdf8]/95 px-3 py-2.5 text-xs font-bold text-[#31583b] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#31583b]/35 hover:bg-[#f2f8f1] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#f2f8f1] text-[#31583b] shadow-sm transition group-hover:bg-[#31583b] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
+              <CheckCircle2 className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
+            </span>
+            Končano
+          </button>
+        </div>
       </div>
 
       <DetailHero
-        eyebrow="Podrobnosti učne enote"
+        eyebrow="Učna enota"
         title={learningUnit.title}
         description={learningUnit.short_description}
       >
@@ -270,37 +294,6 @@ function LearningUnitDetailPage() {
           </div>
         </div>
       </section>
-
-      <DetailSection
-        title="Upravljanje učne enote"
-        description="Tu lahko enoto dodate med priljubljene, jo shranite za pozneje ali označite kot končano."
-      >
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#eadfce] bg-[#fffdf8] px-5 py-3 text-sm font-bold text-[#111111] transition hover:border-[#d07a12]/45 hover:bg-[#fff4e6]"
-          >
-            <Heart className="h-4 w-4 text-[#31583b]" />
-            Dodaj med priljubljene
-          </button>
-
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#eadfce] bg-[#fffdf8] px-5 py-3 text-sm font-bold text-[#111111] transition hover:border-[#d07a12]/45 hover:bg-[#fff4e6]"
-          >
-            <Bookmark className="h-4 w-4 text-[#31583b]" />
-            Shrani za pozneje
-          </button>
-
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#eadfce] bg-[#fffdf8] px-5 py-3 text-sm font-bold text-[#111111] transition hover:border-[#d07a12]/45 hover:bg-[#fff4e6]"
-          >
-            <CheckCircle2 className="h-4 w-4 text-[#31583b]" />
-            Označi kot končano
-          </button>
-        </div>
-      </DetailSection>
     </DetailPageShell>
   )
 }

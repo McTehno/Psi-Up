@@ -9,6 +9,7 @@ import DetailTemplatePage from '../pages/DetailTemplatePage'
 import LearningPathDetailPage from '../pages/LearningPathDetailPage'
 import ModuleDetailPage from '../pages/ModuleDetailPage'
 import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
+import LoginPage from '../pages/LoginPage'
 
 
 
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: 'learning-units/:learningUnitId',
         element: <LearningUnitDetailPage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
       },
     ],
   },

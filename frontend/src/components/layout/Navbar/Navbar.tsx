@@ -28,9 +28,9 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 		let lastScrollTop = 0
 
 		function handleScroll(event: Event) {
-			const isMobile = window.matchMedia('(max-width: 767px)').matches
+			const isMobileOrTablet = window.matchMedia('(max-width: 1023px)').matches
 
-			if (!isMobile || isMenuOpen) {
+			if (!isMobileOrTablet || isMenuOpen) { 
 				setIsNavbarVisible(true)
 				return
 			}
@@ -70,7 +70,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 			className={[
 				'fixed inset-x-0 top-0 z-50 border-b border-white/35 bg-white/18 shadow-[0_12px_40px_rgba(57,47,35,0.10)] backdrop-blur-2xl transition-transform duration-300',
 				isNavbarVisible ? 'translate-y-0' : '-translate-y-full',
-				'md:translate-y-0',
+				'lg:translate-y-0',
 			].join(' ')}
 		>
 			<div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.42),rgba(255,255,255,0.12)_45%,rgba(208,122,18,0.08))]" />
@@ -101,42 +101,42 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 					</span>
 				</Link>
 
-				<div className="hidden items-center gap-10 justify-self-center md:flex">
+				<div className="hidden items-center gap-10 justify-self-center lg:flex">					
 					{links.map((link) => {
-						const isActive = location.pathname === link.to
+					const isActive = location.pathname === link.to
 
-						return (
-							<Link
-								key={link.to}
-								to={link.to}
+					return (
+						<Link
+							key={link.to}
+							to={link.to}
+							className={[
+								'group relative py-2 text-[15px] font-semibold tracking-wide transition-all duration-300',
+								isActive
+									? 'text-[#111111]'
+									: 'text-[#5f5a52] hover:text-[#111111]',
+							].join(' ')}
+						>
+							{link.label}
+
+							<span
 								className={[
-									'group relative py-2 text-[15px] font-semibold tracking-wide transition-all duration-300',
+									'absolute -bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full transition-all duration-300',
 									isActive
-										? 'text-[#111111]'
-										: 'text-[#5f5a52] hover:text-[#111111]',
+										? 'w-8 bg-[#d07a12]'
+										: 'w-0 bg-[#d07a12]/70 group-hover:w-5',
 								].join(' ')}
-							>
-								{link.label}
-
-								<span
-									className={[
-										'absolute -bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full transition-all duration-300',
-										isActive
-											? 'w-8 bg-[#d07a12]'
-											: 'w-0 bg-[#d07a12]/70 group-hover:w-5',
-									].join(' ')}
-								/>
-							</Link>
-						)
-					})}
+							/>
+						</Link>
+					)
+				})}
 				</div>
 
-				<div className="hidden justify-self-end md:block" aria-hidden="true" />
+				<div className="hidden justify-self-end lg:block" aria-hidden="true" />
 
 				<button
 					type="button"
 					onClick={() => setIsMenuOpen((current) => !current)}
-					className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 md:hidden"
+					className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 lg:hidden"
 					aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
 					aria-expanded={isMenuOpen}
 				>
@@ -150,7 +150,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 
 			<div
 				className={[
-					'relative z-50 border-t border-[#eadfce] bg-[#fffdf8] shadow-[0_14px_34px_rgba(57,47,35,0.10)] transition-all duration-300 md:hidden',
+					'relative z-50 border-t border-[#eadfce] bg-[#fffdf8] shadow-[0_14px_34px_rgba(57,47,35,0.10)] transition-all duration-300 lg:hidden',
 					isMenuOpen
 						? 'max-h-64 opacity-100'
 						: 'pointer-events-none max-h-0 overflow-hidden opacity-0',

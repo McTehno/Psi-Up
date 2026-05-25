@@ -60,7 +60,7 @@ function HomePage() {
 	}, [isSearchActive])
 
 	return (
-		<main className="relative isolate overflow-x-hidden bg-[#fffdf8] text-[#111111] lg:h-screen lg:snap-y lg:snap-mandatory lg:overflow-y-auto lg:scroll-smooth">
+		<main className="relative isolate min-h-screen overflow-x-hidden bg-[#fffdf8] text-[#111111] lg:h-screen lg:snap-y lg:snap-mandatory lg:overflow-y-auto lg:scroll-smooth">
 			<HomeBackground />
 
 			<div

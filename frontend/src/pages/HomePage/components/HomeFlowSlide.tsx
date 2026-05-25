@@ -11,9 +11,9 @@ type HomeFlowSlideProps = {
 function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 	return (
 		<section
-	id="digcomp"
-	className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
->
+			id="digcomp"
+			className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+		>
 			<div className="w-full">
 				<div className="rounded-[2.5rem] border border-[#eadfce] bg-[#fffdf8] px-6 py-10 text-center shadow-[0_18px_55px_rgba(57,47,35,0.07)] sm:px-10 sm:py-12">
 					<div className="mx-auto max-w-3xl">
@@ -38,7 +38,7 @@ function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 								key={step}
 								className="flex w-full flex-col items-center gap-4 lg:w-auto lg:flex-row"
 							>
-								<div className="flex min-h-[88px] w-full items-center justify-center rounded-[1.5rem] border border-[#eadfce] bg-[#fff6eb] px-5 py-4 shadow-sm lg:w-[165px]">
+								<div className="flex min-h-[88px] w-[240px] max-w-full items-center justify-center rounded-[1.5rem] border border-[#eadfce] bg-[#fff6eb] px-5 py-4 shadow-sm sm:w-[280px] lg:w-[165px]">
 									<div>
 										<span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#f2f8f1] text-[#31583b]">
 											{index === flowSteps.length - 1 ? (
@@ -55,7 +55,7 @@ function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 								</div>
 
 								{index < flowSteps.length - 1 && (
-									<span className="hidden h-10 w-10 items-center justify-center rounded-full border border-[#eadfce] bg-[#fffdf8] text-[#d07a12] lg:flex">
+									<span className="flex h-10 w-10 rotate-90 items-center justify-center rounded-full border border-[#eadfce] bg-[#fffdf8] text-[#d07a12] shadow-sm lg:rotate-0">
 										<ArrowRightIcon className="h-4 w-4" />
 									</span>
 								)}

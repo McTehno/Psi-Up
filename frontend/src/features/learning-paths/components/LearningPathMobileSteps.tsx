@@ -51,9 +51,9 @@ export function LearningPathMobileSteps({
           {orderedNodes.map((node, index) => (
             <Link
               key={node.id}
-              to={`/learning-units/${node.learningUnitId}`}
+              to={`/modules/${node.moduleId}`}
               className="group relative grid grid-cols-[3rem_minmax(0,1fr)] gap-4"
-              aria-label={`Odpri učno enoto ${node.title}`}
+              aria-label={`Odpri modul ${node.title}`}
             >
               <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#F8E7BE] bg-[#344E41] text-base font-bold text-white shadow-md transition duration-200 group-hover:scale-105 group-hover:bg-[#5F6F52]">
                 {node.order}
@@ -78,7 +78,7 @@ export function LearningPathMobileSteps({
 
                 <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#31583B]">
                   <BookOpen className="h-4 w-4" />
-                  Odpri učno enoto
+                  Odpri modul
                 </div>
               </article>
             </Link>

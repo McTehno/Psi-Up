@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
-import { BookOpen, Check, ArrowRight, Award } from 'lucide-react';
+import { BookOpen, Check, ArrowRight, Award, X } from 'lucide-react';
+import EmptyState from '../../../components/common/EmptyState';
 
 interface LearningUnitVisualizerProps {
   references: LearningUnitReferenceResponse[];
@@ -15,10 +16,47 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   completedUnitIds = []
 }) => {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeNodeIdx, setActiveNodeIdx] = useState<number | null>(null);
 
-  const handleUnitClick = (unitId: string) => {
+  // Detect mobile viewport (below Tailwind md breakpoint)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      setActiveNodeIdx(null);
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  // Close popup on outside click/tap
+  useEffect(() => {
+    if (activeNodeIdx === null) return;
+    const handler = (e: PointerEvent) => {
+      const target = e.target as Element;
+      if (popupRef.current?.contains(target)) return;
+      if (target.closest?.('[data-lu-node]')) return;
+      setActiveNodeIdx(null);
+    };
+    document.addEventListener('pointerdown', handler);
+    return () => document.removeEventListener('pointerdown', handler);
+  }, [activeNodeIdx]);
+
+  const handleUnitClick = useCallback((unitId: string) => {
     navigate(`/learning-units/${unitId}`);
-  };
+  }, [navigate]);
+
+  const handleNodeClick = useCallback((idx: number, unitId: string) => {
+    if (isMobile) {
+      setActiveNodeIdx(prev => prev === idx ? null : idx);
+    } else {
+      handleUnitClick(unitId);
+    }
+  }, [isMobile, handleUnitClick]);
 
   const groupedUnits = references.reduce((acc, ref) => {
     const order = ref.order ?? 999;
@@ -114,19 +152,63 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
   const pathD = paths.join(' ');
 
+  // Mobile popup data
+  const activeNode = activeNodeIdx !== null ? nodePositions[activeNodeIdx] : null;
+  const activeRef = activeNode?.unit;
+  const activeDetail = activeRef ? details.find(d => d._id === activeRef.learning_unit_id) : undefined;
+  const isActiveCompleted = activeRef ? completedUnitIds.includes(activeRef.learning_unit_id) : false;
+
+  // Compute mobile popup position (clamped to container bounds)
+  const getPopupStyle = (): React.CSSProperties => {
+    if (!activeNode || !containerRef.current) return {};
+    const containerWidth = containerRef.current.offsetWidth;
+    const nodeXPx = (activeNode.x / 800) * containerWidth;
+    const popupWidth = Math.min(280, containerWidth - 24);
+    const halfPopup = popupWidth / 2;
+    const clampedLeft = Math.max(12, Math.min(nodeXPx - halfPopup, containerWidth - popupWidth - 12));
+    const showAbove = activeNode.y > totalHeight * 0.65;
+
+    return {
+      left: `${clampedLeft}px`,
+      width: `${popupWidth}px`,
+      ...(showAbove
+        ? { top: `${activeNode.y - 44}px`, transform: 'translateY(-100%)' }
+        : { top: `${activeNode.y + 44}px` }
+      ),
+    };
+  };
+
+  // Arrow position pointing at the node
+  const getArrowOffset = (): number => {
+    if (!activeNode || !containerRef.current) return 0;
+    const containerWidth = containerRef.current.offsetWidth;
+    const nodeXPx = (activeNode.x / 800) * containerWidth;
+    const popupWidth = Math.min(280, containerWidth - 24);
+    const halfPopup = popupWidth / 2;
+    const clampedLeft = Math.max(12, Math.min(nodeXPx - halfPopup, containerWidth - popupWidth - 12));
+    return nodeXPx - clampedLeft;
+  };
+
+  const showPopupAbove = activeNode ? activeNode.y > totalHeight * 0.65 : false;
+
   return (
-    <div className="relative w-full py-8 flex flex-col items-center overflow-hidden">
+    <div className={`relative w-full py-8 flex flex-col items-center ${isMobile ? 'overflow-visible' : 'overflow-hidden'}`}>
       {numRows === 0 ? (
-        <div className="text-center text-[#8B7355] py-12">
-          Ni učnih enot za ta modul.
-        </div>
+        <EmptyState
+          title="Ni učnih enot"
+          message="Za ta modul trenutno ni učnih enot."
+        />
       ) : (
-        <div className="relative w-full max-w-[800px] overflow-visible" style={{ height: `${totalHeight}px` }}>
+        <div
+          ref={containerRef}
+          className="relative w-full max-w-[800px] overflow-visible"
+          style={{ height: `${totalHeight}px` }}
+        >
 
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox={`0 0 800 ${totalHeight}`}
-            preserveAspectRatio="xMidYMin meet"
+            preserveAspectRatio="none"
           >
             <defs>
               <linearGradient id="lu-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -148,6 +230,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const ref = pos.unit;
             const detail = details.find(d => d._id === ref.learning_unit_id);
             const isUnitCompleted = completedUnitIds.includes(ref.learning_unit_id);
+            const isNodeActive = isMobile && activeNodeIdx === idx;
 
             return (
               <div
@@ -158,10 +241,14 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {/* Center Node */}
                 <button
                   type="button"
-                  onClick={() => handleUnitClick(ref.learning_unit_id)}
+                  data-lu-node={idx}
+                  onClick={() => handleNodeClick(idx, ref.learning_unit_id)}
                   className={`
                     w-[56px] h-[56px] shrink-0 rounded-full flex items-center justify-center relative z-20 shadow-sm cursor-pointer
-                    hover:ring-8 transition-all duration-300
+                    transition-all duration-300
+                    ${isNodeActive
+                      ? 'ring-4 ring-[#C98A43]/60 scale-110'
+                      : 'hover:ring-8'}
                     ${isUnitCompleted
                       ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
                       : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
@@ -174,8 +261,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   )}
                 </button>
 
-                {/* Card */}
-                {pos.isSingle ? (
+                {/* Desktop cards — hidden on mobile */}
+                {!isMobile && pos.isSingle && (
                   <button
                     type="button"
                     onClick={() => handleUnitClick(ref.learning_unit_id)}
@@ -208,7 +295,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                       </span>
                     )}
                   </button>
-                ) : (
+                )}
+
+                {!isMobile && !pos.isSingle && (
                   <button
                     type="button"
                     onClick={() => handleUnitClick(ref.learning_unit_id)}
@@ -246,13 +335,69 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             );
           })}
 
+          {/* Mobile popup card — only rendered on mobile when a node is active */}
+          {isMobile && activeNode && activeRef && (
+            <div
+              ref={popupRef}
+              className="absolute z-50 animate-fade-in-up"
+              style={getPopupStyle()}
+            >
+              {/* Arrow pointing at the node */}
+              <div
+                className={`absolute left-0 w-3 h-3 rotate-45 ${isActiveCompleted ? 'bg-[#f4f7f5] border-[#31583b]' : 'bg-white border-[#DECFB3]'} ${showPopupAbove ? 'bottom-[-6px] border-r border-b' : 'top-[-6px] border-l border-t'}`}
+                style={{ left: `${getArrowOffset()}px`, transform: 'translateX(-50%) rotate(45deg)' }}
+              />
+
+              <div className={`relative backdrop-blur-md p-4 rounded-xl border shadow-lg ${isActiveCompleted ? 'bg-[#f4f7f5]/98 border-[#31583b]' : 'bg-white/98 border-[#DECFB3]'}`}>
+                {/* Close button */}
+                <button
+                  type="button"
+                  onClick={() => setActiveNodeIdx(null)}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#F5F0E8] flex items-center justify-center text-[#8B7355] hover:bg-[#EDE5D8] transition-colors z-10"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+
+                <div className="uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2">
+                  Stopnja {activeRef.order}
+                </div>
+
+                <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 pr-6 ${isActiveCompleted ? 'text-[#31583b]' : 'text-[#5c3724]'}`}>
+                  {activeDetail?.title || 'Neznana učna enota'}
+                </h4>
+
+                {activeDetail?.short_description && (
+                  <p className={`text-xs line-clamp-3 mt-1.5 leading-relaxed ${isActiveCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
+                    {activeDetail.short_description}
+                  </p>
+                )}
+
+                {!activeRef.is_required && (
+                  <span className={`mt-2 inline-block px-2 py-0.5 border rounded text-[9px] uppercase font-bold ${isActiveCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'}`}>
+                    Izbirno
+                  </span>
+                )}
+
+                {/* Navigate to detail page */}
+                <button
+                  type="button"
+                  onClick={() => handleUnitClick(activeRef.learning_unit_id)}
+                  className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#C98A43] to-[#BF7B56] text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                >
+                  Odpri podrobnosti
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Goal Node */}
           <div
             className="absolute z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2 group"
             style={{ left: '50%', top: `${finalGoalY}px` }}
           >
             {/* Main Node */}
-            <div className="w-[72px] h-[72px] bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center p-2 z-20 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-[#eadfce] transition-transform duration-300 group-hover:scale-105">
+            <div className="w-[72px] h-[72px] bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center p-1 z-20 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-[#eadfce] transition-transform duration-300 group-hover:scale-105">
               <div className="w-full h-full bg-gradient-to-br from-[#EACE9B] to-[#C98A43] rounded-full flex items-center justify-center shadow-inner relative overflow-hidden">
                 {/* Shine effect that moves on hover */}
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
@@ -262,12 +407,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
             {/* Badge Label */}
             <div className="mt-3 flex flex-col items-center z-20">
-              <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md px-7 py-3 rounded-2xl border border-[#DECFB3] shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1 group-hover:border-[#C98A43]/40">
-                <div className="w-8 h-[1.5px] bg-gradient-to-r from-transparent to-[#C98A43]/60" />
-                <h3 className="font-serif text-[1.15rem] font-bold text-[#5c3724] tracking-wide">
+              <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md px-4 py-2.5 md:px-7 md:py-3 rounded-2xl border border-[#DECFB3] shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1 group-hover:border-[#C98A43]/40">
+                <div className="w-6 md:w-8 h-[1.5px] bg-gradient-to-r from-transparent to-[#C98A43]/60" />
+                <h3 className="font-serif text-sm md:text-[1.15rem] font-bold text-[#5c3724] tracking-wide text-center whitespace-nowrap">
                   Konec modula
                 </h3>
-                <div className="w-8 h-[1.5px] bg-gradient-to-l from-transparent to-[#C98A43]/60" />
+                <div className="w-6 md:w-8 h-[1.5px] bg-gradient-to-l from-transparent to-[#C98A43]/60" />
               </div>
             </div>
           </div>

@@ -136,8 +136,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				<button
 					type="button"
 					onClick={() => setIsMenuOpen((current) => !current)}
-					className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 lg:hidden"
-					aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
+className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 lg:hidden"					aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
 					aria-expanded={isMenuOpen}
 				>
 					{isMenuOpen ? (

@@ -131,7 +131,14 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				})}
 				</div>
 
-				<div className="hidden justify-self-end lg:block" aria-hidden="true" />
+				<div className="hidden justify-self-end lg:flex items-center">
+					<Link
+						to="/login"
+						className="inline-flex h-9 items-center justify-center rounded-full bg-[#d07a12] px-6 text-[14px] font-semibold text-white shadow-sm transition-all duration-300 hover:bg-[#b0650c] hover:scale-105 active:scale-95"
+					>
+						Prijava
+					</Link>
+				</div>
 
 				<button
 					type="button"

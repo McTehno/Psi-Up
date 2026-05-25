@@ -6,27 +6,26 @@
 }
 
 .assessment-panel {
-	min-height: calc(100vh - 36px);
-	display: grid;
-	grid-template-columns: 34% 66%;
-	overflow: hidden;
-
-	background: #fffdf8;
-	border: 1px solid #ded5c6;
-	border-radius: 18px;
-	box-shadow: 0 14px 40px rgba(57, 47, 35, 0.12);
+  height: calc(100vh - 36px);
+  display: grid;
+  grid-template-columns: 34% 66%;
+  overflow: hidden;
+  background: #fffdf8;
+  border: 1px solid #ded5c6;
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(57, 47, 35, 0.12);
 }
 
 .assessment-visual {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: stretch;
-	overflow: hidden;
-
-	background: #f2e8da;
-	border-right: 1px solid #ded5c6;
-	padding: 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow: hidden;
+  background: #f2e8da;
+  border-right: 1px solid #ded5c6;
+  padding: 0;
+  min-height: 0;
 }
 
 .woman-image {
@@ -80,7 +79,9 @@
 }
 
 .assessment-content {
-	padding: 58px 72px 38px;
+  padding: 58px 72px 38px;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .assessment-header {

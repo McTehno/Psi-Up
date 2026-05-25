@@ -190,7 +190,7 @@ function getNextQuestion(params: {
   targetType: QuestionnaireTargetType
   groups: QuestionGroup[]
 }) {
-  const { currentQuestion, selectedAnswer, targetType, groups } = params
+  const { currentQuestion, groups } = params
   const position = findQuestionPosition(groups, currentQuestion.id)
 
   if (!position) {
@@ -200,14 +200,6 @@ function getNextQuestion(params: {
   const currentGroup = groups[position.groupIndex]
   const nextQuestionInSameGroup =
     currentGroup.questions[position.questionIndex + 1] ?? null
-
-  const isBaseQuestion = position.questionIndex === 0
-  const shouldSkipAdditionalQuestions =
-    targetType !== 'learning_unit' && isBaseQuestion && !selectedAnswer.weight
-
-  if (shouldSkipAdditionalQuestions) {
-    return getFirstQuestionOfNextGroup(groups, position.groupIndex)
-  }
 
   if (nextQuestionInSameGroup) {
     return nextQuestionInSameGroup
@@ -243,6 +235,30 @@ function createAnswerPayload(
       }
     })
     .filter(isQuestionnaireAnswerRequest)
+}
+
+function createAutoFalsePayload(
+  questions: QuestionnaireItem[],
+  alreadyAnsweredQuestionIds: string[],
+  selectedAnswers: Record<string, AnswerOption>,
+): QuestionnaireAnswerRequest[] {
+  const alreadyAnsweredQuestionIdSet = new Set(alreadyAnsweredQuestionIds)
+
+  const answeredPayload = createAnswerPayload(
+    alreadyAnsweredQuestionIds,
+    new Map(questions.map((question) => [question.id, question] as const)),
+    selectedAnswers,
+  )
+
+  const autoFalsePayload = questions
+    .filter((question) => !alreadyAnsweredQuestionIdSet.has(question.id))
+    .map((question) => ({
+      learning_unit_id: question.learning_unit_id,
+      question_id: question.id,
+      answer: false,
+    }))
+
+  return [...answeredPayload, ...autoFalsePayload]
 }
 
 function AssessmentResultSummary({
@@ -380,7 +396,10 @@ function QuestionnairePage() {
     }
   }, [questionnaireTitle, targetId, targetType])
 
-  const totalSteps = questionnaire.length || 1
+  const totalSteps =
+  phase === 'completed'
+    ? Math.max(visibleQuestionIds.length, 1)
+    : questionnaire.length || 1
   const currentStepNumber =
     phase === 'completed'
       ? Math.max(visibleQuestionIds.length, 1)
@@ -400,14 +419,17 @@ function QuestionnairePage() {
     phase === 'completed' ||
     (phase === 'questionnaire' && activeQuestionIndex > 0)
 
-  const nextQuestion = currentQuestion && selectedAnswer && targetType
-    ? getNextQuestion({
-        currentQuestion,
-        selectedAnswer,
-        targetType,
-        groups: questionGroups,
-      })
-    : null
+	const shouldFinishAfterCurrentAnswer = Boolean(selectedAnswer) && !selectedAnswer?.weight
+
+	const nextQuestion =
+	currentQuestion && selectedAnswer && targetType && !shouldFinishAfterCurrentAnswer
+		? getNextQuestion({
+			currentQuestion,
+			selectedAnswer,
+			targetType,
+			groups: questionGroups,
+		})
+		: null
 
   const canGoNext =
     phase === 'questionnaire' &&
@@ -520,7 +542,10 @@ function QuestionnairePage() {
     )
   }
 
-  async function submitAssessment(questionIdsToSubmit: string[]) {
+  async function submitAssessment(
+	questionIdsToSubmit: string[],
+	shouldAutoMarkRemainingAsFalse = false,
+	) {
     if (!targetType || !targetId) {
       return
     }
@@ -529,11 +554,17 @@ function QuestionnairePage() {
     setError(null)
 
     try {
-      const answers = createAnswerPayload(
-        questionIdsToSubmit,
-        questionById,
-        selectedAnswers,
-      )
+		const answers = shouldAutoMarkRemainingAsFalse
+		? createAutoFalsePayload(
+			questionnaire,
+			questionIdsToSubmit,
+			selectedAnswers,
+			)
+		: createAnswerPayload(
+			questionIdsToSubmit,
+			questionById,
+			selectedAnswers,
+			)
 
 		const payload: AssessmentEvaluateRequest = {
 		user_id: ASSESSMENT_USER_ID,
@@ -573,20 +604,27 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
-    const followingQuestion = getNextQuestion({
-      currentQuestion,
-      selectedAnswer,
-      targetType,
-      groups: questionGroups,
-    })
+	const shouldFinishAfterNoAnswer = !selectedAnswer.weight
 
-    if (!followingQuestion) {
-      await submitAssessment(questionIdsUntilCurrent)
-      return
-    }
+	if (shouldFinishAfterNoAnswer) {
+	await submitAssessment(questionIdsUntilCurrent, true)
+	return
+	}
 
-    setVisibleQuestionIds([...questionIdsUntilCurrent, followingQuestion.id])
-    setActiveQuestionIndex(questionIdsUntilCurrent.length)
+	const followingQuestion = getNextQuestion({
+	currentQuestion,
+	selectedAnswer,
+	targetType,
+	groups: questionGroups,
+	})
+
+	if (!followingQuestion) {
+	await submitAssessment(questionIdsUntilCurrent)
+	return
+	}
+
+	setVisibleQuestionIds([...questionIdsUntilCurrent, followingQuestion.id])
+	setActiveQuestionIndex(questionIdsUntilCurrent.length)
   }
 
   function goToPreviousStep() {
@@ -689,13 +727,6 @@ function QuestionnairePage() {
                   {currentQuestion.related_topic}
                 </span>
               </div>
-            )}
-
-            {targetType !== 'learning_unit' && (
-              <p className="mt-2">
-                Če na prvo vprašanje učne enote odgovorite z “Ne”, bodo
-                dodatna vprašanja te učne enote preskočena.
-              </p>
             )}
           </div>
 

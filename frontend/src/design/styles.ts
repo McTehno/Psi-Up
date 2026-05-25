@@ -1,6 +1,6 @@
 export const appStyles = {
   page: {
-    base: 'min-h-screen bg-[#e9e1d3] p-[18px] text-[#2f3328]',
+    base: 'min-h-screen bg-[#e9e1d3] pt-20 pb-[18px] px-[18px] md:pt-24 text-[#2f3328]',
     panel:
       'min-h-[calc(100vh-36px)] overflow-hidden rounded-[18px] border border-[#ded5c6] bg-[#fffdf8] shadow-[0_14px_40px_rgba(57,47,35,0.12)]',
     content: 'p-8 md:p-12 lg:p-[58px_72px_38px]',

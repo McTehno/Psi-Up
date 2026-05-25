@@ -668,11 +668,12 @@ export function LearningPathMountain({
             key={`${segment.from.id}-${segment.to.id}`}
             d={`M ${segment.from.x} ${segment.from.y} L ${segment.to.x} ${segment.to.y}`}
             fill="none"
-            stroke="#F8E7BE"
-            strokeWidth="1.8"
+            stroke="#344E41"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
+            strokeOpacity="0.72"
             vectorEffect="non-scaling-stroke"
           />
         ))}

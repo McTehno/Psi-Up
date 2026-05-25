@@ -10,9 +10,11 @@ import {
 
 import { appStyles } from '../../../design'
 import type { LearningUnitResponse } from '../../../types/learning-unit'
+import type { AssessmentResultResponse } from '../../../types/assessment'
 
 type LearningUnitDetailContentProps = {
 	learningUnit: LearningUnitResponse
+	assessmentResult?: AssessmentResultResponse | null
 }
 
 type DetailContentSection =
@@ -29,14 +31,6 @@ type MenuItem = {
 
 type TopicAssessmentStatus = 'known' | 'focus' | 'missing' | 'default'
 
-const demoAssessmentResult = {
-	learning_unit_id: 'ue_005',
-	known_topics: [
-		'Razumevanje in učinkovita uporaba programskega vmesnika',
-		'Shranjevanje in odpiranje datotek v različnih formatih',
-	],
-	missing_topics: ['Vnašanje, urejanje in hramba podatkov'],
-}
 
 const menuItems: MenuItem[] = [
 	{
@@ -104,26 +98,26 @@ function getDigCompSoftColor(code: string) {
 		title: 'text-[#2f3328]',
 	}
 }
-
-function shouldShowDemoAssessmentResult(learningUnit: LearningUnitResponse) {
-	return learningUnit._id === demoAssessmentResult.learning_unit_id
-}
-
-function getTopicAssessmentStatus(topic: string): TopicAssessmentStatus {
-	if (demoAssessmentResult.known_topics.includes(topic)) {
+function getTopicAssessmentStatus(
+	topic: string,
+	knownTopics: string[],
+	missingTopics: string[],
+): TopicAssessmentStatus {
+	if (knownTopics.includes(topic)) {
 		return 'known'
 	}
 
-	if (demoAssessmentResult.missing_topics[0] === topic) {
+	if (missingTopics[0] === topic) {
 		return 'focus'
 	}
 
-	if (demoAssessmentResult.missing_topics.includes(topic)) {
+	if (missingTopics.includes(topic)) {
 		return 'missing'
 	}
 
 	return 'default'
 }
+
 
 function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 	if (status === 'known') {
@@ -163,11 +157,17 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 
 function LearningUnitDetailContent({
 	learningUnit,
+	assessmentResult,
 }: LearningUnitDetailContentProps) {
 	const [activeSection, setActiveSection] =
 		useState<DetailContentSection>('topics')
 
-	const showAssessmentResult = shouldShowDemoAssessmentResult(learningUnit)
+	const learningUnitAssessmentResult =
+		assessmentResult?.learning_unit_results.find(
+			(result) => result.learning_unit_id === learningUnit._id,
+		) ?? null
+
+	const showAssessmentResult = Boolean(learningUnitAssessmentResult)
 
 	function renderSectionHeader({
 		icon: Icon,
@@ -206,12 +206,17 @@ function LearningUnitDetailContent({
 
 				<div className="max-w-[820px]">
 					{learningUnit.content_topics.map((topic, index) => {
-						const status = showAssessmentResult
-							? getTopicAssessmentStatus(topic)
-							: 'default'
-						const style = getTopicAssessmentStyle(status)
+	const status = learningUnitAssessmentResult
+		? getTopicAssessmentStatus(
+				topic,
+				learningUnitAssessmentResult.known_topics,
+				learningUnitAssessmentResult.missing_topics,
+			)
+		: 'default'
 
-						return (
+	const style = getTopicAssessmentStyle(status)
+
+	return (
 							<div
 								key={topic}
 								className={[
@@ -232,7 +237,7 @@ function LearningUnitDetailContent({
 									{showAssessmentResult && status === 'known' ? (
 										<CheckCircle2 className="h-5 w-5" />
 									) : showAssessmentResult &&
-									  (status === 'focus' || status === 'missing') ? (
+										(status === 'focus' || status === 'missing') ? (
 										'!'
 									) : (
 										index + 1

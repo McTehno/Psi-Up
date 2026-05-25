@@ -27,6 +27,8 @@ import type { LearningUnitResponse } from '../../types/learning-unit'
 import { getLearningUnitDetail } from '../../services/learning-unit-service'
 import LearningUnitDetailContent from '../../features/learning-units/components/LearningUnitDetailContent'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
+import type { AssessmentResultResponse } from '../../types/assessment'
+
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
     return 'Ni določeno'
@@ -55,13 +57,12 @@ function LearningUnitDetailPage() {
   const { learningUnitId } = useParams()
   const navigate = useNavigate()
 
-  const [learningUnit, setLearningUnit] =
-    useState<LearningUnitResponse | null>(null)
+  const [learningUnit, setLearningUnit] = useState<LearningUnitResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
 
   useEffect(() => {
-    // Had to make the page scroll to top when href-ing to it from ModuleDetailPage.tsx
     window.scrollTo(0, 0)
     async function loadLearningUnit() {
       if (!learningUnitId) {
@@ -86,7 +87,27 @@ function LearningUnitDetailPage() {
 
     loadLearningUnit()
   }, [learningUnitId])
+  useEffect(() => {
+    if (!learningUnitId) {
+      return
+    }
 
+    const storedResult = sessionStorage.getItem(
+      `assessment_result_${learningUnitId}`,
+    )
+
+    if (!storedResult) {
+      setAssessmentResult(null)
+      return
+    }
+
+    try {
+      setAssessmentResult(JSON.parse(storedResult) as AssessmentResultResponse)
+    } catch (error) {
+      console.error(error)
+      setAssessmentResult(null)
+    }
+  }, [learningUnitId])
   function handleStartQuestionnaire() {
     if (!learningUnitId) return
 
@@ -251,8 +272,9 @@ function LearningUnitDetailPage() {
         </div>
       </DetailSection>
       <LearningUnitDetailContent
-        learningUnit={learningUnit}
-      />
+  learningUnit={learningUnit}
+  assessmentResult={assessmentResult}
+/>
 
       <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
         <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">

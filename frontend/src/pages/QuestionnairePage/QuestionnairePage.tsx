@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import womanImage from '../../assets/woman.png'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
@@ -330,6 +330,7 @@ function AssessmentResultSummary({
 function QuestionnairePage() {
   const ASSESSMENT_USER_ID = 'demo_user'
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
@@ -397,9 +398,9 @@ function QuestionnairePage() {
   }, [questionnaireTitle, targetId, targetType])
 
   const totalSteps =
-  phase === 'completed'
-    ? Math.max(visibleQuestionIds.length, 1)
-    : questionnaire.length || 1
+    phase === 'completed'
+      ? Math.max(visibleQuestionIds.length, 1)
+      : questionnaire.length || 1
   const currentStepNumber =
     phase === 'completed'
       ? Math.max(visibleQuestionIds.length, 1)
@@ -419,17 +420,20 @@ function QuestionnairePage() {
     phase === 'completed' ||
     (phase === 'questionnaire' && activeQuestionIndex > 0)
 
-	const shouldFinishAfterCurrentAnswer = Boolean(selectedAnswer) && !selectedAnswer?.weight
+  const shouldFinishAfterCurrentAnswer =
+    Boolean(selectedAnswer) &&
+    !selectedAnswer?.weight &&
+    targetType !== 'learning_unit'
 
-	const nextQuestion =
-	currentQuestion && selectedAnswer && targetType && !shouldFinishAfterCurrentAnswer
-		? getNextQuestion({
-			currentQuestion,
-			selectedAnswer,
-			targetType,
-			groups: questionGroups,
-		})
-		: null
+  const nextQuestion =
+    currentQuestion && selectedAnswer && targetType && !shouldFinishAfterCurrentAnswer
+      ? getNextQuestion({
+        currentQuestion,
+        selectedAnswer,
+        targetType,
+        groups: questionGroups,
+      })
+      : null
 
   const canGoNext =
     phase === 'questionnaire' &&
@@ -543,9 +547,9 @@ function QuestionnairePage() {
   }
 
   async function submitAssessment(
-	questionIdsToSubmit: string[],
-	shouldAutoMarkRemainingAsFalse = false,
-	) {
+    questionIdsToSubmit: string[],
+    shouldAutoMarkRemainingAsFalse = false,
+  ) {
     if (!targetType || !targetId) {
       return
     }
@@ -554,28 +558,39 @@ function QuestionnairePage() {
     setError(null)
 
     try {
-		const answers = shouldAutoMarkRemainingAsFalse
-		? createAutoFalsePayload(
-			questionnaire,
-			questionIdsToSubmit,
-			selectedAnswers,
-			)
-		: createAnswerPayload(
-			questionIdsToSubmit,
-			questionById,
-			selectedAnswers,
-			)
+      const answers = shouldAutoMarkRemainingAsFalse
+        ? createAutoFalsePayload(
+          questionnaire,
+          questionIdsToSubmit,
+          selectedAnswers,
+        )
+        : createAnswerPayload(
+          questionIdsToSubmit,
+          questionById,
+          selectedAnswers,
+        )
 
-		const payload: AssessmentEvaluateRequest = {
-		user_id: ASSESSMENT_USER_ID,
-		target_type: targetType,
-		target_id: targetId,
-		answers,
-		}
+      const payload: AssessmentEvaluateRequest = {
+        user_id: ASSESSMENT_USER_ID,
+        target_type: targetType,
+        target_id: targetId,
+        answers,
+      }
 
       const result = await evaluateAssessment(payload)
 
       setAssessmentResult(result)
+
+      if (targetType === 'learning_unit') {
+        sessionStorage.setItem(
+          `assessment_result_${targetId}`,
+          JSON.stringify(result),
+        )
+
+        navigate(`/learning-units/${targetId}?assessment=completed`)
+        return
+      }
+
       setPhase('completed')
     } catch (error) {
       console.error(error)
@@ -604,27 +619,28 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
-	const shouldFinishAfterNoAnswer = !selectedAnswer.weight
+    const shouldFinishAfterNoAnswer =
+      !selectedAnswer.weight && targetType !== 'learning_unit'
 
-	if (shouldFinishAfterNoAnswer) {
-	await submitAssessment(questionIdsUntilCurrent, true)
-	return
-	}
+    if (shouldFinishAfterNoAnswer) {
+      await submitAssessment(questionIdsUntilCurrent, true)
+      return
+    }
 
-	const followingQuestion = getNextQuestion({
-	currentQuestion,
-	selectedAnswer,
-	targetType,
-	groups: questionGroups,
-	})
+    const followingQuestion = getNextQuestion({
+      currentQuestion,
+      selectedAnswer,
+      targetType,
+      groups: questionGroups,
+    })
 
-	if (!followingQuestion) {
-	await submitAssessment(questionIdsUntilCurrent)
-	return
-	}
+    if (!followingQuestion) {
+      await submitAssessment(questionIdsUntilCurrent)
+      return
+    }
 
-	setVisibleQuestionIds([...questionIdsUntilCurrent, followingQuestion.id])
-	setActiveQuestionIndex(questionIdsUntilCurrent.length)
+    setVisibleQuestionIds([...questionIdsUntilCurrent, followingQuestion.id])
+    setActiveQuestionIndex(questionIdsUntilCurrent.length)
   }
 
   function goToPreviousStep() {

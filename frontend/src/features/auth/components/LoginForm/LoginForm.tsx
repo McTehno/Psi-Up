@@ -6,9 +6,13 @@ type LoginFormProps = {
   onSubmit?: (email: string, password: string, rememberMe: boolean) => void
   /** Called when "Forgot password?" is clicked */
   onForgotPassword?: () => void
+  /** Error message to display */
+  error?: string | null
+  /** Is the form currently submitting? */
+  isLoading?: boolean
 }
 
-export default function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps) {
+export default function LoginForm({ onSubmit, onForgotPassword, error, isLoading }: LoginFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -21,6 +25,11 @@ export default function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
+          {error}
+        </div>
+      )}
       <div className="space-y-1.5">
         <label htmlFor="login-email" className="block text-sm font-semibold text-[#2C2417]">
           E-poštni naslov
@@ -90,9 +99,10 @@ export default function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps
 
       <button
         type="submit"
-        className="w-full bg-[#31583b] text-white text-sm font-semibold rounded-xl py-3.5 mt-4 hover:bg-[#2f4a31] active:scale-[0.98] transition-all duration-300 shadow-md shadow-[#31583b]/20 cursor-pointer"
+        disabled={isLoading}
+        className="w-full bg-[#31583b] text-white text-sm font-semibold rounded-xl py-3.5 mt-4 hover:bg-[#2f4a31] active:scale-[0.98] transition-all duration-300 shadow-md shadow-[#31583b]/20 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        Prijava
+        {isLoading ? 'Prijava...' : 'Prijava'}
       </button>
     </form>
   )

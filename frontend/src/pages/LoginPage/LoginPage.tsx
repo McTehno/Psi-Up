@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X } from 'lucide-react'
+
+import { supabase } from '../../services/supabase-client'
 
 import {
   AuthFooter,
@@ -13,11 +16,30 @@ import bgImage from '../../assets/login-background-mountains.jpeg'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Handlers — ready for API service integration
-  function handleLogin(email: string, password: string, rememberMe: boolean) {
-    // TODO: call auth service (e.g. authService.login(email, password, rememberMe))
-    console.log('Login submitted:', { email, password, rememberMe })
+  async function handleLogin(email: string, password: string, _rememberMe: boolean) {
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        setError(error.message)
+      } else {
+        navigate('/')
+      }
+    } catch (err) {
+      setError('Prišlo je do napake pri prijavi.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   function handleGoogleLogin() {
@@ -76,6 +98,8 @@ export default function LoginPage() {
               <LoginForm
                 onSubmit={handleLogin}
                 onForgotPassword={handleForgotPassword}
+                error={error}
+                isLoading={isLoading}
               />
 
               <AuthDivider />

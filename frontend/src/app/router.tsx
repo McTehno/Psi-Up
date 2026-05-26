@@ -10,7 +10,7 @@ import LearningPathDetailPage from '../pages/LearningPathDetailPage'
 import ModuleDetailPage from '../pages/ModuleDetailPage'
 import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 import LoginPage from '../pages/LoginPage'
-
+import HomeRedesignPage from '../pages/HomeRedesign/HomeRedesignPage'
 
 
 function RootLayout() {
@@ -31,6 +31,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: 'home-redesign',
+        element: <HomeRedesignPage />,
       },
       {
         path: 'search',

@@ -17,34 +17,34 @@ function DetailMeta({ items, variant = 'cards' }: DetailMetaProps) {
     return null
   }
 
-  if (variant === 'compact') {
-    return (
-      <div className="flex flex-wrap gap-4">
-        {items.map((item) => (
-          <div
-            key={`${item.label}-${item.value}`}
-            className="flex h-[86px] min-w-[175px] items-center gap-4 rounded-[16px] border border-[#eadfce] bg-[#fffdf8] px-5"
-          >
-            {item.icon && (
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center text-[#d07a12] [&_svg]:h-7 [&_svg]:w-7">
-  {item.icon}
-</div>
-            )}
-
-            <div>
-              <strong className="block text-[20px] font-bold leading-tight text-[#111111]">
-                {item.value}
-              </strong>
-
-              <span className="mt-1 block text-[14px] font-semibold text-[#706b60]">
-                {item.label}
-              </span>
+ if (variant === 'compact') {
+  return (
+    <div className="grid gap-3 lg:flex lg:flex-wrap lg:gap-4">
+      {items.map((item) => (
+        <div
+          key={`${item.label}-${item.value}`}
+          className="flex min-h-[72px] w-full items-center gap-3 rounded-[14px] border border-[#eadfce] bg-[#fffdf8] px-4 py-3 lg:h-[86px] lg:w-auto lg:min-w-[175px] lg:gap-4 lg:rounded-[16px] lg:px-5 lg:py-0"
+        >
+          {item.icon && (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[#d07a12] [&_svg]:h-6 [&_svg]:w-6 lg:h-12 lg:w-12 lg:[&_svg]:h-7 lg:[&_svg]:w-7">
+              {item.icon}
             </div>
+          )}
+
+          <div className="min-w-0">
+            <strong className="block break-words text-[17px] font-bold leading-tight text-[#111111] lg:text-[20px]">
+              {item.value}
+            </strong>
+
+            <span className="mt-1 block text-[13px] font-semibold text-[#706b60] lg:text-[14px]">
+              {item.label}
+            </span>
           </div>
-        ))}
-      </div>
-    )
-  }
+        </div>
+      ))}
+    </div>
+  )
+}
 
   return (
     <div className="grid gap-4 md:grid-cols-3">

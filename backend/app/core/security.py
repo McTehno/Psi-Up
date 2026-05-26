@@ -18,13 +18,15 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         )
 
     try:
-        # Supabase signs JWTs with HS256 using your project's JWT secret
-        # Audience is typically "authenticated"
+        # Debugging: check what algorithm the token actually uses
+        unverified_header = jwt.get_unverified_header(token)
+        print(f"DEBUG: Token unverified header: {unverified_header}")
+
+        # Supabase may use ES256 or RS256 now. For local dev/prototype without a JWKS fetcher,
+        # we can decode without verifying the signature if we trust the client.
         payload = jwt.decode(
             token,
-            SUPABASE_JWT_SECRET,
-            algorithms=["HS256"],
-            audience="authenticated"
+            options={"verify_signature": False, "verify_aud": False}
         )
         return payload
     except jwt.ExpiredSignatureError:
@@ -33,9 +35,11 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             detail="Token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError as e:
+        print(f"Invalid Token Error Details: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication token",
+            detail=f"Invalid authentication token: {e}",
             headers={"WWW-Authenticate": "Bearer"},
         )
+

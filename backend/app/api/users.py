@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.core.security import get_current_user
 from app.database.mongodb import get_database
 from app.repositories.user_progress.user_progress_repository import UserProgressRepository
 from app.repositories.user_repository import UserRepository
@@ -36,6 +37,7 @@ def get_user_service() -> UserService:
 async def get_or_create_user_profile(
     request: UserCreateRequest,
     user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(get_current_user),
 ) -> UserResponse:
     """
     Vrne ali ustvari uporabniški profil po uspešni zunanji prijavi.
@@ -44,6 +46,9 @@ async def get_or_create_user_profile(
     Če uporabnik že obstaja, ga vrnemo.
     Če ne obstaja, ustvarimo lokalni profil in prazen user_progress.
     """
+
+    if current_user.get("sub") != request.auth_user_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
 
     user = await user_service.get_or_create_user_profile(
         request.model_dump()
@@ -56,10 +61,14 @@ async def get_or_create_user_profile(
 async def get_user_by_auth_user_id(
     auth_user_id: str,
     user_service: UserService = Depends(get_user_service),
+    current_user: dict = Depends(get_current_user),
 ) -> UserResponse:
     """
     Vrne uporabniški profil po zunanjem auth_user_id.
     """
+
+    if current_user.get("sub") != auth_user_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
 
     user = await user_service.get_user_by_auth_user_id(auth_user_id)
 

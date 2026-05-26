@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import { X } from 'lucide-react'
 
 import {
-  AuthHeader,
   AuthFooter,
   AuthDivider,
   LoginForm,
@@ -37,39 +36,65 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex min-h-screen bg-cover bg-center justify-start"
-      style={{ backgroundImage: `url(${bgImage})` }}
-    >
-      {/* Glassmorphism panel covering left side */}
+    <div className="h-screen bg-sand-50 flex items-center justify-center px-4 overflow-hidden">
+      {/* Large centered window containing the entire login experience */}
       <div
-        className="relative w-full md:w-1/2 lg:w-[45%] xl:w-[40%] h-full flex flex-col justify-center px-8 lg:px-12 bg-[#fffdf8]/30 backdrop-blur-md border-r border-[#ded5c6]/60 shadow-[8px_0_32px_0_rgba(44,36,23,0.15)] animate-in fade-in slide-in-from-left-8 duration-700 ease-out overflow-y-auto"
+        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/15 border border-sand-300/60 animate-fade-in-up"
+        style={{ height: 'min(85vh, 720px)' }}
       >
-        <div className="w-full max-w-sm mx-auto relative pt-12 pb-12">
-          {/* Close Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute -top-4 right-0 p-2 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer"
-            aria-label="Close"
+        <div className="flex h-full">
+          {/* Left side — Glassmorphism login panel */}
+          <div
+            className="relative w-full md:w-1/2 lg:w-[48%] h-full flex flex-col justify-center px-8 lg:px-12 bg-[#fffdf8]/30 backdrop-blur-md border-r border-[#ded5c6]/60"
+            style={{
+              backgroundImage: `url(${bgImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'left center',
+            }}
           >
-            <X className="w-5 h-5" />
-          </button>
+            {/* Frosted glass overlay on top of the background */}
+            <div className="absolute inset-0 bg-[#fffdf8]/60 backdrop-blur-xl" />
 
-          <AuthHeader
-            title="Dobrodošli nazaj"
-            subtitle="Prijavite se za nadaljevanje."
+            <div className="w-full max-w-sm mx-auto relative z-10">
+              {/* Title row with close button inline */}
+              <div className="flex items-start justify-between mb-2">
+                <h1 className="text-3xl font-semibold tracking-tight text-[#2f4a31]">
+                  Dobrodošli nazaj
+                </h1>
+                <button
+                  onClick={() => navigate(-1)}
+                  className="p-2 -mr-2 -mt-1 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <p className="text-[#706b60] text-sm mb-8">
+                Prijavite se za nadaljevanje.
+              </p>
+
+              <LoginForm
+                onSubmit={handleLogin}
+                onForgotPassword={handleForgotPassword}
+              />
+
+              <AuthDivider />
+
+              <GoogleLoginButton onClick={handleGoogleLogin} />
+
+              <AuthFooter onAction={handleRegister} />
+            </div>
+          </div>
+
+          {/* Right side — Mountains background image */}
+          <div
+            className="hidden md:block md:w-1/2 lg:w-[52%] h-full"
+            style={{
+              backgroundImage: `url(${bgImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           />
-
-          <LoginForm
-            onSubmit={handleLogin}
-            onForgotPassword={handleForgotPassword}
-          />
-
-          <AuthDivider />
-
-          <GoogleLoginButton onClick={handleGoogleLogin} />
-
-          <AuthFooter onAction={handleRegister} />
         </div>
       </div>
     </div>

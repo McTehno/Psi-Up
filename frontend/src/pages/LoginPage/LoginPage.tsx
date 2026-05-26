@@ -36,7 +36,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen bg-sand-50 flex items-center justify-center px-4 overflow-hidden">
+    <div className="h-screen flex items-center justify-center px-4 overflow-hidden">
       {/* Large centered window containing the entire login experience */}
       <div
         className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/15 border border-sand-300/60 animate-fade-in-up"

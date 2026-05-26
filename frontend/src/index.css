@@ -65,10 +65,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background:
-    radial-gradient(circle at top left, rgba(139, 115, 85, 0.16), transparent 28%),
-    radial-gradient(circle at 80% 10%, rgba(139, 115, 85, 0.12), transparent 22%),
-    radial-gradient(circle at 90% 80%, rgba(114, 93, 67, 0.08), transparent 30%),
-    linear-gradient(180deg, #F5F0E8 0%, #E0D5C3 100%);
+    radial-gradient(circle at top left, rgba(208, 122, 18, 0.10), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(49, 88, 59, 0.10), transparent 24%),
+    radial-gradient(circle at 90% 80%, rgba(234, 223, 206, 0.45), transparent 32%),
+    linear-gradient(180deg, #fffdf8, #fff6eb);
   background-attachment: fixed;
 }
 

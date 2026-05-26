@@ -67,10 +67,10 @@ export const PathResultPage: React.FC = () => {
   } : mockData;
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8] text-[#3E2723] flex flex-col md:flex-row font-sans overflow-x-hidden">
+    <div className="min-h-screen text-[#3E2723] flex flex-col md:flex-row font-sans overflow-x-hidden">
       
       {/* Sidebar - Left Column */}
-      <aside className="w-full md:w-1/4 border-r border-brown-200/60 bg-[#F5F0E8] p-6 lg:p-10 flex flex-col">
+      <aside className="w-full md:w-1/4 border-r border-brown-200/60 p-6 lg:p-10 flex flex-col">
         <div className="mb-10">
           <h1 className="text-2xl font-bold mb-2">Vaša učna pot</h1>
           <p className="text-slate-600 text-sm">Personalizirano na podlagi vaših rezultatov ocenjevanja.</p>
@@ -94,7 +94,7 @@ export const PathResultPage: React.FC = () => {
       </aside>
 
       {/* Main Content - Right Column */}
-      <main className="w-full md:w-3/4 bg-[#F2EDE1] relative flex justify-center overflow-x-hidden">
+      <main className="w-full md:w-3/4 relative flex justify-center overflow-x-hidden">
         <LearningPathVisualizer data={data} />
       </main>
 

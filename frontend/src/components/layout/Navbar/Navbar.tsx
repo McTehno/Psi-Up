@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 
 import Logo from '../Logo'
+import { useAuth } from '../../../features/auth/contexts/AuthContext'
+import { supabase } from '../../../services/supabase-client'
 
 type NavbarLink = {
 	label: string
@@ -21,8 +23,14 @@ const defaultLinks: NavbarLink[] = [
 
 function Navbar({ links = defaultLinks }: NavbarProps) {
 	const location = useLocation()
+	const { user } = useAuth()
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isNavbarVisible, setIsNavbarVisible] = useState(true)
+
+	const handleLogout = async () => {
+		await supabase.auth.signOut()
+		setIsMenuOpen(false)
+	}
 
 	useEffect(() => {
 		let lastScrollTop = 0
@@ -132,12 +140,22 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				</div>
 
 				<div className="hidden justify-self-end lg:flex items-center">
-					<Link
-						to="/login"
-						className="inline-flex h-9 items-center justify-center rounded-full bg-[#d07a12] px-6 text-[14px] font-semibold text-white shadow-sm transition-all duration-300 hover:bg-[#b0650c] hover:scale-105 active:scale-95"
-					>
-						Prijava
-					</Link>
+					{user ? (
+						<button
+							onClick={handleLogout}
+							className="inline-flex h-9 items-center justify-center gap-2 rounded-full bg-red-600/90 px-5 text-[14px] font-semibold text-white shadow-sm transition-all duration-300 hover:bg-red-700 hover:scale-105 active:scale-95"
+						>
+							<LogOut className="h-4 w-4" />
+							Odjava
+						</button>
+					) : (
+						<Link
+							to="/register"
+							className="inline-flex h-9 items-center justify-center rounded-full bg-[#d07a12] px-6 text-[14px] font-semibold text-white shadow-sm transition-all duration-300 hover:bg-[#b0650c] hover:scale-105 active:scale-95"
+						>
+							Registracija
+						</Link>
+					)}
 				</div>
 
 				<button
@@ -183,6 +201,23 @@ className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify
 							</Link>
 						)
 					})}
+					{user ? (
+						<button
+							onClick={handleLogout}
+							className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-red-600/10 px-4 py-3 text-base font-semibold tracking-wide text-red-600 transition hover:bg-red-600/20"
+						>
+							<LogOut className="h-5 w-5" />
+							Odjava
+						</button>
+					) : (
+						<Link
+							to="/register"
+							onClick={() => setIsMenuOpen(false)}
+							className="mt-2 block rounded-[10px] bg-[#d07a12] px-4 py-3 text-center text-base font-semibold tracking-wide text-white transition hover:bg-[#b0650c]"
+						>
+							Registracija
+						</Link>
+					)}
 				</nav>
 			</div>
 		</header>

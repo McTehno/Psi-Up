@@ -18,10 +18,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         )
 
     try:
-        # Debugging: check what algorithm the token actually uses
-        unverified_header = jwt.get_unverified_header(token)
-        print(f"DEBUG: Token unverified header: {unverified_header}")
-
         # Supabase may use ES256 or RS256 now. For local dev/prototype without a JWKS fetcher,
         # we can decode without verifying the signature if we trust the client.
         payload = jwt.decode(

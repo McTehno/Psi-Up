@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 
 import { supabase } from '../../services/supabase-client'
@@ -17,9 +17,10 @@ import registerBgImage from '../../assets/register-background-mountains.jpeg'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isRegister, setIsRegister] = useState(false)
+  const [isRegister, setIsRegister] = useState(location.pathname === '/register')
 
   // -- Handlers --
   async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {

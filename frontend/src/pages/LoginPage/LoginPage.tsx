@@ -10,7 +10,7 @@ import {
 } from '../../features/auth'
 
 // Using relative path to the image as it is now in src/assets
-import bgImage from '../../assets/login-background-mountains-temp.png'
+import bgImage from '../../assets/login-background-mountains.jpeg'
 
 export default function LoginPage() {
   const navigate = useNavigate()

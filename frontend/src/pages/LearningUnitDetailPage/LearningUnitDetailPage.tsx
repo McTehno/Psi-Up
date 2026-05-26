@@ -2,20 +2,18 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Award,
-  Bookmark,
   Building2,
-  CheckCircle2,
   CircleHelp,
   ClipboardCheck,
   Clock,
   ExternalLink,
-  Heart,
   CircleDot,
   Users,
 } from 'lucide-react'
 
 import MapPinAreaIcon from '../../components/icons/MapPinAreaIcon'
 import {
+  DetailActions,
   DetailHero,
   DetailMeta,
   DetailPageShell,
@@ -114,6 +112,7 @@ function LearningUnitDetailPage() {
     navigate(`/assessment?target_type=learning_unit&target_id=${learningUnitId}`)
   }
 
+
   if (isLoading) {
     return (
       <DetailPageShell>
@@ -146,37 +145,7 @@ function LearningUnitDetailPage() {
           Učna enota
         </div>
 
-        <div className="mt-5 flex flex-nowrap gap-2 overflow-x-auto pb-1 lg:absolute lg:right-0 lg:top-0 lg:z-10 lg:mt-0 lg:flex-col lg:items-end lg:gap-2.5 lg:overflow-visible lg:pb-0">
-          <button
-            type="button"
-            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#d8e8da] bg-[#f2f8f1]/95 px-3 py-2.5 text-xs font-bold text-[#31583b] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#31583b]/35 hover:bg-[#fffdf8] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#fffdf8] text-[#31583b] shadow-sm transition group-hover:bg-[#31583b] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
-              <Heart className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
-            </span>
-            Priljubljeno
-          </button>
-
-          <button
-            type="button"
-            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#eadfce] bg-[#fff6eb]/95 px-3 py-2.5 text-xs font-bold text-[#111111] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d07a12]/45 hover:bg-[#fffdf8] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#fffdf8] text-[#d07a12] shadow-sm transition group-hover:bg-[#d07a12] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
-              <Bookmark className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
-            </span>
-            Shrani
-          </button>
-
-          <button
-            type="button"
-            className="group inline-flex shrink-0 items-center justify-start gap-2 rounded-[14px] border border-[#d8e8da] bg-[#fffdf8]/95 px-3 py-2.5 text-xs font-bold text-[#31583b] shadow-[0_10px_24px_rgba(57,47,35,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#31583b]/35 hover:bg-[#f2f8f1] hover:shadow-[0_16px_34px_rgba(57,47,35,0.10)] lg:w-[158px] lg:gap-3 lg:rounded-[16px] lg:px-4 lg:py-3 lg:text-sm"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#f2f8f1] text-[#31583b] shadow-sm transition group-hover:bg-[#31583b] group-hover:text-[#fffdf8] lg:h-9 lg:w-9 lg:rounded-[11px]">
-              <CheckCircle2 className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
-            </span>
-            Končano
-          </button>
-        </div>
+        <DetailActions />
       </div>
 
       <DetailHero
@@ -184,27 +153,28 @@ function LearningUnitDetailPage() {
         title={learningUnit.title}
         description={learningUnit.short_description}
       >
-        <DetailMeta
-          variant="compact"
-          items={[
-            {
-              label: 'Trajanje',
-              value: formatDuration(learningUnit.duration_hours),
-              icon: <Clock className="h-5 w-5" />,
-            },
-            {
-              label: 'Način izvedbe',
-              value: learningUnit.delivery_mode ?? 'Ni določeno',
-              icon: <MapPinAreaIcon className="h-5 w-5" />,
-            },
-            {
-              label: 'Certifikat',
-              value: learningUnit.certificate ?? 'Ni določeno',
-              icon: <Award className="h-5 w-5" />,
-            },
-          ]}
-        />
-
+        <div className="relative mt-7 lg:pr-[195px]">
+          <DetailMeta
+            variant="compact"
+            items={[
+              {
+                label: 'Trajanje',
+                value: formatDuration(learningUnit.duration_hours),
+                icon: <Clock className="h-5 w-5" />,
+              },
+              {
+                label: 'Način izvedbe',
+                value: learningUnit.delivery_mode ?? 'Ni določeno',
+                icon: <MapPinAreaIcon className="h-5 w-5" />,
+              },
+              {
+                label: 'Certifikat',
+                value: learningUnit.certificate ?? 'Ni določeno',
+                icon: <Award className="h-5 w-5" />,
+              },
+            ]}
+          />
+        </div>
         <div className="mt-6">
           <DetailTags
             tags={learningUnit.keywords}
@@ -272,9 +242,9 @@ function LearningUnitDetailPage() {
         </div>
       </DetailSection>
       <LearningUnitDetailContent
-  learningUnit={learningUnit}
-  assessmentResult={assessmentResult}
-/>
+        learningUnit={learningUnit}
+        assessmentResult={assessmentResult}
+      />
 
       <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
         <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">

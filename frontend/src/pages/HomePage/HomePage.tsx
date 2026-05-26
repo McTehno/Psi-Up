@@ -75,7 +75,7 @@ function HomePage() {
 			<div className="mx-auto flex max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
 				<section
 					id="top"
-					className="grid gap-8 pb-16 pt-24 lg:h-screen lg:snap-start lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:pb-10 lg:pt-10"
+					className="relative grid gap-8 pb-16 pt-24 lg:h-screen lg:snap-start lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:pb-10 lg:pt-10"
 				>
 					<div className="relative max-w-xl">
 						<HeroSearch
@@ -112,7 +112,9 @@ function HomePage() {
 							>
 								Kontakt
 							</a>
+							
 						</div>
+						
 
 					</div>
 					<MobileDigCompVisual
@@ -135,6 +137,9 @@ function HomePage() {
 							rotationCount={rotationCount}
 						/>
 					</div>
+					<div className="hidden lg:block">
+		<ScrollDownHint href="#how-it-works"  />
+	</div>
 				</section>
 
 				<div className="relative">

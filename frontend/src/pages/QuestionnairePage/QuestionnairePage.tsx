@@ -364,6 +364,14 @@ function QuestionnairePage() {
     [questionnaire],
   )
 
+  useEffect(() => {
+    document.body.classList.add('questionnaire-route')
+
+    return () => {
+      document.body.classList.remove('questionnaire-route')
+    }
+  }, [])
+
   const currentQuestionId = visibleQuestionIds[activeQuestionIndex]
   const currentQuestion = currentQuestionId
     ? questionById.get(currentQuestionId)

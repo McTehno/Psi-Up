@@ -17,6 +17,6 @@ export type SearchResult = {
 	id: string
 	type: 'learning_path' | 'module' | 'learning_unit'
 	title: string
-	shortDescription?: string
-	keywords?: string[]
+	shortDescription?: string | null
+	keywords: string[]
 }

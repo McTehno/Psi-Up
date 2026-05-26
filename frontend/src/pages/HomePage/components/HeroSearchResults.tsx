@@ -6,13 +6,7 @@ import {
 } from 'lucide-react'
 import type { NavigateFunction } from 'react-router-dom'
 
-type SearchResult = {
-	id: string
-	type: 'learning_path' | 'module' | 'learning_unit'
-	title: string
-	shortDescription?: string
-	keywords?: string[]
-}
+import type { SearchResult } from '../../../types/search'
 
 type HeroSearchResultsProps = {
 	isSearchActive: boolean

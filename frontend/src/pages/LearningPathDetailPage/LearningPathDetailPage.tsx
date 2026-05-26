@@ -1,14 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   BookOpen,
-  Bookmark,
-  CheckCircle2,
   CircleHelp,
   Clock,
   ExternalLink,
-  Heart,
   Layers3,
   Route,
 } from 'lucide-react'
@@ -61,7 +57,7 @@ function createMountainNodes(
 
     const moduleReference = getModuleReferenceById(
       moduleId,
-      learningPath.modules,
+      learningPath.modules ?? [],
     )
 
     nodes.push({
@@ -114,47 +110,6 @@ function getLearningUnitCount(learningPath: LearningPathDetailResponse) {
   )
 }
 
-function ToggleActionButton({
-  icon,
-  label,
-  activeLabel,
-  isActive,
-  onClick,
-}: {
-  icon: ReactNode
-  label: string
-  activeLabel: string
-  isActive: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={[
-        'inline-flex min-h-[64px] items-center gap-4 rounded-[16px] border px-5 py-4 text-left font-bold shadow-[0_10px_26px_rgba(57,47,35,0.06)] transition hover:-translate-y-0.5',
-        isActive
-          ? 'border-[#dcebe0] bg-[#f4fbf6] text-[#2f4a31]'
-          : 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#d8c8b1]',
-      ].join(' ')}
-      aria-pressed={isActive}
-    >
-      <span
-        className={[
-          'flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border bg-white shadow-sm',
-          isActive
-            ? 'border-[#dcebe0] text-[#2f4a31]'
-            : 'border-[#eadfce] text-[#c98a43]',
-        ].join(' ')}
-      >
-        {icon}
-      </span>
-
-      <span>{isActive ? activeLabel : label}</span>
-    </button>
-  )
-}
-
 function LearningPathDetailPage() {
   const { learningPathId } = useParams<{ learningPathId: string }>()
   const navigate = useNavigate()
@@ -164,9 +119,6 @@ function LearningPathDetailPage() {
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
 
   useEffect(() => {
@@ -190,8 +142,6 @@ function LearningPathDetailPage() {
         }
 
         setLearningPath(learningPathDetail)
-        setIsFavorite(false)
-        setIsSaved(false)
         setIsCompleted(false)
       } catch (error) {
         if (!isActive) {
@@ -283,7 +233,8 @@ function LearningPathDetailPage() {
     )
   }
 
-  const moduleCount = learningPath.module_details?.length ?? learningPath.modules.length
+  const moduleCount =
+    learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
 
   return (
@@ -303,6 +254,15 @@ function LearningPathDetailPage() {
               targetLabel={targetLabel}
               nodes={mountainNodes}
               isCompleted={isCompleted}
+              onFavoriteClick={() => {
+                // TODO: priklop na user-progress-service, ko bo na voljo userId
+              }}
+              onSaveClick={() => {
+                // TODO: priklop na user-progress-service, ko bo na voljo userId
+              }}
+              onCompletedChange={(nextIsCompleted) =>
+                setIsCompleted(nextIsCompleted)
+              }
               className="h-full"
             />
           </div>
@@ -320,113 +280,79 @@ function LearningPathDetailPage() {
         <div className="mt-10 space-y-8">
           <DetailSection
             title="Podrobnosti učne poti"
-            description="Pregled osnovnih informacij, strukture in hitrih dejanj za izbrano učno pot."
+            description="Pregled osnovnih informacij in strukture izbrane učne poti."
           >
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-              <div className="space-y-6">
-                <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
-                  <div className="grid md:grid-cols-3">
-                    {[
-                      {
-                        label: 'Predviden čas',
-                        value: formatDuration(
-                          learningPath.duration_hours,
-                          learningPath.duration_min,
-                        ),
-                        icon: <Clock className="h-5 w-5" />,
-                      },
-                      {
-                        label: 'Moduli',
-                        value: String(moduleCount),
-                        icon: <Layers3 className="h-5 w-5" />,
-                      },
-                      {
-                        label: 'Učne enote',
-                        value: String(learningUnitCount),
-                        icon: <BookOpen className="h-5 w-5" />,
-                      },
-                    ].map((item, index) => (
-                      <div
-                        key={item.label}
-                        className={[
-                          'flex min-w-0 items-start gap-4 px-5 py-5',
-                          index !== 0
-                            ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
-                            : '',
-                        ].join(' ')}
-                      >
-                        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                          {item.icon}
-                        </div>
-
-                        <div className="min-w-0">
-                          <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                            {item.label}
-                          </p>
-
-                          <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
-                            {item.value}
-                          </strong>
-                        </div>
+            <div className="space-y-6">
+              <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
+                <div className="grid md:grid-cols-3">
+                  {[
+                    {
+                      label: 'Predviden čas',
+                      value: formatDuration(
+                        learningPath.duration_hours,
+                        learningPath.duration_min,
+                      ),
+                      icon: <Clock className="h-5 w-5" />,
+                    },
+                    {
+                      label: 'Moduli',
+                      value: String(moduleCount),
+                      icon: <Layers3 className="h-5 w-5" />,
+                    },
+                    {
+                      label: 'Učne enote',
+                      value: String(learningUnitCount),
+                      icon: <BookOpen className="h-5 w-5" />,
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={item.label}
+                      className={[
+                        'flex min-w-0 items-start gap-4 px-5 py-5',
+                        index !== 0
+                          ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
+                          : '',
+                      ].join(' ')}
+                    >
+                      <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
+                        {item.icon}
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                <div className="rounded-[16px] border border-[var(--color-sand-200)] bg-white px-5 py-5">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                      <Route className="h-5 w-5" />
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
+                          {item.label}
+                        </p>
+
+                        <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
+                          {item.value}
+                        </strong>
+                      </div>
                     </div>
-
-                    <div>
-                      <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                        Ključne besede
-                      </p>
-                      <p className="text-sm text-[var(--color-brown-600)]">
-                        Fokus in teme, ki jih pokriva učna pot.
-                      </p>
-                    </div>
-                  </div>
-
-                  <DetailTags
-                    tags={learningPath.keywords || []}
-                    emptyMessage="Ni dodanih ključnih besed."
-                  />
+                  ))}
                 </div>
               </div>
 
-              <aside className="rounded-[18px] border border-[#eadfce] bg-white/90 p-5 shadow-[0_14px_30px_rgba(57,47,35,0.06)]">
-                <p className="mb-4 text-[13px] font-bold uppercase tracking-[0.18em] text-[#706b60]">
-                  Upravljanje učne poti
-                </p>
+              <div className="rounded-[16px] border border-[var(--color-sand-200)] bg-white px-5 py-5">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
+                    <Route className="h-5 w-5" />
+                  </div>
 
-                <div className="grid gap-3">
-                  <ToggleActionButton
-                    icon={<Heart className="h-5 w-5" />}
-                    label="Dodaj med priljubljene"
-                    activeLabel="Priljubljeno"
-                    isActive={isFavorite}
-                    onClick={() => setIsFavorite((current) => !current)}
-                  />
-
-                  <ToggleActionButton
-                    icon={<Bookmark className="h-5 w-5" />}
-                    label="Shrani za pozneje"
-                    activeLabel="Shranjeno"
-                    isActive={isSaved}
-                    onClick={() => setIsSaved((current) => !current)}
-                  />
-
-                  <ToggleActionButton
-                    icon={<CheckCircle2 className="h-5 w-5" />}
-                    label="Označi kot končano"
-                    activeLabel="Končano"
-                    isActive={isCompleted}
-                    onClick={() => setIsCompleted((current) => !current)}
-                  />
+                  <div>
+                    <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
+                      Ključne besede
+                    </p>
+                    <p className="text-sm text-[var(--color-brown-600)]">
+                      Fokus in teme, ki jih pokriva učna pot.
+                    </p>
+                  </div>
                 </div>
-              </aside>
+
+                <DetailTags
+                  tags={learningPath.keywords || []}
+                  emptyMessage="Ni dodanih ključnih besed."
+                />
+              </div>
             </div>
           </DetailSection>
 

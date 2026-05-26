@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronLeft, Clock, Flag } from 'lucide-react'
 
+import { DetailActions } from '../../../components/detail'
 import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
 
@@ -31,6 +32,9 @@ type LearningPathMountainProps = {
   targetLabel?: string
   nodes: LearningPathMountainNode[]
   isCompleted?: boolean
+  onFavoriteClick?: () => void
+  onSaveClick?: () => void
+  onCompletedChange?: (isCompleted: boolean) => void
   className?: string
 }
 
@@ -551,6 +555,9 @@ export function LearningPathMountain({
   targetLabel,
   nodes,
   isCompleted = false,
+  onFavoriteClick,
+  onSaveClick,
+  onCompletedChange,
   className = '',
 }: LearningPathMountainProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -760,27 +767,40 @@ export function LearningPathMountain({
         className="flex min-[1000px]:hidden"
       />
 
-      <div className="absolute left-3 right-3 top-3 z-40 rounded-[1.6rem] bg-white/90 p-4 shadow-md backdrop-blur sm:left-6 sm:right-auto sm:top-6 sm:max-w-xl sm:p-6 min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:max-w-xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#6F7F58]">
-          Učna pot
-        </p>
+        <div className="absolute left-3 right-3 top-3 z-40 flex flex-col rounded-[1.6rem] bg-white/90 p-4 shadow-md backdrop-blur sm:left-6 sm:right-auto sm:top-6 sm:max-w-xl sm:p-6 min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:max-w-[620px]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#6F7F58]">
+              Učna pot
+            </p>
 
-        <h1 className="mt-2 text-[1.55rem] font-bold leading-[1.15] text-[#283618] sm:text-3xl min-[1500px]:text-4xl">
-          {title}
-        </h1>
+            <h1 className="mt-2 text-[1.55rem] font-bold leading-[1.15] text-[#283618] sm:text-3xl min-[1500px]:text-4xl">
+              {title}
+            </h1>
 
-        <p className="mt-3 max-h-24 overflow-hidden text-[0.95rem] leading-6 text-[#5F6652] sm:max-h-none sm:text-base">
-          {description}
-        </p>
-
-        {targetLabel && (
-          <div className="mt-4 inline-flex max-w-full rounded-full bg-[#F7F1E6] px-4 py-2 text-xs font-semibold text-[#344E41] sm:text-sm">
-            <span className="max-h-10 overflow-hidden">
-              Fokus: {targetLabel}
-            </span>
+            <p className="mt-3 max-h-24 overflow-hidden text-[0.95rem] leading-6 text-[#5F6652] sm:max-h-none sm:text-base">
+              {description}
+            </p>
           </div>
-        )}
-      </div>
+
+          {targetLabel && (
+            <div className="mt-4 inline-flex max-w-full rounded-full bg-[#F7F1E6] px-4 py-2 text-xs font-semibold text-[#344E41] sm:text-sm">
+              <span className="max-h-10 overflow-hidden">
+                Fokus: {targetLabel}
+              </span>
+            </div>
+          )}
+
+          <div className="mt-5 border-t border-[#eadfce] pt-5">
+            <DetailActions
+              placement="inline"
+              completedLabel="Končano"
+              uncompletedLabel="Označi kot dokončano"
+              onFavoriteClick={onFavoriteClick}
+              onSaveClick={onSaveClick}
+              onCompletedChange={onCompletedChange}
+            />
+          </div>
+        </div>
 
       {hiddenNodeCount > 0 && (
         <div className="absolute right-4 top-4 z-20 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-[#344E41] shadow-sm backdrop-blur sm:right-6 sm:top-6">

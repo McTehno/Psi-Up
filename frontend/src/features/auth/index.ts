@@ -1,6 +1,5 @@
 export { default as AuthHeader } from './components/AuthHeader'
 export { default as AuthFooter } from './components/AuthFooter'
 export { default as AuthDivider } from './components/AuthDivider'
-export { default as LoginForm } from './components/LoginForm'
-export { default as RegisterForm } from './components/RegisterForm'
+export { default as AuthForm } from './components/AuthForm'
 export { default as GoogleLoginButton } from './components/GoogleLoginButton'

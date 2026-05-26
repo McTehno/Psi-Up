@@ -7,13 +7,13 @@ import { supabase } from '../../services/supabase-client'
 import {
   AuthFooter,
   AuthDivider,
-  LoginForm,
-  RegisterForm,
+  AuthForm,
   GoogleLoginButton,
 } from '../../features/auth'
 
 // Using relative path to the image as it is now in src/assets
-import bgImage from '../../assets/login-background-mountains.jpeg'
+import loginBgImage from '../../assets/login-background-mountains.jpeg'
+import registerBgImage from '../../assets/register-background-mountains.jpeg'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -22,52 +22,34 @@ export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false)
 
   // -- Handlers --
-  async function handleLogin(email: string, password: string, _rememberMe: boolean) {
+  async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {
     setIsLoading(true)
     setError(null)
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        setError(error.message)
-      } else {
-        navigate('/')
-      }
-    } catch (err) {
-      setError('Prišlo je do napake pri prijavi.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  async function handleRegisterSubmit(name: string, email: string, password: string) {
-    setIsLoading(true)
-    setError(null)
-    
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
+      if (isRegister) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            }
           }
-        }
-      })
-
-      if (error) {
-        setError(error.message)
+        })
+        if (error) throw error
       } else {
-        // If auto-confirm is enabled in Supabase, the session will be active immediately.
-        // AuthContext will automatically sync with the backend.
-        navigate('/')
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        if (error) throw error
       }
-    } catch (err) {
-      setError('Prišlo je do napake pri registraciji.')
+      
+      // On success (assuming auto-confirm is enabled for register)
+      navigate('/')
+    } catch (err: any) {
+      setError(err.message || 'Prišlo je do napake.')
     } finally {
       setIsLoading(false)
     }
@@ -93,11 +75,25 @@ export default function LoginPage() {
         className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8]"
         style={{ height: 'min(85vh, 720px)' }}
       >
-        {/* Background Image Wrapper (Spans full width) */}
+        {/* Login Background Image Wrapper */}
         <div 
-          className="absolute inset-0 w-full h-full"
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+            isRegister ? 'opacity-0' : 'opacity-100'
+          }`}
           style={{
-            backgroundImage: `url(${bgImage})`,
+            backgroundImage: `url(${loginBgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+
+        {/* Register Background Image Wrapper */}
+        <div 
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+            isRegister ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url(${registerBgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -113,7 +109,7 @@ export default function LoginPage() {
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
             {/* Title row with close button inline */}
             <div className="flex items-start justify-between mb-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-[#2f4a31]">
+              <h1 className={`text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#8b5a2b]' : 'text-[#2f4a31]'}`}>
                 {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button
@@ -130,32 +126,14 @@ export default function LoginPage() {
             </p>
 
             <div className="relative">
-              {/* Login Form */}
-              <div
-                className={`transition-all duration-500 ${
-                  isRegister ? 'opacity-0 invisible absolute inset-0 scale-95' : 'opacity-100 visible relative scale-100'
-                }`}
-              >
-                <LoginForm
-                  onSubmit={handleLogin}
-                  onForgotPassword={handleForgotPassword}
-                  error={!isRegister ? error : null}
-                  isLoading={isLoading && !isRegister}
-                />
-              </div>
-
-              {/* Register Form */}
-              <div
-                className={`transition-all duration-500 ${
-                  isRegister ? 'opacity-100 visible relative scale-100' : 'opacity-0 invisible absolute inset-0 scale-95'
-                }`}
-              >
-                <RegisterForm
-                  onSubmit={handleRegisterSubmit}
-                  error={isRegister ? error : null}
-                  isLoading={isLoading && isRegister}
-                />
-              </div>
+              {/* Unified Auth Form */}
+              <AuthForm
+                isRegister={isRegister}
+                onSubmit={handleSubmit}
+                onForgotPassword={handleForgotPassword}
+                error={error}
+                isLoading={isLoading}
+              />
             </div>
 
             <AuthDivider label={isRegister ? 'Ali se registrirajte z' : 'Ali nadaljujte z'} />

@@ -60,10 +60,10 @@ export const router = createBrowserRouter([
         path: 'learning-units/:learningUnitId',
         element: <LearningUnitDetailPage />,
       },
-      {
-        path: 'login',
-        element: <LoginPage />,
-      },
     ],
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
   },
 ]);

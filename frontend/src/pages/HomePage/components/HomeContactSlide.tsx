@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import { Mail, MessageCircle, Quote } from 'lucide-react'
 
 function HomeContactSlide() {
+	const [isFlipped, setIsFlipped] = useState(false)
+
 	return (
 		<section
-	id="contact"
-	className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
->
+			id="contact"
+			className="flex py-16 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+		>
 			<div className="w-full">
 				<div className="mx-auto max-w-5xl text-center">
 					<p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a12]">
@@ -21,8 +24,18 @@ function HomeContactSlide() {
 						podlagi digitalnih kompetenc.
 					</p>
 
-					<div className="group mx-auto mt-12 h-[340px] max-w-xl [perspective:1200px]">
-						<div className="relative h-full w-full rounded-[2.5rem] transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+					<button
+						type="button"
+						onClick={() => setIsFlipped((value) => !value)}
+						className="group mx-auto mt-12 block h-[340px] w-full max-w-xl text-left [perspective:1200px]"
+						aria-label={isFlipped ? 'Prikaži citat' : 'Prikaži kontakt'}
+					>
+						<div
+							className={[
+								'relative h-full w-full rounded-[2.5rem] transition-transform duration-700 [transform-style:preserve-3d] lg:group-hover:[transform:rotateY(180deg)]',
+								isFlipped ? '[transform:rotateY(180deg)]' : '',
+							].join(' ')}
+						>
 							<div className="absolute inset-0 flex flex-col items-center justify-center rounded-[2.5rem] border border-[#cdbb9f] bg-[linear-gradient(135deg,rgba(255,255,255,0.38),rgba(255,255,255,0.16)_45%,rgba(208,122,18,0.08))] px-8 py-10 text-center shadow-[0_18px_55px_rgba(57,47,35,0.12)] backdrop-blur-2xl [backface-visibility:hidden]">
 								<span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/45 bg-white/25 text-[#d07a12] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl">
 									<Quote className="h-7 w-7" />
@@ -33,7 +46,8 @@ function HomeContactSlide() {
 								</p>
 
 								<p className="mt-5 text-sm font-medium text-[#706b60]">
-									Premakni se čez kartico za kontakt.
+									<span className="lg:hidden">Tapni kartico za kontakt.</span>
+									<span className="hidden lg:inline">Premakni se čez kartico za kontakt.</span>
 								</p>
 							</div>
 
@@ -53,6 +67,7 @@ function HomeContactSlide() {
 
 								<a
 									href="mailto:info.nidiko@gmail.com"
+									onClick={(event) => event.stopPropagation()}
 									className="mt-8 inline-flex items-center justify-center gap-3 rounded-full bg-[#fffdf8] px-6 py-3 text-sm font-semibold text-[#31583b] shadow-[0_14px_40px_rgba(0,0,0,0.16)] transition hover:bg-[#fff6eb]"
 								>
 									<Mail className="h-4 w-4" />
@@ -60,7 +75,7 @@ function HomeContactSlide() {
 								</a>
 							</div>
 						</div>
-					</div>
+					</button>
 
 					<p className="mt-8 text-xs font-medium text-[#8a8175]">
 						© 2026 NIDiKo. Vse pravice pridržane.

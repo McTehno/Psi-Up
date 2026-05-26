@@ -390,12 +390,12 @@ function LearningUnitDetailContent({
 		return renderPrerequisites(showHeader)
 	}
 	function toggleMobileSection(section: DetailContentSection) {
-	setOpenMobileSections((currentSections) =>
-		currentSections.includes(section)
-			? currentSections.filter((currentSection) => currentSection !== section)
-			: [...currentSections, section],
-	)
-}
+		setOpenMobileSections((currentSections) =>
+			currentSections.includes(section)
+				? currentSections.filter((currentSection) => currentSection !== section)
+				: [...currentSections, section],
+		)
+	}
 
 	function renderMobileSection(item: MenuItem) {
 		const isActive = openMobileSections.includes(item.id)
@@ -405,9 +405,9 @@ function LearningUnitDetailContent({
 			<article
 				key={item.id}
 				className={[
-					'overflow-hidden rounded-[16px] border bg-[#fffdf8] shadow-[0_8px_22px_rgba(57,47,35,0.05)] transition duration-300',
+					'overflow-hidden rounded-[16px] border bg-[#fffdf8] shadow-[0_8px_22px_rgba(57,47,35,0.05)] transition-all duration-300 ease-out',
 					isActive
-						? 'border-[#d7c3a6] bg-[#fffaf2]'
+						? 'border-[#d7c3a6] bg-[#fffaf2] shadow-[0_14px_34px_rgba(57,47,35,0.08)]'
 						: 'border-[#eadfce] active:scale-[0.99]',
 				].join(' ')}
 			>

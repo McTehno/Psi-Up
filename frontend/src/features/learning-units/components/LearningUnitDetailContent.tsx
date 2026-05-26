@@ -3,6 +3,7 @@ import type { ComponentType } from 'react'
 import {
 	BookOpen,
 	CheckCircle2,
+	ChevronDown,
 	GraduationCap,
 	Monitor,
 	Star,
@@ -161,6 +162,9 @@ function LearningUnitDetailContent({
 }: LearningUnitDetailContentProps) {
 	const [activeSection, setActiveSection] =
 		useState<DetailContentSection>('topics')
+	const [openMobileSections, setOpenMobileSections] = useState<
+		DetailContentSection[]
+	>(['topics'])
 
 	const learningUnitAssessmentResult =
 		assessmentResult?.learning_unit_results.find(
@@ -194,15 +198,16 @@ function LearningUnitDetailContent({
 		)
 	}
 
-	function renderTopics() {
+	function renderTopics(showHeader = true) {
 		return (
 			<div>
-				{renderSectionHeader({
-					icon: BookOpen,
-					title: 'Vsebinski sklopi',
-					description:
-						'Pregled ključnih vsebinskih tem, ki jih boste spoznali v tej učni enoti.',
-				})}
+				{showHeader &&
+					renderSectionHeader({
+						icon: BookOpen,
+						title: 'Vsebinski sklopi',
+						description:
+							'Pregled ključnih vsebinskih tem, ki jih boste spoznali v tej učni enoti.',
+					})}
 
 				<div className="max-w-[820px]">
 					{learningUnit.content_topics.map((topic, index) => {
@@ -268,10 +273,10 @@ function LearningUnitDetailContent({
 		)
 	}
 
-	function renderCompetencies() {
+	function renderCompetencies(showHeader = true) {
 		return (
 			<div>
-				{renderSectionHeader({
+				{showHeader && renderSectionHeader({
 					icon: Star,
 					title: 'Pridobljene kompetence',
 					description: 'Kaj bo uporabnik znal po zaključku učne enote.',
@@ -294,10 +299,10 @@ function LearningUnitDetailContent({
 		)
 	}
 
-	function renderDigComp() {
+	function renderDigComp(showHeader = true) {
 		return (
 			<div>
-				{renderSectionHeader({
+				{showHeader && renderSectionHeader({
 					icon: Monitor,
 					title: 'DigComp kompetence',
 					description:
@@ -338,10 +343,10 @@ function LearningUnitDetailContent({
 		)
 	}
 
-	function renderPrerequisites() {
+	function renderPrerequisites(showHeader = true) {
 		return (
 			<div>
-				{renderSectionHeader({
+				{showHeader && renderSectionHeader({
 					icon: GraduationCap,
 					title: 'Predznanje',
 					description: 'Priporočeni pogoji za vključitev.',
@@ -366,21 +371,94 @@ function LearningUnitDetailContent({
 			</div>
 		)
 	}
+	function renderSectionContent(
+		section: DetailContentSection,
+		showHeader = true,
+	) {
+		if (section === 'topics') {
+			return renderTopics(showHeader)
+		}
 
+		if (section === 'competencies') {
+			return renderCompetencies(showHeader)
+		}
+
+		if (section === 'digcomp') {
+			return renderDigComp(showHeader)
+		}
+
+		return renderPrerequisites(showHeader)
+	}
+	function toggleMobileSection(section: DetailContentSection) {
+	setOpenMobileSections((currentSections) =>
+		currentSections.includes(section)
+			? currentSections.filter((currentSection) => currentSection !== section)
+			: [...currentSections, section],
+	)
+}
+
+	function renderMobileSection(item: MenuItem) {
+		const isActive = openMobileSections.includes(item.id)
+		const Icon = item.icon
+
+		return (
+			<article
+				key={item.id}
+				className={[
+					'overflow-hidden rounded-[16px] border bg-[#fffdf8] shadow-[0_8px_22px_rgba(57,47,35,0.05)] transition duration-300',
+					isActive
+						? 'border-[#d7c3a6] bg-[#fffaf2]'
+						: 'border-[#eadfce] active:scale-[0.99]',
+				].join(' ')}
+			>
+				<button
+					type="button"
+					onClick={() => toggleMobileSection(item.id)}
+					className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
+					aria-expanded={isActive}
+				>
+					<span className="flex min-w-0 items-center gap-3">
+						<span
+							className={[
+								'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition duration-300',
+								isActive
+									? 'bg-[#fff4e6] text-[#d07a12]'
+									: 'bg-[#f2f8f1] text-[#31583b]',
+							].join(' ')}
+						>
+							<Icon className="h-5 w-5" />
+						</span>
+
+						<span className="min-w-0 text-[16px] font-bold text-[#111111]">
+							{item.label}
+						</span>
+					</span>
+
+					<ChevronDown
+						className={[
+							'h-5 w-5 shrink-0 text-[#706b60] transition-transform duration-300',
+							isActive ? 'rotate-180 text-[#d07a12]' : '',
+						].join(' ')}
+					/>
+				</button>
+
+				<div
+					className={[
+						'grid transition-[grid-template-rows,opacity] duration-300 ease-out',
+						isActive ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+					].join(' ')}
+				>
+					<div className="overflow-hidden">
+						<div className="px-4 pb-4 pt-1">
+							{renderSectionContent(item.id, false)}
+						</div>
+					</div>
+				</div>
+			</article>
+		)
+	}
 	function renderActiveSection() {
-		if (activeSection === 'topics') {
-			return renderTopics()
-		}
-
-		if (activeSection === 'competencies') {
-			return renderCompetencies()
-		}
-
-		if (activeSection === 'digcomp') {
-			return renderDigComp()
-		}
-
-		return renderPrerequisites()
+		return renderSectionContent(activeSection)
 	}
 
 	return (
@@ -391,22 +469,8 @@ function LearningUnitDetailContent({
 				</h2>
 			</div>
 
-			<div className="grid gap-4 lg:hidden">
-				<div className="rounded-[14px] border border-[#eadfce] bg-[#fffdf8] p-4 shadow-[0_6px_16px_rgba(57,47,35,0.04)]">
-					{renderTopics()}
-				</div>
-
-				<div className="rounded-[14px] border border-[#eadfce] bg-[#fffdf8] p-4 shadow-[0_6px_16px_rgba(57,47,35,0.04)]">
-					{renderCompetencies()}
-				</div>
-
-				<div className="rounded-[14px] border border-[#eadfce] bg-[#fffdf8] p-4 shadow-[0_6px_16px_rgba(57,47,35,0.04)]">
-					{renderDigComp()}
-				</div>
-
-				<div className="rounded-[14px] border border-[#eadfce] bg-[#fffdf8] p-4 shadow-[0_6px_16px_rgba(57,47,35,0.04)]">
-					{renderPrerequisites()}
-				</div>
+			<div className="grid gap-3 lg:hidden">
+				{menuItems.map((item) => renderMobileSection(item))}
 			</div>
 
 			<div className="hidden gap-0 lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">

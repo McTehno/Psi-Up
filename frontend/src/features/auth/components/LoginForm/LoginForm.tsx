@@ -64,7 +64,7 @@ export default function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps
                 'relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors duration-300',
                 rememberMe
                   ? 'bg-[#31583b] border-[#31583b]'
-                  : 'bg-[#ded5c6]/40 border-[#ded5c6]',
+                  : 'bg-[#d4c9b8] border-[#c2b49e]',
               ].join(' ')}
             >
               <span

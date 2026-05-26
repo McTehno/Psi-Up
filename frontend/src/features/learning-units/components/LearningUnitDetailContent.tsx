@@ -206,17 +206,17 @@ function LearningUnitDetailContent({
 
 				<div className="max-w-[820px]">
 					{learningUnit.content_topics.map((topic, index) => {
-	const status = learningUnitAssessmentResult
-		? getTopicAssessmentStatus(
-				topic,
-				learningUnitAssessmentResult.known_topics,
-				learningUnitAssessmentResult.missing_topics,
-			)
-		: 'default'
+						const status = learningUnitAssessmentResult
+							? getTopicAssessmentStatus(
+								topic,
+								learningUnitAssessmentResult.known_topics,
+								learningUnitAssessmentResult.missing_topics,
+							)
+							: 'default'
 
-	const style = getTopicAssessmentStyle(status)
+						const style = getTopicAssessmentStyle(status)
 
-	return (
+						return (
 							<div
 								key={topic}
 								className={[
@@ -384,14 +384,14 @@ function LearningUnitDetailContent({
 	}
 
 	return (
-		<section className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8] p-0 shadow-[0_10px_30px_rgba(57,47,35,0.05)]">
-			<div className="border-b border-[#eadfce] px-4 py-5 sm:px-6 sm:py-6">
+		<section className="lg:overflow-hidden lg:rounded-[16px] lg:border lg:border-[#eadfce] lg:bg-[#fffdf8] lg:p-0 lg:shadow-[0_10px_30px_rgba(57,47,35,0.05)]">
+			<div className="hidden border-b border-[#eadfce] px-4 py-5 sm:px-6 sm:py-6 lg:block">
 				<h2 className="font-serif text-2xl text-[#111111] sm:text-3xl">
 					Pregled učne enote
 				</h2>
 			</div>
 
-			<div className="grid gap-5 px-4 py-5 sm:px-6 lg:hidden">
+			<div className="grid gap-4 lg:hidden">
 				<div className="rounded-[14px] border border-[#eadfce] bg-[#fffdf8] p-4 shadow-[0_6px_16px_rgba(57,47,35,0.04)]">
 					{renderTopics()}
 				</div>

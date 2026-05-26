@@ -14,7 +14,7 @@ function AppShell({
   showFooter = true,
 }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-sand-50 text-brown-900">
+    <div className="min-h-screen text-brown-900">
       {showNavbar && <Navbar />}
       <main>{children}</main>
       {showFooter && <Footer />}

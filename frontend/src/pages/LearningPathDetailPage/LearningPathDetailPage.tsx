@@ -199,7 +199,7 @@ function LearningPathDetailPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#F7F1E6] px-4 pb-6 pt-24 sm:px-6 lg:px-8">
+      <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <LoadingState message="Nalaganje učne poti..." />
         </div>
@@ -209,7 +209,7 @@ function LearningPathDetailPage() {
 
   if (errorMessage) {
     return (
-      <main className="min-h-screen bg-[#F7F1E6] px-4 pb-6 pt-24 sm:px-6 lg:px-8">
+      <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <ErrorState
             title="Učne poti ni bilo mogoče naložiti"
@@ -222,7 +222,7 @@ function LearningPathDetailPage() {
 
   if (!learningPath || mountainNodes.length === 0) {
     return (
-      <main className="min-h-screen bg-[#F7F1E6] px-4 pb-6 pt-24 sm:px-6 lg:px-8">
+      <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <EmptyState
             title="Ni modulov"
@@ -238,7 +238,7 @@ function LearningPathDetailPage() {
   const learningUnitCount = getLearningUnitCount(learningPath)
 
   return (
-    <main className="min-h-screen bg-[#F7F1E6] px-4 pb-10 pt-24 sm:px-6 lg:px-8">
+    <main className="min-h-screen px-4 pb-10 pt-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1800px]">
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div

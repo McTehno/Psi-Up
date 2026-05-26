@@ -240,44 +240,7 @@ function LearningPathDetailPage() {
   return (
     <main className="min-h-screen px-4 pb-10 pt-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1800px]">
-        <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
-          <div
-            className={`h-full transition-[width] duration-300 ease-out ${
-              isChatPanelExpanded
-                ? 'min-[1500px]:w-[calc(100%-384px)]'
-                : 'w-full'
-            }`}
-          >
-            <LearningPathMountain
-              title={learningPath.title}
-              description={learningPath.short_description}
-              targetLabel={targetLabel}
-              nodes={mountainNodes}
-              isCompleted={isCompleted}
-              onFavoriteClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onSaveClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onCompletedChange={(nextIsCompleted) =>
-                setIsCompleted(nextIsCompleted)
-              }
-              className="h-full"
-            />
-          </div>
-
-          <div className="hidden min-[1500px]:block">
-            <CollapsibleChatPanel
-              title="Chat pride kasneje"
-              description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
-              footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
-              onExpandedChange={setIsChatPanelExpanded}
-            />
-          </div>
-        </div>
-
-        <div className="mt-10 space-y-8">
+                <div className="mt-10 space-y-8">
           <DetailSection
             title="Podrobnosti učne poti"
             description="Pregled osnovnih informacij in strukture izbrane učne poti."
@@ -355,8 +318,45 @@ function LearningPathDetailPage() {
               </div>
             </div>
           </DetailSection>
+        </div>
+        <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
+          <div
+            className={`h-full transition-[width] duration-300 ease-out ${
+              isChatPanelExpanded
+                ? 'min-[1500px]:w-[calc(100%-384px)]'
+                : 'w-full'
+            }`}
+          >
 
-          <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
+            <LearningPathMountain
+              title={learningPath.title}
+              description={learningPath.short_description}
+              targetLabel={targetLabel}
+              nodes={mountainNodes}
+              isCompleted={isCompleted}
+              onFavoriteClick={() => {
+                // TODO: priklop na user-progress-service, ko bo na voljo userId
+              }}
+              onSaveClick={() => {
+                // TODO: priklop na user-progress-service, ko bo na voljo userId
+              }}
+              onCompletedChange={(nextIsCompleted) =>
+                setIsCompleted(nextIsCompleted)
+              }
+              className="h-full"
+            />
+          </div>
+
+          <div className="hidden min-[1500px]:block">
+            <CollapsibleChatPanel
+              title="Chat pride kasneje"
+              description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
+              footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+              onExpandedChange={setIsChatPanelExpanded}
+            />
+          </div>
+        </div>
+                  <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
             <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
               <div>
                 <div className="mb-4 flex items-center gap-3">
@@ -395,7 +395,6 @@ function LearningPathDetailPage() {
               </div>
             </div>
           </section>
-        </div>
       </div>
     </main>
   )

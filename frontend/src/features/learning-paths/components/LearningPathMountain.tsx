@@ -7,6 +7,7 @@ import { DetailActions } from '../../../components/detail'
 import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
 
+
 export type LearningPathMountainNode = {
   id: string
   order: number
@@ -52,6 +53,7 @@ type PathPoint = {
 type PathSegment = {
   from: PathPoint
   to: PathPoint
+  isParallelTransition?: boolean
 }
 
 type LayoutVariant = 'mobile' | 'tablet' | 'desktop'
@@ -403,11 +405,17 @@ function createPathSegments(levels: PositionedMountainNode[][]): PathSegment[] {
   for (let levelIndex = 0; levelIndex < levels.length - 1; levelIndex += 1) {
     const currentLevel = levels[levelIndex]
     const nextLevel = levels[levelIndex + 1]
+    const isParallelTransition =
+      currentLevel.length > 1 || nextLevel.length > 1
 
     if (currentLevel.length === 1 || nextLevel.length === 1) {
       currentLevel.forEach((fromNode) => {
         nextLevel.forEach((toNode) => {
-          segments.push({ from: fromNode, to: toNode })
+          segments.push({
+            from: fromNode,
+            to: toNode,
+            isParallelTransition,
+          })
         })
       })
 
@@ -416,7 +424,12 @@ function createPathSegments(levels: PositionedMountainNode[][]): PathSegment[] {
 
     currentLevel.forEach((fromNode, index) => {
       const matchingNode = nextLevel[index] ?? nextLevel[nextLevel.length - 1]
-      segments.push({ from: fromNode, to: matchingNode })
+
+      segments.push({
+        from: fromNode,
+        to: matchingNode,
+        isParallelTransition,
+      })
     })
   }
 
@@ -428,6 +441,7 @@ function createFinishPathSegments(
   finishPosition: Position,
 ): PathSegment[] {
   const lastLevel = levels[levels.length - 1] ?? []
+  const isParallelTransition = lastLevel.length > 1
 
   return lastLevel.map((node) => ({
     from: node,
@@ -436,6 +450,7 @@ function createFinishPathSegments(
       x: finishPosition.x,
       y: finishPosition.y,
     },
+    isParallelTransition,
   }))
 }
 
@@ -547,6 +562,44 @@ function ModuleDetailBox({
       </Link>
     </article>
   )
+}
+
+function createWavyPathD(
+  from: PathPoint,
+  to: PathPoint,
+  waveCount = 2,
+) {
+  const deltaX = to.x - from.x
+  const deltaY = to.y - from.y
+  const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+
+  if (distance === 0) {
+    return `M ${from.x} ${from.y}`
+  }
+
+  const pointCount = 28
+  const amplitude = Math.min(Math.max(distance * 0.035, 1.4), 3.2)
+
+  const normalX = -deltaY / distance
+  const normalY = deltaX / distance
+
+  const points = Array.from({ length: pointCount + 1 }, (_, index) => {
+    const progress = index / pointCount
+    const fade = Math.sin(Math.PI * progress)
+    const wave = Math.sin(progress * Math.PI * 2 * waveCount)
+    const offset = wave * amplitude * fade
+
+    return {
+      x: from.x + deltaX * progress + normalX * offset,
+      y: from.y + deltaY * progress + normalY * offset,
+    }
+  })
+
+  return points
+    .map((point, index) =>
+      `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`,
+    )
+    .join(' ')
 }
 
 export function LearningPathMountain({
@@ -671,18 +724,22 @@ export function LearningPathMountain({
         aria-hidden="true"
       >
         {segments.map((segment) => (
-          <path
-            key={`${segment.from.id}-${segment.to.id}`}
-            d={`M ${segment.from.x} ${segment.from.y} L ${segment.to.x} ${segment.to.y}`}
-            fill="none"
-            stroke="#344E41"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray="4 4"
-            strokeOpacity="0.72"
-            vectorEffect="non-scaling-stroke"
-          />
+        <path
+          key={`${segment.from.id}-${segment.to.id}`}
+          d={createWavyPathD(
+            segment.from,
+            segment.to,
+            segment.isParallelTransition ? 1.5 : 2,
+          )}
+          fill="none"
+          stroke="#344E41"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="4 4"
+          strokeOpacity="0.72"
+          vectorEffect="non-scaling-stroke"
+        />
         ))}
       </svg>
     )

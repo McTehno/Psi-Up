@@ -1,7 +1,14 @@
 import type { ErrorResponse } from '../types/api'
+import { supabase } from './supabase-client'
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
+
+async function getAuthHeaders() {
+  const { data } = await supabase.auth.getSession()
+  const token = data?.session?.access_token
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 async function parseResponse<T>(response: Response): Promise<T> {
   const data = await response.json().catch(() => null)
@@ -20,7 +27,8 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function apiGet<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`)
+  const headers = await getAuthHeaders()
+  const response = await fetch(`${API_BASE_URL}${path}`, { headers })
   return parseResponse<T>(response)
 }
 
@@ -28,10 +36,12 @@ export async function apiPost<TResponse, TBody>(
   path: string,
   body: TBody
 ): Promise<TResponse> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...headers,
     },
     body: JSON.stringify(body),
   })
@@ -43,10 +53,12 @@ export async function apiPut<TResponse, TBody>(
   path: string,
   body: TBody
 ): Promise<TResponse> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      ...headers,
     },
     body: JSON.stringify(body),
   })
@@ -55,8 +67,10 @@ export async function apiPut<TResponse, TBody>(
 }
 
 export async function apiDelete<T>(path: string): Promise<T> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: 'DELETE',
+    headers,
   })
 
   return parseResponse<T>(response)
@@ -66,10 +80,12 @@ export async function apiDeleteWithBody<TResponse, TBody>(
   path: string,
   body: TBody
 ): Promise<TResponse> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
+      ...headers,
     },
     body: JSON.stringify(body),
   })

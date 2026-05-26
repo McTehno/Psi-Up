@@ -1,18 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  BookOpen,
-  CircleHelp,
-  Clock,
-  ExternalLink,
-  Layers3,
-  Route,
-} from 'lucide-react'
-
+import { CircleHelp, ExternalLink } from 'lucide-react'
+import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import EmptyState from '../../components/common/EmptyState'
 import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
-import { DetailSection, DetailTags } from '../../components/detail'
+import { DetailTags } from '../../components/detail'
 import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
   LearningPathMountain,
@@ -22,9 +15,8 @@ import { getLearningPathDetail } from '../../services/learning-path-service'
 import type { LearningPathDetailResponse } from '../../types/learning-path'
 import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
 
-import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
-
 const MAX_VISIBLE_NODES = 7
+
 
 type BackendEntity = {
   id?: string
@@ -175,14 +167,6 @@ function LearningPathDetailPage() {
     return createMountainNodes(learningPath)
   }, [learningPath])
 
-  const targetLabel = useMemo(() => {
-    if (!learningPath?.keywords.length) {
-      return undefined
-    }
-
-    return learningPath.keywords.slice(0, 3).join(' · ')
-  }, [learningPath])
-
   function handleStartQuestionnaire() {
     if (!learningPath) {
       return
@@ -238,87 +222,29 @@ function LearningPathDetailPage() {
   const learningUnitCount = getLearningUnitCount(learningPath)
 
   return (
-    <main className="min-h-screen px-4 pb-10 pt-24 sm:px-6 lg:px-8">
+    <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1800px]">
-                <div className="mt-10 space-y-8">
-          <DetailSection
-            title="Podrobnosti učne poti"
-            description="Pregled osnovnih informacij in strukture izbrane učne poti."
-          >
-            <div className="space-y-6">
-              <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
-                <div className="grid md:grid-cols-3">
-                  {[
-                    {
-                      label: 'Predviden čas',
-                      value: formatDuration(
-                        learningPath.duration_hours,
-                        learningPath.duration_min,
-                      ),
-                      icon: <Clock className="h-5 w-5" />,
-                    },
-                    {
-                      label: 'Moduli',
-                      value: String(moduleCount),
-                      icon: <Layers3 className="h-5 w-5" />,
-                    },
-                    {
-                      label: 'Učne enote',
-                      value: String(learningUnitCount),
-                      icon: <BookOpen className="h-5 w-5" />,
-                    },
-                  ].map((item, index) => (
-                    <div
-                      key={item.label}
-                      className={[
-                        'flex min-w-0 items-start gap-4 px-5 py-5',
-                        index !== 0
-                          ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
-                          : '',
-                      ].join(' ')}
-                    >
-                      <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                        {item.icon}
-                      </div>
+        <section className="ml-0 max-w-[1280px] pb-8 pt-10 sm:ml-6 lg:ml-10 xl:ml-12">
+          <p className="text-sm font-bold uppercase tracking-[0.24em] text-[var(--color-brown-600)]">
+            Učna pot
+          </p>
 
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                          {item.label}
-                        </p>
+          <h1 className="mt-5 max-w-5xl font-serif text-[clamp(3.2rem,5.8vw,6.4rem)] leading-[0.92] tracking-[-0.035em] text-[var(--color-brown-900)]">
+            {learningPath.title}
+          </h1>
 
-                        <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
-                          {item.value}
-                        </strong>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--color-brown-600)]">
+            {learningPath.short_description}
+          </p>
 
-              <div className="rounded-[16px] border border-[var(--color-sand-200)] bg-white px-5 py-5">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                    <Route className="h-5 w-5" />
-                  </div>
+          <div className="mt-7">
+            <DetailTags
+              tags={learningPath.keywords || []}
+              emptyMessage="Ni dodanih ključnih besed."
+            />
+          </div>
+        </section>
 
-                  <div>
-                    <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                      Ključne besede
-                    </p>
-                    <p className="text-sm text-[var(--color-brown-600)]">
-                      Fokus in teme, ki jih pokriva učna pot.
-                    </p>
-                  </div>
-                </div>
-
-                <DetailTags
-                  tags={learningPath.keywords || []}
-                  emptyMessage="Ni dodanih ključnih besed."
-                />
-              </div>
-            </div>
-          </DetailSection>
-        </div>
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div
             className={`h-full transition-[width] duration-300 ease-out ${
@@ -327,12 +253,14 @@ function LearningPathDetailPage() {
                 : 'w-full'
             }`}
           >
-
             <LearningPathMountain
-              title={learningPath.title}
-              description={learningPath.short_description}
-              targetLabel={targetLabel}
               nodes={mountainNodes}
+              durationLabel={formatDuration(
+                learningPath.duration_hours,
+                learningPath.duration_min,
+              )}
+              moduleCount={moduleCount}
+              learningUnitCount={learningUnitCount}
               isCompleted={isCompleted}
               onFavoriteClick={() => {
                 // TODO: priklop na user-progress-service, ko bo na voljo userId
@@ -356,45 +284,43 @@ function LearningPathDetailPage() {
             />
           </div>
         </div>
-                  <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
-            <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
-              <div>
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#d7a56b] bg-[#fffdf8] text-[#d07a12]">
-                    <CircleHelp className="h-6 w-6" />
-                  </div>
 
-                  <h2 className="font-serif text-3xl text-[#111111]">
-                    Samoocena
-                  </h2>
+        <section className="mt-12 overflow-hidden rounded-[32px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-10 shadow-[0_18px_50px_rgba(84,59,33,0.08)] sm:px-10 lg:px-14">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+            <div>
+              <div className="flex items-center gap-5">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#d58a2b] bg-[#fff8ee] text-[#d58a2b]">
+                  <CircleHelp className="h-8 w-8" />
                 </div>
 
-                <p className="max-w-[620px] text-[15px] leading-7 text-[#706b60]">
-                  Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
-                  nekaj minut in preverite, kje na učni poti lahko začnete.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={handleStartQuestionnaire}
-                  className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
-                >
-                  Odpri vprašalnik
-                  <ExternalLink className="h-4 w-4" />
-                </button>
+                <h2 className="font-serif text-5xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
+                  Samoocena
+                </h2>
               </div>
 
-              <div className="hidden items-center justify-center md:flex">
-                <div className="flex h-[190px] w-[240px] items-center justify-center">
-                  <img
-                    src={questionnaireIllustration}
-                    alt="Ilustracija vprašalnika"
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </div>
-              </div>
+              <p className="mt-7 max-w-3xl text-xl leading-9 text-[var(--color-brown-600)]">
+                Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
+                in preverite svoje znanje.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleStartQuestionnaire}
+                className="mt-10 inline-flex items-center justify-center gap-3 rounded-[18px] bg-[#d08a34] px-9 py-5 text-lg font-bold text-white shadow-[0_18px_38px_rgba(208,138,52,0.24)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
+              >
+                Odpri vprašalnik
+                <ExternalLink className="h-5 w-5" />
+              </button>
             </div>
-          </section>
+
+            <img
+              src={questionnaireIllustration}
+              alt=""
+              className="hidden w-full max-w-[330px] justify-self-center opacity-80 lg:block"
+              aria-hidden="true"
+            />
+          </div>
+        </section>
       </div>
     </main>
   )

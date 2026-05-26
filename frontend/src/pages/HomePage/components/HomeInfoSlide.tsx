@@ -25,15 +25,14 @@ function HomeInfoSlide({
 	description,
 	labelColor,
 	cards,
-	cardBackground,
 	iconBackground,
 	iconColor,
 }: HomeInfoSlideProps) {
 	return (
 		<section
-	id={id}
-	className="flex py-12 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
->
+			id={id}
+			className="flex py-12 lg:h-screen lg:snap-start lg:items-center lg:overflow-hidden lg:py-12"
+		>
 			<div className="w-full">
 				<div className="mx-auto max-w-3xl text-center">
 					<p

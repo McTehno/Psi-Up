@@ -24,7 +24,7 @@ function MobileDigCompVisual({
 				</p>
 			</div>
 
-			<div className="relative h-[400px] w-[400px] max-w-full overflow-visible">
+			<div className="relative h-[330px] w-[330px] max-w-full overflow-hidden sm:h-[400px] sm:w-[400px] sm:overflow-visible">
 				<svg
 					viewBox="-120 -120 240 240"
 					className="absolute inset-0 aspect-square h-full w-full transition-transform duration-1000 ease-in-out"

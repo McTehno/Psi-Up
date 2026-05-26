@@ -4,7 +4,11 @@
     "title": "Osnovni pojmi umetne inteligence",
     "short_description": "Uvod v osnovne pojme umetne inteligence.",
     "duration_hours": 0.5,
-    "keywords": ["umetna inteligenca", "UI", "osnovni pojmi"],
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "osnovni pojmi"
+    ],
     "content_topics": [
       "Razumevanje pojma umetna inteligenca",
       "Prepoznavanje osnovnih primerov umetne inteligence",
@@ -48,6 +52,12 @@
         "question": "Znam prepoznati primere umetne inteligence v vsakdanjem življenju.",
         "type": "yes_no",
         "related_topic": "Prepoznavanje osnovnih primerov umetne inteligence"
+      },
+      {
+        "id": "q_ue_001_003",
+        "question": "Znam razlikovati med klasičnimi programi in sistemi umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Razlikovanje med klasičnimi programi in sistemi umetne inteligence"
       }
     ]
   },
@@ -56,7 +66,12 @@
     "title": "Kako deluje umetna inteligenca?",
     "short_description": "Razumevanje osnov delovanja umetne inteligence in pomena podatkov.",
     "duration_hours": 0.5,
-    "keywords": ["umetna inteligenca", "UI", "podatki", "delovanje UI"],
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "podatki",
+      "delovanje UI"
+    ],
     "content_topics": [
       "Vloga podatkov pri umetni inteligenci",
       "Osnovni princip učenja iz podatkov",
@@ -99,6 +114,12 @@
         "question": "Razumem osnovno delovanje umetne inteligence.",
         "type": "yes_no",
         "related_topic": "Osnovni princip učenja iz podatkov"
+      },
+      {
+        "id": "q_ue_002_003",
+        "question": "Znam opisati primer, kako sistem umetne inteligence sprejema odločitve.",
+        "type": "yes_no",
+        "related_topic": "Primeri odločanja sistemov umetne inteligence"
       }
     ]
   },
@@ -107,7 +128,12 @@
     "title": "Generativna UI v praksi",
     "short_description": "Uporaba generativne umetne inteligence v praktičnih primerih.",
     "duration_hours": 0.75,
-    "keywords": ["generativna UI", "GenUI", "pozivi", "orodja GenUI"],
+    "keywords": [
+      "generativna UI",
+      "GenUI",
+      "pozivi",
+      "orodja GenUI"
+    ],
     "content_topics": [
       "Primeri generativne umetne inteligence",
       "Uporaba orodij za ustvarjanje besedila in idej",
@@ -173,7 +199,12 @@
     "title": "Etika UI in varna uporaba UI",
     "short_description": "Razumevanje etičnih vidikov, tveganj in odgovorne uporabe umetne inteligence.",
     "duration_hours": 0.75,
-    "keywords": ["etika UI", "varna uporaba UI", "pristranskost", "tveganja"],
+    "keywords": [
+      "etika UI",
+      "varna uporaba UI",
+      "pristranskost",
+      "tveganja"
+    ],
     "content_topics": [
       "Etični vidiki uporabe umetne inteligence",
       "Pristranskost v sistemih umetne inteligence",
@@ -209,18 +240,24 @@
     "self_assessment_questions": [
       {
         "id": "q_ue_004_001",
+        "question": "Razumem osnovne etične vidike uporabe umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Etični vidiki uporabe umetne inteligence"
+      },
+      {
+        "id": "q_ue_004_002",
         "question": "Razumem, da lahko umetna inteligenca vsebuje pristranskosti.",
         "type": "yes_no",
         "related_topic": "Pristranskost v sistemih umetne inteligence"
       },
       {
-        "id": "q_ue_004_002",
+        "id": "q_ue_004_003",
         "question": "Prepoznam tveganja pri uporabi umetne inteligence.",
         "type": "yes_no",
         "related_topic": "Tveganja pri uporabi umetne inteligence"
       },
       {
-        "id": "q_ue_004_003",
+        "id": "q_ue_004_004",
         "question": "Razumem pomen odgovorne uporabe umetne inteligence.",
         "type": "yes_no",
         "related_topic": "Odgovorna in varna uporaba orodij umetne inteligence"
@@ -232,7 +269,15 @@
     "title": "Osnove Excela",
     "short_description": "Učna enota za osnovno uporabo Excela: vmesnik, vnos in urejanje podatkov ter shranjevanje datotek v različnih formatih.",
     "duration_hours": 8,
-    "keywords": ["Excel", "preglednice", "podatki", "datoteke", "xlsx", "csv", "pdf"],
+    "keywords": [
+      "Excel",
+      "preglednice",
+      "podatki",
+      "datoteke",
+      "xlsx",
+      "csv",
+      "pdf"
+    ],
     "content_topics": [
       "Razumevanje in učinkovita uporaba programskega vmesnika",
       "Vnašanje, urejanje in hramba podatkov",
@@ -289,7 +334,12 @@
     "title": "Formule in funkcije",
     "short_description": "Uporaba osnovnih formul in funkcij v Excelu.",
     "duration_hours": 1,
-    "keywords": ["Excel", "formule", "funkcije", "celice"],
+    "keywords": [
+      "Excel",
+      "formule",
+      "funkcije",
+      "celice"
+    ],
     "content_topics": [
       "Zapisovanje osnovnih formul",
       "Uporaba osnovnih Excel funkcij",
@@ -347,7 +397,12 @@
     "title": "Oblikovanje preglednice",
     "short_description": "Oblikovanje celic, pogojno oblikovanje in priprava preglednic za tisk.",
     "duration_hours": 0.75,
-    "keywords": ["Excel", "oblikovanje", "pogojno oblikovanje", "tiskanje"],
+    "keywords": [
+      "Excel",
+      "oblikovanje",
+      "pogojno oblikovanje",
+      "tiskanje"
+    ],
     "content_topics": [
       "Oblikovanje celic in podatkov v preglednici",
       "Uporaba osnovnega in pogojnega oblikovanja",
@@ -405,7 +460,13 @@
     "title": "Delo s podatki",
     "short_description": "Uvoz, razvrščanje, filtriranje in iskanje podatkov v Excelu.",
     "duration_hours": 1,
-    "keywords": ["Excel", "podatki", "uvoz", "filtriranje", "razvrščanje"],
+    "keywords": [
+      "Excel",
+      "podatki",
+      "uvoz",
+      "filtriranje",
+      "razvrščanje"
+    ],
     "content_topics": [
       "Uvoz podatkov v Excel",
       "Razvrščanje podatkov po izbranih kriterijih",
@@ -471,7 +532,12 @@
     "title": "Priprava podatkov za analizo",
     "short_description": "Priprava in strukturiranje podatkov za nadaljnjo analizo.",
     "duration_hours": 0.75,
-    "keywords": ["Excel", "analiza podatkov", "strukturiranje podatkov", "napake"],
+    "keywords": [
+      "Excel",
+      "analiza podatkov",
+      "strukturiranje podatkov",
+      "napake"
+    ],
     "content_topics": [
       "Pregled podatkov pred analizo",
       "Iskanje in popravljanje napak v podatkih",
@@ -508,18 +574,24 @@
     "self_assessment_questions": [
       {
         "id": "q_ue_009_001",
+        "question": "Znam pregledati podatke pred začetkom analize.",
+        "type": "yes_no",
+        "related_topic": "Pregled podatkov pred analizo"
+      },
+      {
+        "id": "q_ue_009_002",
         "question": "Znam poiskati napake v podatkih.",
         "type": "yes_no",
         "related_topic": "Iskanje in popravljanje napak v podatkih"
       },
       {
-        "id": "q_ue_009_002",
+        "id": "q_ue_009_003",
         "question": "Znam strukturirati podatke v ustrezno obliko za analizo.",
         "type": "yes_no",
         "related_topic": "Strukturiranje podatkov v ustrezno obliko"
       },
       {
-        "id": "q_ue_009_003",
+        "id": "q_ue_009_004",
         "question": "Znam ustrezno poimenovati stolpce in delovne liste.",
         "type": "yes_no",
         "related_topic": "Poimenovanje stolpcev in delovnih listov"
@@ -531,7 +603,12 @@
     "title": "Uvod v vrtilne tabele",
     "short_description": "Razumevanje namena in osnovne uporabe vrtilnih tabel.",
     "duration_hours": 1,
-    "keywords": ["Excel", "vrtilne tabele", "podatki", "analiza"],
+    "keywords": [
+      "Excel",
+      "vrtilne tabele",
+      "podatki",
+      "analiza"
+    ],
     "content_topics": [
       "Namen vrtilnih tabel",
       "Priprava podatkov za vrtilno tabelo",
@@ -574,12 +651,18 @@
       },
       {
         "id": "q_ue_010_002",
+        "question": "Znam pripraviti podatke za izdelavo vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Priprava podatkov za vrtilno tabelo"
+      },
+      {
+        "id": "q_ue_010_003",
         "question": "Znam ustvariti osnovno vrtilno tabelo.",
         "type": "yes_no",
         "related_topic": "Ustvarjanje osnovne vrtilne tabele"
       },
       {
-        "id": "q_ue_010_003",
+        "id": "q_ue_010_004",
         "question": "Znam upravljati področja vrtilne tabele.",
         "type": "yes_no",
         "related_topic": "Upravljanje področij vrtilne tabele"
@@ -591,7 +674,13 @@
     "title": "Napredne vrtilne tabele",
     "short_description": "Napredna uporaba vrtilnih tabel za primerjavo in prikaz podatkov.",
     "duration_hours": 1,
-    "keywords": ["Excel", "vrtilne tabele", "deleži", "odstotki", "primerjava"],
+    "keywords": [
+      "Excel",
+      "vrtilne tabele",
+      "deleži",
+      "odstotki",
+      "primerjava"
+    ],
     "content_topics": [
       "Združevanje podatkov po različnih kriterijih",
       "Prikaz deležev in odstotkov v vrtilnih tabelah",
@@ -643,6 +732,12 @@
         "question": "Znam primerjati več skupin podatkov.",
         "type": "yes_no",
         "related_topic": "Primerjava več skupin podatkov"
+      },
+      {
+        "id": "q_ue_011_004",
+        "question": "Znam prilagoditi prikaz rezultatov v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_topic": "Prilagajanje prikaza rezultatov v vrtilni tabeli"
       }
     ]
   },
@@ -651,7 +746,13 @@
     "title": "Vizualizacija podatkov",
     "short_description": "Ustvarjanje grafov in priprava rezultatov za predstavitev.",
     "duration_hours": 1,
-    "keywords": ["Excel", "grafi", "vizualizacija", "predstavitev", "interaktivni filter"],
+    "keywords": [
+      "Excel",
+      "grafi",
+      "vizualizacija",
+      "predstavitev",
+      "interaktivni filter"
+    ],
     "content_topics": [
       "Ustvarjanje grafov iz podatkov",
       "Ustvarjanje grafov iz vrtilnih tabel",
@@ -694,12 +795,18 @@
       },
       {
         "id": "q_ue_012_002",
+        "question": "Znam ustvariti graf iz vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Ustvarjanje grafov iz vrtilnih tabel"
+      },
+      {
+        "id": "q_ue_012_003",
         "question": "Razumem uporabo interaktivnega filtra.",
         "type": "yes_no",
         "related_topic": "Uporaba interaktivnih filtrov"
       },
       {
-        "id": "q_ue_012_003",
+        "id": "q_ue_012_004",
         "question": "Znam oblikovati in izvoziti rezultate za predstavitev.",
         "type": "yes_no",
         "related_topic": "Oblikovanje in izvoz rezultatov za predstavitev"

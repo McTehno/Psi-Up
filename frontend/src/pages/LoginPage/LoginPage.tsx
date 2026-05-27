@@ -18,6 +18,7 @@ import registerBgImage from '../../assets/register-background-mountains.jpeg'
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const from = location.state?.from || '/'
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(location.pathname === '/register')
@@ -26,7 +27,7 @@ export default function LoginPage() {
   async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {
     setIsLoading(true)
     setError(null)
-    
+
     try {
       if (isRegister) {
         const { error } = await supabase.auth.signUp({
@@ -46,9 +47,9 @@ export default function LoginPage() {
         })
         if (error) throw error
       }
-      
-      // On success (assuming auto-confirm is enabled for register)
-      navigate('/')
+
+      // On success
+      navigate(from, { replace: true })
     } catch (err: any) {
       setError(err.message || 'Prišlo je do napake.')
     } finally {
@@ -77,10 +78,9 @@ export default function LoginPage() {
         style={{ height: 'min(85vh, 720px)' }}
       >
         {/* Login Background Image Wrapper */}
-        <div 
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isRegister ? 'opacity-0' : 'opacity-100'
-          }`}
+        <div
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${isRegister ? 'opacity-0' : 'opacity-100'
+            }`}
           style={{
             backgroundImage: `url(${loginBgImage})`,
             backgroundSize: 'cover',
@@ -89,10 +89,9 @@ export default function LoginPage() {
         />
 
         {/* Register Background Image Wrapper */}
-        <div 
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-            isRegister ? 'opacity-100' : 'opacity-0'
-          }`}
+        <div
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${isRegister ? 'opacity-100' : 'opacity-0'
+            }`}
           style={{
             backgroundImage: `url(${registerBgImage})`,
             backgroundSize: 'cover',
@@ -102,9 +101,8 @@ export default function LoginPage() {
 
         {/* Sliding Frosted Glass Panel */}
         <div
-          className={`absolute top-0 bottom-0 w-full md:w-1/2 flex flex-col justify-center px-8 lg:px-12 bg-[#fffdf8]/65 backdrop-blur-xl transition-transform duration-700 ease-in-out z-20 ${
-            isRegister ? 'md:translate-x-full border-l border-[#ded5c6]/60' : 'translate-x-0 border-r border-[#ded5c6]/60'
-          }`}
+          className={`absolute top-0 bottom-0 w-full md:w-1/2 flex flex-col justify-center px-8 lg:px-12 bg-[#fffdf8]/65 backdrop-blur-xl transition-transform duration-700 ease-in-out z-20 ${isRegister ? 'md:translate-x-full border-l border-[#ded5c6]/60' : 'translate-x-0 border-r border-[#ded5c6]/60'
+            }`}
           style={{ willChange: 'transform' }}
         >
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
@@ -121,7 +119,7 @@ export default function LoginPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <p className="text-[#706b60] text-sm mb-8 transition-opacity duration-500 delay-100">
               {isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
@@ -141,10 +139,10 @@ export default function LoginPage() {
 
             <GoogleLoginButton onClick={handleGoogleLogin} />
 
-            <AuthFooter 
+            <AuthFooter
               prompt={isRegister ? 'Že imate račun?' : 'Še nimate računa?'}
               actionLabel={isRegister ? 'Prijava' : 'Registracija'}
-              onAction={toggleMode} 
+              onAction={toggleMode}
             />
           </div>
         </div>

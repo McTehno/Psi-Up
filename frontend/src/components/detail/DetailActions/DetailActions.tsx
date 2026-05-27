@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Bookmark, CheckCircle2, Heart } from 'lucide-react'
 
@@ -39,6 +39,7 @@ function DetailActions({
 	className = '',
 }: DetailActionsProps) {
 	const navigate = useNavigate()
+	const location = useLocation()
 	const [activeAction, setActiveAction] = useState<DetailAction>(null)
 
 	const {
@@ -192,7 +193,13 @@ function DetailActions({
 						<div className="mt-6 flex justify-center gap-3">
 							<button
 								type="button"
-								onClick={() => navigate('/login')}
+								onClick={() =>
+									navigate('/login', {
+										state: {
+											from: `${location.pathname}${location.search}`,
+										},
+									})
+								}
 								className="inline-flex items-center justify-center rounded-full border border-[#31583b] bg-[#31583b] px-5 py-2.5 text-sm font-bold text-[#fffdf8] shadow-[0_12px_28px_rgba(49,88,59,0.22)] transition hover:bg-[#2a4d33]"
 							>
 								Prijavi se

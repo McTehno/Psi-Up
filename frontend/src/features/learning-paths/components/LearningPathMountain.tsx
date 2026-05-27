@@ -1172,9 +1172,9 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       {renderPathSegments(desktopAllPathSegments, 'hidden min-[1500px]:block')}
       {renderPathSegments(
         tabletAllPathSegments,
-        'hidden md:block min-[1500px]:hidden',
+        'hidden md:max-[1499px]:block',
       )}
-      {renderPathSegments(mobileAllPathSegments, 'md:hidden')}
+      {renderPathSegments(mobileAllPathSegments, 'block md:hidden')}
 
       <FinishFlag
         position={desktopFinishFlagPosition}
@@ -1187,7 +1187,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         position={tabletFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="hidden md:flex min-[1500px]:hidden"
+        className="hidden md:max-[1499px]:flex"
       />
 
       <FinishFlag
@@ -1200,7 +1200,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       {renderNodes(desktopPositionedNodes, 'hidden min-[1500px]:flex')}
       {renderNodes(
         tabletPositionedNodes,
-        'hidden md:flex min-[1500px]:hidden',
+        'hidden md:max-[1499px]:flex',
       )}
       {renderNodes(mobilePositionedNodes, 'flex md:hidden')}
 
@@ -1227,7 +1227,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         <ModuleDetailBox
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
-          className="absolute z-50 hidden w-[350px] md:block min-[1500px]:hidden"
+          className="absolute z-50 hidden w-[350px] md:max-[1499px]:block"
           style={{
             left: `${Math.min(Math.max(selectedTabletNode.x, 22), 78)}%`,
             top:

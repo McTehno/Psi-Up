@@ -131,88 +131,88 @@ const desktopLevelPositionPresets: Record<number, Position[]> = {
 }
 
 const tabletLevelPositionPresets: Record<number, Position[]> = {
-  1: [{ x: 50, y: 62 }],
+  1: [{ x: 44, y: 62 }],
   2: [
-    { x: 31, y: 72 },
-    { x: 65, y: 45 },
+    { x: 34, y: 68 },
+    { x: 51, y: 32 },
   ],
   3: [
-    { x: 25, y: 75 },
-    { x: 48, y: 61 },
-    { x: 67, y: 43 },
+    { x: 30, y: 70 },
+    { x: 45, y: 48 },
+    { x: 53, y: 28 },
   ],
   4: [
-    { x: 22, y: 77 },
-    { x: 41, y: 66 },
-    { x: 57, y: 54 },
-    { x: 69, y: 39 },
+    { x: 27, y: 73 },
+    { x: 39, y: 57 },
+    { x: 49, y: 41 },
+    { x: 54, y: 24 },
   ],
   5: [
-    { x: 20, y: 78 },
-    { x: 36, y: 69 },
-    { x: 50, y: 58 },
-    { x: 63, y: 47 },
-    { x: 71, y: 32 },
+    { x: 25, y: 75 },
+    { x: 36, y: 63 },
+    { x: 46, y: 50 },
+    { x: 53, y: 36 },
+    { x: 54, y: 23 },
   ],
   6: [
-    { x: 18, y: 79 },
-    { x: 31, y: 72 },
-    { x: 43, y: 64 },
-    { x: 55, y: 54 },
-    { x: 66, y: 43 },
-    { x: 73, y: 29 },
+    { x: 23, y: 76 },
+    { x: 33, y: 66 },
+    { x: 42, y: 55 },
+    { x: 50, y: 44 },
+    { x: 55, y: 33 },
+    { x: 54, y: 21 },
   ],
   7: [
-    { x: 17, y: 80 },
-    { x: 28, y: 74 },
-    { x: 39, y: 67 },
-    { x: 50, y: 59 },
-    { x: 60, y: 50 },
-    { x: 68, y: 40 },
-    { x: 74, y: 28 },
+    { x: 22, y: 77 },
+    { x: 31, y: 68 },
+    { x: 40, y: 58 },
+    { x: 48, y: 48 },
+    { x: 54, y: 38 },
+    { x: 56, y: 28 },
+    { x: 54, y: 19 },
   ],
 }
 
 const mobileLevelPositionPresets: Record<number, Position[]> = {
-  1: [{ x: 50, y: 64 }],
+  1: [{ x: 42, y: 72 }],
   2: [
-    { x: 36, y: 78 },
-    { x: 58, y: 56 },
+    { x: 34, y: 82 },
+    { x: 48, y: 55 },
   ],
   3: [
-    { x: 31, y: 80 },
-    { x: 47, y: 67 },
-    { x: 58, y: 55 },
+    { x: 31, y: 84 },
+    { x: 43, y: 66 },
+    { x: 52, y: 48 },
   ],
   4: [
-    { x: 28, y: 82 },
-    { x: 42, y: 72 },
-    { x: 53, y: 62 },
-    { x: 58, y: 52 },
+    { x: 28, y: 85 },
+    { x: 39, y: 72 },
+    { x: 48, y: 58 },
+    { x: 53, y: 43 },
   ],
   5: [
-    { x: 25, y: 84 },
-    { x: 38, y: 76 },
-    { x: 49, y: 68 },
-    { x: 56, y: 60 },
-    { x: 58, y: 52 },
+    { x: 26, y: 86 },
+    { x: 36, y: 76 },
+    { x: 45, y: 64 },
+    { x: 51, y: 51 },
+    { x: 53, y: 39 },
   ],
   6: [
-    { x: 23, y: 84 },
-    { x: 35, y: 78 },
-    { x: 46, y: 72 },
-    { x: 53, y: 66 },
-    { x: 58, y: 59 },
-    { x: 57, y: 52 },
+    { x: 24, y: 86 },
+    { x: 33, y: 78 },
+    { x: 42, y: 68 },
+    { x: 49, y: 58 },
+    { x: 53, y: 48 },
+    { x: 53, y: 38 },
   ],
   7: [
-    { x: 22, y: 85 },
-    { x: 32, y: 80 },
-    { x: 43, y: 75 },
-    { x: 51, y: 69 },
-    { x: 56, y: 63 },
-    { x: 59, y: 57 },
-    { x: 57, y: 51 },
+    { x: 22, y: 87 },
+    { x: 31, y: 80 },
+    { x: 40, y: 72 },
+    { x: 47, y: 63 },
+    { x: 52, y: 54 },
+    { x: 54, y: 45 },
+    { x: 53, y: 36 },
   ],
 }
 
@@ -274,8 +274,8 @@ const mobileParallelOffsets: Record<number, Position[]> = {
 }
 
 const desktopFinishFlagPosition: Position = { x: 74, y: 9 }
-const tabletFinishFlagPosition: Position = { x: 78, y: 18 }
-const mobileFinishFlagPosition: Position = { x: 55, y: 44 }
+const tabletFinishFlagPosition: Position = { x: 55, y: 7 }
+const mobileFinishFlagPosition: Position = { x: 54, y: 21 }
 
 function getNodeAssessmentClassName(status?: AssessmentStatus | null) {
   if (!status || status === 'completed') {
@@ -1136,7 +1136,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         `}
       </style>
       <picture>
-        <source srcSet={mountainJourneyBgMobile} media="(max-width: 999px)" />
+        <source srcSet={mountainJourneyBgMobile} media="(max-width: 1499px)" />
         <img
           src={mountainJourneyBg}
           alt=""
@@ -1162,19 +1162,19 @@ function renderPathSegments(segments: PathSegment[], className: string) {
 
           onCompletedChange?.(nextIsCompleted)
         }}
-        className="absolute left-3 right-3 top-3 z-40 hidden max-w-full sm:left-6 sm:right-auto sm:top-6 sm:w-[430px] sm:max-w-[calc(100%-3rem)] min-[1000px]:block min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:w-[460px]"
+        className="absolute left-8 top-8 z-40 hidden w-[460px] max-w-[calc(100%-3rem)] min-[1500px]:block"
       />
 
-      <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur md:block">
+      <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul
       </div>
 
       {renderPathSegments(desktopAllPathSegments, 'hidden min-[1500px]:block')}
       {renderPathSegments(
         tabletAllPathSegments,
-        'hidden min-[1000px]:block min-[1500px]:hidden',
+        'hidden md:block min-[1500px]:hidden',
       )}
-      {renderPathSegments(mobileAllPathSegments, 'min-[1000px]:hidden')}
+      {renderPathSegments(mobileAllPathSegments, 'md:hidden')}
 
       <FinishFlag
         position={desktopFinishFlagPosition}
@@ -1187,22 +1187,22 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         position={tabletFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="hidden min-[1000px]:flex min-[1500px]:hidden"
+        className="hidden md:flex min-[1500px]:hidden"
       />
 
       <FinishFlag
         position={mobileFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="flex min-[1000px]:hidden"
+        className="flex md:hidden"
       />
 
       {renderNodes(desktopPositionedNodes, 'hidden min-[1500px]:flex')}
       {renderNodes(
         tabletPositionedNodes,
-        'hidden min-[1000px]:flex min-[1500px]:hidden',
+        'hidden md:flex min-[1500px]:hidden',
       )}
-      {renderNodes(mobilePositionedNodes, 'flex min-[1000px]:hidden')}
+      {renderNodes(mobilePositionedNodes, 'flex md:hidden')}
 
       {selectedDesktopNode && (
         <ModuleDetailBox
@@ -1227,7 +1227,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         <ModuleDetailBox
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
-          className="absolute z-50 hidden w-[350px] min-[1000px]:block min-[1500px]:hidden"
+          className="absolute z-50 hidden w-[350px] md:block min-[1500px]:hidden"
           style={{
             left: `${Math.min(Math.max(selectedTabletNode.x, 22), 78)}%`,
             top:
@@ -1243,7 +1243,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       )}
 
       {selectedMobileNode && (
-        <div className="absolute inset-x-3 bottom-3 z-50 min-[1000px]:hidden">
+        <div className="absolute inset-x-3 bottom-3 z-50 md:hidden">
           <ModuleDetailBox
             node={selectedMobileNode}
             onClose={() => setSelectedNodeId(null)}

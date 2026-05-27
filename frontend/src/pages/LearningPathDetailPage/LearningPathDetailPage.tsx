@@ -348,21 +348,21 @@ function LearningPathDetailPage() {
           </div>
         </section>
 
-<section className="mb-4 min-[1000px]:hidden">
-  <LearningPathOverviewCard
-    durationLabel={formatDuration(
-      learningPath.duration_hours,
-      learningPath.duration_min,
-    )}
-    moduleCount={moduleCount}
-    learningUnitCount={learningUnitCount}
-    hiddenNodeCount={hiddenNodeCount}
-    isCompleted={isCompleted}
-    onFavoriteClick={handleFavoriteClick}
-    onSaveClick={handleSaveClick}
-    onCompletedChange={handleCompletedChange}
-  />
-</section>
+        <section className="mb-4 min-[1500px]:hidden">
+          <LearningPathOverviewCard
+            durationLabel={formatDuration(
+              learningPath.duration_hours,
+              learningPath.duration_min,
+            )}
+            moduleCount={moduleCount}
+            learningUnitCount={learningUnitCount}
+            hiddenNodeCount={hiddenNodeCount}
+            isCompleted={isCompleted}
+            onFavoriteClick={handleFavoriteClick}
+            onSaveClick={handleSaveClick}
+            onCompletedChange={handleCompletedChange}
+          />
+        </section>
 
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">

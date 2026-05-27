@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.core.security import get_current_user
+from app.database.mongodb import get_database
+
 from app.schemas.user_progress_schema import (
     CompleteContentRequest,
     FavoriteContentRequest,
@@ -7,7 +10,6 @@ from app.schemas.user_progress_schema import (
     UpdateCurrentPositionRequest,
     UserProgressResponse,
 )
-from app.database.mongodb import get_database
 
 from app.services.user_progress.completed_content_service import CompletedContentService
 from app.services.user_progress.current_position_service import CurrentPositionService
@@ -15,6 +17,7 @@ from app.services.user_progress.favorite_content_service import FavoriteContentS
 from app.services.user_progress.saved_content_service import SavedContentService
 from app.services.user_progress.user_progress_service import UserProgressService
 
+from app.repositories.user_repository import UserRepository
 from app.repositories.user_progress.user_progress_repository import UserProgressRepository
 from app.repositories.user_progress.saved_content_repository import SavedContentRepository
 from app.repositories.user_progress.favorite_content_repository import FavoriteContentRepository
@@ -28,6 +31,35 @@ from app.services.validation.content_validation_service import ContentValidation
 
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
+
+
+async def get_authenticated_local_user_id(
+    current_user: dict = Depends(get_current_user),
+) -> str:
+    """
+    Vrne lokalni user_id na podlagi prijavljenega uporabnika iz JWT tokena.
+
+    Token vsebuje zunanji auth_user_id v polju sub.
+    Lokalni user_id se nato poišče v users kolekciji.
+    """
+
+    auth_user_id = current_user.get("sub")
+
+    if not auth_user_id:
+        raise HTTPException(status_code=401, detail="Neveljaven uporabniški token.")
+
+    database = get_database()
+    user_repository = UserRepository(database)
+
+    user = await user_repository.get_user_by_auth_user_id(auth_user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Uporabniški profil ne obstaja. Najprej ustvarite profil.",
+        )
+
+    return user["_id"]
 
 
 def get_user_progress_service() -> UserProgressService:
@@ -99,6 +131,7 @@ def get_current_position_service() -> CurrentPositionService:
 
     return CurrentPositionService(current_position_repository)
 
+
 def get_content_validation_service() -> ContentValidationService:
     """
     Vrne ContentValidationService instanco.
@@ -121,18 +154,24 @@ def get_content_validation_service() -> ContentValidationService:
         learning_unit_repository=learning_unit_repository,
     )
 
+
 @router.get("/{user_id}", response_model=UserProgressResponse)
 async def get_user_progress(
     user_id: str,
+    authenticated_user_id: str = Depends(get_authenticated_local_user_id),
     user_progress_service: UserProgressService = Depends(get_user_progress_service),
 ) -> UserProgressResponse:
     """
-    Vrne napredek uporabnika.
+    Vrne napredek prijavljenega uporabnika.
 
-    TODO:
-    - Poklicati UserProgressService.
-    - Če napredek ne obstaja, ga lahko kasneje ustvarimo ali vrnemo 404.
+    Uporabnik lahko pridobi samo svoj user_progress.
     """
+
+    if user_id != authenticated_user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Nimate dovoljenja za dostop do tega napredka.",
+        )
 
     progress = await user_progress_service.get_progress_by_user_id(user_id)
 
@@ -145,14 +184,20 @@ async def get_user_progress(
 @router.post("/{user_id}/ensure", response_model=UserProgressResponse)
 async def get_or_create_user_progress(
     user_id: str,
+    authenticated_user_id: str = Depends(get_authenticated_local_user_id),
     user_progress_service: UserProgressService = Depends(get_user_progress_service),
 ) -> UserProgressResponse:
     """
-    Vrne obstoječ napredek uporabnika ali ustvari praznega.
+    Vrne obstoječ napredek prijavljenega uporabnika ali ustvari praznega.
 
-    TODO:
-    - Uporabiti ob ustvarjanju uporabniškega profila ali pri prvem obisku profila.
+    Uporabnik lahko ustvari oziroma pridobi samo svoj user_progress.
     """
+
+    if user_id != authenticated_user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Nimate dovoljenja za urejanje tega napredka.",
+        )
 
     return await user_progress_service.get_or_create_progress(user_id)
 
@@ -160,23 +205,22 @@ async def get_or_create_user_progress(
 @router.post("/save", response_model=UserProgressResponse)
 async def save_content(
     request: SaveContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     saved_content_service: SavedContentService = Depends(get_saved_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Shrani učno pot, modul ali učno enoto uporabniku.
-
-    TODO:
-    - Preveriti, ali content_id obstaja.
-    - Preveriti, ali je content_type veljaven.
+    Shrani učno pot, modul ali učno enoto prijavljenemu uporabniku.
     """
+
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
+
     progress = await saved_content_service.save_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
@@ -190,30 +234,31 @@ async def save_content(
 @router.delete("/save", response_model=UserProgressResponse)
 async def remove_saved_content(
     request: SaveContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     saved_content_service: SavedContentService = Depends(get_saved_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Odstrani shranjeno vsebino uporabnika.
-
-    TODO:
-    - Preveriti, ali je vsebina res shranjena.
-    - Vrniti posodobljen napredek.
+    Odstrani shranjeno vsebino prijavljenega uporabnika.
     """
+
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
 
     progress = await saved_content_service.remove_saved_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Shranjene vsebine ni bilo mogoče odstraniti.")
+        raise HTTPException(
+            status_code=400,
+            detail="Shranjene vsebine ni bilo mogoče odstraniti.",
+        )
 
     return progress
 
@@ -221,29 +266,31 @@ async def remove_saved_content(
 @router.post("/favorite", response_model=UserProgressResponse)
 async def favorite_content(
     request: FavoriteContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     favorite_content_service: FavoriteContentService = Depends(get_favorite_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Označi vsebino kot priljubljeno.
-
-    TODO:
-    - Preveriti, ali content_id obstaja.
-    - Preveriti, ali je content_type veljaven.
+    Označi vsebino kot priljubljeno za prijavljenega uporabnika.
     """
+
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
+
     progress = await favorite_content_service.favorite_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Vsebine ni bilo mogoče označiti kot priljubljene.")
+        raise HTTPException(
+            status_code=400,
+            detail="Vsebine ni bilo mogoče označiti kot priljubljene.",
+        )
 
     return progress
 
@@ -251,31 +298,31 @@ async def favorite_content(
 @router.delete("/favorite", response_model=UserProgressResponse)
 async def remove_favorite_content(
     request: FavoriteContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     favorite_content_service: FavoriteContentService = Depends(get_favorite_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Odstrani vsebino iz priljubljenih.
-
-    TODO:
-    - Preveriti, ali je vsebina res označena kot priljubljena.
-    - Vrniti posodobljen napredek.
+    Odstrani vsebino iz priljubljenih za prijavljenega uporabnika.
     """
 
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
 
     progress = await favorite_content_service.remove_favorite_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Priljubljene vsebine ni bilo mogoče odstraniti.")
+        raise HTTPException(
+            status_code=400,
+            detail="Priljubljene vsebine ni bilo mogoče odstraniti.",
+        )
 
     return progress
 
@@ -283,31 +330,31 @@ async def remove_favorite_content(
 @router.post("/complete", response_model=UserProgressResponse)
 async def complete_content(
     request: CompleteContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     completed_content_service: CompletedContentService = Depends(get_completed_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Označi vsebino kot dokončano.
-
-    TODO:
-    - Preveriti, ali content_id obstaja.
-    - Preveriti, ali je content_type veljaven.
-    - Po potrebi samodejno posodobiti trenutno pozicijo.
+    Označi vsebino kot dokončano za prijavljenega uporabnika.
     """
+
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
 
     progress = await completed_content_service.complete_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Vsebine ni bilo mogoče označiti kot dokončane.")
+        raise HTTPException(
+            status_code=400,
+            detail="Vsebine ni bilo mogoče označiti kot dokončane.",
+        )
 
     return progress
 
@@ -315,30 +362,31 @@ async def complete_content(
 @router.delete("/complete", response_model=UserProgressResponse)
 async def remove_completed_content(
     request: CompleteContentRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     completed_content_service: CompletedContentService = Depends(get_completed_content_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Odstrani vsebino iz dokončanih.
-
-    TODO:
-    - Preveriti, ali je vsebina res dokončana.
-    - Vrniti posodobljen napredek.
+    Odstrani vsebino iz dokončanih za prijavljenega uporabnika.
     """
+
     await validation_service.validate_content_action(
-        user_id=request.user_id,
+        user_id=user_id,
         content_type=request.content_type,
         content_id=request.content_id,
     )
 
     progress = await completed_content_service.remove_completed_content(
-        user_id=request.user_id,
+        user_id=user_id,
         content_id=request.content_id,
         content_type=request.content_type,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Dokončane vsebine ni bilo mogoče odstraniti.")
+        raise HTTPException(
+            status_code=400,
+            detail="Dokončane vsebine ni bilo mogoče odstraniti.",
+        )
 
     return progress
 
@@ -346,30 +394,32 @@ async def remove_completed_content(
 @router.put("/current-position", response_model=UserProgressResponse)
 async def update_current_position(
     request: UpdateCurrentPositionRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
     current_position_service: CurrentPositionService = Depends(get_current_position_service),
     validation_service: ContentValidationService = Depends(get_content_validation_service),
 ) -> UserProgressResponse:
     """
-    Posodobi trenutno pozicijo uporabnika.
-
-    TODO:
-    - Preveriti, ali podani learning_path_id, current_module_id in current_learning_unit_id obstajajo.
-    - Če uporabnik nima progress zapisa, ga ustvariti.
+    Posodobi trenutno pozicijo prijavljenega uporabnika.
     """
+
     await validation_service.validate_current_position(
-        user_id=request.user_id,
+        user_id=user_id,
         learning_path_id=request.learning_path_id,
         current_module_id=request.current_module_id,
         current_learning_unit_id=request.current_learning_unit_id,
     )
+
     progress = await current_position_service.update_current_position(
-        user_id=request.user_id,
+        user_id=user_id,
         learning_path_id=request.learning_path_id,
         current_module_id=request.current_module_id,
         current_learning_unit_id=request.current_learning_unit_id,
     )
 
     if not progress:
-        raise HTTPException(status_code=400, detail="Trenutne pozicije ni bilo mogoče posodobiti.")
+        raise HTTPException(
+            status_code=400,
+            detail="Trenutne pozicije ni bilo mogoče posodobiti.",
+        )
 
     return progress

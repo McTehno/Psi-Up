@@ -50,6 +50,10 @@ class UserProgressCreateRequest(BaseModel):
 
     Uporabi se, ko se za novega uporabnika prvič ustvari
     prazen zapis napredka.
+
+    Opomba:
+    To shemo lahko kasneje odstranimo, če progress vedno ustvarjamo
+    avtomatsko ob ustvarjanju uporabniškega profila.
     """
 
     user_id: str
@@ -59,10 +63,10 @@ class SaveContentRequest(BaseModel):
     """
     Shema za shranjevanje vsebine.
 
-    Uporabi se, ko uporabnik shrani učno pot, modul ali učno enoto.
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
     """
 
-    user_id: str
     content_id: str
     content_type: str
 
@@ -71,11 +75,10 @@ class FavoriteContentRequest(BaseModel):
     """
     Shema za označevanje vsebine kot priljubljene.
 
-    Uporabi se, ko uporabnik označi učno pot, modul ali učno enoto
-    kot priljubljeno.
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
     """
 
-    user_id: str
     content_id: str
     content_type: str
 
@@ -84,10 +87,10 @@ class CompleteContentRequest(BaseModel):
     """
     Shema za označevanje vsebine kot dokončane.
 
-    Uporabi se, ko uporabnik zaključi učno pot, modul ali učno enoto.
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
     """
 
-    user_id: str
     content_id: str
     content_type: str
 
@@ -96,23 +99,23 @@ class UpdateCurrentPositionRequest(BaseModel):
     """
     Shema za posodobitev trenutne pozicije uporabnika.
 
-    Uporabi se, ko želimo shraniti, kje se uporabnik trenutno nahaja.
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
     """
 
-    user_id: str
     learning_path_id: Optional[str] = None
     current_module_id: Optional[str] = None
     current_learning_unit_id: Optional[str] = None
 
 
-
-'''
-opomba: content_type bomo kasneje uporabljali z vrednostmi:
+"""
+Opomba:
+content_type uporabljamo z vrednostmi:
 
 learning_path
 module
 learning_unit
 
-Kasneje lahko to izboljšamo z Enum, ampak za scaffold je tako dovolj pregledno.
-
-'''
+Kasneje lahko to izboljšamo z Enum, ampak za trenutno verzijo
+je string dovolj pregleden.
+"""

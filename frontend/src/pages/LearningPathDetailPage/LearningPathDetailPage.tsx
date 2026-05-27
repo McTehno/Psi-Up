@@ -177,7 +177,6 @@ function LearningPathDetailPage() {
   const { learningPathId } = useParams<{ learningPathId: string }>()
   const navigate = useNavigate()
 
-  const [isChatPanelExpanded, setIsChatPanelExpanded] = useState(false)
   const [learningPath, setLearningPath] =
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -336,13 +335,7 @@ function LearningPathDetailPage() {
         </section>
 
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
-          <div
-            className={`h-full transition-[width] duration-300 ease-out ${
-              isChatPanelExpanded
-                ? 'min-[1500px]:w-[calc(100%-384px)]'
-                : 'w-full'
-            }`}
-          >
+          <div className="h-full">
             <LearningPathMountain
               nodes={mountainNodes}
               durationLabel={formatDuration(
@@ -366,12 +359,12 @@ function LearningPathDetailPage() {
             />
           </div>
 
-          <div className="hidden min-[1500px]:block">
+          <div className="pointer-events-none absolute inset-y-6 right-6 z-50 hidden w-[420px] min-[1500px]:block">
             <CollapsibleChatPanel
               title="Chat pride kasneje"
               description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
               footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
-              onExpandedChange={setIsChatPanelExpanded}
+              className="pointer-events-auto"
             />
           </div>
         </div>

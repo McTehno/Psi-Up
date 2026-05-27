@@ -30,11 +30,6 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm animate-fade-in-up">
-          {error}
-        </div>
-      )}
 
       {/* Name Field (Slides down and in) */}
       <div 

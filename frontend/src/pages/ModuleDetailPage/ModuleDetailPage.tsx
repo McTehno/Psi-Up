@@ -20,6 +20,7 @@ import type { ModuleResponse } from '../../types/module'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
+import { useUserProgressState } from '../../hooks/useUserProgressState'
 
 function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -29,6 +30,11 @@ function ModuleDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
+
+  const { isFavorite, isSaved, isCompleted } = useUserProgressState({
+    contentId: moduleData?._id,
+    contentType: 'module',
+  })
 
   useEffect(() => {
     async function loadData() {
@@ -142,7 +148,13 @@ function ModuleDetailPage() {
           Modul
         </div>
 
-        <DetailActions />
+        <DetailActions
+          contentId={moduleData._id}
+          contentType="module"
+          initialIsFavorite={isFavorite}
+          initialIsSaved={isSaved}
+          initialIsCompleted={isCompleted}
+        />
       </div>
 
       <DetailHero

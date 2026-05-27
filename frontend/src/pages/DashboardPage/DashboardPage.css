@@ -1,0 +1,86 @@
+/* ─── Dashboard Animations ─── */
+
+@keyframes dashboard-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashboard-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes avatar-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(208, 122, 18, 0.18),
+      0 8px 32px rgba(57, 47, 35, 0.10);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(208, 122, 18, 0),
+      0 8px 32px rgba(57, 47, 35, 0.10);
+  }
+}
+
+@keyframes tab-underline-slide {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes card-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(0.8rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dashboard-profile-card {
+  animation: dashboard-scale-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dashboard-content-section {
+  animation: dashboard-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  opacity: 0;
+}
+
+.dashboard-avatar {
+  animation: avatar-pulse 3s ease-in-out infinite;
+}
+
+.dashboard-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  border-radius: 9999px;
+  animation: tab-underline-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center;
+}
+
+.dashboard-content-card {
+  animation: card-stagger 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}

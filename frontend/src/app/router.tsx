@@ -11,6 +11,7 @@ import ModuleDetailPage from '../pages/ModuleDetailPage'
 import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 import LoginPage from '../pages/LoginPage'
 import HomeRedesignPage from '../pages/HomeRedesign/HomeRedesignPage'
+import DashboardPage from '../pages/DashboardPage'
 
 
 function RootLayout() {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
       {
         path: 'learning-units/:learningUnitId',
         element: <LearningUnitDetailPage />,
+      },
+      {
+        path: 'dashboard',
+        element: <DashboardPage />,
       },
     ],
   },

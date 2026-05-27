@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, Award, X } from 'lucide-react';
 import EmptyState from '../../../components/common/EmptyState';
-import moduleBgImage from '../../../assets/module-details-background.jpeg';
-import moduleBgImageVertical from '../../../assets/module-details-background-vertical.jpeg';
+import moduleBgImage from '../../../assets/module-details-background.webp';
+import moduleBgImageVertical from '../../../assets/module-details-background-vertical.webp';
 
 
 interface LearningUnitVisualizerProps {
@@ -49,25 +49,35 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     return () => document.removeEventListener('pointerdown', handler);
   }, [activeNodeIdx]);
 
-  const [offsetY, setOffsetY] = useState(0);
+  const parallaxBg1Ref = useRef<HTMLDivElement>(null);
+  const parallaxBg2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let animationFrameId: number;
     const handleScroll = () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       animationFrameId = requestAnimationFrame(() => {
         if (!containerRef.current) return;
         const rect = containerRef.current.getBoundingClientRect();
         // Calculate offset based on how far the container is from the viewport center
         const centerOffset = (rect.top - window.innerHeight / 2);
         // Move the background slightly slower than the scroll speed
-        setOffsetY(centerOffset * -0.15);
+        const offset = centerOffset * -0.15;
+        
+        if (parallaxBg1Ref.current) {
+          parallaxBg1Ref.current.style.transform = `translate3d(0, ${offset}px, 0) scale(1.15)`;
+        }
+        if (parallaxBg2Ref.current) {
+          parallaxBg2Ref.current.style.transform = `translate3d(0, ${offset}px, 0) scale(1.15)`;
+        }
       });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Use capture to ensure we catch scroll events from any nested scroll containers
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll(); // Initial position
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll, { capture: true } as any);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -235,24 +245,24 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
         {/* Mountain Image for Mobile and Landscape Screens */}
         <div
+          ref={parallaxBg1Ref}
           className="absolute inset-0 mix-blend-multiply opacity-[0.25] md:portrait:hidden"
           style={{
             backgroundImage: `url(${moduleBgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            transform: `translateY(${offsetY}px) scale(1.15)`,
             willChange: 'transform'
           }}
         />
 
         {/* Mountain Image for Big Vertical Screens */}
         <div
+          ref={parallaxBg2Ref}
           className="absolute inset-0 mix-blend-multiply opacity-[0.25] hidden md:portrait:block"
           style={{
             backgroundImage: `url(${moduleBgImageVertical})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            transform: `translateY(${offsetY}px) scale(1.15)`,
             willChange: 'transform'
           }}
         />

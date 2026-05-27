@@ -20,6 +20,7 @@ import type { ModuleResponse } from '../../types/module'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
+import { useUserProgressState } from '../../hooks/useUserProgressState'
 
 function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -29,6 +30,11 @@ function ModuleDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
+
+  const { isFavorite, isSaved, isCompleted } = useUserProgressState({
+    contentId: moduleData?._id,
+    contentType: 'module',
+  })
 
   useEffect(() => {
     async function loadData() {
@@ -142,7 +148,13 @@ function ModuleDetailPage() {
           Modul
         </div>
 
-        <DetailActions />
+        <DetailActions
+          contentId={moduleData._id}
+          contentType="module"
+          initialIsFavorite={isFavorite}
+          initialIsSaved={isSaved}
+          initialIsCompleted={isCompleted}
+        />
       </div>
 
       <DetailHero
@@ -220,13 +232,11 @@ function ModuleDetailPage() {
         title="Učne enote"
         description="Vizualizacija poteka učnih enot znotraj modula."
       >
-        <div className="rounded-[16px] border border-dashed border-[var(--color-sand-300)] bg-[var(--color-sand-50)] px-6 py-8">
-          <LearningUnitVisualizer
-            references={moduleData.learning_units || []}
-            details={moduleData.learning_unit_details || []}
-            completedUnitIds={completedUnitIds}
-          />
-        </div>
+        <LearningUnitVisualizer
+          references={moduleData.learning_units || []}
+          details={moduleData.learning_unit_details || []}
+          completedUnitIds={completedUnitIds}
+        />
       </DetailSection>
 
       <section className="mt-12 overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">

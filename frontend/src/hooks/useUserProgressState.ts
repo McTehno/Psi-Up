@@ -1,0 +1,64 @@
+import { useEffect, useState } from 'react'
+
+import { useAuth } from '../features/auth/contexts/AuthContext'
+import {
+	getUserProgress,
+	isContentCompleted,
+	isContentFavorite,
+	isContentSaved,
+	type UserProgressContentType,
+} from '../services/user-progress-service'
+
+type UseUserProgressStateParams = {
+	contentId?: string
+	contentType?: UserProgressContentType
+}
+
+export function useUserProgressState({
+	contentId,
+	contentType,
+}: UseUserProgressStateParams) {
+	const { session, localUser } = useAuth()
+
+	const [isFavorite, setIsFavorite] = useState(false)
+	const [isSaved, setIsSaved] = useState(false)
+	const [isCompleted, setIsCompleted] = useState(false)
+	const [isLoadingProgress, setIsLoadingProgress] = useState(false)
+
+	useEffect(() => {
+		async function loadProgress() {
+			if (!contentId || !contentType || !session?.access_token || !localUser?._id) {
+				setIsFavorite(false)
+				setIsSaved(false)
+				setIsCompleted(false)
+				return
+			}
+
+			try {
+				setIsLoadingProgress(true)
+
+				const progress = await getUserProgress(localUser._id, session.access_token)
+                
+				setIsFavorite(isContentFavorite(progress, contentId, contentType))
+				setIsSaved(isContentSaved(progress, contentId, contentType))
+				setIsCompleted(isContentCompleted(progress, contentId, contentType))
+			} catch (error) {
+				console.error('Napaka pri nalaganju uporabniškega napredka:', error)
+				setIsFavorite(false)
+				setIsSaved(false)
+				setIsCompleted(false)
+			} finally {
+				setIsLoadingProgress(false)
+			}
+		}
+
+		loadProgress()
+ }, [contentId, contentType, session?.access_token, localUser?._id])
+
+	return {
+		isFavorite,
+		isSaved,
+		isCompleted,
+		isLoadingProgress,
+	}
+}

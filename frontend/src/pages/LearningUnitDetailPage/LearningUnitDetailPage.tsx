@@ -26,6 +26,8 @@ import { getLearningUnitDetail } from '../../services/learning-unit-service'
 import LearningUnitDetailContent from '../../features/learning-units/components/LearningUnitDetailContent'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import type { AssessmentResultResponse } from '../../types/assessment'
+import { useUserProgressState } from '../../hooks/useUserProgressState'
+
 
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
@@ -59,6 +61,15 @@ function LearningUnitDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
+
+  const {
+    isFavorite,
+    isSaved,
+    isCompleted,
+  } = useUserProgressState({
+    contentId: learningUnit?._id,
+    contentType: 'learning_unit',
+  })
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -145,7 +156,13 @@ function LearningUnitDetailPage() {
           Učna enota
         </div>
 
-        <DetailActions />
+        <DetailActions
+          contentId={learningUnit._id}
+          contentType="learning_unit"
+          initialIsFavorite={isFavorite}
+          initialIsSaved={isSaved}
+          initialIsCompleted={isCompleted}
+        />
       </div>
 
       <DetailHero

@@ -145,7 +145,10 @@ function LearningUnitDetailPage() {
           Učna enota
         </div>
 
-        <DetailActions />
+        <DetailActions
+          contentId={learningUnit._id}
+          contentType="learning_unit"
+        />
       </div>
 
       <DetailHero

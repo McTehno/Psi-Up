@@ -9,6 +9,7 @@ import { DetailTags } from '../../components/detail'
 import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
   LearningPathMountain,
+  LearningPathOverviewCard,
   type LearningPathMountainNode,
 } from '../../features/learning-paths/components/LearningPathMountain'
 import { getLearningPathDetail } from '../../services/learning-path-service'
@@ -309,6 +310,19 @@ function LearningPathDetailPage() {
   const moduleCount =
     learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
+  const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
+
+  function handleFavoriteClick() {
+    // TODO: priklop na user-progress-service, ko bo na voljo userId
+  }
+
+  function handleSaveClick() {
+    // TODO: priklop na user-progress-service, ko bo na voljo userId
+  }
+
+  function handleCompletedChange(nextIsCompleted: boolean) {
+    setIsCompleted(nextIsCompleted)
+  }
 
   return (
     <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
@@ -334,6 +348,22 @@ function LearningPathDetailPage() {
           </div>
         </section>
 
+<section className="mb-4 min-[1000px]:hidden">
+  <LearningPathOverviewCard
+    durationLabel={formatDuration(
+      learningPath.duration_hours,
+      learningPath.duration_min,
+    )}
+    moduleCount={moduleCount}
+    learningUnitCount={learningUnitCount}
+    hiddenNodeCount={hiddenNodeCount}
+    isCompleted={isCompleted}
+    onFavoriteClick={handleFavoriteClick}
+    onSaveClick={handleSaveClick}
+    onCompletedChange={handleCompletedChange}
+  />
+</section>
+
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">
             <LearningPathMountain
@@ -346,15 +376,9 @@ function LearningPathDetailPage() {
               learningUnitCount={learningUnitCount}
               isCompleted={isCompleted}
               celebrateCompletedOnMount={isCompletedByAssessment}
-              onFavoriteClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onSaveClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onCompletedChange={(nextIsCompleted) =>
-                setIsCompleted(nextIsCompleted)
-              }
+              onFavoriteClick={handleFavoriteClick}
+              onSaveClick={handleSaveClick}
+              onCompletedChange={handleCompletedChange}
               className="h-full"
             />
           </div>

@@ -738,6 +738,99 @@ function MountainActions({
   )
 }
 
+export type LearningPathOverviewCardProps = {
+  durationLabel: string
+  moduleCount: number
+  learningUnitCount: number
+  hiddenNodeCount?: number
+  isCompleted: boolean
+  onFavoriteClick?: () => void
+  onSaveClick?: () => void
+  onCompletedChange?: (isCompleted: boolean) => void
+  className?: string
+}
+
+export function LearningPathOverviewCard({
+  durationLabel,
+  moduleCount,
+  learningUnitCount,
+  hiddenNodeCount = 0,
+  isCompleted,
+  onFavoriteClick,
+  onSaveClick,
+  onCompletedChange,
+  className = '',
+}: LearningPathOverviewCardProps) {
+  return (
+    <div
+      className={[
+        'rounded-[1.6rem] bg-white/92 p-4 shadow-md backdrop-blur sm:p-5',
+        className,
+      ].join(' ')}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6F7F58]">
+            Pregled poti
+          </p>
+
+          {hiddenNodeCount > 0 && (
+            <p className="mt-2 text-sm text-[#6b6258]">
+              +{hiddenNodeCount} dodatnih modulov
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {[
+          {
+            label: 'Trajanje',
+            value: durationLabel,
+            icon: <Clock className="h-5 w-5" />,
+          },
+          {
+            label: 'Moduli',
+            value: String(moduleCount),
+            icon: <Layers3 className="h-5 w-5" />,
+          },
+          {
+            label: 'Učne enote',
+            value: String(learningUnitCount),
+            icon: <BookOpen className="h-5 w-5" />,
+          },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="rounded-2xl bg-[#F7F1E6]/75 px-3 py-3"
+          >
+            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#344E41] shadow-sm">
+              {item.icon}
+            </div>
+
+            <p className="text-[11px] font-bold uppercase tracking-wide text-[#6F7F58]">
+              {item.label}
+            </p>
+
+            <strong className="mt-1 block text-base font-bold leading-tight text-[#283618]">
+              {item.value}
+            </strong>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 border-t border-[#eadfce] pt-5">
+        <MountainActions
+          isCompleted={isCompleted}
+          onFavoriteClick={onFavoriteClick}
+          onSaveClick={onSaveClick}
+          onCompletedChange={onCompletedChange}
+        />
+      </div>
+    </div>
+  )
+}
+
 function createWavyPathD(
   from: PathPoint,
   to: PathPoint,
@@ -898,7 +991,7 @@ export function LearningPathMountain({
     [mobilePathSegments, mobileFinishPathSegments],
   )
 
-  const hiddenNodeCount = Math.max(nodes.length - MAX_VISIBLE_NODES, 0)
+  const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
 
 function renderPathSegments(segments: PathSegment[], className: string) {
   if (segments.length === 0) {
@@ -1054,73 +1147,23 @@ function renderPathSegments(segments: PathSegment[], className: string) {
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
 
-      <div className="absolute left-3 right-3 top-3 z-40 flex max-w-full flex-col rounded-[1.6rem] bg-white/92 p-4 shadow-md backdrop-blur sm:left-6 sm:right-auto sm:top-6 sm:w-[430px] sm:max-w-[calc(100%-3rem)] sm:p-5 min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:w-[460px]">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6F7F58]">
-              Pregled poti
-            </p>
+      <LearningPathOverviewCard
+        durationLabel={durationLabel}
+        moduleCount={moduleCount}
+        learningUnitCount={learningUnitCount}
+        hiddenNodeCount={hiddenNodeCount}
+        isCompleted={isCompleted}
+        onFavoriteClick={onFavoriteClick}
+        onSaveClick={onSaveClick}
+        onCompletedChange={(nextIsCompleted) => {
+          if (nextIsCompleted) {
+            setCompletionCelebrationKey((currentKey) => currentKey + 1)
+          }
 
-            {hiddenNodeCount > 0 && (
-              <p className="mt-2 text-sm text-[#6b6258]">
-                +{hiddenNodeCount} dodatnih modulov
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {[
-            {
-              label: 'Trajanje',
-              value: durationLabel,
-              icon: <Clock className="h-5 w-5" />,
-            },
-            {
-              label: 'Moduli',
-              value: String(moduleCount),
-              icon: <Layers3 className="h-5 w-5" />,
-            },
-            {
-              label: 'Učne enote',
-              value: String(learningUnitCount),
-              icon: <BookOpen className="h-5 w-5" />,
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="rounded-2xl bg-[#F7F1E6]/75 px-3 py-3"
-            >
-              <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#344E41] shadow-sm">
-                {item.icon}
-              </div>
-
-              <p className="text-[11px] font-bold uppercase tracking-wide text-[#6F7F58]">
-                {item.label}
-              </p>
-
-              <strong className="mt-1 block text-base font-bold leading-tight text-[#283618]">
-                {item.value}
-              </strong>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-5 border-t border-[#eadfce] pt-5">
-          <MountainActions
-            isCompleted={isCompleted}
-            onFavoriteClick={onFavoriteClick}
-            onSaveClick={onSaveClick}
-            onCompletedChange={(nextIsCompleted: boolean) => {
-              if (nextIsCompleted) {
-                setCompletionCelebrationKey((currentKey) => currentKey + 1)
-              }
-
-              onCompletedChange?.(nextIsCompleted)
-            }}
-          />
-        </div>
-      </div>
+          onCompletedChange?.(nextIsCompleted)
+        }}
+        className="absolute left-3 right-3 top-3 z-40 hidden max-w-full sm:left-6 sm:right-auto sm:top-6 sm:w-[430px] sm:max-w-[calc(100%-3rem)] min-[1000px]:block min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:w-[460px]"
+      />
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur md:block">
         Klikni modul

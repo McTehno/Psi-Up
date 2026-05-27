@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 
 import Logo from '../Logo'
 import { useAuth } from '../../../features/auth/contexts/AuthContext'
@@ -38,7 +38,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 		function handleScroll(event: Event) {
 			const isMobileOrTablet = window.matchMedia('(max-width: 1023px)').matches
 
-			if (!isMobileOrTablet || isMenuOpen) { 
+			if (!isMobileOrTablet || isMenuOpen) {
 				setIsNavbarVisible(true)
 				return
 			}
@@ -109,45 +109,45 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 					</span>
 				</Link>
 
-				<div className="hidden items-center gap-10 justify-self-center lg:flex">					
+				<div className="hidden items-center gap-10 justify-self-center lg:flex">
 					{links.map((link) => {
-					const isActive = location.pathname === link.to
+						const isActive = location.pathname === link.to
 
-					return (
-						<Link
-							key={link.to}
-							to={link.to}
-							className={[
-								'group relative py-2 text-[15px] font-semibold tracking-wide transition-all duration-300',
-								isActive
-									? 'text-[#111111]'
-									: 'text-[#5f5a52] hover:text-[#111111]',
-							].join(' ')}
-						>
-							{link.label}
-
-							<span
+						return (
+							<Link
+								key={link.to}
+								to={link.to}
 								className={[
-									'absolute -bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full transition-all duration-300',
+									'group relative py-2 text-[15px] font-semibold tracking-wide transition-all duration-300',
 									isActive
-										? 'w-8 bg-[#d07a12]'
-										: 'w-0 bg-[#d07a12]/70 group-hover:w-5',
+										? 'text-[#111111]'
+										: 'text-[#5f5a52] hover:text-[#111111]',
 								].join(' ')}
-							/>
-						</Link>
-					)
-				})}
+							>
+								{link.label}
+
+								<span
+									className={[
+										'absolute -bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full transition-all duration-300',
+										isActive
+											? 'w-8 bg-[#d07a12]'
+											: 'w-0 bg-[#d07a12]/70 group-hover:w-5',
+									].join(' ')}
+								/>
+							</Link>
+						)
+					})}
 				</div>
 
-				<div className="hidden justify-self-end lg:flex items-center">
+				<div className="hidden justify-self-end lg:flex items-center gap-3">
 					{user ? (
-						<button
-							onClick={handleLogout}
-							className="inline-flex h-9 items-center justify-center gap-2 rounded-full bg-red-600/90 px-5 text-[14px] font-semibold text-white shadow-sm transition-all duration-300 hover:bg-red-700 hover:scale-105 active:scale-95"
+						<Link
+							to="/dashboard"
+							className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce] bg-gradient-to-br from-[#ede5d8] to-[#d4c4ad] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-105 hover:border-[#d07a12]/40 active:scale-95"
+							aria-label="Uporabniški profil"
 						>
-							<LogOut className="h-4 w-4" />
-							Odjava
-						</button>
+							<User className="h-4.5 w-4.5 text-[#6e614f] transition-colors duration-300 group-hover:text-[#d07a12]" />
+						</Link>
 					) : (
 						<Link
 							to="/register"
@@ -161,7 +161,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				<button
 					type="button"
 					onClick={() => setIsMenuOpen((current) => !current)}
-className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 lg:hidden"					aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
+					className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-[10px] border border-white/45 bg-white/24 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_22px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:bg-white/38 lg:hidden" aria-label={isMenuOpen ? 'Zapri meni' : 'Odpri meni'}
 					aria-expanded={isMenuOpen}
 				>
 					{isMenuOpen ? (
@@ -202,13 +202,23 @@ className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify
 						)
 					})}
 					{user ? (
-						<button
-							onClick={handleLogout}
-							className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-red-600/10 px-4 py-3 text-base font-semibold tracking-wide text-red-600 transition hover:bg-red-600/20"
-						>
-							<LogOut className="h-5 w-5" />
-							Odjava
-						</button>
+						<>
+							<Link
+								to="/dashboard"
+								onClick={() => setIsMenuOpen(false)}
+								className="mt-2 flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#f2f8f1] px-4 py-3 text-base font-semibold tracking-wide text-[#31583b] transition hover:bg-[#e0eedd]"
+							>
+								<User className="h-5 w-5" />
+								Moj profil
+							</Link>
+							<button
+								onClick={handleLogout}
+								className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-red-600/10 px-4 py-3 text-base font-semibold tracking-wide text-red-600 transition hover:bg-red-600/20"
+							>
+								<LogOut className="h-5 w-5" />
+								Odjava
+							</button>
+						</>
 					) : (
 						<Link
 							to="/register"

@@ -9,6 +9,7 @@ import {
   AuthDivider,
   AuthForm,
   GoogleLoginButton,
+  Toast,
 } from '../../features/auth'
 
 // Using relative path to the image as it is now in src/assets
@@ -20,8 +21,32 @@ export default function LoginPage() {
   const location = useLocation()
   const from = location.state?.from || '/'
   const [error, setError] = useState<string | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(location.pathname === '/register')
+
+  // Slovenian translations for common Supabase auth errors, this is unfortunately not an option through supabase :(
+  function translateAuthError(msg: string): string {
+    const translations: Record<string, string> = {
+      'Invalid login credentials': 'Napačen e-poštni naslov ali geslo.',
+      'Email not confirmed': 'E-poštni naslov še ni potrjen. Preverite svoj nabiralnik.',
+      'User already registered': 'Uporabnik s tem e-poštnim naslovom že obstaja.',
+      'Signup requires a valid password': 'Geslo mora imeti vsaj 6 znakov.',
+      'Password should be at least 6 characters': 'Geslo mora imeti vsaj 6 znakov.',
+      'Unable to validate email address: invalid format': 'Neveljaven format e-poštnega naslova.',
+      'Email rate limit exceeded': 'Preveč poskusov. Počakajte nekaj minut in poskusite znova.',
+      'For security purposes, you can only request this after 60 seconds.': 'Iz varnostnih razlogov počakajte 60 sekund pred ponovnim poskusom.',
+      'Auth session missing!': 'Seja je potekla. Prijavite se znova.',
+      'New password should be different from the old password.': 'Novo geslo se mora razlikovati od starega.',
+      'User not found': 'Uporabnik s tem e-poštnim naslovom ne obstaja.',
+    }
+
+    for (const [en, sl] of Object.entries(translations)) {
+      if (msg.toLowerCase().includes(en.toLowerCase())) return sl
+    }
+
+    return 'Prišlo je do napake. Poskusite znova.'
+  }
 
   // -- Handlers --
   async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {
@@ -51,7 +76,9 @@ export default function LoginPage() {
       // On success
       navigate(from, { replace: true })
     } catch (err: any) {
-      setError(err.message || 'Prišlo je do napake.')
+      const translated = translateAuthError(err.message || '')
+      setError(translated)
+      setToastMessage(translated)
     } finally {
       setIsLoading(false)
     }
@@ -72,9 +99,15 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
+      <Toast
+        message={toastMessage}
+        variant="error"
+        duration={5000}
+        onDismiss={() => setToastMessage(null)}
+      />
       {/* Large centered window containing the entire login/register experience */}
       <div
-        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8]"
+        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8] scale-[0.8] origin-center"
         style={{ height: 'min(85vh, 720px)' }}
       >
         {/* Login Background Image Wrapper */}
@@ -107,20 +140,20 @@ export default function LoginPage() {
         >
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
             {/* Title row with close button inline */}
-            <div className="flex items-start justify-between mb-2">
-              <h1 className={`text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#8b5a2b]' : 'text-[#2f4a31]'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <h1 className={`font-serif text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
                 {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 -mr-2 -mt-1 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
+                className="p-2 -mr-2 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-[#706b60] text-sm mb-8 transition-opacity duration-500 delay-100">
+            <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
               {isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 

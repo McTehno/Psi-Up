@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Mail, Lock, User } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 
 type AuthFormProps = {
   isRegister: boolean
@@ -11,6 +11,7 @@ type AuthFormProps = {
 
 export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error, isLoading }: AuthFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -22,19 +23,14 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
   }
 
   // Colors based on mode
-  const accentColor = isRegister ? 'text-[#8b5a2b]' : 'text-[#31583b]'
-  const ringColor = isRegister ? 'focus:border-[#8b5a2b]' : 'focus:border-[#31583b]'
-  const btnBg = isRegister ? 'bg-[#8b5a2b] hover:bg-[#6b4421]' : 'bg-[#31583b] hover:bg-[#2f4a31]'
-  const btnShadow = isRegister ? 'shadow-[#8b5a2b]/20' : 'shadow-[#31583b]/20'
-  const toggleBg = isRegister ? 'bg-[#8b5a2b] border-[#8b5a2b]' : 'bg-[#31583b] border-[#31583b]'
+  const accentColor = isRegister ? 'text-[#d07a12]' : 'text-[#31583b]'
+  const ringColor = isRegister ? 'focus:border-[#d07a12]' : 'focus:border-[#31583b]'
+  const btnBg = isRegister ? 'bg-[#d07a12] hover:bg-[#b3660f]' : 'bg-[#31583b] hover:bg-[#2f4a31]'
+  const btnShadow = isRegister ? 'shadow-[#d07a12]/20' : 'shadow-[#31583b]/20'
+  const toggleBg = isRegister ? 'bg-[#d07a12] border-[#d07a12]' : 'bg-[#31583b] border-[#31583b]'
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm animate-fade-in-up">
-          {error}
-        </div>
-      )}
 
       {/* Name Field (Slides down and in) */}
       <div 
@@ -89,12 +85,24 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
           <input
             id="auth-password"
             name="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder={isRegister ? "Ustvarite geslo" : "Vnesite geslo"}
             required
             minLength={isRegister ? 6 : undefined}
-            className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
+            className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 pr-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all duration-300 cursor-pointer ${accentColor} opacity-50 hover:opacity-100 hover:bg-black/[0.04]`}
+            aria-label={showPassword ? 'Skrij geslo' : 'Prikaži geslo'}
+            tabIndex={-1}
+          >
+            {showPassword
+              ? <EyeOff className="w-4 h-4" strokeWidth={2} />
+              : <Eye className="w-4 h-4" strokeWidth={2} />
+            }
+          </button>
         </div>
         
         {/* Remember Me / Forgot Password (Fades out on register) */}

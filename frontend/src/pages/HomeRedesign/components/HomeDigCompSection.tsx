@@ -17,19 +17,20 @@ function HomeDigCompSection({
 		>
 			<div className="relative grid w-full items-center gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
 				<RevealOnScroll className="relative z-20 max-w-2xl">
-					<p className="text-xs font-bold uppercase tracking-[0.28em] text-[#706b60]">
-						DigComp okvir
-					</p>
+					<div className="max-w-xl rounded-[30px] bg-[#fffdf8]/30 p-6 backdrop-blur-sm sm:p-8">
+						<p className="text-xs font-bold uppercase tracking-[0.28em] text-[#706b60]">
+							DigComp okvir
+						</p>
 
-					<h2 className="mt-5 font-serif text-[clamp(38px,5vw,68px)] leading-[0.98] text-[#33442f]">
-						Pet področij, ki stojijo za digitalnimi kompetencami.
-					</h2>
+						<h2 className="mt-5 font-serif text-[clamp(36px,4.6vw,60px)] leading-[1.02] text-[#33442f]">
+							Pet področij, ki stojijo za digitalnimi kompetencami.
+						</h2>
 
-					<p className="mt-7 max-w-xl text-[19px] leading-8 text-[#6f6a60]">
-						DigComp pomaga razumeti, katera znanja uporabnik razvija skozi
-						učne poti, module in učne enote. Barve predstavljajo pet področij,
-						ki se povežejo v celoten okvir.
-					</p>
+						<p className="mt-6 max-w-xl text-[18px] leading-8 text-[#6f6a60]">
+							DigComp pomaga razumeti, katera znanja razvijaš skozi učne
+							poti, module in učne enote.
+						</p>
+					</div>
 				</RevealOnScroll>
 
 				<RevealOnScroll

@@ -107,20 +107,20 @@ export default function LoginPage() {
         >
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
             {/* Title row with close button inline */}
-            <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center justify-between mb-2">
               <h1 className={`text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
                 {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 -mr-2 -mt-1 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
+                className="p-2 -mr-2 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-[#706b60] text-sm mb-8 transition-opacity duration-500 delay-100">
+            <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
               {isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 

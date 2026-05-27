@@ -14,6 +14,11 @@ import {
 import { getLearningPathDetail } from '../../services/learning-path-service'
 import type { LearningPathDetailResponse } from '../../types/learning-path'
 import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
+import { getSessionAssessmentResult } from '../../services/assessment-session-service'
+import type {
+  AssessmentResultResponse,
+  AssessmentStatus,
+} from '../../types/assessment'
 
 const MAX_VISIBLE_NODES = 7
 
@@ -34,8 +39,39 @@ function getModuleReferenceById(
   return references.find((reference) => reference.module_id === moduleId)
 }
 
+function getModuleAssessmentStatus(
+  moduleId: string,
+  assessmentResult: AssessmentResultResponse | null,
+): AssessmentStatus | null {
+  if (!assessmentResult) {
+    return null
+  }
+
+  const moduleResult = assessmentResult.module_results.find(
+    (result) => result.module_id === moduleId,
+  )
+
+  if (moduleResult) {
+    return moduleResult.status
+  }
+
+  if (assessmentResult.skipped_modules.includes(moduleId)) {
+    return 'completed'
+  }
+
+  if (
+    assessmentResult.recommended_next_modules.includes(moduleId) ||
+    assessmentResult.start_module_id === moduleId
+  ) {
+    return 'not_started'
+  }
+
+  return null
+}
+
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,
+  assessmentResult: AssessmentResultResponse | null = null,
 ): LearningPathMountainNode[] {
   const moduleDetails = learningPath.module_details ?? []
   const nodes: LearningPathMountainNode[] = []
@@ -61,12 +97,47 @@ function createMountainNodes(
       durationHours: module.duration_hours,
       isRequired: moduleReference?.is_required ?? false,
       parallelGroup: moduleReference?.parallel_group ?? null,
+      assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
     })
   })
 
   return nodes
     .sort((firstNode, secondNode) => firstNode.order - secondNode.order)
     .slice(0, MAX_VISIBLE_NODES)
+}
+
+function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
+  const referenceModuleIds = (learningPath.modules ?? [])
+    .map((moduleReference) => moduleReference.module_id)
+    .filter((moduleId): moduleId is string => Boolean(moduleId))
+
+  if (referenceModuleIds.length > 0) {
+    return referenceModuleIds
+  }
+
+  return (learningPath.module_details ?? [])
+    .map((module) => getBackendEntityId(module as BackendEntity))
+    .filter((moduleId): moduleId is string => Boolean(moduleId))
+}
+
+function isLearningPathCompletedByAssessment(
+  learningPath: LearningPathDetailResponse,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult || assessmentResult.target_type !== 'learning_path') {
+    return false
+  }
+
+  const moduleIds = getLearningPathModuleIds(learningPath)
+
+  if (moduleIds.length === 0) {
+    return false
+  }
+
+  return moduleIds.every(
+    (moduleId) =>
+      getModuleAssessmentStatus(moduleId, assessmentResult) === 'completed',
+  )
 }
 
 function formatDuration(
@@ -113,6 +184,10 @@ function LearningPathDetailPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
 
+  const [assessmentResult, setAssessmentResult] =
+    useState<AssessmentResultResponse | null>(null)
+  const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
+
   useEffect(() => {
     let isActive = true
 
@@ -133,8 +208,23 @@ function LearningPathDetailPage() {
           return
         }
 
-        setLearningPath(learningPathDetail)
-        setIsCompleted(false)
+      const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
+
+      const sessionAssessmentResult =
+        getSessionAssessmentResult('learning_path', targetId) ??
+        (targetId !== learningPathId
+          ? getSessionAssessmentResult('learning_path', learningPathId)
+          : null)
+
+      const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
+        learningPathDetail,
+        sessionAssessmentResult,
+      )
+
+      setLearningPath(learningPathDetail)
+      setAssessmentResult(sessionAssessmentResult)
+      setIsCompletedByAssessment(nextIsCompletedByAssessment)
+      setIsCompleted(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
           return
@@ -164,8 +254,8 @@ function LearningPathDetailPage() {
       return []
     }
 
-    return createMountainNodes(learningPath)
-  }, [learningPath])
+    return createMountainNodes(learningPath, assessmentResult)
+  }, [assessmentResult, learningPath])
 
   function handleStartQuestionnaire() {
     if (!learningPath) {
@@ -262,6 +352,7 @@ function LearningPathDetailPage() {
               moduleCount={moduleCount}
               learningUnitCount={learningUnitCount}
               isCompleted={isCompleted}
+              celebrateCompletedOnMount={isCompletedByAssessment}
               onFavoriteClick={() => {
                 // TODO: priklop na user-progress-service, ko bo na voljo userId
               }}

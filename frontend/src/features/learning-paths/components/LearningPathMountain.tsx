@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -15,6 +15,7 @@ import {
 
 import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
+import type { AssessmentStatus } from '../../../types/assessment'
 
 export type LearningPathMountainNode = {
   id: string
@@ -25,6 +26,7 @@ export type LearningPathMountainNode = {
   durationHours?: number | null
   isRequired?: boolean
   parallelGroup?: string | null
+  assessmentStatus?: AssessmentStatus | null
 }
 
 type PositionedMountainNode = LearningPathMountainNode & {
@@ -41,6 +43,7 @@ type LearningPathMountainProps = {
   moduleCount: number
   learningUnitCount: number
   isCompleted?: boolean
+  celebrateCompletedOnMount?: boolean
   onFavoriteClick?: () => void
   onSaveClick?: () => void
   onCompletedChange?: (isCompleted: boolean) => void
@@ -273,6 +276,18 @@ const mobileParallelOffsets: Record<number, Position[]> = {
 const desktopFinishFlagPosition: Position = { x: 74, y: 9 }
 const tabletFinishFlagPosition: Position = { x: 78, y: 18 }
 const mobileFinishFlagPosition: Position = { x: 55, y: 44 }
+
+function getNodeAssessmentClassName(status?: AssessmentStatus | null) {
+  if (!status || status === 'completed') {
+    return 'border-[#F8E7BE] bg-[#344E41] text-white hover:bg-[#5F6F52] focus-visible:ring-[#F8E7BE]/70'
+  }
+
+  if (status === 'partially_completed') {
+    return 'border-[#d8a24d] bg-[#F8E7BE] text-[#344E41] hover:bg-[#f3ddb0] focus-visible:ring-[#d8a24d]/40'
+  }
+
+  return 'border-[#DED2BC] bg-white/90 text-[#344E41] hover:bg-[#F7F1E6] focus-visible:ring-[#DED2BC]/70'
+}
 
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
@@ -766,6 +781,7 @@ export function LearningPathMountain({
   moduleCount,
   learningUnitCount,
   isCompleted = false,
+  celebrateCompletedOnMount = false,
   onFavoriteClick,
   onSaveClick,
   onCompletedChange,
@@ -773,6 +789,20 @@ export function LearningPathMountain({
 }: LearningPathMountainProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [completionCelebrationKey, setCompletionCelebrationKey] = useState(0)
+  const previousIsCompletedRef = useRef(isCompleted)
+
+  useEffect(() => {
+    const wasCompleted = previousIsCompletedRef.current
+    previousIsCompletedRef.current = isCompleted
+
+    if (!isCompleted) {
+      return
+    }
+
+    if (!wasCompleted || celebrateCompletedOnMount) {
+      setCompletionCelebrationKey((currentKey) => currentKey + 1)
+    }
+  }, [celebrateCompletedOnMount, isCompleted])
 
   const desktopNodeLevels = useMemo(
     () => getPositionedNodeLevels(nodes, desktopLevelPositionPresets, 'desktop'),
@@ -910,20 +940,20 @@ function renderPathSegments(segments: PathSegment[], className: string) {
     return nodesToRender.map((node) => {
       const isSelected = selectedNodeId === node.id
       const hasParallelLabel = node.parallelCount > 1
-
+      const nodeAssessmentClassName = getNodeAssessmentClassName(
+        node.assessmentStatus,
+      )      
       return (
         <button
           key={node.id}
           type="button"
           onClick={() => setSelectedNodeId(node.id)}
-          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-[#F8E7BE] bg-[#344E41] font-bold text-white shadow-lg transition duration-200 hover:scale-105 hover:bg-[#5F6F52] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#F8E7BE]/70 min-[1500px]:h-14 min-[1500px]:w-14 ${
+          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 font-bold shadow-lg transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14 ${nodeAssessmentClassName} ${
             hasParallelLabel
               ? 'text-[0.78rem] min-[1500px]:text-sm'
               : 'text-base min-[1500px]:text-lg'
           } ${className} ${
-            isSelected
-              ? 'scale-110 bg-[#5F6F52] ring-4 ring-[#F8E7BE]/70'
-              : ''
+            isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : ''
           }`}
           style={{
             left: `${node.x}%`,

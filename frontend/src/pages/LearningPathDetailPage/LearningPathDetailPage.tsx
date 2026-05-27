@@ -403,20 +403,20 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <section className="mt-12 overflow-hidden rounded-[32px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-10 shadow-[0_18px_50px_rgba(84,59,33,0.08)] sm:px-10 lg:px-14">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+        <section className="mt-12 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:px-10 lg:px-14">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
             <div>
-              <div className="flex items-center gap-5">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#d58a2b] bg-[#fff8ee] text-[#d58a2b]">
-                  <CircleHelp className="h-8 w-8" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#d58a2b] bg-[#fff8ee] text-[#d58a2b]">
+                  <CircleHelp className="h-6 w-6" />
                 </div>
 
-                <h2 className="font-serif text-5xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
+                <h2 className="font-serif text-4xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
                   Samoocena
                 </h2>
               </div>
 
-              <p className="mt-7 max-w-3xl text-xl leading-9 text-[var(--color-brown-600)]">
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
                 Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
                 in preverite svoje znanje.
               </p>
@@ -424,17 +424,17 @@ function LearningPathDetailPage() {
               <button
                 type="button"
                 onClick={handleStartQuestionnaire}
-                className="mt-10 inline-flex items-center justify-center gap-3 rounded-[18px] bg-[#d08a34] px-9 py-5 text-lg font-bold text-white shadow-[0_18px_38px_rgba(208,138,52,0.24)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
+                className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
               >
                 Odpri vprašalnik
-                <ExternalLink className="h-5 w-5" />
+                <ExternalLink className="h-4 w-4" />
               </button>
             </div>
 
             <img
               src={questionnaireIllustration}
               alt=""
-              className="hidden w-full max-w-[330px] justify-self-center opacity-80 lg:block"
+              className="hidden w-full max-w-[280px] justify-self-center opacity-80 lg:block"
               aria-hidden="true"
             />
           </div>

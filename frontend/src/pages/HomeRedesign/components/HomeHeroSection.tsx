@@ -4,6 +4,7 @@ import type { NavigateFunction } from 'react-router-dom'
 import type { SearchResult } from '../../../types/search'
 import HeroSearch from '../../HomePage/components/HeroSearch'
 import HeroSearchResults from '../../HomePage/components/HeroSearchResults'
+import MobileHeroSearchResults from './MobileHeroSearchResults'
 
 type HomeHeroSectionProps = {
 	isSearchActive: boolean
@@ -45,13 +46,19 @@ function HomeHeroSection({
 					setSearchQuery={setSearchQuery}
 					setSearchResults={setSearchResults}
 				/>
-
+				<MobileHeroSearchResults
+					isSearchActive={isSearchActive}
+					searchQuery={searchQuery}
+					searchResults={searchResults}
+					isSearching={isSearching}
+					navigate={navigate}
+				/>
 				<div
-					className={`rounded-[34px] border border-[#ded5c6]/80 bg-[#fffdf8]/72 p-8 shadow-[0_24px_70px_rgba(57,47,35,0.12)] backdrop-blur-2xl transition-all duration-500 sm:p-10 ${
-						isSearchActive
-							? 'pointer-events-none translate-y-6 opacity-0 blur-sm'
+					className={`rounded-[34px] border border-[#ded5c6]/80 bg-[#fffdf8]/72 p-8 shadow-[0_24px_70px_rgba(57,47,35,0.12)] backdrop-blur-2xl transition-all duration-500 sm:p-10 
+						${isSearchActive
+							? 'pointer-events-none translate-y-3 opacity-70 blur-[8px]'
 							: 'translate-y-0 opacity-100 blur-0'
-					}`}
+						}`}
 				>
 					<p className="text-xs font-bold uppercase tracking-[0.28em] text-[#706b60]">
 						NIDiKo
@@ -96,11 +103,11 @@ function HomeHeroSection({
 				/>
 
 				<div
-					className={`rounded-[36px] border border-[#ded5c6]/70 bg-[#fffdf8]/50 p-8 shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl transition-all duration-500 ${
-						isSearchActive
-							? 'pointer-events-none translate-y-6 opacity-0 blur-sm'
+					className={`rounded-[36px] border border-[#ded5c6]/70 bg-[#fffdf8]/50 p-8 shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl transition-all duration-500 
+						${isSearchActive
+							? 'pointer-events-none translate-y-4 opacity-35 blur-[6px]'
 							: 'translate-y-0 opacity-100 blur-0'
-					}`}
+						}`}
 				>
 					<p className="text-xs font-bold uppercase tracking-[0.28em] text-[#706b60]">
 						Struktura učenja

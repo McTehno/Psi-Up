@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import type { SearchResult } from '../types/domain'
 import { searchFilters } from '../pages/HomePage/constants'
 
@@ -9,11 +10,13 @@ type AdvancedFiltersState = {
   types: string[]
 }
 
+const defaultActiveFilters = ['Učne poti']
+
 export function useSearch() {
   const [isSearchActive, setIsSearchActive] = useState(false)
-  const [activeFilters, setActiveFilters] = useState<string[]>(['Vse'])
+  const [activeFilters, setActiveFilters] =
+    useState<string[]>(defaultActiveFilters)
 
-  // Naprednejši filtri - placeholder za prihodnost
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFiltersState>({
     query: '',
     types: [],
@@ -24,44 +27,25 @@ export function useSearch() {
   const [isSearching, setIsSearching] = useState(false)
 
   const toggleFilter = useCallback((label: string) => {
-    if (label === 'Vse') {
-      setActiveFilters(['Vse'])
-      return
-    }
-
     setActiveFilters((previousFilters) => {
-      let nextFilters = previousFilters.filter((filter) => filter !== 'Vse')
-
-      if (nextFilters.includes(label)) {
-        nextFilters = nextFilters.filter((filter) => filter !== label)
-        return nextFilters.length === 0 ? ['Vse'] : nextFilters
+      if (previousFilters.includes(label)) {
+        return previousFilters.filter((filter) => filter !== label)
       }
 
-      if (nextFilters.length >= 2) {
-        nextFilters = nextFilters.slice(1)
-      }
-
-      return [...nextFilters, label]
+      return [...previousFilters, label]
     })
   }, [])
 
   useEffect(() => {
-
-
     const timeoutId = window.setTimeout(async () => {
       setIsSearching(true)
 
       try {
-        let types: string[] = []
-
-        if (!activeFilters.includes('Vse')) {
-          types = searchFilters
-            .filter(
-              (filter: SearchFilterOption) =>
-                activeFilters.includes(filter.label) && filter.value !== null
-            )
-            .map((filter: SearchFilterOption) => filter.value as string)
-        }
+        const types = searchFilters
+          .filter((filter: SearchFilterOption) =>
+            activeFilters.includes(filter.label),
+          )
+          .map((filter: SearchFilterOption) => filter.value)
 
         const urlParams = new URLSearchParams()
         urlParams.append('query', searchQuery)
@@ -74,7 +58,7 @@ export function useSearch() {
           import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
         const response = await fetch(
-          `${apiBaseUrl}/api/search?${urlParams.toString()}`
+          `${apiBaseUrl}/api/search?${urlParams.toString()}`,
         )
 
         if (!response.ok) {
@@ -84,10 +68,10 @@ export function useSearch() {
         const data = await response.json()
 
         const mappedData: SearchResult[] = (data.results || []).map(
-          (item: SearchResult & { short_description?: string }) => ({
+          (item: SearchResult & { short_description?: string | null }) => ({
             ...item,
             shortDescription: item.short_description,
-          })
+          }),
         )
 
         setSearchResults(mappedData)

@@ -1,5 +1,6 @@
 import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 
+import type { SearchResult } from '../../../types/search'
 import { searchFilters } from '../constants'
 
 type HeroSearchProps = {
@@ -9,7 +10,7 @@ type HeroSearchProps = {
 	toggleFilter: (filter: string) => void
 	searchQuery: string
 	setSearchQuery: (query: string) => void
-	setSearchResults: (results: never[]) => void
+	setSearchResults: (results: SearchResult[]) => void
 }
 
 function HeroSearch({
@@ -24,7 +25,7 @@ function HeroSearch({
 	return (
 		<div
 			className={`relative z-50 mb-8 max-w-sm transition-all duration-500 ease-in-out ${
-				isSearchActive ? 'scale-105 origin-left' : ''
+				isSearchActive ? 'origin-left scale-105' : ''
 			}`}
 		>
 			<div className="relative">
@@ -63,7 +64,7 @@ function HeroSearch({
 			</div>
 
 			<div
-				className={`absolute left-0 right-0 top-full mt-4 flex origin-top flex-wrap gap-2 transition-all duration-500 ease-in-out ${
+				className={`absolute left-0 right-0 top-full mt-4 flex origin-top gap-2 overflow-x-auto whitespace-nowrap pb-1 transition-all duration-500 ease-in-out [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:overflow-visible sm:whitespace-normal ${
 					isSearchActive
 						? 'visible translate-y-0 opacity-100'
 						: 'invisible -translate-y-4 opacity-0'
@@ -74,7 +75,7 @@ function HeroSearch({
 						type="button"
 						key={filter.label}
 						onClick={() => toggleFilter(filter.label)}
-						className={`rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
+						className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
 							activeFilters.includes(filter.label)
 								? 'border-[#31583b] bg-[#31583b] text-white hover:bg-[#274a31]'
 								: 'border-[#eadfce] bg-white text-[#706b60] hover:bg-[#fff6eb]'

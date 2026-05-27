@@ -118,8 +118,7 @@ export const flowSteps = [
 ] as const
 
 export const searchFilters = [
-	{ label: 'Vse', value: null },
-	{ label: 'Moduli', value: 'module' },
 	{ label: 'Učne poti', value: 'learning_path' },
+	{ label: 'Moduli', value: 'module' },
 	{ label: 'Učne enote', value: 'learning_unit' },
 ] as const

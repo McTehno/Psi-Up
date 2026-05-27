@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Layers, Clock, Info, BookOpen, CircleHelp, ExternalLink } from 'lucide-react'
 
@@ -17,6 +17,7 @@ import EmptyState from '../../components/common/EmptyState'
 import { getModuleDetail } from '../../services/module-service'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import type { ModuleResponse } from '../../types/module'
+import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
 
@@ -27,6 +28,7 @@ function ModuleDetailPage() {
   const [moduleData, setModuleData] = useState<ModuleResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
 
   useEffect(() => {
     async function loadData() {
@@ -44,6 +46,56 @@ function ModuleDetailPage() {
     }
     loadData()
   }, [moduleId])
+
+  useEffect(() => {
+    if (!moduleId) {
+      return
+    }
+
+    const storedResult = sessionStorage.getItem(`assessment_result_${moduleId}`)
+
+    if (!storedResult) {
+      setAssessmentResult(null)
+      return
+    }
+
+    try {
+      setAssessmentResult(JSON.parse(storedResult) as AssessmentResultResponse)
+    } catch (err) {
+      console.error(err)
+      setAssessmentResult(null)
+    }
+  }, [moduleId])
+
+  const completedUnitIds = useMemo(() => {
+    if (!assessmentResult) {
+      return []
+    }
+
+    const moduleResult = assessmentResult.module_results?.find(
+      (m) => m.module_id === moduleId,
+    )
+
+    const completed = new Set<string>()
+
+    if (moduleResult?.completed_learning_units) {
+      moduleResult.completed_learning_units.forEach((id) => completed.add(id))
+    }
+
+    if (assessmentResult.skipped_learning_units) {
+      assessmentResult.skipped_learning_units.forEach((id) => completed.add(id))
+    }
+
+    if (assessmentResult.learning_unit_results) {
+      assessmentResult.learning_unit_results.forEach((lu) => {
+        if (lu.is_completed_by_assessment) {
+          completed.add(lu.learning_unit_id)
+        }
+      })
+    }
+
+    return Array.from(completed)
+  }, [assessmentResult, moduleId])
 
   function handleStartQuestionnaire() {
     if (!moduleId) return
@@ -172,8 +224,7 @@ function ModuleDetailPage() {
           <LearningUnitVisualizer
             references={moduleData.learning_units || []}
             details={moduleData.learning_unit_details || []}
-            /* Current demo for completed units - change for production*/
-            completedUnitIds={moduleId === 'mod_002' ? ['ue_001', 'ue_002'] : []}
+            completedUnitIds={completedUnitIds}
           />
         </div>
       </DetailSection>

@@ -32,8 +32,8 @@ function getPathD(mode: JourneyMode, height: number) {
       C 80 ${h * 0.44}, 105 ${h * 0.49}, 260 ${h * 0.545}
       C 360 ${h * 0.585}, 315 ${h * 0.65}, 160 ${h * 0.705}
       C 55 ${h * 0.745}, 95 ${h * 0.805}, 235 ${h * 0.855}
-      C 345 ${h * 0.895}, 330 ${h * 0.945}, 205 ${h * 0.975}
-      C 150 ${h * 0.99}, 185 ${h * 0.997}, 305 ${h * 0.999}
+      C 325 ${h * 0.895}, 230 ${h * 0.92}, 230 ${h * 0.955}
+      C 230 ${h * 0.98}, 230 ${h * 1.0}, 230 ${h * 1.035}
     `
 	}
 
@@ -45,8 +45,8 @@ function getPathD(mode: JourneyMode, height: number) {
     C 1020 ${h * 0.46}, 410 ${h * 0.455}, 460 ${h * 0.54}
     C 510 ${h * 0.62}, 1080 ${h * 0.60}, 900 ${h * 0.695}
     C 770 ${h * 0.765}, 270 ${h * 0.75}, 330 ${h * 0.835}
-    C 390 ${h * 0.925}, 790 ${h * 0.90}, 720 ${h * 0.965}
-    C 680 ${h * 0.99}, 900 ${h * 0.995}, 1080 ${h * 0.999}
+    C 390 ${h * 0.925}, 620 ${h * 0.90}, 620 ${h * 0.955}
+    C 620 ${h * 0.98}, 620 ${h * 1.0}, 620 ${h * 1.035}
   `
 }
 
@@ -155,7 +155,6 @@ function HomeScrollJourney() {
 	}, [pathLength, pathD, mode, svgHeight])
 
 	const drawOffset = pathLength * (1 - drawProgress)
-	const endX = mode === 'mobile' ? 305 : 1080
 
 	return (
 		<div
@@ -226,14 +225,6 @@ function HomeScrollJourney() {
 					strokeDasharray={pathLength}
 					strokeDashoffset={drawOffset}
 					filter="url(#home-journey-glow)"
-				/>
-
-				<circle
-					cx={endX}
-					cy={svgHeight * 0.999}
-					r={mode === 'mobile' ? 7 : 9}
-					fill="#c98a43"
-					opacity={drawProgress > 0.96 ? 0.55 : 0}
 				/>
 			</svg>
 		</div>

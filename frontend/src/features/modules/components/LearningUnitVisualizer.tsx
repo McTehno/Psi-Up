@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, Award, X } from 'lucide-react';
 import EmptyState from '../../../components/common/EmptyState';
+import moduleBgImage from '../../../assets/module-details-background.jpeg';
+import moduleBgImageVertical from '../../../assets/module-details-background-vertical.jpeg';
+
 
 interface LearningUnitVisualizerProps {
   references: LearningUnitReferenceResponse[];
@@ -45,6 +48,29 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     document.addEventListener('pointerdown', handler);
     return () => document.removeEventListener('pointerdown', handler);
   }, [activeNodeIdx]);
+
+  const [offsetY, setOffsetY] = useState(0);
+
+  useEffect(() => {
+    let animationFrameId: number;
+    const handleScroll = () => {
+      animationFrameId = requestAnimationFrame(() => {
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        // Calculate offset based on how far the container is from the viewport center
+        const centerOffset = (rect.top - window.innerHeight / 2);
+        // Move the background slightly slower than the scroll speed
+        setOffsetY(centerOffset * -0.15);
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial position
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   const handleUnitClick = useCallback((unitId: string) => {
     navigate(`/learning-units/${unitId}`);
@@ -200,16 +226,54 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const showPopupAbove = activeNode ? activeNode.y > totalHeight * 0.65 : false;
 
   return (
-    <div className={`relative w-full py-8 flex flex-col items-center ${isMobile ? 'overflow-visible' : 'overflow-hidden'}`}>
-      {numRows === 0 ? (
-        <EmptyState
-          title="Ni učnih enot"
-          message="Za ta modul trenutno ni učnih enot."
+    <div className={`relative w-full py-12 flex flex-col items-center rounded-3xl ${isMobile ? 'overflow-visible' : 'overflow-hidden'}`}>
+
+      {/* Sleek Nature Background Layer */}
+      <div className="absolute inset-0 pointer-events-none z-0 rounded-3xl overflow-hidden border border-[#eadfce]/60 bg-[#fffdf8] shadow-[inset_0_2px_20px_rgba(0,0,0,0.02)]">
+        {/* Soft base gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#f9f5ed] to-[#f4eee1] opacity-95" />
+
+        {/* Mountain Image for Mobile and Landscape Screens */}
+        <div
+          className="absolute inset-0 mix-blend-multiply opacity-[0.25] md:portrait:hidden"
+          style={{
+            backgroundImage: `url(${moduleBgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: `translateY(${offsetY}px) scale(1.15)`,
+            willChange: 'transform'
+          }}
         />
+
+        {/* Mountain Image for Big Vertical Screens */}
+        <div
+          className="absolute inset-0 mix-blend-multiply opacity-[0.25] hidden md:portrait:block"
+          style={{
+            backgroundImage: `url(${moduleBgImageVertical})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: `translateY(${offsetY}px) scale(1.15)`,
+            willChange: 'transform'
+          }}
+        />
+
+        {/* Subtle radial glows for depth */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-white/60 blur-[100px] rounded-full mix-blend-overlay" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#EACE9B]/10 blur-[80px] rounded-full mix-blend-multiply" />
+        <div className="absolute top-1/3 left-0 w-[400px] h-[400px] bg-[#7DAE8C]/10 blur-[80px] rounded-full mix-blend-multiply" />
+      </div>
+
+      {numRows === 0 ? (
+        <div className="relative z-10 w-full flex justify-center">
+          <EmptyState
+            title="Ni učnih enot"
+            message="Za ta modul trenutno ni učnih enot."
+          />
+        </div>
       ) : (
         <div
           ref={containerRef}
-          className="relative w-full max-w-[800px] overflow-visible"
+          className="relative w-full max-w-[800px] overflow-visible z-10"
           style={{ height: `${totalHeight}px` }}
         >
 

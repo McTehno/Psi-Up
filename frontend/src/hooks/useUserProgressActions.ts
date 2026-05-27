@@ -1,135 +1,143 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAuth } from '../features/auth/contexts/AuthContext'
 import {
-	isContentCompleted,
-	isContentFavorite,
-	isContentSaved,
-	updateUserProgress,
-	type UserProgressContentType,
+    isContentCompleted,
+    isContentFavorite,
+    isContentSaved,
+    updateUserProgress,
+    type UserProgressContentType,
 } from '../services/user-progress-service'
 
 type UserProgressActionState = {
-	isFavorite: boolean
-	isSaved: boolean
-	isCompleted: boolean
+    isFavorite: boolean
+    isSaved: boolean
+    isCompleted: boolean
 }
 
 type UseUserProgressActionsParams = {
-	contentId?: string
-	contentType?: UserProgressContentType
-	initialIsFavorite?: boolean
-	initialIsSaved?: boolean
-	initialIsCompleted?: boolean
+    contentId?: string
+    contentType?: UserProgressContentType
+    initialIsFavorite?: boolean
+    initialIsSaved?: boolean
+    initialIsCompleted?: boolean
 }
 
 type ToggleUserProgressAction = 'favorite' | 'save' | 'completed'
 
 export function useUserProgressActions({
-	contentId,
-	contentType,
-	initialIsFavorite = false,
-	initialIsSaved = false,
-	initialIsCompleted = false,
+    contentId,
+    contentType,
+    initialIsFavorite = false,
+    initialIsSaved = false,
+    initialIsCompleted = false,
 }: UseUserProgressActionsParams) {
-	const { session } = useAuth()
+    const { session } = useAuth()
 
-	const [state, setState] = useState<UserProgressActionState>({
-		isFavorite: initialIsFavorite,
-		isSaved: initialIsSaved,
-		isCompleted: initialIsCompleted,
-	})
+    const [state, setState] = useState<UserProgressActionState>({
+        isFavorite: initialIsFavorite,
+        isSaved: initialIsSaved,
+        isCompleted: initialIsCompleted,
+    })
 
-	const [isLoading, setIsLoading] = useState(false)
-	const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-	function clearError() {
-		setErrorMessage(null)
-	}
+    useEffect(() => {
+        setState({
+            isFavorite: initialIsFavorite,
+            isSaved: initialIsSaved,
+            isCompleted: initialIsCompleted,
+        })
+    }, [initialIsFavorite, initialIsSaved, initialIsCompleted])
 
-	async function toggleAction(action: ToggleUserProgressAction) {
-		setErrorMessage(null)
+    function clearError() {
+        setErrorMessage(null)
+    }
 
-		if (!contentId || !contentType) {
-			setState((currentState) => {
-				if (action === 'favorite') {
-					return {
-						...currentState,
-						isFavorite: !currentState.isFavorite,
-					}
-				}
+    async function toggleAction(action: ToggleUserProgressAction) {
+        setErrorMessage(null)
 
-				if (action === 'save') {
-					return {
-						...currentState,
-						isSaved: !currentState.isSaved,
-					}
-				}
+        if (!contentId || !contentType) {
+            setState((currentState) => {
+                if (action === 'favorite') {
+                    return {
+                        ...currentState,
+                        isFavorite: !currentState.isFavorite,
+                    }
+                }
 
-				return {
-					...currentState,
-					isCompleted: !currentState.isCompleted,
-				}
-			})
+                if (action === 'save') {
+                    return {
+                        ...currentState,
+                        isSaved: !currentState.isSaved,
+                    }
+                }
 
-			return null
-		}
+                return {
+                    ...currentState,
+                    isCompleted: !currentState.isCompleted,
+                }
+            })
 
-		if (!session?.access_token) {
-			setErrorMessage('AUTH_REQUIRED')
-			console.error('Uporabnik ni prijavljen.')
-			return null
-		}
+            return null
+        }
 
-		const isActive =
-			action === 'favorite'
-				? state.isFavorite
-				: action === 'save'
-					? state.isSaved
-					: state.isCompleted
+        if (!session?.access_token) {
+            setErrorMessage('AUTH_REQUIRED')
+            console.error('Uporabnik ni prijavljen.')
+            return null
+        }
 
-		try {
-			setIsLoading(true)
+        const isActive =
+            action === 'favorite'
+                ? state.isFavorite
+                : action === 'save'
+                    ? state.isSaved
+                    : state.isCompleted
 
-			const progress = await updateUserProgress({
-				action: action === 'completed' ? 'complete' : action,
-				isActive,
-				contentId,
-				contentType,
-				accessToken: session.access_token,
-			})
+        try {
+            setIsLoading(true)
 
-			const nextState = {
-				isFavorite: isContentFavorite(progress, contentId, contentType),
-				isSaved: isContentSaved(progress, contentId, contentType),
-				isCompleted: isContentCompleted(progress, contentId, contentType),
-			}
+            const progress = await updateUserProgress({
+                action: action === 'completed' ? 'complete' : action,
+                isActive,
+                contentId,
+                contentType,
+                accessToken: session.access_token,
+            })
 
-			setState(nextState)
+            const nextState = {
+                isFavorite: isContentFavorite(progress, contentId, contentType),
+                isSaved: isContentSaved(progress, contentId, contentType),
+                isCompleted: isContentCompleted(progress, contentId, contentType),
+            }
 
-			return nextState
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: 'Napaka pri posodobitvi napredka.'
+            setState(nextState)
 
-			setErrorMessage(message)
-			console.error('Napaka pri posodobitvi napredka:', error)
+            return nextState
+        } catch (error) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : 'Napaka pri posodobitvi napredka.'
 
-			return null
-		} finally {
-			setIsLoading(false)
-		}
-	}
+            setErrorMessage(message)
+            console.error('Napaka pri posodobitvi napredka:', error)
 
-	return {
-		isFavorite: state.isFavorite,
-		isSaved: state.isSaved,
-		isCompleted: state.isCompleted,
-		isLoading,
-		errorMessage,
-		clearError,
-		toggleAction,
-	}
+            return null
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    return {
+        isFavorite: state.isFavorite,
+        isSaved: state.isSaved,
+        isCompleted: state.isCompleted,
+        isLoading,
+        errorMessage,
+        clearError,
+        toggleAction,
+    }
 }

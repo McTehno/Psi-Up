@@ -46,14 +46,18 @@ async function readProgressResponse(
 }
 
 export async function getUserProgress(
+	userId: string,
 	accessToken: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress`, {
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
+	const response = await fetch(
+		`${getApiBaseUrl()}/api/user-progress/${userId}`,
+		{
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
 		},
-	})
+	)
 
 	return readProgressResponse(response)
 }

@@ -26,7 +26,6 @@ import type {
   QuestionnaireResponse,
   QuestionnaireTargetType,
 } from '../../types/questionnaire'
-
 import './QuestionnairePage.css'
 
 type AnswerOption = {
@@ -241,13 +240,11 @@ function createAutoFalsePayload(
   selectedAnswers: Record<string, AnswerOption>,
 ): QuestionnaireAnswerRequest[] {
   const alreadyAnsweredQuestionIdSet = new Set(alreadyAnsweredQuestionIds)
-
   const answeredPayload = createAnswerPayload(
     alreadyAnsweredQuestionIds,
     new Map(questions.map((question) => [question.id, question] as const)),
     selectedAnswers,
   )
-
   const autoFalsePayload = questions
     .filter((question) => !alreadyAnsweredQuestionIdSet.has(question.id))
     .map((question) => ({
@@ -259,16 +256,34 @@ function createAutoFalsePayload(
   return [...answeredPayload, ...autoFalsePayload]
 }
 
+function getSessionStorage() {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  try {
+    return window.sessionStorage
+  } catch {
+    return null
+  }
+}
+
 function saveAssessmentResult(
   targetType: QuestionnaireTargetType,
   targetId: string,
   result: AssessmentResultResponse,
 ) {
-  sessionStorage.setItem(
+  const storage = getSessionStorage()
+
+  if (!storage) {
+    return
+  }
+
+  storage.setItem(
     `assessment_result_${targetType}_${targetId}`,
     JSON.stringify(result),
   )
-  sessionStorage.setItem(`assessment_result_${targetId}`, JSON.stringify(result))
+  storage.setItem(`assessment_result_${targetId}`, JSON.stringify(result))
 }
 
 function getOrderedItems<T extends { order?: number | null }>(items: T[]) {
@@ -292,11 +307,9 @@ function getLeafStatus(
   const isActive = Boolean(
     activeQuestionId && questionIds.includes(activeQuestionId),
   )
-
   const hasNoAnswer = questionIds.some(
     (questionId) => selectedAnswers[questionId]?.weight === false,
   )
-
   const isCompleted =
     questionIds.length > 0 &&
     questionIds.every(
@@ -344,7 +357,8 @@ function getCompletedLeafCount(steps: AssessmentProgressStep[]) {
     if (step.subSteps && step.subSteps.length > 0) {
       return (
         count +
-        step.subSteps.filter((subStep) => subStep.status === 'completed').length
+        step.subSteps.filter((subStep) => subStep.status === 'completed')
+          .length
       )
     }
 
@@ -367,7 +381,6 @@ function getTotalLeafCount(steps: AssessmentProgressStep[]) {
 function QuestionnairePage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
 
@@ -399,12 +412,9 @@ function QuestionnairePage() {
     () => groupQuestionsByLearningUnit(questionnaire),
     [questionnaire],
   )
-
   const questionById = useMemo(
     () =>
-      new Map(
-        questionnaire.map((question) => [question.id, question] as const),
-      ),
+      new Map(questionnaire.map((question) => [question.id, question] as const)),
     [questionnaire],
   )
 
@@ -412,7 +422,6 @@ function QuestionnairePage() {
   const currentQuestion = currentQuestionId
     ? questionById.get(currentQuestionId)
     : undefined
-
   const selectedAnswer = currentQuestion
     ? selectedAnswers[currentQuestion.id]
     : undefined
@@ -432,7 +441,6 @@ function QuestionnairePage() {
 
   const shouldFinishAfterCurrentAnswer =
     Boolean(selectedAnswer) && selectedAnswer?.weight === false
-
   const nextQuestion =
     currentQuestion && selectedAnswer && !shouldFinishAfterCurrentAnswer
       ? getNextQuestion({
@@ -442,8 +450,8 @@ function QuestionnairePage() {
       : null
 
   const assessmentProgress = useMemo(() => {
-  const activeQuestionId =
-    phase === 'questionnaire' ? currentQuestion?.id : undefined
+    const activeQuestionId =
+      phase === 'questionnaire' ? currentQuestion?.id : undefined
 
     if (targetType === 'learning_unit') {
       const steps: AssessmentProgressStep[] = questionnaire.map(
@@ -474,7 +482,6 @@ function QuestionnairePage() {
           questionnaire,
           learningUnitReference.learning_unit_id,
         )
-
         const unitTitle =
           moduleDetail.learning_unit_details?.find(
             (learningUnit) =>
@@ -503,18 +510,15 @@ function QuestionnairePage() {
         const moduleItem = learningPathDetail.module_details?.find(
           (item) => item._id === moduleReference.module_id,
         )
-
         const learningUnits = moduleItem?.learning_units
           ? getOrderedItems(moduleItem.learning_units)
           : []
-
         const subSteps = learningUnits.map(
           (learningUnitReference, unitIndex) => {
             const questionIds = getQuestionIdsByLearningUnit(
               questionnaire,
               learningUnitReference.learning_unit_id,
             )
-
             const unitTitle =
               moduleItem?.learning_unit_details?.find(
                 (learningUnit) =>
@@ -600,34 +604,27 @@ function QuestionnairePage() {
     phase === 'completed'
       ? Math.max(visibleQuestionIds.length, 1)
       : questionnaire.length || 1
-
   const currentStepNumber =
     phase === 'completed'
       ? Math.max(visibleQuestionIds.length, 1)
       : Math.min(activeQuestionIndex + 1, totalSteps)
-
   const currentLabel = assessmentCopy.questionnaire.label
-
   const currentTitle =
     phase === 'completed'
       ? 'Cilj učne poti je dosežen'
       : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
-
   const currentDescription =
     phase === 'completed'
       ? 'Odgovori so bili shranjeni. Preusmerjamo vas nazaj na podrobnosti.'
       : assessmentCopy.questionnaire.description
-
   const canGoPrevious =
     phase === 'completed' ||
     (phase === 'questionnaire' && activeQuestionIndex > 0)
-
   const canGoNext =
     phase === 'questionnaire' &&
     Boolean(currentQuestion) &&
     Boolean(selectedAnswer) &&
     !isSubmittingAssessment
-
   const nextButtonLabel = isSubmittingAssessment
     ? 'Pošiljanje ...'
     : nextQuestion
@@ -655,7 +652,6 @@ function QuestionnairePage() {
         setLearningPathDetail(null)
 
         const data = await getQuestionnaire(targetType, targetId)
-
         let nextModuleDetail: ModuleResponse | null = null
         let nextLearningPathDetail: LearningPathDetailResponse | null = null
 
@@ -680,7 +676,6 @@ function QuestionnairePage() {
           targetType,
           targetId,
         )
-
         const questions = normalizedData.questions.map((question) => ({
           ...question,
           answers: yesNoAnswers,
@@ -755,7 +750,6 @@ function QuestionnairePage() {
       }
 
       nextAnswers[currentQuestion.id] = answer
-
       return nextAnswers
     })
 
@@ -800,20 +794,15 @@ function QuestionnairePage() {
             questionIdsToSubmit,
             selectedAnswers,
           )
-        : createAnswerPayload(
-            questionIdsToSubmit,
-            questionById,
-            selectedAnswers,
-          )
-
+        : createAnswerPayload(questionIdsToSubmit, questionById, selectedAnswers)
       const payload: AssessmentEvaluateRequest = {
         user_id: ASSESSMENT_USER_ID,
         target_type: targetType,
         target_id: targetId,
         answers,
       }
-
       const result = await evaluateAssessment(payload)
+
       saveAssessmentResult(targetType, targetId, result)
 
       if (
@@ -829,7 +818,6 @@ function QuestionnairePage() {
       navigate(getTargetDetailPath(targetType, targetId))
     } catch (error) {
       console.error(error)
-
       setError(
         error instanceof Error
           ? error.message
@@ -854,7 +842,6 @@ function QuestionnairePage() {
       0,
       activeQuestionIndex + 1,
     )
-
     const shouldFinishAfterNoAnswer = !selectedAnswer.weight
 
     if (shouldFinishAfterNoAnswer) {
@@ -893,14 +880,16 @@ function QuestionnairePage() {
       <AssessmentLayout
         imageSrc={womanImage}
         defaultNote={assessmentCopy.groupSelection.note}
-        phase="questionnaire"
+        phase={phase}
         selectedGroup={selectedGroup}
+        currentQuestion={currentQuestion}
+        selectedAnswer={selectedAnswer}
       >
         <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-800">
-          <p className="text-sm font-semibold uppercase tracking-wide">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em]">
             Napaka
           </p>
-          <p className="mt-2 text-base">{error}</p>
+          <p className="mt-2 text-sm">{error}</p>
         </div>
       </AssessmentLayout>
     )
@@ -911,10 +900,12 @@ function QuestionnairePage() {
       <AssessmentLayout
         imageSrc={womanImage}
         defaultNote={assessmentCopy.groupSelection.note}
-        phase="questionnaire"
+        phase={phase}
         selectedGroup={selectedGroup}
+        currentQuestion={currentQuestion}
+        selectedAnswer={selectedAnswer}
       >
-        <div className="rounded-3xl border border-[#e7dac7] bg-white p-6 text-[#756f65]">
+        <div className="rounded-3xl border border-[#e8ddcf] bg-white/80 p-6 text-sm text-[#5f5146] shadow-sm">
           Nalaganje vprašalnika ...
         </div>
       </AssessmentLayout>
@@ -926,10 +917,12 @@ function QuestionnairePage() {
       <AssessmentLayout
         imageSrc={womanImage}
         defaultNote={assessmentCopy.groupSelection.note}
-        phase="questionnaire"
+        phase={phase}
         selectedGroup={selectedGroup}
+        currentQuestion={currentQuestion}
+        selectedAnswer={selectedAnswer}
       >
-        <div className="rounded-3xl border border-[#e7dac7] bg-white p-6 text-[#756f65]">
+        <div className="rounded-3xl border border-[#e8ddcf] bg-white/80 p-6 text-sm text-[#5f5146] shadow-sm">
           Ta cilj trenutno nima vprašanj.
         </div>
       </AssessmentLayout>
@@ -950,18 +943,16 @@ function QuestionnairePage() {
         totalSteps={totalSteps}
         label={currentLabel}
         onVoiceSupportClick={handleVoiceSupportClick}
-        isVoiceSupportDisabled={phase !== 'questionnaire' || !currentQuestion}
-      />
-
-      <AssessmentProgress
-        targetLabel={targetType ? getTargetTypeLabel(targetType) : 'cilj'}
-        steps={assessmentProgress.steps}
-        completedLeafCount={assessmentProgress.completedLeafCount}
-        totalLeafCount={assessmentProgress.totalLeafCount}
-        isGoalReached={isLearningPathGoalReached}
       />
 
       <AssessmentIntro title={currentTitle} description={currentDescription} />
+
+      <AssessmentProgress
+        targetLabel={questionnaireTitle || currentLabel}
+        steps={assessmentProgress.steps}
+        completedLeafCount={assessmentProgress.completedLeafCount}
+        totalLeafCount={assessmentProgress.totalLeafCount}
+      />
 
       {phase === 'questionnaire' && currentQuestion && (
         <>
@@ -982,12 +973,20 @@ function QuestionnairePage() {
       )}
 
       {phase === 'completed' && (
-        <div className="assessment-summary">
-          <h2>Odlično, cilj je dosežen.</h2>
-          <p>
+        <div className="rounded-3xl border border-[#cfe1cf] bg-[#f2f8f1] p-6 text-[#31583b] shadow-sm">
+          <h2 className="text-xl font-bold">Odlično, cilj je dosežen.</h2>
+          <p className="mt-2 text-sm leading-6">
             Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
             Preusmeritev na podrobnosti se bo izvedla samodejno.
           </p>
+
+          <AssessmentActions
+            canGoPrevious={canGoPrevious}
+            canGoNext={false}
+            onPrevious={goToPreviousStep}
+            onNext={goToNextStep}
+            nextLabel="Preusmerjanje ..."
+          />
         </div>
       )}
 
@@ -1000,7 +999,7 @@ function QuestionnairePage() {
       </button>
 
       {isChatOpen && (
-        <div className="mt-4 rounded-3xl border border-[#e7dac7] bg-white p-5 text-sm leading-6 text-[#756f65] shadow-sm">
+        <div className="mt-4 rounded-3xl border border-[#e7dac7] bg-[#F7F1E6] p-5 text-sm text-[#5f5146]">
           Demo prostor za pomočnika. Logika vprašalnika je ločena od chata.
         </div>
       )}

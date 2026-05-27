@@ -9,11 +9,17 @@ import { DetailTags } from '../../components/detail'
 import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
   LearningPathMountain,
+  LearningPathOverviewCard,
   type LearningPathMountainNode,
 } from '../../features/learning-paths/components/LearningPathMountain'
 import { getLearningPathDetail } from '../../services/learning-path-service'
 import type { LearningPathDetailResponse } from '../../types/learning-path'
 import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
+import { getSessionAssessmentResult } from '../../services/assessment-session-service'
+import type {
+  AssessmentResultResponse,
+  AssessmentStatus,
+} from '../../types/assessment'
 
 const MAX_VISIBLE_NODES = 7
 
@@ -34,8 +40,39 @@ function getModuleReferenceById(
   return references.find((reference) => reference.module_id === moduleId)
 }
 
+function getModuleAssessmentStatus(
+  moduleId: string,
+  assessmentResult: AssessmentResultResponse | null,
+): AssessmentStatus | null {
+  if (!assessmentResult) {
+    return null
+  }
+
+  const moduleResult = assessmentResult.module_results.find(
+    (result) => result.module_id === moduleId,
+  )
+
+  if (moduleResult) {
+    return moduleResult.status
+  }
+
+  if (assessmentResult.skipped_modules.includes(moduleId)) {
+    return 'completed'
+  }
+
+  if (
+    assessmentResult.recommended_next_modules.includes(moduleId) ||
+    assessmentResult.start_module_id === moduleId
+  ) {
+    return 'not_started'
+  }
+
+  return null
+}
+
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,
+  assessmentResult: AssessmentResultResponse | null = null,
 ): LearningPathMountainNode[] {
   const moduleDetails = learningPath.module_details ?? []
   const nodes: LearningPathMountainNode[] = []
@@ -61,12 +98,47 @@ function createMountainNodes(
       durationHours: module.duration_hours,
       isRequired: moduleReference?.is_required ?? false,
       parallelGroup: moduleReference?.parallel_group ?? null,
+      assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
     })
   })
 
   return nodes
     .sort((firstNode, secondNode) => firstNode.order - secondNode.order)
     .slice(0, MAX_VISIBLE_NODES)
+}
+
+function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
+  const referenceModuleIds = (learningPath.modules ?? [])
+    .map((moduleReference) => moduleReference.module_id)
+    .filter((moduleId): moduleId is string => Boolean(moduleId))
+
+  if (referenceModuleIds.length > 0) {
+    return referenceModuleIds
+  }
+
+  return (learningPath.module_details ?? [])
+    .map((module) => getBackendEntityId(module as BackendEntity))
+    .filter((moduleId): moduleId is string => Boolean(moduleId))
+}
+
+function isLearningPathCompletedByAssessment(
+  learningPath: LearningPathDetailResponse,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult || assessmentResult.target_type !== 'learning_path') {
+    return false
+  }
+
+  const moduleIds = getLearningPathModuleIds(learningPath)
+
+  if (moduleIds.length === 0) {
+    return false
+  }
+
+  return moduleIds.every(
+    (moduleId) =>
+      getModuleAssessmentStatus(moduleId, assessmentResult) === 'completed',
+  )
 }
 
 function formatDuration(
@@ -106,12 +178,15 @@ function LearningPathDetailPage() {
   const { learningPathId } = useParams<{ learningPathId: string }>()
   const navigate = useNavigate()
 
-  const [isChatPanelExpanded, setIsChatPanelExpanded] = useState(false)
   const [learningPath, setLearningPath] =
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+
+  const [assessmentResult, setAssessmentResult] =
+    useState<AssessmentResultResponse | null>(null)
+  const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
 
   useEffect(() => {
     let isActive = true
@@ -133,8 +208,23 @@ function LearningPathDetailPage() {
           return
         }
 
-        setLearningPath(learningPathDetail)
-        setIsCompleted(false)
+      const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
+
+      const sessionAssessmentResult =
+        getSessionAssessmentResult('learning_path', targetId) ??
+        (targetId !== learningPathId
+          ? getSessionAssessmentResult('learning_path', learningPathId)
+          : null)
+
+      const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
+        learningPathDetail,
+        sessionAssessmentResult,
+      )
+
+      setLearningPath(learningPathDetail)
+      setAssessmentResult(sessionAssessmentResult)
+      setIsCompletedByAssessment(nextIsCompletedByAssessment)
+      setIsCompleted(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
           return
@@ -164,8 +254,8 @@ function LearningPathDetailPage() {
       return []
     }
 
-    return createMountainNodes(learningPath)
-  }, [learningPath])
+    return createMountainNodes(learningPath, assessmentResult)
+  }, [assessmentResult, learningPath])
 
   function handleStartQuestionnaire() {
     if (!learningPath) {
@@ -220,6 +310,19 @@ function LearningPathDetailPage() {
   const moduleCount =
     learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
+  const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
+
+  function handleFavoriteClick() {
+    // TODO: priklop na user-progress-service, ko bo na voljo userId
+  }
+
+  function handleSaveClick() {
+    // TODO: priklop na user-progress-service, ko bo na voljo userId
+  }
+
+  function handleCompletedChange(nextIsCompleted: boolean) {
+    setIsCompleted(nextIsCompleted)
+  }
 
   return (
     <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
@@ -245,14 +348,24 @@ function LearningPathDetailPage() {
           </div>
         </section>
 
+        <section className="mb-4 min-[1500px]:hidden">
+          <LearningPathOverviewCard
+            durationLabel={formatDuration(
+              learningPath.duration_hours,
+              learningPath.duration_min,
+            )}
+            moduleCount={moduleCount}
+            learningUnitCount={learningUnitCount}
+            hiddenNodeCount={hiddenNodeCount}
+            isCompleted={isCompleted}
+            onFavoriteClick={handleFavoriteClick}
+            onSaveClick={handleSaveClick}
+            onCompletedChange={handleCompletedChange}
+          />
+        </section>
+
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
-          <div
-            className={`h-full transition-[width] duration-300 ease-out ${
-              isChatPanelExpanded
-                ? 'min-[1500px]:w-[calc(100%-384px)]'
-                : 'w-full'
-            }`}
-          >
+          <div className="h-full">
             <LearningPathMountain
               nodes={mountainNodes}
               durationLabel={formatDuration(
@@ -262,43 +375,48 @@ function LearningPathDetailPage() {
               moduleCount={moduleCount}
               learningUnitCount={learningUnitCount}
               isCompleted={isCompleted}
-              onFavoriteClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onSaveClick={() => {
-                // TODO: priklop na user-progress-service, ko bo na voljo userId
-              }}
-              onCompletedChange={(nextIsCompleted) =>
-                setIsCompleted(nextIsCompleted)
-              }
+              celebrateCompletedOnMount={isCompletedByAssessment}
+              onFavoriteClick={handleFavoriteClick}
+              onSaveClick={handleSaveClick}
+              onCompletedChange={handleCompletedChange}
               className="h-full"
             />
           </div>
 
-          <div className="hidden min-[1500px]:block">
+          <div className="pointer-events-none absolute inset-y-6 right-6 z-50 hidden w-[420px] min-[1500px]:block">
             <CollapsibleChatPanel
               title="Chat pride kasneje"
               description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
               footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
-              onExpandedChange={setIsChatPanelExpanded}
+              variant="desktop"
+              className="pointer-events-auto"
             />
           </div>
         </div>
 
-        <section className="mt-12 overflow-hidden rounded-[32px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-10 shadow-[0_18px_50px_rgba(84,59,33,0.08)] sm:px-10 lg:px-14">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+        <section className="mt-8 min-[1500px]:hidden">
+          <CollapsibleChatPanel
+            title="Chat pride kasneje"
+            description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
+            footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+            variant="mobile"
+          />
+        </section>
+
+        <section className="mt-12 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:px-10 lg:px-14">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
             <div>
-              <div className="flex items-center gap-5">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#d58a2b] bg-[#fff8ee] text-[#d58a2b]">
-                  <CircleHelp className="h-8 w-8" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#d58a2b] bg-[#fff8ee] text-[#d58a2b]">
+                  <CircleHelp className="h-6 w-6" />
                 </div>
 
-                <h2 className="font-serif text-5xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
+                <h2 className="font-serif text-4xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
                   Samoocena
                 </h2>
               </div>
 
-              <p className="mt-7 max-w-3xl text-xl leading-9 text-[var(--color-brown-600)]">
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
                 Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
                 in preverite svoje znanje.
               </p>
@@ -306,17 +424,17 @@ function LearningPathDetailPage() {
               <button
                 type="button"
                 onClick={handleStartQuestionnaire}
-                className="mt-10 inline-flex items-center justify-center gap-3 rounded-[18px] bg-[#d08a34] px-9 py-5 text-lg font-bold text-white shadow-[0_18px_38px_rgba(208,138,52,0.24)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
+                className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
               >
                 Odpri vprašalnik
-                <ExternalLink className="h-5 w-5" />
+                <ExternalLink className="h-4 w-4" />
               </button>
             </div>
 
             <img
               src={questionnaireIllustration}
               alt=""
-              className="hidden w-full max-w-[330px] justify-self-center opacity-80 lg:block"
+              className="hidden w-full max-w-[280px] justify-self-center opacity-80 lg:block"
               aria-hidden="true"
             />
           </div>

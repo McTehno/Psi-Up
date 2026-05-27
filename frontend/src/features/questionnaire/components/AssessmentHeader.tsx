@@ -9,8 +9,6 @@ type AssessmentHeaderProps = {
 }
 
 function AssessmentHeader({
-  stepNumber,
-  totalSteps,
   label,
   onVoiceSupportClick,
   isVoiceSupportDisabled = false,

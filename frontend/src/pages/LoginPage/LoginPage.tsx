@@ -74,7 +74,7 @@ export default function LoginPage() {
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
       {/* Large centered window containing the entire login/register experience */}
       <div
-        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8]"
+        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8] scale-[0.8] origin-center"
         style={{ height: 'min(85vh, 720px)' }}
       >
         {/* Login Background Image Wrapper */}
@@ -108,7 +108,7 @@ export default function LoginPage() {
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
             {/* Title row with close button inline */}
             <div className="flex items-start justify-between mb-2">
-              <h1 className={`text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#8b5a2b]' : 'text-[#2f4a31]'}`}>
+              <h1 className={`text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
                 {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button

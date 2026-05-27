@@ -22,11 +22,11 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
   }
 
   // Colors based on mode
-  const accentColor = isRegister ? 'text-[#8b5a2b]' : 'text-[#31583b]'
-  const ringColor = isRegister ? 'focus:border-[#8b5a2b]' : 'focus:border-[#31583b]'
-  const btnBg = isRegister ? 'bg-[#8b5a2b] hover:bg-[#6b4421]' : 'bg-[#31583b] hover:bg-[#2f4a31]'
-  const btnShadow = isRegister ? 'shadow-[#8b5a2b]/20' : 'shadow-[#31583b]/20'
-  const toggleBg = isRegister ? 'bg-[#8b5a2b] border-[#8b5a2b]' : 'bg-[#31583b] border-[#31583b]'
+  const accentColor = isRegister ? 'text-[#d07a12]' : 'text-[#31583b]'
+  const ringColor = isRegister ? 'focus:border-[#d07a12]' : 'focus:border-[#31583b]'
+  const btnBg = isRegister ? 'bg-[#d07a12] hover:bg-[#b3660f]' : 'bg-[#31583b] hover:bg-[#2f4a31]'
+  const btnShadow = isRegister ? 'shadow-[#d07a12]/20' : 'shadow-[#31583b]/20'
+  const toggleBg = isRegister ? 'bg-[#d07a12] border-[#d07a12]' : 'bg-[#31583b] border-[#31583b]'
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>

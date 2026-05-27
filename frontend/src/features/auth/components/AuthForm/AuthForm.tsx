@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Mail, Lock, User } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 
 type AuthFormProps = {
   isRegister: boolean
@@ -11,6 +11,7 @@ type AuthFormProps = {
 
 export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error, isLoading }: AuthFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -84,12 +85,24 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
           <input
             id="auth-password"
             name="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder={isRegister ? "Ustvarite geslo" : "Vnesite geslo"}
             required
             minLength={isRegister ? 6 : undefined}
-            className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
+            className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 pr-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all duration-300 cursor-pointer ${accentColor} opacity-50 hover:opacity-100 hover:bg-black/[0.04]`}
+            aria-label={showPassword ? 'Skrij geslo' : 'Prikaži geslo'}
+            tabIndex={-1}
+          >
+            {showPassword
+              ? <EyeOff className="w-4 h-4" strokeWidth={2} />
+              : <Eye className="w-4 h-4" strokeWidth={2} />
+            }
+          </button>
         </div>
         
         {/* Remember Me / Forgot Password (Fades out on register) */}

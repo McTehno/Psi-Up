@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Layers, Clock, Info, BookOpen, CircleHelp, ExternalLink } from 'lucide-react'
 
 import {
+  DetailActions,
   DetailHero,
   DetailMeta,
   DetailPageShell,
@@ -81,13 +82,15 @@ function ModuleDetailPage() {
 
   return (
     <DetailPageShell>
-      <div className="mb-8 flex items-center justify-between gap-4">
+      <div className="relative mb-8">
         <div className={appStyles.header.step}>
           <div className={appStyles.header.stepIcon}>
             <Layers className="h-5 w-5" />
           </div>
           Modul
         </div>
+
+        <DetailActions />
       </div>
 
       <DetailHero

@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: psi_up_backend_dev
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    # Povozimo command iz Dockerfile, da se uporabi --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Mountamo kodo za live-reload
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: psi_up_frontend_dev
+    ports:
+      # Povežemo se na Vite port namesto na nginx 80
+      - "5173:5173"
+    volumes:
+      # Priklopimo frontend mapo in izoliramo node_modules v kontejnerju
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      # Spodbuja live reload na Windowsu prek Docker volumnov
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+    restart: unless-stopped

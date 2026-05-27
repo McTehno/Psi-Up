@@ -114,7 +114,6 @@
 }
 
 .listen-button {
-	display: none;
 	padding: 16px 24px;
 
 	background: #fffdf8;
@@ -945,6 +944,36 @@
   color: #5f665d;
 }
 
+.listen-button {
+  width: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 14px 18px;
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.listen-button__content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.listen-button__content span {
+  line-height: 1;
+}
+
+.listen-button .volume2 {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 /* Tablet: 768px - 1199px */
 @media (min-width: 768px) and (max-width: 1199px) {
   .assessment-page {
@@ -1050,6 +1079,36 @@
   .assessment-chat-toggle__button {
     display: none;
   }
+
+  .listen-button {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 14px 18px;
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.listen-button__content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.listen-button__content span {
+  line-height: 1;
+}
+
+.listen-button .volume2 {
+  display: inline-block;
+  flex-shrink: 0;
+}
 }
 
 /* Mobile: <= 767px */
@@ -1098,12 +1157,35 @@
     flex: 0 0 38px;
   }
 
-  .listen-button {
-    width: 100%;
-    justify-content: center;
-    padding: 14px 18px;
-    font-size: 15px;
-  }
+.listen-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 14px 18px;
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.listen-button__content {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.listen-button__content span {
+  line-height: 1;
+}
+
+.listen-button .volume2 {
+  display: inline-block;
+  flex-shrink: 0;
+}
 
   .assessment-intro h1 {
     max-width: 100%;
@@ -1123,10 +1205,15 @@
     gap: 14px;
   }
 
+  .questionnaire-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
 	.answer-card {
 		min-height: 82px;
-		padding: 18px;
-		display: absolute;
+ 		padding: 16px 12px;
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		text-align: center;

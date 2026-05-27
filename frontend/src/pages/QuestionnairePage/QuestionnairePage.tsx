@@ -6,13 +6,19 @@ import AssessmentActions from '../../features/questionnaire/components/Assessmen
 import AssessmentHeader from '../../features/questionnaire/components/AssessmentHeader'
 import AssessmentIntro from '../../features/questionnaire/components/AssessmentIntro'
 import AssessmentLayout from '../../features/questionnaire/components/AssessmentLayout'
+import AssessmentProgress, {
+  type AssessmentProgressStep,
+  type AssessmentProgressStepStatus,
+} from '../../features/questionnaire/components/AssessmentProgress'
 import QuestionnaireQuestion from '../../features/questionnaire/components/QuestionnaireQuestion'
-import { useAudioPlayer } from '../../features/questionnaire/hooks/useAudioPlayer'
 import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
-import { getAssessmentVoice } from '../../features/questionnaire/utils/assessmentVoice'
 import { evaluateAssessment } from '../../services/assessment-service'
+import { getLearningPathDetail } from '../../services/learning-path-service'
+import { getModuleDetail } from '../../services/module-service'
 import { getQuestionnaire } from '../../services/questionnaire-service'
 import type { AssessmentResultResponse } from '../../types/assessment'
+import type { LearningPathDetailResponse } from '../../types/learning-path'
+import type { ModuleResponse } from '../../types/module'
 import type {
   AssessmentEvaluateRequest,
   QuestionnaireAnswerRequest,
@@ -262,8 +268,100 @@ function saveAssessmentResult(
     `assessment_result_${targetType}_${targetId}`,
     JSON.stringify(result),
   )
-
   sessionStorage.setItem(`assessment_result_${targetId}`, JSON.stringify(result))
+}
+
+function getOrderedItems<T extends { order?: number | null }>(items: T[]) {
+  return [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+}
+
+function getQuestionIdsByLearningUnit(
+  questionnaire: QuestionnaireItem[],
+  learningUnitId: string,
+) {
+  return questionnaire
+    .filter((question) => question.learning_unit_id === learningUnitId)
+    .map((question) => question.id)
+}
+
+function getLeafStatus(
+  questionIds: string[],
+  selectedAnswers: Record<string, AnswerOption>,
+  activeQuestionId?: string,
+): AssessmentProgressStepStatus {
+  const isActive = Boolean(
+    activeQuestionId && questionIds.includes(activeQuestionId),
+  )
+
+  const hasNoAnswer = questionIds.some(
+    (questionId) => selectedAnswers[questionId]?.weight === false,
+  )
+
+  const isCompleted =
+    questionIds.length > 0 &&
+    questionIds.every(
+      (questionId) => selectedAnswers[questionId]?.weight === true,
+    )
+
+  if (hasNoAnswer) {
+    return 'missing'
+  }
+
+  if (isActive) {
+    return 'active'
+  }
+
+  if (isCompleted) {
+    return 'completed'
+  }
+
+  return 'upcoming'
+}
+
+function getStepStatusFromChildren(
+  childStatuses: AssessmentProgressStepStatus[],
+): AssessmentProgressStepStatus {
+  if (
+    childStatuses.length > 0 &&
+    childStatuses.every((status) => status === 'completed')
+  ) {
+    return 'completed'
+  }
+
+  if (childStatuses.includes('missing')) {
+    return 'missing'
+  }
+
+  if (childStatuses.includes('active')) {
+    return 'active'
+  }
+
+  return 'upcoming'
+}
+
+function getCompletedLeafCount(steps: AssessmentProgressStep[]) {
+  return steps.reduce((count, step) => {
+    if (step.subSteps && step.subSteps.length > 0) {
+      return (
+        count +
+        step.subSteps.filter((subStep) => subStep.status === 'completed').length
+      )
+    }
+
+    return count + (step.status === 'completed' ? 1 : 0)
+  }, 0)
+}
+
+function getTotalLeafCount(steps: AssessmentProgressStep[]) {
+  const leafCount = steps.reduce((count, step) => {
+    if (step.subSteps && step.subSteps.length > 0) {
+      return count + step.subSteps.length
+    }
+
+    return count + 1
+  }, 0)
+
+  return Math.max(leafCount, 1)
 }
 
 function QuestionnairePage() {
@@ -281,6 +379,9 @@ function QuestionnairePage() {
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, AnswerOption>
   >({})
+  const [moduleDetail, setModuleDetail] = useState<ModuleResponse | null>(null)
+  const [learningPathDetail, setLearningPathDetail] =
+    useState<LearningPathDetailResponse | null>(null)
   const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(true)
   const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -316,18 +417,6 @@ function QuestionnairePage() {
     ? selectedAnswers[currentQuestion.id]
     : undefined
 
-  const currentAudioSrc = getAssessmentVoice({
-    phase,
-    groupId: targetId,
-    questionIndex: activeQuestionIndex,
-  })
-
-  const {
-    isPlaying: isAudioPlaying,
-    toggle: toggleAudio,
-    hasAudio,
-  } = useAudioPlayer(currentAudioSrc)
-
   const selectedGroup = useMemo<CompetencyGroup | undefined>(() => {
     if (!targetType || !targetId || !questionnaireTitle) {
       return undefined
@@ -342,19 +431,170 @@ function QuestionnairePage() {
   }, [questionnaireTitle, targetId, targetType])
 
   const shouldFinishAfterCurrentAnswer =
-    Boolean(selectedAnswer) &&
-    !selectedAnswer?.weight &&
-    targetType !== 'learning_unit'
+    Boolean(selectedAnswer) && selectedAnswer?.weight === false
 
   const nextQuestion =
-    currentQuestion &&
-    selectedAnswer &&
-    !shouldFinishAfterCurrentAnswer
+    currentQuestion && selectedAnswer && !shouldFinishAfterCurrentAnswer
       ? getNextQuestion({
           currentQuestion,
           groups: questionGroups,
         })
       : null
+
+  const assessmentProgress = useMemo(() => {
+  const activeQuestionId =
+    phase === 'questionnaire' ? currentQuestion?.id : undefined
+
+    if (targetType === 'learning_unit') {
+      const steps: AssessmentProgressStep[] = questionnaire.map(
+        (question, index) => ({
+          id: question.id,
+          label: String(index + 1),
+          title: `Vprašanje ${index + 1}`,
+          status: getLeafStatus(
+            [question.id],
+            selectedAnswers,
+            activeQuestionId,
+          ),
+        }),
+      )
+
+      return {
+        steps,
+        completedLeafCount: getCompletedLeafCount(steps),
+        totalLeafCount: getTotalLeafCount(steps),
+      }
+    }
+
+    if (targetType === 'module' && moduleDetail) {
+      const steps: AssessmentProgressStep[] = getOrderedItems(
+        moduleDetail.learning_units,
+      ).map((learningUnitReference, unitIndex) => {
+        const questionIds = getQuestionIdsByLearningUnit(
+          questionnaire,
+          learningUnitReference.learning_unit_id,
+        )
+
+        const unitTitle =
+          moduleDetail.learning_unit_details?.find(
+            (learningUnit) =>
+              learningUnit._id === learningUnitReference.learning_unit_id,
+          )?.title ?? `Učna enota ${unitIndex + 1}`
+
+        return {
+          id: learningUnitReference.learning_unit_id,
+          label: String(unitIndex + 1),
+          title: unitTitle,
+          status: getLeafStatus(questionIds, selectedAnswers, activeQuestionId),
+        }
+      })
+
+      return {
+        steps,
+        completedLeafCount: getCompletedLeafCount(steps),
+        totalLeafCount: getTotalLeafCount(steps),
+      }
+    }
+
+    if (targetType === 'learning_path' && learningPathDetail) {
+      const steps: AssessmentProgressStep[] = getOrderedItems(
+        learningPathDetail.modules,
+      ).map((moduleReference, moduleIndex) => {
+        const moduleItem = learningPathDetail.module_details?.find(
+          (item) => item._id === moduleReference.module_id,
+        )
+
+        const learningUnits = moduleItem?.learning_units
+          ? getOrderedItems(moduleItem.learning_units)
+          : []
+
+        const subSteps = learningUnits.map(
+          (learningUnitReference, unitIndex) => {
+            const questionIds = getQuestionIdsByLearningUnit(
+              questionnaire,
+              learningUnitReference.learning_unit_id,
+            )
+
+            const unitTitle =
+              moduleItem?.learning_unit_details?.find(
+                (learningUnit) =>
+                  learningUnit._id === learningUnitReference.learning_unit_id,
+              )?.title ?? `Učna enota ${unitIndex + 1}`
+
+            return {
+              id: learningUnitReference.learning_unit_id,
+              title: unitTitle,
+              status: getLeafStatus(
+                questionIds,
+                selectedAnswers,
+                activeQuestionId,
+              ),
+            }
+          },
+        )
+
+        return {
+          id: moduleReference.module_id,
+          label: `M${moduleIndex + 1}`,
+          title: moduleItem?.title ?? `Modul ${moduleIndex + 1}`,
+          status: getStepStatusFromChildren(
+            subSteps.map((subStep) => subStep.status),
+          ),
+          subSteps,
+        }
+      })
+
+      return {
+        steps,
+        completedLeafCount: getCompletedLeafCount(steps),
+        totalLeafCount: getTotalLeafCount(steps),
+      }
+    }
+
+    const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
+      (group, groupIndex) => ({
+        id: group.learningUnitId,
+        label: String(groupIndex + 1),
+        title: `Učna enota ${groupIndex + 1}`,
+        status: getLeafStatus(
+          group.questions.map((question) => question.id),
+          selectedAnswers,
+          activeQuestionId,
+        ),
+      }),
+    )
+
+    return {
+      steps: fallbackSteps,
+      completedLeafCount: getCompletedLeafCount(fallbackSteps),
+      totalLeafCount: getTotalLeafCount(fallbackSteps),
+    }
+  }, [
+    currentQuestion?.id,
+    learningPathDetail,
+    moduleDetail,
+    phase,
+    questionGroups,
+    questionnaire,
+    selectedAnswers,
+    targetType,
+  ])
+
+  const hasAnsweredEveryLearningPathQuestionWithYes = useMemo(() => {
+    if (targetType !== 'learning_path' || questionnaire.length === 0) {
+      return false
+    }
+
+    return questionnaire.every(
+      (question) => selectedAnswers[question.id]?.weight === true,
+    )
+  }, [questionnaire, selectedAnswers, targetType])
+
+  const isLearningPathGoalReached =
+    targetType === 'learning_path' &&
+    phase === 'completed' &&
+    hasAnsweredEveryLearningPathQuestionWithYes &&
+    assessmentProgress.completedLeafCount === assessmentProgress.totalLeafCount
 
   const totalSteps =
     phase === 'completed'
@@ -370,7 +610,7 @@ function QuestionnairePage() {
 
   const currentTitle =
     phase === 'completed'
-      ? 'Vprašalnik je zaključen'
+      ? 'Cilj učne poti je dosežen'
       : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
   const currentDescription =
@@ -402,6 +642,8 @@ function QuestionnairePage() {
         setError(
           'Manjka target_type ali target_id. Primer: /assessment?target_type=module&target_id=mod_001',
         )
+        setModuleDetail(null)
+        setLearningPathDetail(null)
         setIsLoadingQuestionnaire(false)
         return
       }
@@ -409,8 +651,30 @@ function QuestionnairePage() {
       try {
         setIsLoadingQuestionnaire(true)
         setError(null)
+        setModuleDetail(null)
+        setLearningPathDetail(null)
 
         const data = await getQuestionnaire(targetType, targetId)
+
+        let nextModuleDetail: ModuleResponse | null = null
+        let nextLearningPathDetail: LearningPathDetailResponse | null = null
+
+        if (targetType === 'module') {
+          try {
+            nextModuleDetail = await getModuleDetail(targetId)
+          } catch (detailError) {
+            console.warn('Module detail ni bil naložen.', detailError)
+          }
+        }
+
+        if (targetType === 'learning_path') {
+          try {
+            nextLearningPathDetail = await getLearningPathDetail(targetId)
+          } catch (detailError) {
+            console.warn('Learning path detail ni bil naložen.', detailError)
+          }
+        }
+
         const normalizedData = normalizeQuestionnaireResponse(
           data,
           targetType,
@@ -433,6 +697,8 @@ function QuestionnairePage() {
         setVisibleQuestionIds(questions[0] ? [questions[0].id] : [])
         setActiveQuestionIndex(0)
         setSelectedAnswers({})
+        setModuleDetail(nextModuleDetail)
+        setLearningPathDetail(nextLearningPathDetail)
         setPhase('questionnaire')
       } catch (error) {
         console.error(error)
@@ -460,6 +726,20 @@ function QuestionnairePage() {
     }
   }, [targetType, targetId])
 
+  useEffect(() => {
+    if (!isLearningPathGoalReached || !targetType || !targetId) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      navigate(getTargetDetailPath(targetType, targetId))
+    }, 2000)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [isLearningPathGoalReached, navigate, targetId, targetType])
+
   function handleSelectAnswer(answer: AnswerOption) {
     if (!currentQuestion) {
       return
@@ -475,11 +755,30 @@ function QuestionnairePage() {
       }
 
       nextAnswers[currentQuestion.id] = answer
+
       return nextAnswers
     })
 
     setVisibleQuestionIds((currentQuestionIds) =>
       currentQuestionIds.slice(0, activeQuestionIndex + 1),
+    )
+  }
+
+  function handleVoiceSupportClick() {
+    // Azure/LLM voice flow bo dodan v naslednjem koraku skozi src/services.
+  }
+
+  function shouldShowLearningPathCompletion(
+    questionIdsToSubmit: string[],
+    shouldAutoMarkRemainingAsFalse: boolean,
+  ) {
+    return (
+      targetType === 'learning_path' &&
+      !shouldAutoMarkRemainingAsFalse &&
+      questionIdsToSubmit.length === questionnaire.length &&
+      questionIdsToSubmit.every(
+        (questionId) => selectedAnswers[questionId]?.weight === true,
+      )
     )
   }
 
@@ -515,8 +814,17 @@ function QuestionnairePage() {
       }
 
       const result = await evaluateAssessment(payload)
-
       saveAssessmentResult(targetType, targetId, result)
+
+      if (
+        shouldShowLearningPathCompletion(
+          questionIdsToSubmit,
+          shouldAutoMarkRemainingAsFalse,
+        )
+      ) {
+        setPhase('completed')
+        return
+      }
 
       navigate(getTargetDetailPath(targetType, targetId))
     } catch (error) {
@@ -547,8 +855,7 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
-    const shouldFinishAfterNoAnswer =
-      !selectedAnswer.weight && targetType !== 'learning_unit'
+    const shouldFinishAfterNoAnswer = !selectedAnswer.weight
 
     if (shouldFinishAfterNoAnswer) {
       await submitAssessment(questionIdsUntilCurrent, true)
@@ -642,33 +949,22 @@ function QuestionnairePage() {
         stepNumber={currentStepNumber}
         totalSteps={totalSteps}
         label={currentLabel}
-        isAudioPlaying={isAudioPlaying}
-        onToggleAudio={toggleAudio}
-        hasAudio={hasAudio}
+        onVoiceSupportClick={handleVoiceSupportClick}
+        isVoiceSupportDisabled={phase !== 'questionnaire' || !currentQuestion}
+      />
+
+      <AssessmentProgress
+        targetLabel={targetType ? getTargetTypeLabel(targetType) : 'cilj'}
+        steps={assessmentProgress.steps}
+        completedLeafCount={assessmentProgress.completedLeafCount}
+        totalLeafCount={assessmentProgress.totalLeafCount}
+        isGoalReached={isLearningPathGoalReached}
       />
 
       <AssessmentIntro title={currentTitle} description={currentDescription} />
 
       {phase === 'questionnaire' && currentQuestion && (
         <>
-          <div className="mb-5 rounded-3xl border border-[#e7dac7] bg-white/80 p-4 text-sm leading-6 text-[#756f65]">
-            <div>
-              Učna enota:{' '}
-              <span className="font-semibold text-[#31583b]">
-                {currentQuestion.learning_unit_id}
-              </span>
-            </div>
-
-            {currentQuestion.related_topic && (
-              <div>
-                Tema:{' '}
-                <span className="font-semibold text-[#31583b]">
-                  {currentQuestion.related_topic}
-                </span>
-              </div>
-            )}
-          </div>
-
           <QuestionnaireQuestion
             question={currentQuestion}
             selectedAnswer={selectedAnswer}
@@ -683,6 +979,16 @@ function QuestionnairePage() {
             nextLabel={nextButtonLabel}
           />
         </>
+      )}
+
+      {phase === 'completed' && (
+        <div className="assessment-summary">
+          <h2>Odlično, cilj je dosežen.</h2>
+          <p>
+            Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
+            Preusmeritev na podrobnosti se bo izvedla samodejno.
+          </p>
+        </div>
       )}
 
       <button

@@ -1,0 +1,236 @@
+.assessment-progress {
+  position: relative;
+  margin: 22px 0 42px;
+}
+
+.assessment-progress__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #31583b;
+  font-size: 0.95rem;
+}
+
+.assessment-progress__meta strong {
+  font-weight: 700;
+}
+
+.assessment-progress__track {
+  position: relative;
+  min-height: 74px;
+  padding-right: 42px;
+}
+
+.assessment-progress__line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 42px;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eadfce;
+}
+
+.assessment-progress__fill {
+  width: var(--assessment-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: #006d04;
+  transition: width 220ms ease;
+}
+
+.assessment-progress__steps {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 42px;
+  display: grid;
+  grid-template-columns: repeat(var(--assessment-step-count), minmax(0, 1fr));
+  align-items: start;
+}
+
+.assessment-progress__step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.assessment-progress__marker {
+  z-index: 1;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 2px solid #d8cbb8;
+  border-radius: 999px;
+  background: #f8f5ef;
+  color: #5f625c;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgb(49 88 59 / 10%);
+}
+
+.assessment-progress__step--completed .assessment-progress__marker {
+  border-color: #31583b;
+  background: #31583b;
+  color: #fff;
+}
+.assessment-progress__step--active .assessment-progress__marker {
+  border-color: #F8E7BE;
+  background: #344E41;
+  color: #fff;
+}
+
+.assessment-progress__step--missing .assessment-progress__marker {
+  border-color: #228100;
+  background: #fff7ef;
+  color: #009c03;
+}
+
+.assessment-progress__label {
+  max-width: 132px;
+  overflow: hidden;
+  color: #31583b;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assessment-progress__substeps {
+  display: flex;
+  max-width: 116px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.assessment-progress__substep {
+  width: 7px;
+  height: 7px;
+  border: 1px solid #d8cbb8;
+  border-radius: 999px;
+  background: #f8f5ef;
+}
+
+.assessment-progress__substep--completed {
+  border-color: #31583b;
+  background: #31583b;
+}
+
+.assessment-progress__substep--active {
+  border-color: #098400;
+  background: #005a00;
+}
+
+.assessment-progress__substep--missing {
+  border-color: #1e7700;
+  background: #fff7ef;
+}
+
+.assessment-progress__flag {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid #d8cbb8;
+  border-radius: 999px;
+  background: #f8f5ef;
+  color: #5f625c;
+  font-size: 1.2rem;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.assessment-progress__flag--completed {
+  border-color: #31583b;
+  background: #31583b;
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.assessment-progress__confetti {
+  pointer-events: none;
+  position: absolute;
+  inset: -28px 0 auto;
+  height: 110px;
+  overflow: hidden;
+}
+
+.assessment-progress__confetti span {
+  position: absolute;
+  top: 0;
+  left: var(--confetti-left);
+  width: 7px;
+  height: 13px;
+  border-radius: 2px;
+  background: #19af05;
+  animation: assessment-confetti 900ms ease-out var(--confetti-delay) both;
+}
+
+.assessment-progress__confetti span:nth-child(3n) {
+  background: #31583b;
+}
+
+.assessment-progress__confetti span:nth-child(3n + 1) {
+  background: #39da08;
+}
+
+@keyframes assessment-confetti {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0deg);
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(100px) rotate(210deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .assessment-progress {
+    margin: 18px 0 34px;
+  }
+
+  .assessment-progress__track {
+    min-height: 62px;
+    padding-right: 34px;
+  }
+
+  .assessment-progress__line,
+  .assessment-progress__steps {
+    right: 34px;
+  }
+
+  .assessment-progress__marker {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .assessment-progress__label {
+    display: none;
+  }
+
+  .assessment-progress__flag {
+    top: 4px;
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+}

@@ -1,10 +1,21 @@
-import { Bot, ChevronLeft, ChevronRight, Send, Sparkles } from 'lucide-react'
+import {
+  Bot,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Send,
+  Sparkles,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
+
+type CollapsibleChatPanelVariant = 'desktop' | 'mobile'
 
 type CollapsibleChatPanelProps = {
   title?: string
   description?: string
   footerText?: string
+  variant?: CollapsibleChatPanelVariant
   className?: string
   onExpandedChange?: (isExpanded: boolean) => void
 }
@@ -13,28 +24,109 @@ export function CollapsibleChatPanel({
   title = 'Chat pride kasneje',
   description = 'Ta prostor je rezerviran za pogovor z asistentom.',
   footerText = 'Kasneje lahko tukaj dodamo vprašanja, priporočila in pomoč glede trenutne strani.',
+  variant = 'desktop',
   className = '',
   onExpandedChange,
 }: CollapsibleChatPanelProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isLockedOpen, setIsLockedOpen] = useState(false)
 
-  const isExpanded = isHovered || isLockedOpen
+  const isMobile = variant === 'mobile'
+  const isExpanded = isMobile ? isLockedOpen : isHovered || isLockedOpen
 
   useEffect(() => {
     onExpandedChange?.(isExpanded)
   }, [isExpanded, onExpandedChange])
+
+  function handlePanelClick() {
+    if (isMobile || isExpanded) {
+      setIsLockedOpen(true)
+    }
+  }
 
   function handleClose() {
     setIsLockedOpen(false)
     setIsHovered(false)
   }
 
-  function handlePanelClick() {
-  if (isExpanded) {
-    setIsLockedOpen(true)
+  if (isMobile) {
+    return (
+      <aside className={`relative z-10 w-full ${className}`}>
+        <div
+          onClick={handlePanelClick}
+          className="relative overflow-hidden rounded-[2rem] border border-white/45 bg-white/28 p-4 shadow-[0_24px_70px_rgba(43,33,24,0.16)] backdrop-blur-[34px] backdrop-saturate-150 transition-all duration-500 before:pointer-events-none before:absolute before:inset-0 before:rounded-[2rem] before:bg-[radial-gradient(circle_at_18%_0%,rgba(255,255,255,0.78),transparent_34%),radial-gradient(circle_at_90%_10%,rgba(248,231,190,0.46),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.52),rgba(255,253,248,0.18))] before:content-[''] after:pointer-events-none after:absolute after:inset-[1px] after:rounded-[1.95rem] after:border after:border-white/35 after:content-['']"
+        >
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-[1.35rem] border border-white/50 bg-white/35 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_14px_28px_rgba(49,88,59,0.12)] backdrop-blur-2xl">
+              <Bot className="h-6 w-6" />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#31583b]">
+                <Sparkles className="h-3.5 w-3.5" />
+                LLM pomočnik
+              </p>
+
+              <h2 className="mt-1 truncate text-2xl font-bold tracking-[-0.04em] text-[#2b2118]">
+                {title}
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                setIsLockedOpen((currentValue) => !currentValue)
+              }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/35 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/55"
+              aria-label={isExpanded ? 'Zapri chat pomočnika' : 'Odpri chat pomočnika'}
+              aria-expanded={isExpanded}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          <div
+            className={`relative z-10 grid transition-[grid-template-rows,opacity,margin] duration-500 ease-out ${
+              isExpanded
+                ? 'mt-6 grid-rows-[1fr] opacity-100'
+                : 'mt-0 grid-rows-[0fr] opacity-0'
+            }`}
+          >
+            <div className="overflow-hidden">
+              <p className="text-base leading-8 text-[#6d665d]">
+                {description}
+              </p>
+
+              <div className="mt-6 flex min-h-[220px] cursor-text flex-col rounded-[1.75rem] border border-white/45 bg-white/22 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
+                <div className="flex-1 text-base leading-8 text-[#6d665d]">
+                  Klikni kamorkoli v panel, da chat ostane odprt.
+                </div>
+
+                <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
+                  <span className="min-w-0 flex-1 truncate">
+                    Vprašaj pomočnika ...
+                  </span>
+
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
+                    <Send className="h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-[1.5rem] border border-white/45 bg-white/24 p-5 text-base leading-8 text-[#5f6652] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl">
+                {footerText}
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    )
   }
-}
 
   return (
     <aside
@@ -57,6 +149,10 @@ export function CollapsibleChatPanel({
         {!isExpanded && (
           <button
             type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              setIsLockedOpen(true)
+            }}
             className="relative z-10 flex h-full w-full flex-col items-center justify-between rounded-[1.75rem] border border-white/45 bg-white/30 px-2 py-4 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_18px_38px_rgba(49,88,59,0.12)] backdrop-blur-2xl transition hover:bg-white/45"
             aria-label="Odpri chat pomočnika"
           >
@@ -79,25 +175,19 @@ export function CollapsibleChatPanel({
                 <Bot className="h-6 w-6" />
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="hidden rounded-full border border-white/45 bg-white/25 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#31583b] shadow-sm backdrop-blur-xl min-[1700px]:block">
-                  Beta
-                </div>
-
-                {isLockedOpen && (
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleClose()
-                    }}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-white/30 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/50"
-                    aria-label="Zapri chat pomočnika"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
+              {isLockedOpen && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleClose()
+                  }}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-white/30 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/50"
+                  aria-label="Zapri chat pomočnika"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              )}
             </div>
 
             <div className="mt-7">
@@ -115,11 +205,10 @@ export function CollapsibleChatPanel({
               </p>
             </div>
 
-            <div
-              className="mt-8 flex min-h-[250px] cursor-text flex-col rounded-[2rem] border border-white/45 bg-white/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30"
-            >
+            <div className="mt-8 flex min-h-[250px] cursor-text flex-col rounded-[2rem] border border-white/45 bg-white/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
               <div className="flex-1 text-base leading-8 text-[#6d665d]">
-                Predel
+                Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
+                miško.
               </div>
 
               <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">

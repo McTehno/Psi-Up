@@ -364,10 +364,20 @@ function LearningPathDetailPage() {
               title="Chat pride kasneje"
               description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
               footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+              variant="desktop"
               className="pointer-events-auto"
             />
           </div>
         </div>
+
+        <section className="mt-8 min-[1500px]:hidden">
+          <CollapsibleChatPanel
+            title="Chat pride kasneje"
+            description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
+            footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+            variant="mobile"
+          />
+        </section>
 
         <section className="mt-12 overflow-hidden rounded-[32px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-10 shadow-[0_18px_50px_rgba(84,59,33,0.08)] sm:px-10 lg:px-14">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">

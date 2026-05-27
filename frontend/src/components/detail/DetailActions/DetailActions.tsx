@@ -81,8 +81,8 @@ function DetailActions({
 
 	const containerClassName =
 		placement === 'overlay'
-			? 'mt-5 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 lg:absolute lg:right-0 lg:top-0 lg:z-10 lg:mt-0 lg:overflow-visible lg:pb-0'
-			: 'flex flex-nowrap items-center gap-2 overflow-x-auto pb-1'
+			? 'mt-5 flex flex-nowrap items-center justify-start gap-2 lg:absolute lg:right-0 lg:top-0 lg:z-10 lg:mt-0 lg:justify-end'
+			: 'flex flex-nowrap items-center justify-start gap-2'
 
 	return (
 		<>
@@ -140,25 +140,28 @@ function DetailActions({
 						onClick={() => handleAction('completed')}
 						disabled={isLoading}
 						className={[
-							'group inline-flex h-12 shrink-0 items-center justify-center gap-2.5 rounded-full border px-5 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(49,88,59,0.14)] disabled:cursor-not-allowed disabled:opacity-60',
-							isCompleted
-								? 'border-[#b7d7bd] bg-[#f2f8f1] text-[#31583b] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
-								: activeAction === 'completed'
-									? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
-									: 'border-[#31583b]/75 bg-[#3f6b49] text-[#fffdf8] hover:border-[#31583b] hover:bg-[#31583b]',
+							'group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border px-3.5 text-xs font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 sm:px-5 sm:text-sm',
+							isCompleted || activeAction === 'completed'
+								? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
+								: 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#31583b]/35 hover:bg-[#f2f8f1] hover:text-[#31583b]',
 						].join(' ')}
 						aria-pressed={isCompleted}
 					>
 						<CheckCircle2
 							className={[
-								'h-5 w-5 shrink-0 transition duration-300',
-								isCompleted
-									? 'text-[#31583b]'
-									: 'text-[#fffdf8] group-hover:scale-110',
+								'h-5 w-5 shrink-0 transition duration-300 group-hover:scale-110',
+								isCompleted || activeAction === 'completed'
+									? 'text-[#fffdf8]'
+									: 'text-[#31583b]',
 							].join(' ')}
 						/>
 
-						<span>{isCompleted ? completedLabel : uncompletedLabel}</span>
+						<span className="hidden sm:inline">
+							{isCompleted ? completedLabel : uncompletedLabel}
+						</span>
+						<span className="sm:hidden">
+							{isCompleted ? 'Končano' : 'Dokončaj'}
+						</span>
 					</button>
 				</div>
 			</div>

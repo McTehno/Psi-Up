@@ -1,5 +1,5 @@
 export type UserResponse = {
-  id: string
+  _id: string
   auth_provider?: string | null
   auth_user_id: string
   name?: string | null

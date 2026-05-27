@@ -50,9 +50,10 @@ function HomeRedesignPage() {
             <HomeBackground />
 
             <div
-                className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive
-                    ? 'bg-[#fffdf8]/60 backdrop-blur-md'
-                    : 'pointer-events-none bg-transparent backdrop-blur-none'
+                className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out
+                         ${isSearchActive
+                        ? 'bg-[#fffdf8]/25 backdrop-blur-[8px] backdrop-saturate-150'
+                        : 'pointer-events-none bg-transparent backdrop-blur-none backdrop-saturate-100'
                     }`}
                 onClick={() => setIsSearchActive(false)}
                 aria-hidden="true"
@@ -60,10 +61,7 @@ function HomeRedesignPage() {
 
             <HomeScrollJourney />
 
-            <div
-                className={`relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10 ${isSearchActive ? 'z-50' : 'z-20'
-                    }`}
-            >
+            <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
                 <HomeHeroSection
                     isSearchActive={isSearchActive}
                     setIsSearchActive={setIsSearchActive}

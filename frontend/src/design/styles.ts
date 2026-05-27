@@ -12,7 +12,7 @@ export const appStyles = {
     visualPanel:
       'relative flex items-stretch justify-center overflow-hidden border-r border-[#ded5c6] bg-[#f2e8da]',
     fullWidthPanel:
-      'min-h-[calc(100vh-36px)] overflow-hidden rounded-[18px] border border-[#ded5c6] bg-[#fffdf8] shadow-[0_14px_40px_rgba(57,47,35,0.12)]',
+	'min-h-[calc(100vh-36px)] overflow-hidden rounded-[18px] border border-[#ded5c6] bg-[linear-gradient(135deg,_#fffdf8_0%,_#fffaf2_55%,_#fff6eb_100%)] shadow-[0_14px_40px_rgba(57,47,35,0.12)]',
   },
 
   text: {

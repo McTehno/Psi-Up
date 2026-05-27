@@ -103,16 +103,24 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       });
       currentY += 200;
     } else if (numUnits === 2) {
-      nodePositions.push({ unit: units[0], order, x: CENTER_X - 180, y: currentY, isSingle: false, isOnRightSide: false });
-      nodePositions.push({ unit: units[1], order, x: CENTER_X + 180, y: currentY, isSingle: false, isOnRightSide: false });
-      currentY += 320;
+      if (isMobile) {
+        nodePositions.push({ unit: units[0], order, x: CENTER_X - 140, y: currentY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[1], order, x: CENTER_X + 140, y: currentY + 140, isSingle: false, isOnRightSide: true });
+        currentY += 340;
+      } else {
+        nodePositions.push({ unit: units[0], order, x: CENTER_X - 180, y: currentY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[1], order, x: CENTER_X + 180, y: currentY, isSingle: false, isOnRightSide: false });
+        currentY += 320;
+      }
     } else {
-      const spread = 560;
+      const spread = isMobile ? 320 : 560;
+      const staggerAmount = isMobile ? 140 : 0;
       for (let j = 0; j < numUnits; j++) {
         const x = CENTER_X - spread / 2 + (spread / (numUnits - 1)) * j;
-        nodePositions.push({ unit: units[j], order, x, y: currentY, isSingle: false, isOnRightSide: false });
+        const staggeredY = currentY + (j * staggerAmount);
+        nodePositions.push({ unit: units[j], order, x, y: staggeredY, isSingle: false, isOnRightSide: false });
       }
-      currentY += 320;
+      currentY += (isMobile ? 200 + (numUnits - 1) * staggerAmount : 320);
     }
   }
 
@@ -260,6 +268,15 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />
                   )}
                 </button>
+
+                {/* Mobile Node Label */}
+                {isMobile && !isUnitCompleted && (
+                  <div className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300">
+                    <h4 className="text-[11px] font-bold leading-snug line-clamp-2 text-[#4a392b]">
+                      {detail?.title || 'Neznana učna enota'}
+                    </h4>
+                  </div>
+                )}
 
                 {/* Desktop cards — hidden on mobile */}
                 {!isMobile && pos.isSingle && (

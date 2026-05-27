@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+# V dev okolju bomo datoteke mountali kot volume,
+# a vseeno kopiramo osnovo, če bo kdaj potrebno.
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]

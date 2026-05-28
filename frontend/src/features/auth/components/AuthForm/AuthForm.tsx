@@ -31,7 +31,14 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-
+      {error && (
+        <p
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+        >
+          {error}
+        </p>
+      )}
       {/* Name Field (Slides down and in) */}
       <div 
         className={`grid transition-[grid-template-rows,opacity] duration-700 ease-in-out ${

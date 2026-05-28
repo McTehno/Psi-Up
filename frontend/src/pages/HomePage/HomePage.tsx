@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Lenis from 'lenis'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
 import { digcompAreas } from './constants'
@@ -44,6 +45,32 @@ function HomePage() {
 			document.body.style.overflow = 'unset'
 		}
 	}, [isSearchActive])
+
+	useEffect(() => {
+		const lenis = new Lenis({
+			duration: 1.2,
+			easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+			orientation: 'vertical',
+			gestureOrientation: 'vertical',
+			smoothWheel: true,
+			wheelMultiplier: 1,
+			touchMultiplier: 2,
+		})
+
+		let animationFrameId: number
+
+		function raf(time: number) {
+			lenis.raf(time)
+			animationFrameId = requestAnimationFrame(raf)
+		}
+
+		animationFrameId = requestAnimationFrame(raf)
+
+		return () => {
+			cancelAnimationFrame(animationFrameId)
+			lenis.destroy()
+		}
+	}, [])
 
 	return (
 		<main className="relative isolate min-h-screen overflow-x-hidden bg-[#fffdf8] text-[#2f3328]">

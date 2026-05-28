@@ -31,6 +31,8 @@ Ne podvajaj:
 - route/path prikaza
 - assistant/chat komponent
 
+Preden misliš pushati, zaganjan npm run dev, da preveriš če ima napak.
+
 Če nekaj že obstaja kot reusable komponenta, uporabi to komponento.
 
 ---

@@ -1,28 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ArrowRight as ArrowRightIcon } from 'lucide-react'
-
 import { useGlobalSearch } from '../../contexts/SearchContext'
-import ScrollDownHint from './components/ScrollDownHint'
-import {
-	digcompAreas,
-	flowSteps,
-	learningPathCards,
-	positionCards,
-} from './constants'
-
-import DigCompHeroVisual from './components/DigCompHeroVisual'
-import HeroSearch from './components/HeroSearch'
-import HeroSearchResults from './components/HeroSearchResults'
+import { digcompAreas } from './constants'
 import HomeBackground from './components/HomeBackground'
-import HomeFlowSlide from './components/HomeFlowSlide'
-import HomeInfoSlide from './components/HomeInfoSlide'
-import HomeContactSlide from './components/HomeContactSlide'
-import MobileDigCompVisual from './components/MobileDigCompVisual'
+import HomeScrollJourney from './components/HomeScrollJourney'
+import HomeHeroSection from './components/HomeHeroSection'
+import HomeStorySection from './components/HomeStorySection'
+import HomeDigCompSection from './components/HomeDigCompSection'
+import HomeFinalCtaSection from './components/HomeFinalCtaSection'
 
 function HomePage() {
 	const navigate = useNavigate()
+
 	const [activeIndex, setActiveIndex] = useState(0)
 	const [rotationCount, setRotationCount] = useState(0)
 
@@ -48,11 +38,7 @@ function HomePage() {
 	}, [])
 
 	useEffect(() => {
-		if (isSearchActive) {
-			document.body.style.overflow = 'hidden'
-		} else {
-			document.body.style.overflow = 'unset'
-		}
+		document.body.style.overflow = isSearchActive ? 'hidden' : 'unset'
 
 		return () => {
 			document.body.style.overflow = 'unset'
@@ -60,129 +46,122 @@ function HomePage() {
 	}, [isSearchActive])
 
 	return (
-		<main className="relative isolate min-h-screen overflow-x-hidden bg-[#fffdf8] text-[#111111] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden lg:h-screen lg:snap-y lg:snap-mandatory lg:overflow-y-auto lg:scroll-smooth">
+		<main className="relative isolate min-h-screen overflow-x-hidden bg-[#fffdf8] text-[#2f3328]">
 			<HomeBackground />
 
 			<div
 				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive
-					? 'bg-[#fffdf8]/60 backdrop-blur-md'
-					: 'pointer-events-none bg-transparent backdrop-blur-none'
+						? 'bg-[#fffdf8]/60 backdrop-blur-md'
+						: 'pointer-events-none bg-transparent backdrop-blur-none'
 					}`}
 				onClick={() => setIsSearchActive(false)}
 				aria-hidden="true"
 			/>
 
-			<div className="mx-auto flex max-w-7xl flex-col px-6 py-6 sm:px-8 lg:px-10">
-				<section
-					id="top"
-					className="relative grid gap-8 pb-16 pt-24 lg:h-screen lg:snap-start lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:pb-10 lg:pt-10"
-				>
-					<div className="relative max-w-xl">
-						<HeroSearch
-							isSearchActive={isSearchActive}
-							setIsSearchActive={setIsSearchActive}
-							activeFilters={activeFilters}
-							toggleFilter={toggleFilter}
-							searchQuery={searchQuery}
-							setSearchQuery={setSearchQuery}
-							setSearchResults={setSearchResults}
-						/>
+			<HomeScrollJourney />
 
-						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-[#111111] sm:text-6xl xl:text-7xl">
-							Pot do cilja je lažja, ko je najprej mirna.
-						</h1>
+			<div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+				<HomeHeroSection
+					isSearchActive={isSearchActive}
+					setIsSearchActive={setIsSearchActive}
+					activeFilters={activeFilters}
+					toggleFilter={toggleFilter}
+					searchQuery={searchQuery}
+					setSearchQuery={setSearchQuery}
+					setSearchResults={setSearchResults}
+					searchResults={searchResults}
+					isSearching={isSearching}
+					navigate={navigate}
+				/>
 
-						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							NIDiKo poveže vprašalnik, DigComp in učno pot v eno jasno
-							priporočilo.
-						</p>
+				<HomeStorySection
+					id="learning-paths"
+					eyebrow="Učne poti"
+					title="Začni z večjo sliko."
+					description="Učna pot ti pokaže celotno smer učenja. Namesto posameznih nepovezanih vsebin vidiš zaporedje korakov, ki te vodijo proti jasnemu cilju."
+					align="left"
+					cards={[
+						{
+							title: 'Pregled',
+							front: 'Vidiš celotno pot',
+							back: 'Učna pot združi module in učne enote v logično zaporedje.',
+						},
+						{
+							title: 'Usmeritev',
+							front: 'Lažje izbereš začetek',
+							back: 'Pomaga ti razumeti, katero področje je zate najbolj smiselno.',
+						},
+					]}
+				/>
 
-						<div className="mt-8 flex flex-wrap gap-3">
-							<a
-								href="#how-it-works"
-								className="inline-flex items-center justify-center rounded-full bg-[#31583b] px-6 py-3 text-sm font-semibold text-[#fffdf8] shadow-[0_14px_40px_rgba(49,88,59,0.22)] transition hover:bg-[#274a31]"
-							>
-								Kako deluje
-								<ArrowRightIcon className="ml-2 h-4 w-4" />
-							</a>
+				<HomeStorySection
+					id="modules"
+					eyebrow="Moduli"
+					title="Večjo pot razdeli na razumljive korake."
+					description="Modul predstavlja zaokrožen del učne poti. Vsak modul ima svoj namen, zato lažje slediš napredku in razumeš, kaj posamezen korak prinese."
+					align="right"
+					cards={[
+						{
+							title: 'Korak',
+							front: 'Manjši del večje poti',
+							back: 'Modul razdeli širše področje na bolj obvladljive vsebinske sklope.',
+						},
+						{
+							title: 'Napredek',
+							front: 'Slediš svojemu tempu',
+							back: 'Vsak modul ti pomaga videti, kaj si že pregledal in kaj še sledi.',
+						},
+					]}
+				/>
 
-							<a
-								href="#contact"
-								className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-[#fff6eb] px-6 py-3 text-sm font-semibold text-[#111111] shadow-sm transition hover:border-[#d07a12]/45 hover:bg-[#fffdf8]"
-							>
-								Kontakt
-							</a>
-							
-						</div>
-						
+				<HomeStorySection
+					id="learning-units"
+					eyebrow="Učne enote"
+					title="Uči se skozi kratke in konkretne vsebine."
+					description="Učna enota je najmanjši del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula."
+					align="left"
+					cards={[
+						{
+							title: 'Fokus',
+							front: 'Ena vsebina naenkrat',
+							back: 'Vsaka učna enota predstavi jasen in omejen del znanja.',
+						},
+						{
+							title: 'Samostojnost',
+							front: 'Pregledaš jo lahko posebej',
+							back: 'Enote lahko raziskuješ znotraj modula ali kot samostojen vir.',
+						},
+					]}
+				/>
 
-					</div>
-					<MobileDigCompVisual
-						activeIndex={activeIndex}
-						rotationCount={rotationCount}
-					/>
+				<HomeStorySection
+					id="questionnaire"
+					eyebrow="Vprašalnik"
+					title="Preveri, kje si trenutno."
+					description="Vprašalnik ti pomaga oceniti trenutno znanje in prepoznati področja, kjer imaš največ prostora za napredek."
+					align="right"
+					cards={[
+						{
+							title: 'Samoocena',
+							front: 'Razumeš svoje izhodišče',
+							back: 'Odgovori pokažejo, katera področja že poznaš in katera potrebujejo več pozornosti.',
+						},
+						{
+							title: 'Priporočilo',
+							front: 'Dobiš bolj jasno smer',
+							back: 'Rezultat ti pomaga izbrati primernejšo pot, modul ali naslednjo vsebino.',
+						},
+					]}
+				/>
 
-					<div className="relative hidden h-[40rem] w-full flex-col lg:flex">
-						<HeroSearchResults
-							isSearchActive={isSearchActive}
-							searchQuery={searchQuery}
-							searchResults={searchResults}
-							isSearching={isSearching}
-							navigate={navigate}
-						/>
+				<HomeDigCompSection
+					activeIndex={activeIndex}
+					rotationCount={rotationCount}
+				/>
 
-						<DigCompHeroVisual
-							isSearchActive={isSearchActive}
-							activeIndex={activeIndex}
-							rotationCount={rotationCount}
-						/>
-					</div>
-					<div className="hidden lg:block">
-		<ScrollDownHint href="#how-it-works"  />
-	</div>
-				</section>
-
-				<div className="relative">
-					<HomeInfoSlide
-						id="how-it-works"
-						label="Začni z zanimanjem"
-						title="Izberi učno pot, ki te pritegne."
-						description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj približa cilju."
-						labelColor="text-[#d07a12]"
-						cards={learningPathCards}
-						cardBackground="bg-[#fffdf8]"
-						iconBackground="bg-[#f2f8f1]"
-						iconColor="text-[#31583b]"
-					/>
-					<div className="hidden lg:block">
-						<ScrollDownHint href="#position" />
-					</div>
-				</div>
-				<div className="relative">
-					<HomeInfoSlide
-						id="position"
-						label="Tvoja trenutna pozicija"
-						title="Ugotovi, kje si na izbrani poti."
-						description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek."
-						labelColor="text-[#31583b]"
-						cards={positionCards}
-						cardBackground="bg-[#fff6eb]"
-						iconBackground="bg-[#fffdf8]"
-						iconColor="text-[#d07a12]"
-					/>
-					<div className="hidden lg:block">
-						<ScrollDownHint href="#digcomp" />
-					</div>
-				</div>
-				<div className="relative">
-					<HomeFlowSlide flowSteps={flowSteps} />
-					<div className="hidden lg:block">
-						<ScrollDownHint href="#contact" />
-					</div>
-				</div>
-				<HomeContactSlide />
+				<HomeFinalCtaSection />
 			</div>
-		</main >
+		</main>
 	)
 }
 

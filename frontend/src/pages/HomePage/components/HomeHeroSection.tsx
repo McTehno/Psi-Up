@@ -2,8 +2,8 @@ import { ArrowRight, Search } from 'lucide-react'
 import type { NavigateFunction } from 'react-router-dom'
 
 import type { SearchResult } from '../../../types/search'
-import HeroSearch from '../../HomePage/components/HeroSearch'
-import HeroSearchResults from '../../HomePage/components/HeroSearchResults'
+import HeroSearch from '../../HomePageBackup/components/HeroSearch'
+import HeroSearchResults from '../../HomePageBackup/components/HeroSearchResults'
 import MobileHeroSearchResults from './MobileHeroSearchResults'
 
 type HomeHeroSectionProps = {

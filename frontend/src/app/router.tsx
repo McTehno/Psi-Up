@@ -10,7 +10,7 @@ import LearningPathDetailPage from '../pages/LearningPathDetailPage'
 import ModuleDetailPage from '../pages/ModuleDetailPage'
 import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 import LoginPage from '../pages/LoginPage'
-import HomeRedesignPage from '../pages/HomeRedesign/HomeRedesignPage'
+import HomePageBackup from '../pages/HomePageBackup'
 import DashboardPage from '../pages/DashboardPage'
 
 
@@ -34,8 +34,8 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: 'home-redesign',
-        element: <HomeRedesignPage />,
+        path: 'home-backup',
+        element: <HomePageBackup />,
       },
       {
         path: 'search',

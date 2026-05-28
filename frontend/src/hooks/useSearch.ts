@@ -51,7 +51,9 @@ export function useSearch() {
         urlParams.append('query', searchQuery)
 
         types.forEach((type) => {
-          urlParams.append('types', type)
+          if (type !== null) {
+            urlParams.append('types', type)
+          }
         })
 
         const apiBaseUrl =

@@ -12,24 +12,16 @@ function MobileDigCompVisual({
 	const activeArea = digcompAreas[activeIndex]
 
 	return (
-		<div className="relative mx-auto mt-8 flex w-full flex-col items-center lg:hidden">
-			<div className="mb-4 max-w-sm text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#d07a12]">
-					DigComp okvir
-				</p>
-
-				<p className="mt-2 text-sm leading-6 text-[#706b60]">
-					Pet področij digitalnih kompetenc, ki pomagajo določiti tvojo učno
-					pot.
-				</p>
-			</div>
-
-			<div className="relative h-[330px] w-[330px] max-w-full overflow-hidden sm:h-[400px] sm:w-[400px] sm:overflow-visible">
+		<div className="relative mx-auto flex w-full flex-col items-center">
+			<div className="relative h-[360px] w-[360px] max-w-full overflow-hidden sm:h-[440px] sm:w-[440px] sm:overflow-visible lg:h-[470px] lg:w-[470px]">
 				<svg
 					viewBox="-120 -120 240 240"
 					className="absolute inset-0 aspect-square h-full w-full transition-transform duration-1000 ease-in-out"
 					style={{
 						transform: `rotate(${-81 - rotationCount * 72}deg)`,
+						transformOrigin: 'center center',
+						willChange: 'transform',
+						backfaceVisibility: 'hidden',
 					}}
 				>
 					{digcompAreas.map((area, index) => {
@@ -62,14 +54,14 @@ function MobileDigCompVisual({
 				</svg>
 
 				<div className="absolute inset-0 flex items-center justify-center px-12 text-center">
-					<div className="flex max-w-[190px] flex-col items-center">
+					<div className="flex max-w-[215px] flex-col items-center">
 						<span
-							className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 shadow-lg ${activeArea.themeBg} ${activeArea.themeText}`}
+							className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 shadow-lg ${activeArea.themeBg} ${activeArea.themeText}`}
 						>
-							<activeArea.icon className="h-6 w-6" />
+							<activeArea.icon className="h-7 w-7" />
 						</span>
 
-						<h2 className="mt-3 font-display text-[17px] font-semibold leading-tight text-[#111111]">
+						<h2 className="mt-3 font-display text-[18px] font-semibold leading-tight text-[#111111]">
 							{activeArea.title}
 						</h2>
 
@@ -78,21 +70,6 @@ function MobileDigCompVisual({
 						</p>
 					</div>
 				</div>
-			</div>
-
-			<div className="mt-4 flex max-w-sm flex-wrap justify-center gap-2">
-				{digcompAreas.map((area) => (
-					<span
-						key={area.title}
-						className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfce] bg-[#fffdf8]/80 px-2.5 py-1 text-[11px] font-medium text-[#706b60] shadow-sm"
-					>
-						<span
-							className="h-2.5 w-2.5 rounded-full"
-							style={{ backgroundColor: area.svgFill }}
-						/>
-						{area.title.split(' ')[0]}
-					</span>
-				))}
 			</div>
 		</div>
 	)

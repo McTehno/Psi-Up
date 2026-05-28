@@ -1,4 +1,5 @@
 import type { UserProgressResponse } from '../types/user-progress'
+import { apiGet } from './api-client'
 
 export type UserProgressContentType =
 	| 'learning_path'
@@ -47,8 +48,12 @@ async function readProgressResponse(
 
 export async function getUserProgress(
 	userId: string,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
+	if (!accessToken) {
+		return apiGet<UserProgressResponse>(`/user-progress/${userId}`)
+	}
+
 	const response = await fetch(
 		`${getApiBaseUrl()}/api/user-progress/${userId}`,
 		{

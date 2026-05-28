@@ -1,29 +1,55 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
 import EmptyState from '../../../components/common/EmptyState';
 import { GoalBadge } from './GoalBadge';
-import moduleBgImage from '../../../assets/module-details-background.webp';
-import moduleBgImageVertical from '../../../assets/module-details-background-vertical.webp';
+import bg0 from '../../../assets/module-details-background/module-details-background0.webp';
+import bg1 from '../../../assets/module-details-background/module-details-background1.webp';
+import bg2 from '../../../assets/module-details-background/module-details-background2.webp';
+import bg3 from '../../../assets/module-details-background/module-details-background3.webp';
+import bg4 from '../../../assets/module-details-background/module-details-background4.webp';
+
+import bgMob0 from '../../../assets/module-details-background-mobile/module-details-background-mobile0.webp';
+import bgMob1 from '../../../assets/module-details-background-mobile/module-details-background-mobile1.webp';
+import bgMob2 from '../../../assets/module-details-background-mobile/module-details-background-mobile2.webp';
+import bgMob3 from '../../../assets/module-details-background-mobile/module-details-background-mobile3.webp';
+import bgMob4 from '../../../assets/module-details-background-mobile/module-details-background-mobile4.webp';
+
+const desktopBgs = [bg0, bg1, bg2, bg3, bg4];
+const mobileBgs = [bgMob0, bgMob1, bgMob2, bgMob3, bgMob4];
 
 
 interface LearningUnitVisualizerProps {
   references: LearningUnitReferenceResponse[];
   details?: LearningUnitResponse[];
   completedUnitIds?: string[];
+  moduleId?: string;
 }
 
 export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   references,
   details = [],
-  completedUnitIds = []
+  completedUnitIds = [],
+  moduleId
 }) => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [activeNodeIdx, setActiveNodeIdx] = useState<number | null>(null);
+
+  const bgIndex = useMemo(() => {
+    if (!moduleId) return 0;
+    let hash = 0;
+    for (let i = 0; i < moduleId.length; i++) {
+      hash = moduleId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % 5;
+  }, [moduleId]);
+
+  const currentDesktopBg = desktopBgs[bgIndex];
+  const currentMobileBg = mobileBgs[bgIndex];
 
   // Detect mobile viewport (below Tailwind md breakpoint)
   useEffect(() => {
@@ -64,7 +90,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
         const centerOffset = (rect.top - window.innerHeight / 2);
         // Move the background slightly slower than the scroll speed
         const offset = centerOffset * -0.15;
-        
+
         if (parallaxBg1Ref.current) {
           parallaxBg1Ref.current.style.transform = `translate3d(0, ${offset}px, 0) scale(1.15)`;
         }
@@ -242,26 +268,26 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       {/* Sleek Nature Background Layer */}
       <div className="absolute inset-0 pointer-events-none z-0 rounded-3xl overflow-hidden border border-[#eadfce]/60 bg-[#fffdf8] shadow-[inset_0_2px_20px_rgba(0,0,0,0.02)]">
         {/* Soft base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#f9f5ed] to-[#f4eee1] opacity-95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#f9f5ed] to-[#f4eee1] opacity-60" />
 
-        {/* Mountain Image for Mobile and Landscape Screens */}
+        {/* Mountain Image for Landscape Screens */}
         <div
           ref={parallaxBg1Ref}
-          className="absolute inset-0 mix-blend-multiply opacity-[0.25] md:portrait:hidden"
+          className="absolute inset-0 mix-blend-multiply opacity-[0.35] portrait:hidden"
           style={{
-            backgroundImage: `url(${moduleBgImage})`,
+            backgroundImage: `url(${currentDesktopBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             willChange: 'transform'
           }}
         />
 
-        {/* Mountain Image for Big Vertical Screens */}
+        {/* Mountain Image for Portrait Screens */}
         <div
           ref={parallaxBg2Ref}
-          className="absolute inset-0 mix-blend-multiply opacity-[0.25] hidden md:portrait:block"
+          className="absolute inset-0 mix-blend-multiply opacity-[0.35] hidden portrait:block"
           style={{
-            backgroundImage: `url(${moduleBgImageVertical})`,
+            backgroundImage: `url(${currentMobileBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             willChange: 'transform'

@@ -236,6 +236,7 @@ function ModuleDetailPage() {
           references={moduleData.learning_units || []}
           details={moduleData.learning_unit_details || []}
           completedUnitIds={completedUnitIds}
+          moduleId={moduleId}
         />
       </DetailSection>
 

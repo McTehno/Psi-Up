@@ -13,8 +13,9 @@ class SearchService:
 
     Pomembno:
     SearchResponse schema pričakuje, da ima vsak rezultat veljaven title
-    in keywords seznam. Če MongoDB dokument vsebuje None vrednosti,
-    jih tukaj pretvorimo v varne fallback vrednosti.
+    in keywords seznam. Če MongoDB dokument vsebuje None vrednosti
+    ali napačne elemente v seznamih, jih tukaj pretvorimo v varne fallback
+    vrednosti.
     """
 
     def __init__(
@@ -48,20 +49,31 @@ class SearchService:
 
         return fallback
 
-    def _get_list_value(
+    def _get_string_list_value(
         self,
         value: Any,
-    ) -> List[Any]:
+    ) -> List[str]:
         """
-        Vrne varno list vrednost.
+        Vrne varen seznam stringov.
 
         Če vrednost ni list, vrne prazen seznam.
+        Iz seznama odstrani elemente, ki niso string,
+        in prazne stringe.
+
+        Primer:
+        [None, 123, "Excel", ""] -> ["Excel"]
+
+        Uporablja se za keywords v search rezultatih.
         """
 
-        if isinstance(value, list):
-            return value
+        if not isinstance(value, list):
+            return []
 
-        return []
+        return [
+            item.strip()
+            for item in value
+            if isinstance(item, str) and item.strip()
+        ]
 
     async def search(
         self,
@@ -139,9 +151,10 @@ class SearchService:
         Pretvori dokument iz baze v enotno search result obliko.
 
         Tukaj je glavna zaščita za SearchResponse:
-        - title None -> ""
-        - short_description None -> ""
-        - keywords None -> []
+        - id None ali napačen tip -> ""
+        - title None ali napačen tip -> ""
+        - short_description None ali napačen tip -> ""
+        - keywords None ali napačni elementi -> []
 
         Tako en nepopoln dokument ne povzroči 500 napake pri search endpointu.
         """
@@ -153,5 +166,5 @@ class SearchService:
             "short_description": self._get_string_value(
                 item.get("short_description")
             ),
-            "keywords": self._get_list_value(item.get("keywords")),
+            "keywords": self._get_string_list_value(item.get("keywords")),
         }

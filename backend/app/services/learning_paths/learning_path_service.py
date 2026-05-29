@@ -105,12 +105,40 @@ class LearningPathService:
         Vrne varno list vrednost.
 
         Če vrednost ni list, vrne prazen seznam.
+
+        Uporablja se za sezname, ki niso nujno samo stringi.
         """
 
         if isinstance(value, list):
             return value
 
         return []
+
+    def _get_string_list_value(
+        self,
+        value: Any,
+    ) -> List[str]:
+        """
+        Vrne varen seznam stringov.
+
+        Če vrednost ni list, vrne prazen seznam.
+        Iz seznama odstrani elemente, ki niso string,
+        in prazne stringe.
+
+        Primer:
+        [None, 123, "modul", ""] -> ["modul"]
+
+        Uporablja se za keywords in prerequisites.
+        """
+
+        if not isinstance(value, list):
+            return []
+
+        return [
+            item.strip()
+            for item in value
+            if isinstance(item, str) and item.strip()
+        ]
 
     def _normalize_module_reference(
         self,
@@ -148,7 +176,7 @@ class LearningPathService:
             "is_required": self._get_bool_value(
                 reference.get("is_required")
             ),
-            "prerequisites": self._get_list_value(
+            "prerequisites": self._get_string_list_value(
                 reference.get("prerequisites")
             ),
         }
@@ -187,7 +215,7 @@ class LearningPathService:
 
         Namen:
         - title in short_description ne smeta biti None
-        - keywords mora biti seznam
+        - keywords mora biti seznam stringov
         - modules mora biti varen seznam referenc
         - dodatna polja se ohranijo
         """
@@ -201,7 +229,7 @@ class LearningPathService:
             normalized_learning_path.get("short_description")
         )
 
-        normalized_learning_path["keywords"] = self._get_list_value(
+        normalized_learning_path["keywords"] = self._get_string_list_value(
             normalized_learning_path.get("keywords")
         )
         normalized_learning_path["modules"] = self._normalize_module_references(

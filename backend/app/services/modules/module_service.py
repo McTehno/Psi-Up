@@ -109,12 +109,40 @@ class ModuleService:
         Vrne varno list vrednost.
 
         Če vrednost ni list, vrne prazen seznam.
+
+        Uporablja se za sezname, ki niso nujno samo stringi.
         """
 
         if isinstance(value, list):
             return value
 
         return []
+
+    def _get_string_list_value(
+        self,
+        value: Any,
+    ) -> List[str]:
+        """
+        Vrne varen seznam stringov.
+
+        Če vrednost ni list, vrne prazen seznam.
+        Iz seznama odstrani elemente, ki niso string,
+        in prazne stringe.
+
+        Primer:
+        [None, 123, "modul", ""] -> ["modul"]
+
+        Uporablja se za keywords, domains in prerequisites.
+        """
+
+        if not isinstance(value, list):
+            return []
+
+        return [
+            item.strip()
+            for item in value
+            if isinstance(item, str) and item.strip()
+        ]
 
     def _normalize_learning_unit_reference(
         self,
@@ -152,7 +180,7 @@ class ModuleService:
             "is_required": self._get_bool_value(
                 reference.get("is_required")
             ),
-            "prerequisites": self._get_list_value(
+            "prerequisites": self._get_string_list_value(
                 reference.get("prerequisites")
             ),
         }
@@ -193,7 +221,7 @@ class ModuleService:
 
         Namen:
         - title in short_description ne smeta biti None
-        - keywords in domains morata biti seznama
+        - keywords in domains morata biti seznama stringov
         - learning_units mora biti varen seznam referenc
         - dodatna polja se ohranijo
         """
@@ -207,10 +235,10 @@ class ModuleService:
             normalized_module.get("short_description")
         )
 
-        normalized_module["keywords"] = self._get_list_value(
+        normalized_module["keywords"] = self._get_string_list_value(
             normalized_module.get("keywords")
         )
-        normalized_module["domains"] = self._get_list_value(
+        normalized_module["domains"] = self._get_string_list_value(
             normalized_module.get("domains")
         )
         normalized_module["learning_units"] = self._normalize_learning_unit_references(

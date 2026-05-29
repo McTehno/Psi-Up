@@ -63,18 +63,46 @@ class LearningUnitService:
         - če je vrednost None ali napačnega tipa, vrne prazen seznam
 
         Zakaj:
-        LearningUnitResponse schema za polja kot keywords, content_topics,
-        acquired_competencies, digcomp_competencies in prerequisites pričakuje list.
-        Če iz MongoDB pride None, FastAPI response validacija pade.
-
-        Napačnih tipov ne pretvarjamo na silo v list,
-        ker bi s tem lahko skrili napake v podatkih.
+        Nekatera polja, kot sta digcomp_competencies in
+        self_assessment_questions, so seznami objektov.
+        Zato jih tukaj ne čistimo kot string sezname.
         """
 
         if isinstance(value, list):
             return value
 
         return []
+
+    def _get_string_list_value(
+        self,
+        value: Any,
+    ) -> List[str]:
+        """
+        Vrne varen seznam stringov.
+
+        Namen:
+        - če vrednost ni list, vrne prazen seznam
+        - iz seznama odstrani elemente, ki niso string
+        - odstrani prazne stringe
+
+        Primer:
+        [None, 123, "Excel", ""] -> ["Excel"]
+
+        Zakaj:
+        Polja kot keywords, content_topics, acquired_competencies
+        in prerequisites morajo vsebovati samo string vrednosti.
+        Če seznam vsebuje None, številke ali objekte, lahko response_model
+        še vedno pade pri validaciji.
+        """
+
+        if not isinstance(value, list):
+            return []
+
+        return [
+            item.strip()
+            for item in value
+            if isinstance(item, str) and item.strip()
+        ]
 
     def _normalize_learning_unit(
         self,
@@ -87,6 +115,7 @@ class LearningUnitService:
         - preprečiti ResponseValidationError
         - zagotoviti, da obvezna string polja niso None
         - zagotoviti, da list polja niso None
+        - zagotoviti, da string seznami vsebujejo samo stringe
         - ohraniti dodatna polja, ki jih frontend lahko uporablja
 
         Pomembno:
@@ -103,19 +132,19 @@ class LearningUnitService:
             normalized_learning_unit.get("short_description")
         )
 
-        normalized_learning_unit["keywords"] = self._get_list_value(
+        normalized_learning_unit["keywords"] = self._get_string_list_value(
             normalized_learning_unit.get("keywords")
         )
-        normalized_learning_unit["content_topics"] = self._get_list_value(
+        normalized_learning_unit["content_topics"] = self._get_string_list_value(
             normalized_learning_unit.get("content_topics")
         )
-        normalized_learning_unit["acquired_competencies"] = self._get_list_value(
+        normalized_learning_unit["acquired_competencies"] = self._get_string_list_value(
             normalized_learning_unit.get("acquired_competencies")
         )
         normalized_learning_unit["digcomp_competencies"] = self._get_list_value(
             normalized_learning_unit.get("digcomp_competencies")
         )
-        normalized_learning_unit["prerequisites"] = self._get_list_value(
+        normalized_learning_unit["prerequisites"] = self._get_string_list_value(
             normalized_learning_unit.get("prerequisites")
         )
         normalized_learning_unit["self_assessment_questions"] = self._get_list_value(

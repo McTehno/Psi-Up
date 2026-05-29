@@ -19,6 +19,9 @@
 .assessment-progress__track {
   position: relative;
   min-height: 74px;
+}
+
+.assessment-progress--with-goal .assessment-progress__track {
   padding-right: 42px;
 }
 
@@ -26,14 +29,20 @@
   position: absolute;
   top: 20px;
   left: 0;
-  right: 42px;
+  right: 0;
   height: 14px;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 999px;
   background: #eadfce;
 }
 
+.assessment-progress--with-goal .assessment-progress__line {
+  right: 21px;
+}
+
 .assessment-progress__fill {
+  position: relative;
+  z-index: 0;
   width: var(--assessment-progress);
   height: 100%;
   border-radius: inherit;
@@ -41,27 +50,67 @@
   transition: width 220ms ease;
 }
 
+.assessment-progress__question-dots {
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+}
+
+.assessment-progress__question-dot {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #f8f5ef;
+  border-radius: 999px;
+  background: #d8cbb8;
+  box-shadow: 0 2px 6px rgb(49 88 59 / 18%);
+  transform: translate(-50%, -50%);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.assessment-progress__question-dot--completed {
+  border-color: #f8f5ef;
+  background: #31583b;
+}
+
+.assessment-progress__question-dot--upcoming {
+  background: #d8cbb8;
+}
+
 .assessment-progress__steps {
   position: absolute;
+  z-index: 3;
   top: 0;
   left: 0;
-  right: 42px;
-  display: grid;
-  grid-template-columns: repeat(var(--assessment-step-count), minmax(0, 1fr));
-  align-items: start;
+  right: 0;
+}
+
+.assessment-progress--with-goal .assessment-progress__steps {
+  right: 21px;
 }
 
 .assessment-progress__step {
+  position: absolute;
+  z-index: 4;
   display: flex;
   min-width: 0;
   align-items: center;
   flex-direction: column;
   gap: 6px;
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .assessment-progress__marker {
-  z-index: 1;
+  position: relative;
+  z-index: 5;
   display: grid;
   width: 42px;
   height: 42px;
@@ -79,9 +128,10 @@
   background: #31583b;
   color: #fff;
 }
+
 .assessment-progress__step--active .assessment-progress__marker {
-  border-color: #F8E7BE;
-  background: #344E41;
+  border-color: #f8e7be;
+  background: #344e41;
   color: #fff;
 }
 
@@ -134,11 +184,12 @@
 
 .assessment-progress__flag {
   position: absolute;
-  top: 6px;
+  z-index: 6;
+  top: 0;
   right: 0;
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   place-items: center;
   border: 2px solid #d8cbb8;
   border-radius: 999px;
@@ -162,6 +213,7 @@
 .assessment-progress__confetti {
   pointer-events: none;
   position: absolute;
+  z-index: 7;
   inset: -28px 0 auto;
   height: 110px;
   overflow: hidden;
@@ -209,12 +261,15 @@
 
   .assessment-progress__track {
     min-height: 62px;
+  }
+
+  .assessment-progress--with-goal .assessment-progress__track {
     padding-right: 34px;
   }
 
-  .assessment-progress__line,
-  .assessment-progress__steps {
-    right: 34px;
+  .assessment-progress--with-goal .assessment-progress__line,
+  .assessment-progress--with-goal .assessment-progress__steps {
+    right: 17px;
   }
 
   .assessment-progress__marker {
@@ -223,14 +278,18 @@
     font-size: 0.85rem;
   }
 
+  .assessment-progress__question-dot {
+    width: 8px;
+    height: 8px;
+  }
+
   .assessment-progress__label {
     display: none;
   }
 
   .assessment-progress__flag {
-    top: 4px;
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
     font-size: 1rem;
   }
 }

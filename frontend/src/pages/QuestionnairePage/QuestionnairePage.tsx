@@ -35,6 +35,7 @@ type AnswerOption = {
 
 type QuestionnaireItem = QuestionnaireQuestionResponse & {
   answers: AnswerOption[]
+  runtimeId: string
 }
 
 type CompetencyGroup = {
@@ -161,15 +162,18 @@ function groupQuestionsByLearningUnit(
 
 function findQuestionPosition(
   groups: QuestionGroup[],
-  questionId: string,
+  questionRuntimeId: string,
 ): QuestionPosition | null {
   for (let groupIndex = 0; groupIndex < groups.length; groupIndex += 1) {
     const questionIndex = groups[groupIndex].questions.findIndex(
-      (question) => question.id === questionId,
+      (question) => question.runtimeId === questionRuntimeId,
     )
 
     if (questionIndex !== -1) {
-      return { groupIndex, questionIndex }
+      return {
+        groupIndex,
+        questionIndex,
+      }
     }
   }
 
@@ -188,7 +192,7 @@ function getNextQuestion(params: {
   groups: QuestionGroup[]
 }) {
   const { currentQuestion, groups } = params
-  const position = findQuestionPosition(groups, currentQuestion.id)
+  const position = findQuestionPosition(groups, currentQuestion.runtimeId)
 
   if (!position) {
     return null
@@ -242,11 +246,11 @@ function createAutoFalsePayload(
   const alreadyAnsweredQuestionIdSet = new Set(alreadyAnsweredQuestionIds)
   const answeredPayload = createAnswerPayload(
     alreadyAnsweredQuestionIds,
-    new Map(questions.map((question) => [question.id, question] as const)),
+    new Map(questions.map((question) => [question.runtimeId, question] as const)),
     selectedAnswers,
   )
   const autoFalsePayload = questions
-    .filter((question) => !alreadyAnsweredQuestionIdSet.has(question.id))
+    .filter((question) => !alreadyAnsweredQuestionIdSet.has(question.runtimeId))
     .map((question) => ({
       learning_unit_id: question.learning_unit_id,
       question_id: question.id,
@@ -296,24 +300,56 @@ function getQuestionIdsByLearningUnit(
 ) {
   return questionnaire
     .filter((question) => question.learning_unit_id === learningUnitId)
-    .map((question) => question.id)
+    .map((question) => question.runtimeId)
+}
+
+function getQuestionProgressPosition(
+  questionCountUntilStep: number,
+  totalQuestionCount: number,
+) {
+  if (totalQuestionCount <= 0) {
+    return 0
+  }
+
+  return Math.min(totalQuestionCount, Math.max(0, questionCountUntilStep))
+}
+
+function getProgressQuestionIds(
+  visibleQuestionIds: string[],
+  activeQuestionIndex: number,
+  phase: AssessmentPhase,
+) {
+  if (phase === 'completed') {
+    return new Set(visibleQuestionIds)
+  }
+
+  return new Set(visibleQuestionIds.slice(0, activeQuestionIndex))
 }
 
 function getLeafStatus(
   questionIds: string[],
   selectedAnswers: Record<string, AnswerOption>,
+  progressQuestionIds: Set<string>,
   activeQuestionId?: string,
 ): AssessmentProgressStepStatus {
+  const visibleQuestionIds = questionIds.filter((questionId) =>
+    progressQuestionIds.has(questionId),
+  )
+
   const isActive = Boolean(
     activeQuestionId && questionIds.includes(activeQuestionId),
   )
-  const hasNoAnswer = questionIds.some(
+
+  const hasNoAnswer = visibleQuestionIds.some(
     (questionId) => selectedAnswers[questionId]?.weight === false,
   )
+
   const isCompleted =
     questionIds.length > 0 &&
     questionIds.every(
-      (questionId) => selectedAnswers[questionId]?.weight === true,
+      (questionId) =>
+        progressQuestionIds.has(questionId) &&
+        selectedAnswers[questionId]?.weight === true,
     )
 
   if (hasNoAnswer) {
@@ -414,7 +450,9 @@ function QuestionnairePage() {
   )
   const questionById = useMemo(
     () =>
-      new Map(questionnaire.map((question) => [question.id, question] as const)),
+      new Map(
+        questionnaire.map((question) => [question.runtimeId, question] as const),
+      ),
     [questionnaire],
   )
 
@@ -423,7 +461,7 @@ function QuestionnairePage() {
     ? questionById.get(currentQuestionId)
     : undefined
   const selectedAnswer = currentQuestion
-    ? selectedAnswers[currentQuestion.id]
+    ? selectedAnswers[currentQuestion.runtimeId]
     : undefined
 
   const selectedGroup = useMemo<CompetencyGroup | undefined>(() => {
@@ -449,76 +487,110 @@ function QuestionnairePage() {
         })
       : null
 
-  const assessmentProgress = useMemo(() => {
-    const activeQuestionId =
-      phase === 'questionnaire' ? currentQuestion?.id : undefined
+const assessmentProgress = useMemo(() => {
+    const progressQuestionIds = getProgressQuestionIds(
+    visibleQuestionIds,
+    activeQuestionIndex,
+    phase,
+  )
+  const activeQuestionId =
+    phase === 'questionnaire' ? currentQuestion?.runtimeId : undefined
 
-    if (targetType === 'learning_unit') {
-      const steps: AssessmentProgressStep[] = questionnaire.map(
-        (question, index) => ({
-          id: question.id,
-          label: String(index + 1),
-          title: `Vprašanje ${index + 1}`,
-          status: getLeafStatus(
-            [question.id],
-            selectedAnswers,
-            activeQuestionId,
-          ),
-        }),
+  if (targetType === 'learning_unit') {
+    const steps: AssessmentProgressStep[] = questionnaire.map(
+      (question, index) => ({
+        id: question.runtimeId,
+        label: String(index + 1),
+        title: `Vprašanje ${index + 1}`,
+        status: getLeafStatus(
+          [question.runtimeId],
+          selectedAnswers,
+          progressQuestionIds,
+          activeQuestionId,
+        ),
+        questionCountUntilStep: getQuestionProgressPosition(
+          index + 1,
+          questionnaire.length,
+        ),
+      }),
+    )
+
+    return {
+      steps,
+      completedLeafCount: getCompletedLeafCount(steps),
+      totalLeafCount: getTotalLeafCount(steps),
+    }
+  }
+
+  if (targetType === 'module' && moduleDetail) {
+    let questionCountUntilStep = 0
+
+    const steps: AssessmentProgressStep[] = getOrderedItems(
+      moduleDetail.learning_units,
+    ).map((learningUnitReference, unitIndex) => {
+      const questionIds = getQuestionIdsByLearningUnit(
+        questionnaire,
+        learningUnitReference.learning_unit_id,
       )
 
-      return {
-        steps,
-        completedLeafCount: getCompletedLeafCount(steps),
-        totalLeafCount: getTotalLeafCount(steps),
-      }
-    }
+      questionCountUntilStep += questionIds.length
 
-    if (targetType === 'module' && moduleDetail) {
-      const steps: AssessmentProgressStep[] = getOrderedItems(
-        moduleDetail.learning_units,
-      ).map((learningUnitReference, unitIndex) => {
-        const questionIds = getQuestionIdsByLearningUnit(
-          questionnaire,
-          learningUnitReference.learning_unit_id,
-        )
-        const unitTitle =
-          moduleDetail.learning_unit_details?.find(
-            (learningUnit) =>
-              learningUnit._id === learningUnitReference.learning_unit_id,
-          )?.title ?? `Učna enota ${unitIndex + 1}`
-
-        return {
-          id: learningUnitReference.learning_unit_id,
-          label: String(unitIndex + 1),
-          title: unitTitle,
-          status: getLeafStatus(questionIds, selectedAnswers, activeQuestionId),
-        }
-      })
+      const unitTitle =
+        moduleDetail.learning_unit_details?.find(
+          (learningUnit) =>
+            learningUnit._id === learningUnitReference.learning_unit_id,
+        )?.title ?? `Učna enota ${unitIndex + 1}`
 
       return {
-        steps,
-        completedLeafCount: getCompletedLeafCount(steps),
-        totalLeafCount: getTotalLeafCount(steps),
+        id: learningUnitReference.learning_unit_id,
+        label: String(unitIndex + 1),
+        title: unitTitle,
+        status: getLeafStatus(
+          questionIds,
+          selectedAnswers,
+          progressQuestionIds,
+          activeQuestionId,
+        ),
+        questionCountUntilStep: getQuestionProgressPosition(
+          questionCountUntilStep,
+          questionnaire.length,
+        ),
       }
-    }
+    })
 
-    if (targetType === 'learning_path' && learningPathDetail) {
-      const steps: AssessmentProgressStep[] = getOrderedItems(
-        learningPathDetail.modules,
-      ).map((moduleReference, moduleIndex) => {
+    return {
+      steps,
+      completedLeafCount: getCompletedLeafCount(steps),
+      totalLeafCount: getTotalLeafCount(steps),
+    }
+  }
+
+  if (targetType === 'learning_path' && learningPathDetail) {
+    let questionCountUntilStep = 0
+
+    const orderedModules = getOrderedItems(learningPathDetail.modules)
+
+    const steps: AssessmentProgressStep[] = orderedModules.map(
+      (moduleReference, moduleIndex) => {
         const moduleItem = learningPathDetail.module_details?.find(
           (item) => item._id === moduleReference.module_id,
         )
+
         const learningUnits = moduleItem?.learning_units
           ? getOrderedItems(moduleItem.learning_units)
           : []
+
+        let moduleQuestionCount = 0
+
         const subSteps = learningUnits.map(
           (learningUnitReference, unitIndex) => {
             const questionIds = getQuestionIdsByLearningUnit(
               questionnaire,
               learningUnitReference.learning_unit_id,
             )
+
+            moduleQuestionCount += questionIds.length
+
             const unitTitle =
               moduleItem?.learning_unit_details?.find(
                 (learningUnit) =>
@@ -531,11 +603,14 @@ function QuestionnairePage() {
               status: getLeafStatus(
                 questionIds,
                 selectedAnswers,
+                progressQuestionIds,
                 activeQuestionId,
               ),
             }
           },
         )
+
+        questionCountUntilStep += moduleQuestionCount
 
         return {
           id: moduleReference.module_id,
@@ -545,44 +620,62 @@ function QuestionnairePage() {
             subSteps.map((subStep) => subStep.status),
           ),
           subSteps,
+          questionCountUntilStep: getQuestionProgressPosition(
+            questionCountUntilStep,
+            questionnaire.length,
+          ),
         }
-      })
-
-      return {
-        steps,
-        completedLeafCount: getCompletedLeafCount(steps),
-        totalLeafCount: getTotalLeafCount(steps),
-      }
-    }
-
-    const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
-      (group, groupIndex) => ({
-        id: group.learningUnitId,
-        label: String(groupIndex + 1),
-        title: `Učna enota ${groupIndex + 1}`,
-        status: getLeafStatus(
-          group.questions.map((question) => question.id),
-          selectedAnswers,
-          activeQuestionId,
-        ),
-      }),
+      },
     )
 
     return {
-      steps: fallbackSteps,
-      completedLeafCount: getCompletedLeafCount(fallbackSteps),
-      totalLeafCount: getTotalLeafCount(fallbackSteps),
+      steps,
+      completedLeafCount: getCompletedLeafCount(steps),
+      totalLeafCount: getTotalLeafCount(steps),
     }
-  }, [
-    currentQuestion?.id,
-    learningPathDetail,
-    moduleDetail,
-    phase,
-    questionGroups,
-    questionnaire,
-    selectedAnswers,
-    targetType,
-  ])
+  }
+
+  let fallbackQuestionCountUntilStep = 0
+
+const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
+  (group, groupIndex) => {
+    fallbackQuestionCountUntilStep += group.questions.length
+
+    return {
+      id: group.learningUnitId,
+      label: String(groupIndex + 1),
+      title: `Učna enota ${groupIndex + 1}`,
+      status: getLeafStatus(
+        group.questions.map((question) => question.runtimeId),
+        selectedAnswers,
+        progressQuestionIds,
+        activeQuestionId,
+      ),
+      questionCountUntilStep: getQuestionProgressPosition(
+        fallbackQuestionCountUntilStep,
+        questionnaire.length,
+      ),
+    }
+  },
+)
+
+  return {
+    steps: fallbackSteps,
+    completedLeafCount: getCompletedLeafCount(fallbackSteps),
+    totalLeafCount: getTotalLeafCount(fallbackSteps),
+  }
+}, [
+  activeQuestionIndex,
+  currentQuestion?.id,
+  learningPathDetail,
+  moduleDetail,
+  phase,
+  questionGroups,
+  questionnaire,
+  selectedAnswers,
+  targetType,
+  visibleQuestionIds,
+])
 
   const hasAnsweredEveryLearningPathQuestionWithYes = useMemo(() => {
     if (targetType !== 'learning_path' || questionnaire.length === 0) {
@@ -590,7 +683,7 @@ function QuestionnairePage() {
     }
 
     return questionnaire.every(
-      (question) => selectedAnswers[question.id]?.weight === true,
+      (question) => selectedAnswers[question.runtimeId]?.weight === true,
     )
   }, [questionnaire, selectedAnswers, targetType])
 
@@ -608,6 +701,10 @@ function QuestionnairePage() {
     phase === 'completed'
       ? Math.max(visibleQuestionIds.length, 1)
       : Math.min(activeQuestionIndex + 1, totalSteps)
+  const confirmedQuestionCount =
+    phase === 'completed'
+      ? Math.min(visibleQuestionIds.length, questionnaire.length)
+      : Math.min(Math.max(activeQuestionIndex, 0), questionnaire.length)
   const currentLabel = assessmentCopy.questionnaire.label
   const currentTitle =
     phase === 'completed'
@@ -676,8 +773,9 @@ function QuestionnairePage() {
           targetType,
           targetId,
         )
-        const questions = normalizedData.questions.map((question) => ({
+        const questions = normalizedData.questions.map((question, index) => ({
           ...question,
+          runtimeId: `${question.id}_${index}`,
           answers: yesNoAnswers,
         }))
 
@@ -689,7 +787,7 @@ function QuestionnairePage() {
           normalizedData.title ?? createFallbackTitle(targetType, targetId),
         )
         setQuestionnaire(questions)
-        setVisibleQuestionIds(questions[0] ? [questions[0].id] : [])
+        setVisibleQuestionIds(questions[0] ? [questions[0].runtimeId] : [])
         setActiveQuestionIndex(0)
         setSelectedAnswers({})
         setModuleDetail(nextModuleDetail)
@@ -749,7 +847,7 @@ function QuestionnairePage() {
         delete nextAnswers[questionId]
       }
 
-      nextAnswers[currentQuestion.id] = answer
+      nextAnswers[currentQuestion.runtimeId] = answer
       return nextAnswers
     })
 
@@ -811,6 +909,8 @@ function QuestionnairePage() {
           shouldAutoMarkRemainingAsFalse,
         )
       ) {
+        setVisibleQuestionIds(questionnaire.map((question) => question.runtimeId))
+        setActiveQuestionIndex(Math.max(questionnaire.length - 1, 0))
         setPhase('completed')
         return
       }
@@ -843,7 +943,12 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
     const shouldFinishAfterNoAnswer = !selectedAnswer.weight
+    const hasReachedLastQuestion = activeQuestionIndex >= questionnaire.length - 1
 
+    if (hasReachedLastQuestion) {
+      await submitAssessment(questionIdsUntilCurrent)
+      return
+    }
     if (shouldFinishAfterNoAnswer) {
       await submitAssessment(questionIdsUntilCurrent, true)
       return
@@ -859,7 +964,10 @@ function QuestionnairePage() {
       return
     }
 
-    setVisibleQuestionIds([...questionIdsUntilCurrent, followingQuestion.id])
+    setVisibleQuestionIds([
+    ...questionIdsUntilCurrent,
+    followingQuestion.runtimeId,
+  ])
     setActiveQuestionIndex(questionIdsUntilCurrent.length)
   }
 
@@ -952,6 +1060,10 @@ function QuestionnairePage() {
         steps={assessmentProgress.steps}
         completedLeafCount={assessmentProgress.completedLeafCount}
         totalLeafCount={assessmentProgress.totalLeafCount}
+        isGoalReached={isLearningPathGoalReached}
+        questionCount={questionnaire.length}
+        confirmedQuestionCount={confirmedQuestionCount}
+        showGoalFlag={targetType === 'learning_path'}
       />
 
       {phase === 'questionnaire' && currentQuestion && (

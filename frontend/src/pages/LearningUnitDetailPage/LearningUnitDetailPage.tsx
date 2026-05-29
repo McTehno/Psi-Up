@@ -129,6 +129,75 @@ function getBasicInfoFields(extraFields: DetailExtraField[]) {
 }
 
 /**
+ * Določi število stolpcev za osnovne podatke glede na število prikazanih kartic.
+ *
+ * Namen:
+ * - če manjkajo opcijska polja, kartice ne ostanejo stisnjene v layout za 4 elemente
+ * - če imamo 1, 2 ali 3 kartice, se razporedijo lepše
+ * - na mobilnem ostane vedno en stolpec
+ *
+ * Pomembno:
+ * ClassName vrednosti so napisane eksplicitno, ker Tailwind ne zazna varno
+ * dinamičnih classov, kot je `xl:grid-cols-${count}`.
+ */
+function getBasicInfoGridClass(itemCount: number) {
+  if (itemCount <= 1) {
+    return 'grid grid-cols-1'
+  }
+
+  if (itemCount === 2) {
+    return 'grid grid-cols-1 md:grid-cols-2'
+  }
+
+  if (itemCount === 3) {
+    return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+  }
+
+  return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
+}
+
+/**
+ * Določi ločilne črte med karticami v sekciji Osnovni podatki.
+ *
+ * Namen:
+ * - ohraniti isti vizualni stil kot prej
+ * - preprečiti čudne borderje, ko imamo manj kot 4 kartice
+ * - ohraniti lep responsive prikaz
+ */
+function getBasicInfoCardBorderClass(index: number, itemCount: number) {
+  if (itemCount <= 1) {
+    return ''
+  }
+
+  if (itemCount === 2) {
+    return index === 1
+      ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
+      : ''
+  }
+
+  if (itemCount === 3) {
+    if (index === 1) {
+      return 'border-t border-[#eadfce] md:border-l md:border-t-0'
+    }
+
+    if (index === 2) {
+      return 'border-t border-[#eadfce] xl:border-l xl:border-t-0'
+    }
+
+    return ''
+  }
+
+  return [
+    index !== 0
+      ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
+      : '',
+    index === 2
+      ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
+      : '',
+  ].join(' ')
+}
+
+/**
  * Vrne vrednost dodatnega polja po labelu.
  *
  * To uporabimo za compact meta podatke v hero sekciji,
@@ -322,19 +391,14 @@ function LearningUnitDetailPage() {
         description="Kratek pregled informacij o izvedbi, izvajalcu in preverjanju znanja."
       >
         <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
-          <div className="grid md:grid-cols-2 xl:grid-cols-4">
+          <div className={getBasicInfoGridClass(basicInfoFields.length)}>
             {basicInfoFields.length > 0 ? (
               basicInfoFields.map((item, index) => (
                 <div
                   key={item.label}
                   className={[
                     'flex min-w-0 items-start gap-4 px-5 py-5',
-                    index !== 0
-                      ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
-                      : '',
-                    index === 2
-                      ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
-                      : '',
+                    getBasicInfoCardBorderClass(index, basicInfoFields.length),
                   ].join(' ')}
                 >
                   <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">

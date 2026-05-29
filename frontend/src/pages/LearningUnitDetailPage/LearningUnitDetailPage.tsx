@@ -27,15 +27,41 @@ import LearningUnitDetailContent from '../../features/learning-units/components/
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import { useUserProgressState } from '../../hooks/useUserProgressState'
+import {
+  normalizeDetailContent,
+  type DetailExtraField,
+} from '../../utils/normalizers/detail-normalizers'
 
+/**
+ * LearningUnitDetailPage prikazuje podrobnosti ene učne enote.
+ *
+ * Namen te strani:
+ * - naložiti učno enoto iz backend-a
+ * - prikazati osnovne podatke, ključne besede in vsebinski del učne enote
+ * - omogočiti začetek vprašalnika za samooceno, če vprašanja obstajajo
+ * - prikazati uporabniške akcije: shrani, priljubljeno, zaključeno
+ *
+ * Zakaj uporabljamo normalizer:
+ * Backend lahko vrne manjkajoča, null ali dodatna polja.
+ * Zato podatke najprej pretvorimo v stabilno frontend obliko z normalizeDetailContent.
+ * Tako DetailHero, DetailMeta in DetailTags ne dobijo neurejenih backend vrednosti.
+ */
 
+/**
+ * Oblikuje trajanje učne enote za prikaz uporabniku.
+ *
+ * Trenutna MongoDB struktura uporablja duration_hours.
+ * Če trajanje manjka, prikažemo "Ni določeno".
+ */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
     return 'Ni določeno'
   }
 
+  const formattedDuration = String(durationHours).replace('.', ',')
+
   if (!Number.isInteger(durationHours)) {
-    return `${durationHours} h`
+    return `${formattedDuration} h`
   }
 
   if (durationHours === 1) {
@@ -51,6 +77,83 @@ function formatDuration(durationHours?: number | null) {
   }
 
   return `${durationHours} ur`
+}
+
+/**
+ * Vrne ikono za dodatno informacijo.
+ *
+ * Extra fields pridejo iz normalizerja in so dovoljena dodatna polja,
+ * na primer provider, delivery_mode, target_audience, knowledge_assessment.
+ */
+function getExtraFieldIcon(label: string) {
+  if (label === 'Ciljna skupina') {
+    return <Users className="h-5 w-5" />
+  }
+
+  if (label === 'Izvajalec') {
+    return <Building2 className="h-5 w-5" />
+  }
+
+  if (label === 'Preverjanje znanja') {
+    return <ClipboardCheck className="h-5 w-5" />
+  }
+
+  if (label === 'Certifikat') {
+    return <Award className="h-5 w-5" />
+  }
+
+  if (label === 'Način izvedbe') {
+    return <MapPinAreaIcon className="h-5 w-5" />
+  }
+
+  return <CircleDot className="h-5 w-5" />
+}
+
+/**
+ * Iz dodatnih polj izbere tista, ki jih želimo prikazati v sekciji Osnovni podatki.
+ *
+ * Namen:
+ * - osnovni podatki niso več direktno vezani na learningUnit.provider itd.
+ * - če backend pošlje manjkajoče vrednosti, jih normalizer ne doda
+ * - če backend kasneje doda novo dovoljeno dodatno polje, ga lahko tu vključimo
+ */
+function getBasicInfoFields(extraFields: DetailExtraField[]) {
+  const allowedLabels = [
+    'Ciljna skupina',
+    'Izvajalec',
+    'Preverjanje znanja',
+    'Certifikat',
+  ]
+
+  return extraFields.filter((field) => allowedLabels.includes(field.label))
+}
+
+/**
+ * Vrne vrednost dodatnega polja po labelu.
+ *
+ * To uporabimo za compact meta podatke v hero sekciji,
+ * kjer želimo vedno prikazati ista tri polja.
+ */
+function getExtraFieldValue(
+  extraFields: DetailExtraField[],
+  label: string,
+  fallback = 'Ni določeno',
+) {
+  return extraFields.find((field) => field.label === label)?.value ?? fallback
+}
+
+/**
+ * Preveri, ali ima učna enota vprašanja za samooceno.
+ *
+ * Zakaj:
+ * Gumb za vprašalnik naj se ne prikaže, če backend ne pošlje vprašanj
+ * ali če je seznam vprašanj prazen.
+ */
+function hasSelfAssessmentQuestions(learningUnit: LearningUnitResponse) {
+  return (
+    Array.isArray(learningUnit.self_assessment_questions) &&
+    learningUnit.self_assessment_questions.length > 0
+  )
 }
 
 function LearningUnitDetailPage() {
@@ -73,6 +176,7 @@ function LearningUnitDetailPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
+
     async function loadLearningUnit() {
       if (!learningUnitId) {
         setError('ID učne enote ni podan.')
@@ -96,6 +200,7 @@ function LearningUnitDetailPage() {
 
     loadLearningUnit()
   }, [learningUnitId])
+
   useEffect(() => {
     if (!learningUnitId) {
       return
@@ -117,12 +222,12 @@ function LearningUnitDetailPage() {
       setAssessmentResult(null)
     }
   }, [learningUnitId])
+
   function handleStartQuestionnaire() {
     if (!learningUnitId) return
 
     navigate(`/assessment?target_type=learning_unit&target_id=${learningUnitId}`)
   }
-
 
   if (isLoading) {
     return (
@@ -146,6 +251,15 @@ function LearningUnitDetailPage() {
     )
   }
 
+  const detail = normalizeDetailContent(
+    learningUnit,
+    'Neimenovana učna enota',
+  )
+
+  const basicInfoFields = getBasicInfoFields(detail.extraFields)
+  const canUseContentActions = Boolean(detail.id)
+  const canStartQuestionnaire = hasSelfAssessmentQuestions(learningUnit)
+
   return (
     <DetailPageShell>
       <div className="relative mb-8">
@@ -156,19 +270,21 @@ function LearningUnitDetailPage() {
           Učna enota
         </div>
 
-        <DetailActions
-          contentId={learningUnit._id}
-          contentType="learning_unit"
-          initialIsFavorite={isFavorite}
-          initialIsSaved={isSaved}
-          initialIsCompleted={isCompleted}
-        />
+        {canUseContentActions && (
+          <DetailActions
+            contentId={detail.id}
+            contentType="learning_unit"
+            initialIsFavorite={isFavorite}
+            initialIsSaved={isSaved}
+            initialIsCompleted={isCompleted}
+          />
+        )}
       </div>
 
       <DetailHero
         eyebrow="Učna enota"
-        title={learningUnit.title}
-        description={learningUnit.short_description}
+        title={detail.title}
+        description={detail.description}
       >
         <div className="relative mt-7 lg:pr-[195px]">
           <DetailMeta
@@ -176,25 +292,26 @@ function LearningUnitDetailPage() {
             items={[
               {
                 label: 'Trajanje',
-                value: formatDuration(learningUnit.duration_hours),
+                value: formatDuration(detail.durationHours),
                 icon: <Clock className="h-5 w-5" />,
               },
               {
                 label: 'Način izvedbe',
-                value: learningUnit.delivery_mode ?? 'Ni določeno',
+                value: getExtraFieldValue(detail.extraFields, 'Način izvedbe'),
                 icon: <MapPinAreaIcon className="h-5 w-5" />,
               },
               {
                 label: 'Certifikat',
-                value: learningUnit.certificate ?? 'Ni določeno',
+                value: getExtraFieldValue(detail.extraFields, 'Certifikat'),
                 icon: <Award className="h-5 w-5" />,
               },
             ]}
           />
         </div>
+
         <div className="mt-6">
           <DetailTags
-            tags={learningUnit.keywords}
+            tags={detail.keywords}
             emptyMessage="Ta učna enota nima dodanih ključnih besed."
           />
         </div>
@@ -206,58 +323,46 @@ function LearningUnitDetailPage() {
       >
         <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
           <div className="grid md:grid-cols-2 xl:grid-cols-4">
-            {[
-              {
-                label: 'Ciljna publika',
-                value: learningUnit.target_audience ?? 'Ni določeno',
-                icon: <Users className="h-5 w-5" />,
-              },
-              {
-                label: 'Izvajalec',
-                value: learningUnit.provider ?? 'Ni določeno',
-                icon: <Building2 className="h-5 w-5" />,
-              },
-              {
-                label: 'Preverjanje znanja',
-                value: learningUnit.knowledge_assessment ?? 'Ni določeno',
-                icon: <ClipboardCheck className="h-5 w-5" />,
-              },
-              {
-                label: 'Potrdilo',
-                value: learningUnit.certificate ?? 'Ni določeno',
-                icon: <Award className="h-5 w-5" />,
-              },
-            ].map((item, index) => (
-              <div
-                key={item.label}
-                className={[
-                  'flex min-w-0 items-start gap-4 px-5 py-5',
-                  index !== 0
-                    ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
-                    : '',
-                  index === 2
-                    ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
-                    : '',
-                ].join(' ')}
-              >
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
-                  {item.icon}
-                </div>
+            {basicInfoFields.length > 0 ? (
+              basicInfoFields.map((item, index) => (
+                <div
+                  key={item.label}
+                  className={[
+                    'flex min-w-0 items-start gap-4 px-5 py-5',
+                    index !== 0
+                      ? 'border-t border-[#eadfce] md:border-l md:border-t-0'
+                      : '',
+                    index === 2
+                      ? 'md:border-l-0 md:border-t xl:border-l xl:border-t-0'
+                      : '',
+                  ].join(' ')}
+                >
+                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4eee4] text-[#31583b]">
+                    {getExtraFieldIcon(item.label)}
+                  </div>
 
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold uppercase tracking-wide text-[#706b60]">
-                    {item.label}
-                  </p>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold uppercase tracking-wide text-[#706b60]">
+                      {item.label}
+                    </p>
 
-                  <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[#111111]">
-                    {item.value}
-                  </strong>
+                    <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[#111111]">
+                      {item.value}
+                    </strong>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="px-5 py-5">
+                <p className="text-sm text-[#706b60]">
+                  Osnovni podatki za to učno enoto trenutno niso določeni.
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </DetailSection>
+
       <LearningUnitDetailContent
         learningUnit={learningUnit}
         assessmentResult={assessmentResult}
@@ -276,21 +381,28 @@ function LearningUnitDetailPage() {
               </h2>
             </div>
 
-            <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-              Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
-              minut in preverite svoje znanje.
-            </p>
+            {canStartQuestionnaire ? (
+              <>
+                <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                  Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
+                  minut in preverite svoje znanje.
+                </p>
 
-            <button
-              type="button"
-              onClick={handleStartQuestionnaire}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
-            >
-              Odpri vprašalnik
-              <ExternalLink className="h-4 w-4" />
-            </button>
+                <button
+                  type="button"
+                  onClick={handleStartQuestionnaire}
+                  className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
+                >
+                  Odpri vprašalnik
+                  <ExternalLink className="h-4 w-4" />
+                </button>
+              </>
+            ) : (
+              <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                Vprašalnik za to učno enoto še ni pripravljen.
+              </p>
+            )}
           </div>
-
 
           <div className="hidden items-center justify-center md:flex">
             <div className="flex h-[190px] w-[240px] items-center justify-center">

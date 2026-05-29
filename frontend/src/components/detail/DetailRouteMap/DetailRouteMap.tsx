@@ -1,9 +1,31 @@
+import type { RouteNode } from '../../../types/route-node'
+
+/**
+ * Status elementa v prikazu poti.
+ *
+ * Uporaba:
+ * - locked: uporabnik še ne more dostopati do elementa
+ * - available: element je na voljo
+ * - completed: element je opravljen
+ * - current: element je trenutno izbran ali aktiven
+ */
 export type DetailRouteItemStatus =
   | 'locked'
   | 'available'
   | 'completed'
   | 'current'
 
+/**
+ * Oblika podatka, ki jo DetailRouteMap neposredno prikaže.
+ *
+ * To je UI-friendly oblika:
+ * - title je že pripravljen za prikaz
+ * - durationLabel je že oblikovan tekst
+ * - typeLabel je tekst, ki ga uporabnik vidi
+ *
+ * Ta tip lahko še naprej uporabljajo obstoječe detail strani,
+ * zato s to spremembo ne zlomimo stare kode.
+ */
 export type DetailRouteItem = {
   id: string
   title: string
@@ -17,11 +39,24 @@ export type DetailRouteItem = {
   status?: DetailRouteItemStatus
 }
 
+/**
+ * DetailRouteMap lahko sprejme:
+ * - DetailRouteItem[]: stara UI oblika, ki jo komponenta že podpira
+ * - RouteNode[]: nova normalizirana oblika iz detail-normalizers.ts
+ *
+ * S tem lahko postopoma prehajamo na bolj fleksibilen frontend model,
+ * brez da bi morali naenkrat refactorati vse detail strani.
+ */
+type DetailRouteMapItem = DetailRouteItem | RouteNode
+
 type DetailRouteMapProps = {
-  items: DetailRouteItem[]
+  items: DetailRouteMapItem[]
   emptyMessage?: string
 }
 
+/**
+ * Slovenske oznake za statuse.
+ */
 const statusLabels: Record<DetailRouteItemStatus, string> = {
   locked: 'Zaklenjeno',
   available: 'Na voljo',
@@ -29,6 +64,11 @@ const statusLabels: Record<DetailRouteItemStatus, string> = {
   current: 'Trenutno',
 }
 
+/**
+ * CSS className vrednosti za prikaz statusov.
+ *
+ * Barve ostajajo enake kot prej, da ne spreminjamo izgleda strani.
+ */
 const statusClasses: Record<DetailRouteItemStatus, string> = {
   locked: 'bg-[rgba(123,118,108,0.12)] text-[#6d6a61]',
   available: 'bg-[rgba(219,210,195,0.5)] text-[#5f665d]',
@@ -36,6 +76,99 @@ const statusClasses: Record<DetailRouteItemStatus, string> = {
   current: 'bg-[#31583b] text-white',
 }
 
+/**
+ * Oznake za tipe vsebin.
+ *
+ * RouteNode uporablja tehnične tipe:
+ * - learning_path
+ * - module
+ * - learning_unit
+ *
+ * Uporabniku pa prikažemo lepše slovenske oznake.
+ */
+const routeNodeTypeLabels: Record<RouteNode['type'], string> = {
+  learning_path: 'Učna pot',
+  module: 'Modul',
+  learning_unit: 'Učna enota',
+}
+
+/**
+ * Preveri, ali je item RouteNode.
+ *
+ * RouteNode ima vedno polje "type".
+ * DetailRouteItem tega polja nima.
+ */
+const isRouteNode = (item: DetailRouteMapItem): item is RouteNode => {
+  return 'type' in item
+}
+
+/**
+ * Formatira trajanje za prikaz.
+ *
+ * Trenutna baza uporablja duration_hours.
+ * Za prihodnost podpiramo tudi duration_min.
+ */
+const formatDurationLabel = (item: RouteNode): string | null => {
+  if (typeof item.durationHours === 'number') {
+    return `${String(item.durationHours).replace('.', ',')} h`
+  }
+
+  if (typeof item.durationMin === 'number') {
+    return `${item.durationMin} min`
+  }
+
+  return null
+}
+
+/**
+ * Pretvori RouteNode v DetailRouteItem.
+ *
+ * Zakaj to potrebujemo:
+ * DetailRouteMap interno že zna lepo prikazati DetailRouteItem.
+ * Namesto da prepišemo celotno komponento, RouteNode samo pretvorimo
+ * v obliko, ki jo komponenta že razume.
+ */
+const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    typeLabel: routeNodeTypeLabels[item.type],
+    durationLabel: formatDurationLabel(item),
+    order: item.order,
+    parallelGroup: item.parallelGroup,
+    isRequired: item.isRequired,
+    prerequisites: item.prerequisites,
+  }
+}
+
+/**
+ * Pretvori vsak vhodni item v DetailRouteItem.
+ *
+ * Če komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
+ * Če dobi nov RouteNode, ga pretvori.
+ */
+const normalizeDetailRouteItem = (
+  item: DetailRouteMapItem,
+): DetailRouteItem => {
+  if (isRouteNode(item)) {
+    return mapRouteNodeToDetailRouteItem(item)
+  }
+
+  return item
+}
+
+/**
+ * DetailRouteMap prikaže zaporedje povezanih vsebin na detail strani.
+ *
+ * Primeri uporabe:
+ * - LearningPathDetailPage: prikaže module znotraj učne poti
+ * - ModuleDetailPage: prikaže učne enote znotraj modula
+ * - prihodnje razširitve: prikaže tudi učno enoto direktno znotraj učne poti
+ *
+ * Komponenta ne bere direktno backend strukture.
+ * Dobi že pripravljene oziroma normalizirane podatke.
+ */
 function DetailRouteMap({
   items,
   emptyMessage = 'Ni elementov za prikaz poti.',
@@ -44,7 +177,9 @@ function DetailRouteMap({
     return <p className="text-sm text-[#706b60]">{emptyMessage}</p>
   }
 
-  const sortedItems = [...items].sort((firstItem, secondItem) => {
+  const normalizedItems = items.map(normalizeDetailRouteItem)
+
+  const sortedItems = [...normalizedItems].sort((firstItem, secondItem) => {
     const firstOrder = firstItem.order ?? Number.MAX_SAFE_INTEGER
     const secondOrder = secondItem.order ?? Number.MAX_SAFE_INTEGER
 

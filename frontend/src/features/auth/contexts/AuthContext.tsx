@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
+
 import { supabase } from '../../../services/supabase-client'
 import { createUserProfile } from '../../../services/user-service'
 import type { UserResponse } from '../../../types/user'
-import GuestQuestionnaireAnswersPopup from '../../questionnaire/components/GuestQuestionnaireAnswersPopup'
-import { hasGuestQuestionnaireAnswers } from '../../questionnaire/utils/guest-questionnaire-storage'
 
 type AuthContextType = {
   session: Session | null
@@ -25,8 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [localUser, setLocalUser] = useState<UserResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [showGuestQuestionnairePopup, setShowGuestQuestionnairePopup] =
-    useState(false)
 
   async function syncLocalUser(supabaseUser: User | null) {
     if (!supabaseUser) {
@@ -40,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         auth_user_id: supabaseUser.id,
         email: supabaseUser.email,
       })
+
       setLocalUser(profile)
     } catch (err) {
       console.error('Failed to sync local user profile:', err)
@@ -66,25 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  useEffect(() => {
-    if (!localUser) {
-      setShowGuestQuestionnairePopup(false)
-      return
-    }
-
-    setShowGuestQuestionnairePopup(hasGuestQuestionnaireAnswers())
-  }, [localUser?._id])
-
   return (
     <AuthContext.Provider value={{ session, user, localUser, isLoading }}>
       {children}
-
-      {localUser && showGuestQuestionnairePopup && (
-        <GuestQuestionnaireAnswersPopup
-          userId={localUser._id}
-          onClose={() => setShowGuestQuestionnairePopup(false)}
-        />
-      )}
     </AuthContext.Provider>
   )
 }

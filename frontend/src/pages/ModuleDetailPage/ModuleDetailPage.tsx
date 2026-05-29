@@ -1,6 +1,13 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Layers, Clock, Info, BookOpen, CircleHelp, ExternalLink } from 'lucide-react'
+import {
+  Layers,
+  Clock,
+  Info,
+  BookOpen,
+  CircleHelp,
+  ExternalLink,
+} from 'lucide-react'
 
 import {
   DetailActions,
@@ -21,6 +28,101 @@ import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
 import { useUserProgressState } from '../../hooks/useUserProgressState'
+import { getArrayOrEmpty } from '../../utils/display'
+import { normalizeDetailContent } from '../../utils/normalizers/detail-normalizers'
+
+/**
+ * ModuleDetailPage prikazuje podrobnosti enega modula.
+ *
+ * Namen strani:
+ * - naložiti modul iz backend-a
+ * - prikazati osnovne podatke modula
+ * - prikazati ključne besede in domene
+ * - prikazati učne enote znotraj modula prek LearningUnitVisualizer
+ * - omogočiti začetek vprašalnika, če ima modul povezane učne enote
+ * - prikazati uporabniške akcije: shrani, priljubljeno, zaključeno
+ *
+ * Zakaj uporabljamo normalizerje in varne helperje:
+ * Backend lahko vrne manjkajoča, prazna ali delno nepopolna polja.
+ * Zato podatke pred prikazom pretvorimo v stabilno obliko, da UI ne pade.
+ */
+
+/**
+ * Oblikuje trajanje modula za prikaz uporabniku.
+ *
+ * Trenutna MongoDB struktura uporablja duration_hours.
+ * Če trajanje manjka, prikažemo "Ni določeno".
+ */
+function formatDuration(durationHours?: number | null) {
+  if (!durationHours) {
+    return 'Ni določeno'
+  }
+
+  const formattedDuration = String(durationHours).replace('.', ',')
+
+  if (!Number.isInteger(durationHours)) {
+    return `${formattedDuration} h`
+  }
+
+  if (durationHours === 1) {
+    return '1 ura'
+  }
+
+  if (durationHours === 2) {
+    return '2 uri'
+  }
+
+  if (durationHours === 3 || durationHours === 4) {
+    return `${durationHours} ure`
+  }
+
+  return `${durationHours} ur`
+}
+
+/**
+ * Vrne samo veljavne string vrednosti iz array-a.
+ *
+ * Uporaba:
+ * - domains
+ *
+ * Če backend pošlje null, undefined ali napačne elemente,
+ * jih ne prikažemo.
+ */
+function getStringArrayOrEmpty(value: unknown): string[] {
+  return getArrayOrEmpty(value as string[])
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+/**
+ * Oblikuje domene za prikaz v compact meta podatkih.
+ *
+ * Če domen ni, prikažemo "Ni določeno".
+ */
+function formatDomains(domains: unknown) {
+  const safeDomains = getStringArrayOrEmpty(domains)
+
+  if (safeDomains.length === 0) {
+    return 'Ni določeno'
+  }
+
+  return safeDomains.join(', ')
+}
+
+/**
+ * Preveri, ali ima modul vsebino, iz katere je smiselno odpreti vprašalnik.
+ *
+ * Modul trenutno nima svojega seznama vprašanj v istem smislu kot učna enota.
+ * Vprašalnik za modul se običajno generira iz povezanih učnih enot.
+ * Zato gumb prikažemo samo, če ima modul vsaj eno učno enoto ali detail učno enoto.
+ */
+function hasQuestionnaireContent(
+  learningUnitReferences: unknown[],
+  learningUnitDetails: unknown[],
+) {
+  return learningUnitReferences.length > 0 || learningUnitDetails.length > 0
+}
 
 function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -29,7 +131,8 @@ function ModuleDetailPage() {
   const [moduleData, setModuleData] = useState<ModuleResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
+  const [assessmentResult, setAssessmentResult] =
+    useState<AssessmentResultResponse | null>(null)
 
   const { isFavorite, isSaved, isCompleted } = useUserProgressState({
     contentId: moduleData?._id,
@@ -37,19 +140,34 @@ function ModuleDetailPage() {
   })
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+
     async function loadData() {
-      if (!moduleId) return
+      if (!moduleId) {
+        setError('ID modula ni podan.')
+        setLoading(false)
+        return
+      }
+
       try {
         setLoading(true)
         setError(null)
+
         const data = await getModuleDetail(moduleId)
         setModuleData(data)
-      } catch (err: any) {
-        setError(err.message || 'Napaka pri nalaganju modula.')
+      } catch (err) {
+        console.error(err)
+
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError('Napaka pri nalaganju modula.')
+        }
       } finally {
         setLoading(false)
       }
     }
+
     loadData()
   }, [moduleId])
 
@@ -79,7 +197,7 @@ function ModuleDetailPage() {
     }
 
     const moduleResult = assessmentResult.module_results?.find(
-      (m) => m.module_id === moduleId,
+      (moduleResult) => moduleResult.module_id === moduleId,
     )
 
     const completed = new Set<string>()
@@ -93,9 +211,9 @@ function ModuleDetailPage() {
     }
 
     if (assessmentResult.learning_unit_results) {
-      assessmentResult.learning_unit_results.forEach((lu) => {
-        if (lu.is_completed_by_assessment) {
-          completed.add(lu.learning_unit_id)
+      assessmentResult.learning_unit_results.forEach((learningUnitResult) => {
+        if (learningUnitResult.is_completed_by_assessment) {
+          completed.add(learningUnitResult.learning_unit_id)
         }
       })
     }
@@ -105,6 +223,7 @@ function ModuleDetailPage() {
 
   function handleStartQuestionnaire() {
     if (!moduleId) return
+
     navigate(`/assessment?target_type=module&target_id=${moduleId}`)
   }
 
@@ -138,6 +257,16 @@ function ModuleDetailPage() {
     )
   }
 
+  const detail = normalizeDetailContent(moduleData, 'Neimenovan modul')
+  const learningUnitReferences = getArrayOrEmpty(moduleData.learning_units)
+  const learningUnitDetails = getArrayOrEmpty(moduleData.learning_unit_details)
+
+  const canUseContentActions = Boolean(detail.id)
+  const canStartQuestionnaire = hasQuestionnaireContent(
+    learningUnitReferences,
+    learningUnitDetails,
+  )
+
   return (
     <DetailPageShell>
       <div className="relative mb-8">
@@ -148,31 +277,33 @@ function ModuleDetailPage() {
           Modul
         </div>
 
-        <DetailActions
-          contentId={moduleData._id}
-          contentType="module"
-          initialIsFavorite={isFavorite}
-          initialIsSaved={isSaved}
-          initialIsCompleted={isCompleted}
-        />
+        {canUseContentActions && (
+          <DetailActions
+            contentId={detail.id}
+            contentType="module"
+            initialIsFavorite={isFavorite}
+            initialIsSaved={isSaved}
+            initialIsCompleted={isCompleted}
+          />
+        )}
       </div>
 
       <DetailHero
         eyebrow="Podrobnosti modula"
-        title={moduleData.title}
-        description={moduleData.short_description}
+        title={detail.title}
+        description={detail.description}
       >
         <DetailMeta
           variant="compact"
           items={[
             {
               label: 'Trajanje',
-              value: moduleData.duration_hours ? `${moduleData.duration_hours} h` : 'Ni določeno',
+              value: formatDuration(detail.durationHours),
               icon: <Clock className="h-5 w-5" />,
             },
             {
               label: 'Domene',
-              value: moduleData.domains?.join(', ') || 'Ni določeno',
+              value: formatDomains(moduleData.domains),
               icon: <Info className="h-5 w-5" />,
             },
           ]}
@@ -180,7 +311,7 @@ function ModuleDetailPage() {
 
         <div className="mt-6">
           <DetailTags
-            tags={moduleData.keywords || []}
+            tags={detail.keywords}
             emptyMessage="Ni dodanih ključnih besed."
           />
         </div>
@@ -195,29 +326,33 @@ function ModuleDetailPage() {
             {[
               {
                 label: 'Število učnih enot',
-                value: String(moduleData.learning_units?.length || 0),
+                value: String(learningUnitReferences.length),
                 icon: <BookOpen className="h-5 w-5" />,
               },
               {
                 label: 'Predviden čas',
-                value: moduleData.duration_hours ? `${moduleData.duration_hours} ur` : 'Ni na voljo',
+                value: formatDuration(detail.durationHours),
                 icon: <Clock className="h-5 w-5" />,
-              }
+              },
             ].map((item, index) => (
               <div
                 key={`${item.label}-${index}`}
                 className={[
                   'flex min-w-0 items-start gap-4 px-5 py-5',
-                  index !== 0 ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0' : '',
+                  index !== 0
+                    ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
+                    : '',
                 ].join(' ')}
               >
                 <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
                   {item.icon}
                 </div>
+
                 <div className="min-w-0">
                   <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
                     {item.label}
                   </p>
+
                   <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
                     {item.value}
                   </strong>
@@ -233,8 +368,8 @@ function ModuleDetailPage() {
         description="Vizualizacija poteka učnih enot znotraj modula."
       >
         <LearningUnitVisualizer
-          references={moduleData.learning_units || []}
-          details={moduleData.learning_unit_details || []}
+          references={learningUnitReferences}
+          details={learningUnitDetails}
           completedUnitIds={completedUnitIds}
           moduleId={moduleId}
         />
@@ -253,19 +388,27 @@ function ModuleDetailPage() {
               </h2>
             </div>
 
-            <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-              Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
-              minut in preverite svoje znanje.
-            </p>
+            {canStartQuestionnaire ? (
+              <>
+                <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                  Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
+                  minut in preverite svoje znanje.
+                </p>
 
-            <button
-              type="button"
-              onClick={handleStartQuestionnaire}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
-            >
-              Odpri vprašalnik
-              <ExternalLink className="h-4 w-4" />
-            </button>
+                <button
+                  type="button"
+                  onClick={handleStartQuestionnaire}
+                  className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
+                >
+                  Odpri vprašalnik
+                  <ExternalLink className="h-4 w-4" />
+                </button>
+              </>
+            ) : (
+              <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                Vprašalnik za ta modul še ni pripravljen.
+              </p>
+            )}
           </div>
 
           <div className="hidden items-center justify-center md:flex">

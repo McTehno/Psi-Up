@@ -176,7 +176,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 				className={[
 					'relative z-50 border-t border-[#eadfce] bg-[#fffdf8] shadow-[0_14px_34px_rgba(57,47,35,0.10)] transition-all duration-300 lg:hidden',
 					isMenuOpen
-						? 'max-h-64 opacity-100'
+						? 'max-h-[500px] opacity-100'
 						: 'pointer-events-none max-h-0 overflow-hidden opacity-0',
 				].join(' ')}
 			>

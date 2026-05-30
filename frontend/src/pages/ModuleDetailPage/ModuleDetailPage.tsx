@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
-  Layers,
+  Circle,
   Clock,
   Info,
   BookOpen,
@@ -272,7 +272,7 @@ function ModuleDetailPage() {
       <div className="relative mb-8">
         <div className={appStyles.header.step}>
           <div className={appStyles.header.stepIcon}>
-            <Layers className="h-5 w-5" />
+            <Circle className="h-5 w-5" />
           </div>
           Modul
         </div>

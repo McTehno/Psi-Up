@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { KeyRound } from 'lucide-react'
+import { Eye, EyeOff, KeyRound } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
 
@@ -14,6 +14,8 @@ export default function ChangePasswordForm({
 }: ChangePasswordFormProps) {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -73,15 +75,32 @@ export default function ChangePasswordForm({
         >
           Novo geslo
         </label>
-        <input
-          id="dashboard-new-password"
-          type="password"
-          value={newPassword}
-          onChange={(event) => setNewPassword(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)]"
-          placeholder="Vnesi novo geslo"
-          disabled={isSubmitting}
-        />
+
+        <div className="relative mt-2">
+          <input
+            id="dashboard-new-password"
+            type={showNewPassword ? 'text' : 'password'}
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+            className="w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 pr-12 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)]"
+            placeholder="Vnesi novo geslo"
+            disabled={isSubmitting}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowNewPassword((current) => !current)}
+            className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#8b7c65] transition-all duration-300 hover:bg-[#fff6eb] hover:text-[#d07a12] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isSubmitting}
+            aria-label={showNewPassword ? 'Skrij novo geslo' : 'Prikaži novo geslo'}
+          >
+            {showNewPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       <div>
@@ -91,19 +110,40 @@ export default function ChangePasswordForm({
         >
           Potrdi novo geslo
         </label>
-        <input
-          id="dashboard-confirm-password"
-          type="password"
-          value={confirmPassword}
-          onChange={(event) => setConfirmPassword(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)]"
-          placeholder="Ponovno vnesi novo geslo"
-          disabled={isSubmitting}
-        />
+
+        <div className="relative mt-2">
+          <input
+            id="dashboard-confirm-password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            className="w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 pr-12 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)]"
+            placeholder="Ponovno vnesi novo geslo"
+            disabled={isSubmitting}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword((current) => !current)}
+            className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#8b7c65] transition-all duration-300 hover:bg-[#fff6eb] hover:text-[#d07a12] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isSubmitting}
+            aria-label={
+              showConfirmPassword
+                ? 'Skrij potrditveno geslo'
+                : 'Prikaži potrditveno geslo'
+            }
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       <p className="rounded-2xl border border-[#eadfce]/70 bg-[#faf7f2]/60 px-4 py-3 text-xs leading-5 text-[#8b7c65]">
-        Po uspešni spremembi gesla boš odjavljen/a in preusmerjen/a na prijavo.
+        Po uspešni spremembi gesla boš odjavljena in preusmerjena na prijavo.
       </p>
 
       {errorMessage && (

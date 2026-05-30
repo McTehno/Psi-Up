@@ -16,12 +16,12 @@ export default function DashboardModal({
 }: DashboardModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-28 backdrop-blur-md sm:pt-32"
+      className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-20 backdrop-blur-md sm:pt-24"
       role="presentation"
       onMouseDown={onClose}
     >
       <div
-        className="dashboard-modal-card relative w-full max-w-lg rounded-[28px] border border-[#eadfce]/70 bg-[#fffdf8]/75 p-6 shadow-[0_24px_80px_rgba(57,47,35,0.16)] backdrop-blur-2xl sm:p-7"
+        className="dashboard-modal-card relative w-full max-w-md rounded-[28px] border border-[#eadfce]/70 bg-[#fffdf8]/80 p-5 shadow-[0_24px_80px_rgba(57,47,35,0.16)] backdrop-blur-2xl sm:p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="dashboard-modal-title"
@@ -54,7 +54,7 @@ export default function DashboardModal({
           )}
         </div>
 
-        <div className="mt-6">{children}</div>
+        <div className="mt-5">{children}</div>
       </div>
     </div>
   )

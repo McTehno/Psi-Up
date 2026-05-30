@@ -11,7 +11,6 @@ import {
 	ChevronRight,
 	Inbox,
 	Pencil,
-	KeyRound,
 } from 'lucide-react'
 
 import { getLearningPathById } from '../../services/learning-path-service'
@@ -22,7 +21,7 @@ import { useAuth } from '../../features/auth/contexts/AuthContext'
 import { useDashboardProgress } from '../../hooks/useDashboardProgress'
 import { supabase } from '../../services/supabase-client'
 import DashboardModal from '../../features/dashboard/components/DashboardModal'
-import EditProfileForm from '../../features/dashboard/components/EditProfileForm'
+import ProfileSettingsForm from '../../features/dashboard/components/ProfileSettingsForm'
 import ChangePasswordForm from '../../features/dashboard/components/ChangePasswordForm'
 
 import './DashboardPage.css'
@@ -144,7 +143,6 @@ export default function DashboardPage() {
 		navigate('/')
 	}
 
-	// Derive display name and email
 	const displayName =
 		localUser?.name ||
 		user?.user_metadata?.full_name ||
@@ -152,7 +150,6 @@ export default function DashboardPage() {
 		'Uporabnik'
 	const displayEmail = localUser?.email || user?.email || ''
 
-	// Get initials for avatar
 	const initials = displayName
 		.split(' ')
 		.map((w: string) => w[0])
@@ -160,7 +157,6 @@ export default function DashboardPage() {
 		.toUpperCase()
 		.slice(0, 2)
 
-	// Get items for active tab
 	function getTabItems(): { id: string; type: 'learning_path' | 'module' | 'learning_unit' }[] {
 		if (!progress) return []
 
@@ -216,7 +212,6 @@ export default function DashboardPage() {
 
 	const tabItems = getTabItems()
 
-	// Tab accent colors
 	const tabAccent: Record<DashboardTab, { underline: string; activeText: string }> = {
 		favorites: { underline: 'bg-[#31583b]', activeText: 'text-[#31583b]' },
 		saved: { underline: 'bg-[#d07a12]', activeText: 'text-[#d07a12]' },
@@ -230,21 +225,18 @@ export default function DashboardPage() {
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32">
 				{/* ── Profile Card ── */}
 				<div className="dashboard-profile-card relative overflow-hidden rounded-[28px] border border-[#eadfce]/60 bg-[#fffdf8]/70 p-6 sm:p-8 shadow-[0_16px_48px_rgba(57,47,35,0.08)] backdrop-blur-xl">
-					{/* Decorative background gradients */}
 					<div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px]">
 						<div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#d07a12]/[0.06] blur-3xl" />
 						<div className="absolute -left-12 bottom-0 h-36 w-36 rounded-full bg-[#31583b]/[0.05] blur-3xl" />
 					</div>
 
 					<div className="relative flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-7">
-						{/* Avatar */}
 						<div className="dashboard-avatar relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-2 border-[#eadfce] bg-gradient-to-br from-[#ede5d8] to-[#d4c4ad] sm:h-28 sm:w-28">
 							<span className="select-none font-display text-3xl font-bold text-[#6e614f] sm:text-4xl">
 								{initials}
 							</span>
 						</div>
 
-						{/* User Info */}
 						<div className="flex flex-1 flex-col items-center text-center sm:items-start sm:text-left">
 							<h1 className="font-display text-2xl font-bold tracking-tight text-[#2C2417] sm:text-3xl">
 								{displayName}
@@ -253,7 +245,6 @@ export default function DashboardPage() {
 								{displayEmail}
 							</p>
 
-							{/* Stats mini row */}
 							{progress && (
 								<div className="mt-4 flex items-center gap-5">
 									<div className="flex items-center gap-1.5">
@@ -283,7 +274,6 @@ export default function DashboardPage() {
 								</div>
 							)}
 
-							{/* Profile actions */}
 							{localUser && (
 								<div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
 									<button
@@ -294,20 +284,10 @@ export default function DashboardPage() {
 										<Pencil className="h-3.5 w-3.5" />
 										Uredi profil
 									</button>
-
-									<button
-										type="button"
-										onClick={() => setActiveModal('change-password')}
-										className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#e8c3af]/80 bg-[#fff6eb]/70 px-4 text-xs font-bold text-[#8d5033] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:shadow-md hover:scale-105 active:scale-95"
-									>
-										<KeyRound className="h-3.5 w-3.5" />
-										Spremeni geslo
-									</button>
 								</div>
 							)}
 						</div>
 
-						{/* Logout button */}
 						<button
 							type="button"
 							onClick={handleLogout}
@@ -321,7 +301,6 @@ export default function DashboardPage() {
 
 				{/* ── Tabs + Content Section ── */}
 				<div className="dashboard-content-section mt-8">
-					{/* Tab bar */}
 					<div className="flex items-center gap-1 rounded-2xl border border-[#eadfce]/60 bg-[#fffdf8]/50 p-1.5 shadow-sm backdrop-blur-lg">
 						{tabs.map((tab) => {
 							const isActive = activeTab === tab.key
@@ -343,17 +322,12 @@ export default function DashboardPage() {
 									<Icon
 										className={[
 											'h-4 w-4 shrink-0 transition-all duration-300',
-											isActive && tab.key === 'favorites'
-												? 'fill-current'
-												: '',
-											isActive && tab.key === 'saved'
-												? 'fill-current'
-												: '',
+											isActive && tab.key === 'favorites' ? 'fill-current' : '',
+											isActive && tab.key === 'saved' ? 'fill-current' : '',
 										].join(' ')}
 									/>
 									<span className="hidden sm:inline">{tab.label}</span>
 
-									{/* Active underline */}
 									{isActive && (
 										<span
 											className={`dashboard-tab-active absolute -bottom-1.5 left-[20%] right-[20%] h-[3px] rounded-full ${accent.underline}`}
@@ -365,7 +339,6 @@ export default function DashboardPage() {
 						})}
 					</div>
 
-					{/* Content area */}
 					<div className="mt-6 min-h-[240px]">
 						{isInitialLoading && (
 							<div className="flex flex-col items-center justify-center py-16">
@@ -429,16 +402,16 @@ export default function DashboardPage() {
 			{activeModal === 'edit-profile' && localUser && (
 				<DashboardModal
 					title="Uredi profil"
-					description="Posodobi uporabniško ime, ki se prikazuje v aplikaciji NIDiKo."
+					description="Uredi uporabniško ime in email za svoj račun."
 					onClose={() => setActiveModal(null)}
 				>
-					<EditProfileForm
+					<ProfileSettingsForm
 						localUser={localUser}
 						displayEmail={displayEmail}
 						onProfileUpdated={(updatedUser) => {
 							updateLocalUser(updatedUser)
-							setActiveModal(null)
 						}}
+						onOpenPasswordChange={() => setActiveModal('change-password')}
 						onCancel={() => setActiveModal(null)}
 					/>
 				</DashboardModal>
@@ -451,7 +424,7 @@ export default function DashboardPage() {
 					onClose={() => setActiveModal(null)}
 				>
 					<ChangePasswordForm
-						onCancel={() => setActiveModal(null)}
+						onCancel={() => setActiveModal('edit-profile')}
 						onPasswordChanged={async () => {
 							await supabase.auth.signOut()
 							navigate('/login')

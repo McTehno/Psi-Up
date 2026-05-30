@@ -8,6 +8,7 @@ class FakeCollection:
         self.documents = documents
         self.last_find_filter = None
         self.last_find_one_filter = None
+        self.inserted_documents: list[dict[str, Any]] = []
 
     def find(self, filter_query: dict[str, Any] | None = None):
         # Podpremo osnovne MongoDB filtre, ki jih trenutno uporabljajo repository metode.
@@ -32,17 +33,38 @@ class FakeCollection:
                 if self._matches_or_filter(document, filter_query["$or"])
             ]
 
-        return []
+        return [
+            document
+            for document in self.documents
+            if self._matches_exact_filter(document, filter_query)
+        ]
 
     def find_one(self, filter_query: dict[str, Any]):
-        # Podpremo iskanje po _id, ker ga uporabljajo get_by_id metode.
+        # Podpremo osnovno iskanje po poljih, npr. _id ali user_id.
         self.last_find_one_filter = filter_query
 
         for document in self.documents:
-            if document.get("_id") == filter_query.get("_id"):
+            if self._matches_exact_filter(document, filter_query):
                 return document
 
         return None
+
+    def insert_one(self, document: dict[str, Any]):
+        # Simuliramo MongoDB insert_one in dokument shranimo v fake kolekcijo.
+        self.documents.append(document)
+        self.inserted_documents.append(document)
+
+        return {"inserted_id": document.get("_id")}
+
+    def _matches_exact_filter(
+        self,
+        document: dict[str, Any],
+        filter_query: dict[str, Any],
+    ) -> bool:
+        return all(
+            document.get(field_name) == expected_value
+            for field_name, expected_value in filter_query.items()
+        )
 
     def _matches_or_filter(
         self,

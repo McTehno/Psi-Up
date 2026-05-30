@@ -692,15 +692,6 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
     phase === 'completed' &&
     hasAnsweredEveryLearningPathQuestionWithYes &&
     assessmentProgress.completedLeafCount === assessmentProgress.totalLeafCount
-
-  const totalSteps =
-    phase === 'completed'
-      ? Math.max(visibleQuestionIds.length, 1)
-      : questionnaire.length || 1
-  const currentStepNumber =
-    phase === 'completed'
-      ? Math.max(visibleQuestionIds.length, 1)
-      : Math.min(activeQuestionIndex + 1, totalSteps)
   const confirmedQuestionCount =
     phase === 'completed'
       ? Math.min(visibleQuestionIds.length, questionnaire.length)
@@ -854,10 +845,6 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
     setVisibleQuestionIds((currentQuestionIds) =>
       currentQuestionIds.slice(0, activeQuestionIndex + 1),
     )
-  }
-
-  function handleVoiceSupportClick() {
-    // Azure/LLM voice flow bo dodan v naslednjem koraku skozi src/services.
   }
 
   function shouldShowLearningPathCompletion(
@@ -1047,10 +1034,9 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
       selectedAnswer={selectedAnswer}
     >
       <AssessmentHeader
-        stepNumber={currentStepNumber}
-        totalSteps={totalSteps}
-        label={currentLabel}
-        onVoiceSupportClick={handleVoiceSupportClick}
+        label="Vprašalnik"
+        currentQuestion={currentQuestion}
+        isVoiceSupportDisabled={!currentQuestion}
       />
 
       <AssessmentIntro title={currentTitle} description={currentDescription} />

@@ -436,7 +436,7 @@ function LearningPathDetailPage() {
             )}
           </div>
 
-          <div className="pointer-events-none absolute inset-y-6 right-6 z-50 hidden w-[420px] min-[1500px]:block">
+          <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
             <CollapsibleChatPanel
               title="Chat pride kasneje"
               description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."

@@ -12,7 +12,7 @@ import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 import LoginPage from '../pages/LoginPage'
 import HomeRedesignPage from '../pages/HomeRedesign/HomeRedesignPage'
 import DashboardPage from '../pages/DashboardPage'
-
+import AboutPage from '../pages/AboutPage'
 
 function RootLayout() {
   return (
@@ -37,6 +37,10 @@ export const router = createBrowserRouter([
         path: 'home-redesign',
         element: <HomeRedesignPage />,
       },
+      {
+  path: 'about',
+  element: <AboutPage />,
+},
       {
         path: 'search',
         element: <SearchPage />,

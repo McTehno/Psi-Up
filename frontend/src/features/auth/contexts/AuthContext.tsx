@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
+
 import { supabase } from '../../../services/supabase-client'
 import { createUserProfile } from '../../../services/user-service'
 import type { UserResponse } from '../../../types/user'
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         auth_user_id: supabaseUser.id,
         email: supabaseUser.email,
       })
+
       setLocalUser(profile)
     } catch (err) {
       console.error('Failed to sync local user profile:', err)

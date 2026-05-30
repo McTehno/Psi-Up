@@ -84,3 +84,18 @@
   animation: card-stagger 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
+
+@keyframes dashboard-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dashboard-modal-card {
+  animation: dashboard-modal-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

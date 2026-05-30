@@ -10,6 +10,7 @@ type AuthContextType = {
   user: User | null
   localUser: UserResponse | null
   isLoading: boolean
+  updateLocalUser: (updatedUser: UserResponse) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   localUser: null,
   isLoading: true,
+  updateLocalUser: () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -45,6 +47,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  function updateLocalUser(updatedUser: UserResponse) {
+    setLocalUser(updatedUser)
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -65,7 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ session, user, localUser, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        user,
+        localUser,
+        isLoading,
+        updateLocalUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

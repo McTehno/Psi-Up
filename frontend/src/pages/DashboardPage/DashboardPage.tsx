@@ -10,6 +10,8 @@ import {
 	CircleDot,
 	ChevronRight,
 	Inbox,
+	Pencil,
+	KeyRound,
 } from 'lucide-react'
 
 import { getLearningPathById } from '../../services/learning-path-service'
@@ -19,10 +21,14 @@ import { getLearningUnitById } from '../../services/learning-unit-service'
 import { useAuth } from '../../features/auth/contexts/AuthContext'
 import { useDashboardProgress } from '../../hooks/useDashboardProgress'
 import { supabase } from '../../services/supabase-client'
+import DashboardModal from '../../features/dashboard/components/DashboardModal'
+import EditProfileForm from '../../features/dashboard/components/EditProfileForm'
+import ChangePasswordForm from '../../features/dashboard/components/ChangePasswordForm'
 
 import './DashboardPage.css'
 
 type DashboardTab = 'favorites' | 'saved' | 'completed'
+type DashboardModalType = 'edit-profile' | 'change-password' | null
 
 const tabs: { key: DashboardTab; label: string; icon: typeof Heart }[] = [
 	{ key: 'favorites', label: 'Priljubljeno', icon: Heart },
@@ -128,9 +134,10 @@ function ContentItem({ id, type, index }: ContentItemProps) {
 
 export default function DashboardPage() {
 	const navigate = useNavigate()
-	const { user, localUser, isLoading: isAuthLoading } = useAuth()
+	const { user, localUser, isLoading: isAuthLoading, updateLocalUser } = useAuth()
 	const { progress, isLoading: isProgressLoading, error } = useDashboardProgress()
 	const [activeTab, setActiveTab] = useState<DashboardTab>('favorites')
+	const [activeModal, setActiveModal] = useState<DashboardModalType>(null)
 
 	const handleLogout = async () => {
 		await supabase.auth.signOut()
@@ -275,6 +282,29 @@ export default function DashboardPage() {
 									</div>
 								</div>
 							)}
+
+							{/* Profile actions */}
+							{localUser && (
+								<div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+									<button
+										type="button"
+										onClick={() => setActiveModal('edit-profile')}
+										className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#c3d4c0]/80 bg-[#f2f8f1]/70 px-4 text-xs font-bold text-[#31583b] shadow-sm transition-all duration-300 hover:border-[#31583b]/30 hover:bg-[#f2f8f1] hover:shadow-md hover:scale-105 active:scale-95"
+									>
+										<Pencil className="h-3.5 w-3.5" />
+										Uredi profil
+									</button>
+
+									<button
+										type="button"
+										onClick={() => setActiveModal('change-password')}
+										className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#e8c3af]/80 bg-[#fff6eb]/70 px-4 text-xs font-bold text-[#8d5033] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:shadow-md hover:scale-105 active:scale-95"
+									>
+										<KeyRound className="h-3.5 w-3.5" />
+										Spremeni geslo
+									</button>
+								</div>
+							)}
 						</div>
 
 						{/* Logout button */}
@@ -395,6 +425,40 @@ export default function DashboardPage() {
 					</div>
 				</div>
 			</div>
+
+			{activeModal === 'edit-profile' && localUser && (
+				<DashboardModal
+					title="Uredi profil"
+					description="Posodobi uporabniško ime, ki se prikazuje v aplikaciji NIDiKo."
+					onClose={() => setActiveModal(null)}
+				>
+					<EditProfileForm
+						localUser={localUser}
+						displayEmail={displayEmail}
+						onProfileUpdated={(updatedUser) => {
+							updateLocalUser(updatedUser)
+							setActiveModal(null)
+						}}
+						onCancel={() => setActiveModal(null)}
+					/>
+				</DashboardModal>
+			)}
+
+			{activeModal === 'change-password' && (
+				<DashboardModal
+					title="Spremeni geslo"
+					description="Nastavi novo geslo za svoj prijavni račun."
+					onClose={() => setActiveModal(null)}
+				>
+					<ChangePasswordForm
+						onCancel={() => setActiveModal(null)}
+						onPasswordChanged={async () => {
+							await supabase.auth.signOut()
+							navigate('/login')
+						}}
+					/>
+				</DashboardModal>
+			)}
 		</div>
 	)
 }

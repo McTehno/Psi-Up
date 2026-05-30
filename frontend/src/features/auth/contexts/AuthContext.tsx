@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 
 import { supabase } from '../../../services/supabase-client'
-import { createUserProfile } from '../../../services/user-service'
+import { createUserProfile, updateUser } from '../../../services/user-service'
 import type { UserResponse } from '../../../types/user'
 
 type AuthContextType = {
@@ -39,6 +39,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         auth_user_id: supabaseUser.id,
         email: supabaseUser.email,
       })
+
+      if (supabaseUser.email && profile.email !== supabaseUser.email) {
+        const updatedProfile = await updateUser(profile._id, {
+          email: supabaseUser.email,
+        })
+
+        setLocalUser(updatedProfile)
+        return
+      }
 
       setLocalUser(profile)
     } catch (err) {

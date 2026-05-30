@@ -13,7 +13,7 @@ import {
   Layers3,
 } from 'lucide-react'
 
-import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
+import mountainJourneyBg from '../../../assets/mountain-journey-bg.webp'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
 import type { AssessmentStatus } from '../../../types/assessment'
 
@@ -993,38 +993,38 @@ export function LearningPathMountain({
 
   const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
 
-function renderPathSegments(segments: PathSegment[], className: string) {
-  if (segments.length === 0) {
-    return null
-  }
+  function renderPathSegments(segments: PathSegment[], className: string) {
+    if (segments.length === 0) {
+      return null
+    }
 
-  return (
-    <svg
-      className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      {segments.map((segment) => (
-        <path
-          key={`${segment.from.id}-${segment.to.id}`}
-          d={createWavyPathD(
-            segment.from,
-            segment.to,
-            segment.isParallelTransition ? 1.5 : 2,
-          )}
-          fill="none"
-          stroke="#344E41"
-          strokeWidth="3.45"
-          strokeLinecap="round"
-          strokeDasharray="1.4 1.25"
-          opacity="0.62"
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
-    </svg>
-  )
-}
+    return (
+      <svg
+        className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        {segments.map((segment) => (
+          <path
+            key={`${segment.from.id}-${segment.to.id}`}
+            d={createWavyPathD(
+              segment.from,
+              segment.to,
+              segment.isParallelTransition ? 1.5 : 2,
+            )}
+            fill="none"
+            stroke="#344E41"
+            strokeWidth="3.45"
+            strokeLinecap="round"
+            strokeDasharray="1.4 1.25"
+            opacity="0.62"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+    )
+  }
 
   function renderNodes(
     nodesToRender: PositionedMountainNode[],
@@ -1035,19 +1035,17 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       const hasParallelLabel = node.parallelCount > 1
       const nodeAssessmentClassName = getNodeAssessmentClassName(
         node.assessmentStatus,
-      )      
+      )
       return (
         <button
           key={node.id}
           type="button"
           onClick={() => setSelectedNodeId(node.id)}
-          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 font-bold shadow-lg transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14 ${nodeAssessmentClassName} ${
-            hasParallelLabel
+          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 font-bold shadow-lg transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14 ${nodeAssessmentClassName} ${hasParallelLabel
               ? 'text-[0.78rem] min-[1500px]:text-sm'
               : 'text-base min-[1500px]:text-lg'
-          } ${className} ${
-            isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : ''
-          }`}
+            } ${className} ${isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : ''
+            }`}
           style={{
             left: `${node.x}%`,
             top: `${node.y}%`,

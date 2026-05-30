@@ -32,6 +32,23 @@ type BackendEntity = {
 function getBackendEntityId(entity: BackendEntity) {
   return entity.id ?? entity._id
 }
+function getTextOrFallback(
+  value: string | null | undefined,
+  fallback: string,
+) {
+  return value?.trim() || fallback
+}
+
+function getStringArrayOrEmpty(value: unknown) {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
 
 function getModuleReferenceById(
   moduleId: string,
@@ -74,7 +91,12 @@ function createMountainNodes(
   learningPath: LearningPathDetailResponse,
   assessmentResult: AssessmentResultResponse | null = null,
 ): LearningPathMountainNode[] {
-  const moduleDetails = learningPath.module_details ?? []
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+  const moduleReferences = Array.isArray(learningPath.modules)
+    ? learningPath.modules
+    : []
   const nodes: LearningPathMountainNode[] = []
 
   moduleDetails.forEach((module: ModuleResponse, index) => {
@@ -84,16 +106,16 @@ function createMountainNodes(
       return
     }
 
-    const moduleReference = getModuleReferenceById(
-      moduleId,
-      learningPath.modules ?? [],
-    )
+    const moduleReference = getModuleReferenceById(moduleId, moduleReferences)
 
     nodes.push({
       id: moduleId,
       order: moduleReference?.order ?? index + 1,
-      title: module.title,
-      description: module.short_description,
+      title: getTextOrFallback(module.title, 'Neimenovan modul'),
+      description: getTextOrFallback(
+        module.short_description,
+        'Opis modula trenutno ni na voljo.',
+      ),
       moduleId,
       durationHours: module.duration_hours,
       isRequired: moduleReference?.is_required ?? false,
@@ -108,7 +130,13 @@ function createMountainNodes(
 }
 
 function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
-  const referenceModuleIds = (learningPath.modules ?? [])
+  const modules = Array.isArray(learningPath.modules)
+    ? learningPath.modules
+    : []
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+  const referenceModuleIds = modules
     .map((moduleReference) => moduleReference.module_id)
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 
@@ -116,7 +144,7 @@ function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
     return referenceModuleIds
   }
 
-  return (learningPath.module_details ?? [])
+  return moduleDetails
     .map((module) => getBackendEntityId(module as BackendEntity))
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 }
@@ -168,7 +196,11 @@ function getLearningPathEntityId(
 }
 
 function getLearningUnitCount(learningPath: LearningPathDetailResponse) {
-  return (learningPath.module_details ?? []).reduce(
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+
+  return moduleDetails.reduce(
     (totalCount, module) => totalCount + (module.learning_units?.length ?? 0),
     0,
   )
@@ -208,23 +240,23 @@ function LearningPathDetailPage() {
           return
         }
 
-      const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
+        const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
 
-      const sessionAssessmentResult =
-        getSessionAssessmentResult('learning_path', targetId) ??
-        (targetId !== learningPathId
-          ? getSessionAssessmentResult('learning_path', learningPathId)
-          : null)
+        const sessionAssessmentResult =
+          getSessionAssessmentResult('learning_path', targetId) ??
+          (targetId !== learningPathId
+            ? getSessionAssessmentResult('learning_path', learningPathId)
+            : null)
 
-      const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
-        learningPathDetail,
-        sessionAssessmentResult,
-      )
+        const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
+          learningPathDetail,
+          sessionAssessmentResult,
+        )
 
-      setLearningPath(learningPathDetail)
-      setAssessmentResult(sessionAssessmentResult)
-      setIsCompletedByAssessment(nextIsCompletedByAssessment)
-      setIsCompleted(nextIsCompletedByAssessment)
+        setLearningPath(learningPathDetail)
+        setAssessmentResult(sessionAssessmentResult)
+        setIsCompletedByAssessment(nextIsCompletedByAssessment)
+        setIsCompleted(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
           return
@@ -294,23 +326,35 @@ function LearningPathDetailPage() {
     )
   }
 
-  if (!learningPath || mountainNodes.length === 0) {
+  if (!learningPath) {
     return (
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <EmptyState
-            title="Ni modulov"
-            message="Ta učna pot trenutno nima modulov za prikaz."
+            title="Učna pot ni najdena"
+            message="Učna pot, ki jo iščete, ne obstaja ali pa je bila izbrisana."
           />
         </div>
       </main>
     )
   }
-
+  const learningPathTitle = getTextOrFallback(
+    learningPath.title,
+    'Neimenovana učna pot',
+  )
+  const learningPathDescription = getTextOrFallback(
+    learningPath.short_description,
+    'Opis trenutno ni na voljo.',
+  )
+  const learningPathKeywords = getStringArrayOrEmpty(learningPath.keywords)
   const moduleCount =
     learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
   const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
+
+  const hasMountainNodes = mountainNodes.length > 0
+
+  const canStartQuestionnaire = moduleCount > 0
 
   function handleFavoriteClick() {
     // TODO: priklop na user-progress-service, ko bo na voljo userId
@@ -333,16 +377,16 @@ function LearningPathDetailPage() {
           </p>
 
           <h1 className="mt-5 max-w-5xl font-serif text-[clamp(3.2rem,5.8vw,6.4rem)] leading-[0.92] tracking-[-0.035em] text-[var(--color-brown-900)]">
-            {learningPath.title}
+            {learningPathTitle}
           </h1>
 
           <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--color-brown-600)]">
-            {learningPath.short_description}
+            {learningPathDescription}
           </p>
 
           <div className="mt-7">
             <DetailTags
-              tags={learningPath.keywords || []}
+              tags={learningPathKeywords}
               emptyMessage="Ni dodanih ključnih besed."
             />
           </div>
@@ -366,21 +410,30 @@ function LearningPathDetailPage() {
 
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">
-            <LearningPathMountain
-              nodes={mountainNodes}
-              durationLabel={formatDuration(
-                learningPath.duration_hours,
-                learningPath.duration_min,
-              )}
-              moduleCount={moduleCount}
-              learningUnitCount={learningUnitCount}
-              isCompleted={isCompleted}
-              celebrateCompletedOnMount={isCompletedByAssessment}
-              onFavoriteClick={handleFavoriteClick}
-              onSaveClick={handleSaveClick}
-              onCompletedChange={handleCompletedChange}
-              className="h-full"
-            />
+            {hasMountainNodes ? (
+              <LearningPathMountain
+                nodes={mountainNodes}
+                durationLabel={formatDuration(
+                  learningPath.duration_hours,
+                  learningPath.duration_min,
+                )}
+                moduleCount={moduleCount}
+                learningUnitCount={learningUnitCount}
+                isCompleted={isCompleted}
+                celebrateCompletedOnMount={isCompletedByAssessment}
+                onFavoriteClick={handleFavoriteClick}
+                onSaveClick={handleSaveClick}
+                onCompletedChange={handleCompletedChange}
+                className="h-full"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
+                <EmptyState
+                  title="Ni modulov"
+                  message="Ta učna pot trenutno nima modulov za prikaz."
+                />
+              </div>
+            )}
           </div>
 
           <div className="pointer-events-none absolute inset-y-6 right-6 z-50 hidden w-[420px] min-[1500px]:block">
@@ -416,19 +469,27 @@ function LearningPathDetailPage() {
                 </h2>
               </div>
 
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
-                Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
-                in preverite svoje znanje.
-              </p>
+              {canStartQuestionnaire ? (
+                <>
+                  <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
+                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
+                    in preverite svoje znanje.
+                  </p>
 
-              <button
-                type="button"
-                onClick={handleStartQuestionnaire}
-                className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
-              >
-                Odpri vprašalnik
-                <ExternalLink className="h-4 w-4" />
-              </button>
+                  <button
+                    type="button"
+                    onClick={handleStartQuestionnaire}
+                    className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
+                  >
+                    Odpri vprašalnik
+                    <ExternalLink className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
+                  Vprašalnik za to učno pot še ni pripravljen.
+                </p>
+              )}
             </div>
 
             <img

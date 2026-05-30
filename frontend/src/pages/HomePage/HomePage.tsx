@@ -78,8 +78,8 @@ function HomePage() {
 
 			<div
 				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive
-						? 'bg-[#fffdf8]/60 backdrop-blur-md'
-						: 'pointer-events-none bg-transparent backdrop-blur-none'
+					? 'bg-[#fffdf8]/60 backdrop-blur-md'
+					: 'pointer-events-none bg-transparent backdrop-blur-none'
 					}`}
 				onClick={() => setIsSearchActive(false)}
 				aria-hidden="true"

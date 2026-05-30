@@ -37,9 +37,9 @@ class SearchResultResponse(BaseModel):
 
     id: str
     type: SearchContentType
-    title: str
+    title: Optional[str] = ""
     short_description: Optional[str] = None
-    keywords: List[str] = Field(default_factory=list)
+    keywords: Optional[List[str]] = Field(default_factory=list)
 
 
 class SearchResponse(BaseModel):

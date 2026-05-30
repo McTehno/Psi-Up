@@ -1,0 +1,43 @@
+name: psi-up-home-redesign
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: psi-up-backend:home-redesign
+    container_name: psi_up_backend_redesign
+    ports:
+      - "8003:8000"
+    env_file:
+      - ./backend/.env
+    # Povozimo command iz Dockerfile, da se uporabi --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Mountamo kodo za live-reload
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    image: psi-up-frontend:home-redesign
+    container_name: psi_up_frontend_redesign
+    ports:
+      # Povežemo se na Vite port namesto na nginx 80, izpostavljen na 5176 na gostitelju
+      - "5176:5173"
+    volumes:
+      # Priklopimo frontend mapo in izoliramo node_modules v kontejnerju
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      # Spodbuja live reload na Windowsu prek Docker volumnov
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      # Povežemo frontend na redesign backend na portu 8003
+      - VITE_API_BASE_URL=http://localhost:8003/api
+      - VITE_BACKEND_HOST=http://localhost:8003
+    depends_on:
+      - backend
+    restart: unless-stopped

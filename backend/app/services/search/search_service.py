@@ -104,7 +104,7 @@ class SearchService:
         return {
             "id": item.get("_id") or item.get("id"),
             "type": content_type,
-            "title": item.get("title"),
+            "title": item.get("title") or "",
             "short_description": item.get("short_description"),
-            "keywords": item.get("keywords", []),
+            "keywords": item.get("keywords") or [],
         }

@@ -57,7 +57,9 @@ export function useSearch() {
         })
 
         const apiBaseUrl =
-          import.meta.env.VITE_API_URL || 'http://localhost:8000'
+          import.meta.env.VITE_API_URL ||
+          import.meta.env.VITE_BACKEND_HOST ||
+          'http://localhost:8000'
 
         const response = await fetch(
           `${apiBaseUrl}/api/search?${urlParams.toString()}`,

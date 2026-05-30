@@ -6,14 +6,12 @@ import type { UserResponse } from '../../../../types/user'
 
 type EditProfileFormProps = {
   localUser: UserResponse
-  displayEmail: string
   onProfileUpdated: (updatedUser: UserResponse) => void
   onCancel: () => void
 }
 
 export default function EditProfileForm({
   localUser,
-  displayEmail,
   onProfileUpdated,
   onCancel,
 }: EditProfileFormProps) {
@@ -56,7 +54,7 @@ export default function EditProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label
           htmlFor="dashboard-profile-name"
@@ -73,18 +71,6 @@ export default function EditProfileForm({
           placeholder="Vnesi uporabniško ime"
           disabled={isSubmitting}
         />
-      </div>
-
-      <div>
-        <p className="text-sm font-bold text-[#504639]">Email</p>
-        <div className="mt-2 rounded-2xl border border-[#eadfce]/70 bg-[#faf7f2]/60 px-4 py-3">
-          <p className="truncate text-sm font-semibold text-[#8b7c65]">
-            {displayEmail || 'Email ni na voljo'}
-          </p>
-        </div>
-        <p className="mt-2 text-xs leading-5 text-[#a89880]">
-          Email je povezan s prijavnim računom in ga bomo urejali ločeno.
-        </p>
       </div>
 
       {errorMessage && (

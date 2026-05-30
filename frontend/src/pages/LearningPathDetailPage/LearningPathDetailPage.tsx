@@ -5,6 +5,7 @@ import questionnaireIllustration from '../../assets/questionnaire-illustration.p
 import EmptyState from '../../components/common/EmptyState'
 import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
+import AuthRequiredDialog from '../../components/common/AuthRequiredDialog'
 import { DetailTags } from '../../components/detail'
 import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
@@ -12,17 +13,18 @@ import {
   LearningPathOverviewCard,
   type LearningPathMountainNode,
 } from '../../features/learning-paths/components/LearningPathMountain'
-import { getLearningPathDetail } from '../../services/learning-path-service'
-import type { LearningPathDetailResponse } from '../../types/learning-path'
-import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
+import { useUserProgressActions } from '../../hooks/useUserProgressActions'
+import { useUserProgressState } from '../../hooks/useUserProgressState'
 import { getSessionAssessmentResult } from '../../services/assessment-session-service'
+import { getLearningPathDetail } from '../../services/learning-path-service'
 import type {
   AssessmentResultResponse,
   AssessmentStatus,
 } from '../../types/assessment'
+import type { LearningPathDetailResponse } from '../../types/learning-path'
+import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
 
 const MAX_VISIBLE_NODES = 7
-
 
 type BackendEntity = {
   id?: string
@@ -32,6 +34,7 @@ type BackendEntity = {
 function getBackendEntityId(entity: BackendEntity) {
   return entity.id ?? entity._id
 }
+
 function getTextOrFallback(
   value: string | null | undefined,
   fallback: string,
@@ -215,10 +218,44 @@ function LearningPathDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
-
   const [assessmentResult, setAssessmentResult] =
     useState<AssessmentResultResponse | null>(null)
   const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
+
+  const learningPathContentId = useMemo(() => {
+    if (!learningPath) {
+      return undefined
+    }
+
+    const contentId = getLearningPathEntityId(learningPath, learningPathId)
+    return contentId || undefined
+  }, [learningPath, learningPathId])
+
+  const {
+    isFavorite: initialIsFavorite,
+    isSaved: initialIsSaved,
+    isCompleted: initialIsCompleted,
+  } = useUserProgressState({
+    contentId: learningPathContentId,
+    contentType: 'learning_path',
+  })
+
+  const {
+    isCompleted: progressIsCompleted,
+    errorMessage: progressErrorMessage,
+    clearError: clearProgressError,
+    toggleAction,
+  } = useUserProgressActions({
+    contentId: learningPathContentId,
+    contentType: 'learning_path',
+    initialIsFavorite,
+    initialIsSaved,
+    initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
+  })
+
+  useEffect(() => {
+    setIsCompleted(isCompletedByAssessment || progressIsCompleted)
+  }, [isCompletedByAssessment, progressIsCompleted])
 
   useEffect(() => {
     let isActive = true
@@ -240,7 +277,10 @@ function LearningPathDetailPage() {
           return
         }
 
-        const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
+        const targetId = getLearningPathEntityId(
+          learningPathDetail,
+          learningPathId,
+        )
 
         const sessionAssessmentResult =
           getSessionAssessmentResult('learning_path', targetId) ??
@@ -303,6 +343,39 @@ function LearningPathDetailPage() {
     navigate(`/assessment?target_type=learning_path&target_id=${targetId}`)
   }
 
+  async function handleFavoriteClick() {
+    if (!learningPathContentId) {
+      return false
+    }
+
+    const nextState = await toggleAction('favorite')
+    return Boolean(nextState)
+  }
+
+  async function handleSaveClick() {
+    if (!learningPathContentId) {
+      return false
+    }
+
+    const nextState = await toggleAction('save')
+    return Boolean(nextState)
+  }
+
+  async function handleCompletedChange(_nextIsCompleted: boolean) {
+    if (!learningPathContentId) {
+      return false
+    }
+
+    const nextState = await toggleAction('completed')
+
+    if (!nextState) {
+      return false
+    }
+
+    setIsCompleted(isCompletedByAssessment || nextState.isCompleted)
+    return true
+  }
+
   if (isLoading) {
     return (
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
@@ -338,6 +411,7 @@ function LearningPathDetailPage() {
       </main>
     )
   }
+
   const learningPathTitle = getTextOrFallback(
     learningPath.title,
     'Neimenovana učna pot',
@@ -351,22 +425,8 @@ function LearningPathDetailPage() {
     learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
   const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
-
   const hasMountainNodes = mountainNodes.length > 0
-
   const canStartQuestionnaire = moduleCount > 0
-
-  function handleFavoriteClick() {
-    // TODO: priklop na user-progress-service, ko bo na voljo userId
-  }
-
-  function handleSaveClick() {
-    // TODO: priklop na user-progress-service, ko bo na voljo userId
-  }
-
-  function handleCompletedChange(nextIsCompleted: boolean) {
-    setIsCompleted(nextIsCompleted)
-  }
 
   return (
     <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
@@ -392,7 +452,7 @@ function LearningPathDetailPage() {
           </div>
         </section>
 
-        <section className="mb-4 min-[1500px]:hidden">
+        <section className="mb-6">
           <LearningPathOverviewCard
             durationLabel={formatDuration(
               learningPath.duration_hours,
@@ -413,12 +473,6 @@ function LearningPathDetailPage() {
             {hasMountainNodes ? (
               <LearningPathMountain
                 nodes={mountainNodes}
-                durationLabel={formatDuration(
-                  learningPath.duration_hours,
-                  learningPath.duration_min,
-                )}
-                moduleCount={moduleCount}
-                learningUnitCount={learningUnitCount}
                 isCompleted={isCompleted}
                 celebrateCompletedOnMount={isCompletedByAssessment}
                 onFavoriteClick={handleFavoriteClick}
@@ -472,8 +526,8 @@ function LearningPathDetailPage() {
               {canStartQuestionnaire ? (
                 <>
                   <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
-                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
-                    in preverite svoje znanje.
+                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
+                    nekaj minut in preverite svoje znanje.
                   </p>
 
                   <button
@@ -501,6 +555,11 @@ function LearningPathDetailPage() {
           </div>
         </section>
       </div>
+
+      <AuthRequiredDialog
+        isOpen={progressErrorMessage === 'AUTH_REQUIRED'}
+        onClose={clearProgressError}
+      />
     </main>
   )
 }

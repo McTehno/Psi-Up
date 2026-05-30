@@ -39,14 +39,11 @@ type PositionedMountainNode = LearningPathMountainNode & {
 
 type LearningPathMountainProps = {
   nodes: LearningPathMountainNode[]
-  durationLabel: string
-  moduleCount: number
-  learningUnitCount: number
   isCompleted?: boolean
   celebrateCompletedOnMount?: boolean
-  onFavoriteClick?: () => void
-  onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
+  onFavoriteClick?: LearningPathActionHandler
+  onSaveClick?: LearningPathActionHandler
+  onCompletedChange?: LearningPathCompletedActionHandler
   className?: string
 }
 
@@ -70,6 +67,12 @@ type PathSegment = {
 type LayoutVariant = 'mobile' | 'tablet' | 'desktop'
 
 type MountainAction = 'favorite' | 'save' | 'completed' | null
+
+type LearningPathActionResult = boolean | void | Promise<boolean | void>
+type LearningPathActionHandler = () => LearningPathActionResult
+type LearningPathCompletedActionHandler = (
+  isCompleted: boolean,
+) => LearningPathActionResult
 
 const MAX_VISIBLE_NODES = 7
 const PARALLEL_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -651,9 +654,9 @@ function MountainActions({
   onCompletedChange,
 }: {
   isCompleted: boolean
-  onFavoriteClick?: () => void
-  onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
+  onFavoriteClick?: LearningPathActionHandler
+  onSaveClick?: LearningPathActionHandler
+  onCompletedChange?: LearningPathCompletedActionHandler
 }) {
   const [activeAction, setActiveAction] = useState<MountainAction>(null)
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted)
@@ -662,25 +665,32 @@ function MountainActions({
     setLocalIsCompleted(isCompleted)
   }, [isCompleted])
 
-  function handleAction(action: Exclude<MountainAction, null>) {
-    setActiveAction(action)
-
+  async function handleAction(action: Exclude<MountainAction, null>) {
+    let nextCompletedValue: boolean | null = null
+ 
     if (action === 'favorite') {
-      onFavoriteClick?.()
+      const result = await onFavoriteClick?.()
+      if (result === false) return
     }
-
+ 
     if (action === 'save') {
-      onSaveClick?.()
+      const result = await onSaveClick?.()
+      if (result === false) return
     }
-
+ 
     if (action === 'completed') {
-      setLocalIsCompleted((currentValue) => {
-        const nextValue = !currentValue
-        onCompletedChange?.(nextValue)
-        return nextValue
-      })
+      nextCompletedValue = !localIsCompleted
+ 
+      const result = await onCompletedChange?.(nextCompletedValue)
+      if (result === false) return
     }
-
+ 
+    setActiveAction(action)
+ 
+    if (nextCompletedValue !== null) {
+      setLocalIsCompleted(nextCompletedValue)
+    }
+ 
     window.setTimeout(() => {
       setActiveAction(null)
     }, 450)
@@ -690,7 +700,7 @@ function MountainActions({
     <div className="flex flex-wrap items-center gap-3">
       <button
         type="button"
-        onClick={() => handleAction('favorite')}
+        onClick={() => void handleAction('favorite')}
         className={[
           'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
           activeAction === 'favorite'
@@ -705,7 +715,7 @@ function MountainActions({
 
       <button
         type="button"
-        onClick={() => handleAction('save')}
+        onClick={() => void handleAction('save')}
         className={[
           'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
           activeAction === 'save'
@@ -720,7 +730,7 @@ function MountainActions({
 
       <button
         type="button"
-        onClick={() => handleAction('completed')}
+        onClick={() => void handleAction('completed')}
         className={[
           'group inline-flex h-12 min-w-[210px] flex-1 items-center justify-center gap-2.5 rounded-full border px-5 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(49,88,59,0.14)] sm:flex-none',
           localIsCompleted
@@ -744,9 +754,9 @@ export type LearningPathOverviewCardProps = {
   learningUnitCount: number
   hiddenNodeCount?: number
   isCompleted: boolean
-  onFavoriteClick?: () => void
-  onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
+  onFavoriteClick?: LearningPathActionHandler
+  onSaveClick?: LearningPathActionHandler
+  onCompletedChange?: LearningPathCompletedActionHandler
   className?: string
 }
 
@@ -870,14 +880,8 @@ function createWavyPathD(
 
 export function LearningPathMountain({
   nodes,
-  durationLabel,
-  moduleCount,
-  learningUnitCount,
   isCompleted = false,
   celebrateCompletedOnMount = false,
-  onFavoriteClick,
-  onSaveClick,
-  onCompletedChange,
   className = '',
 }: LearningPathMountainProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -990,8 +994,6 @@ export function LearningPathMountain({
     () => [...mobilePathSegments, ...mobileFinishPathSegments],
     [mobilePathSegments, mobileFinishPathSegments],
   )
-
-  const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
 
 function renderPathSegments(segments: PathSegment[], className: string) {
   if (segments.length === 0) {
@@ -1147,23 +1149,6 @@ function renderPathSegments(segments: PathSegment[], className: string) {
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
 
-      <LearningPathOverviewCard
-        durationLabel={durationLabel}
-        moduleCount={moduleCount}
-        learningUnitCount={learningUnitCount}
-        hiddenNodeCount={hiddenNodeCount}
-        isCompleted={isCompleted}
-        onFavoriteClick={onFavoriteClick}
-        onSaveClick={onSaveClick}
-        onCompletedChange={(nextIsCompleted) => {
-          if (nextIsCompleted) {
-            setCompletionCelebrationKey((currentKey) => currentKey + 1)
-          }
-
-          onCompletedChange?.(nextIsCompleted)
-        }}
-        className="absolute left-8 top-8 z-40 hidden w-[460px] max-w-[calc(100%-3rem)] min-[1500px]:block"
-      />
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul

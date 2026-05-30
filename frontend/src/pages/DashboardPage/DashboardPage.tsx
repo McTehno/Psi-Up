@@ -59,24 +59,24 @@ const typeIcons: Record<string, typeof Route> = {
 	learning_unit: CircleDot,
 }
 
-const typeColors: Record<string, { bg: string; border: string; text: string; iconBg: string }> = {
+const typeColors: Record<
+	string,
+	{ border: string; iconBg: string; iconText: string }
+> = {
 	learning_path: {
-		bg: 'bg-[#f2f8f1]',
-		border: 'border-[#c3d4c0]',
-		text: 'text-[#3d5a3e]',
-		iconBg: 'bg-[#31583b]',
+		border: 'border-forest-200',
+		iconBg: 'bg-forest-100',
+		iconText: 'text-forest-700',
 	},
 	module: {
-		bg: 'bg-[#fff6eb]',
-		border: 'border-[#e8c3af]',
-		text: 'text-[#8d5033]',
-		iconBg: 'bg-[#d07a12]',
+		border: 'border-blue-200',
+		iconBg: 'bg-blue-100',
+		iconText: 'text-blue-700',
 	},
 	learning_unit: {
-		bg: 'bg-[#faf7f2]',
-		border: 'border-[#ede5d8]',
-		text: 'text-[#6e614f]',
-		iconBg: 'bg-[#8b7355]',
+		border: 'border-amber-200',
+		iconBg: 'bg-amber-100',
+		iconText: 'text-amber-700',
 	},
 }
 
@@ -110,23 +110,23 @@ function ContentItem({ id, type, index }: ContentItemProps) {
 	return (
 		<Link
 			to={route}
-			className={`dashboard-content-card group flex items-center gap-4 rounded-2xl border ${colors.border} ${colors.bg} p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-[#d07a12]/30`}
+			className={`dashboard-content-card group flex items-center gap-4 rounded-2xl border ${colors.border} bg-white/70 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-forest-300 hover:shadow-lg`}
 			style={{ animationDelay: `${index * 60}ms` }}
 		>
 			<div
-				className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${colors.iconBg} text-white shadow-sm transition-transform duration-300 group-hover:scale-110`}
+				className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${colors.iconBg} ${colors.iconText} shadow-sm transition-transform duration-300 group-hover:scale-110`}
 			>
 				<Icon className="h-5 w-5" />
 			</div>
 
 			<div className="min-w-0 flex-1">
-				<p className="text-sm font-bold text-[#2C2417] truncate">{title}</p>
-				<p className={`text-xs font-semibold ${colors.text} mt-0.5`}>
+				<p className="truncate text-sm font-bold text-[#2C2417]">{title}</p>
+				<p className="mt-0.5 text-xs font-semibold text-[#8b7c65]">
 					{typeLabels[type]}
 				</p>
 			</div>
 
-			<ChevronRight className="h-4 w-4 shrink-0 text-[#c2b49e] transition-all duration-300 group-hover:text-[#d07a12] group-hover:translate-x-0.5" />
+			<ChevronRight className="h-4 w-4 shrink-0 text-[#c2b49e] transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#d07a12]" />
 		</Link>
 	)
 }
@@ -224,7 +224,7 @@ export default function DashboardPage() {
 		<div className="min-h-screen pb-20">
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32">
 				{/* ── Profile Card ── */}
-				<div className="dashboard-profile-card relative overflow-hidden rounded-[28px] border border-[#eadfce]/60 bg-[#fffdf8]/70 p-6 sm:p-8 shadow-[0_16px_48px_rgba(57,47,35,0.08)] backdrop-blur-xl">
+				<div className="dashboard-profile-card relative overflow-hidden rounded-[28px] border border-[#eadfce]/60 bg-[#fffdf8]/70 p-6 shadow-[0_16px_48px_rgba(57,47,35,0.08)] backdrop-blur-xl sm:p-8">
 					<div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px]">
 						<div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#d07a12]/[0.06] blur-3xl" />
 						<div className="absolute -left-12 bottom-0 h-36 w-36 rounded-full bg-[#31583b]/[0.05] blur-3xl" />
@@ -279,7 +279,7 @@ export default function DashboardPage() {
 									<button
 										type="button"
 										onClick={() => setActiveModal('edit-profile')}
-										className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#c3d4c0]/80 bg-[#f2f8f1]/70 px-4 text-xs font-bold text-[#31583b] shadow-sm transition-all duration-300 hover:border-[#31583b]/30 hover:bg-[#f2f8f1] hover:shadow-md hover:scale-105 active:scale-95"
+										className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#c3d4c0]/80 bg-[#f2f8f1]/70 px-4 text-xs font-bold text-[#31583b] shadow-sm transition-all duration-300 hover:scale-105 hover:border-[#31583b]/30 hover:bg-[#f2f8f1] hover:shadow-md active:scale-95"
 									>
 										<Pencil className="h-3.5 w-3.5" />
 										Uredi profil
@@ -291,7 +291,7 @@ export default function DashboardPage() {
 						<button
 							type="button"
 							onClick={handleLogout}
-							className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-red-200/80 bg-red-50/60 px-4 text-sm font-semibold text-red-600 shadow-sm transition-all duration-300 hover:bg-red-100 hover:border-red-300 hover:shadow-md hover:scale-105 active:scale-95 cursor-pointer sm:absolute sm:right-8 sm:top-8"
+							className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-red-200/80 bg-red-50/60 px-4 text-sm font-semibold text-red-600 shadow-sm transition-all duration-300 hover:scale-105 hover:border-red-300 hover:bg-red-100 hover:shadow-md active:scale-95 sm:absolute sm:right-8 sm:top-8"
 						>
 							<LogOut className="h-4 w-4" />
 							<span className="hidden sm:inline">Odjava</span>
@@ -313,10 +313,10 @@ export default function DashboardPage() {
 									type="button"
 									onClick={() => setActiveTab(tab.key)}
 									className={[
-										'relative flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-bold tracking-wide transition-all duration-300 cursor-pointer',
+										'relative flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-bold tracking-wide transition-all duration-300',
 										isActive
 											? `${accent.activeText} bg-white shadow-[0_4px_16px_rgba(57,47,35,0.07)]`
-											: 'text-[#a89880] hover:text-[#6e614f] hover:bg-white/40',
+											: 'text-[#a89880] hover:bg-white/40 hover:text-[#6e614f]',
 									].join(' ')}
 								>
 									<Icon
@@ -375,7 +375,7 @@ export default function DashboardPage() {
 								</p>
 								<Link
 									to="/search"
-									className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#d07a12] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:bg-[#b3660f] hover:scale-105 hover:shadow-md"
+									className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#d07a12] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#b3660f] hover:shadow-md"
 								>
 									Razišči vsebine
 									<ChevronRight className="h-4 w-4" />

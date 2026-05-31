@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.schemas.module_schema import ModuleResponse
+from app.schemas.module_schema import ModuleDetailResponse, ModuleResponse
 from app.schemas.questionnaire_schema import QuestionnaireResponse, QuestionnaireTargetType
 from app.services.modules.module_service import ModuleService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
@@ -28,18 +28,22 @@ def get_module_service() -> ModuleService:
     Vrne ModuleService instanco.
 
     Ustvari povezavo:
-    database -> ModuleRepository + LearningUnitRepository -> ModuleService.
+    database -> ModuleRepository + LearningUnitRepository + LearningPathRepository
+    -> ModuleService.
     """
 
     database = get_database()
 
     module_repository = ModuleRepository(database)
     learning_unit_repository = LearningUnitRepository(database)
+    learning_path_repository = LearningPathRepository(database)
+
     learning_unit_service = LearningUnitService(learning_unit_repository)
 
     return ModuleService(
         module_repository=module_repository,
         learning_unit_service=learning_unit_service,
+        learning_path_repository=learning_path_repository,
     )
 
 def get_questionnaire_service() -> QuestionnaireService:
@@ -112,7 +116,7 @@ async def get_module_by_id(
     return module
 
 
-@router.get("/{module_id}/detail")
+@router.get("/{module_id}/detail", response_model=ModuleDetailResponse)
 async def get_module_detail(
     module_id: str,
     module_service: ModuleService = Depends(get_module_service),

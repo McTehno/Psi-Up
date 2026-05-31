@@ -18,15 +18,20 @@ class ModuleService:
     def __init__(
         self,
         module_repository: Any,
-        learning_unit_service: Any
+        learning_unit_service: Any,
+        learning_path_repository: Optional[Any] = None,
     ):
         """
         Inicializira service z repository-jem za module
         in service-om za učne enote.
+
+        Opcijsko prejme tudi repository za učne poti, kadar service potrebuje
+        povezane učne poti za detail prikaz modula.
         """
 
         self.module_repository = module_repository
         self.learning_unit_service = learning_unit_service
+        self.learning_path_repository = learning_path_repository
 
     def _get_string_value(
         self,
@@ -262,7 +267,45 @@ class ModuleService:
             for module in modules
             if isinstance(module, dict)
         ]
+    
+    def _normalize_recommended_learning_path(
+        self,
+        learning_path: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Normalizira kratek prikaz učne poti za recommended_learning_paths.
 
+        Namen:
+        - preprečiti ResponseValidationError
+        - vrniti samo osnovne podatke, ki jih frontend potrebuje
+        - ne vračati celotnega modules seznama v tem prikazu
+        """
+
+        return {
+            "_id": self._get_string_value(learning_path.get("_id")),
+            "title": self._get_string_value(learning_path.get("title")),
+            "short_description": self._get_string_value(
+                learning_path.get("short_description")
+            ),
+            "duration_hours": learning_path.get("duration_hours"),
+            "keywords": self._get_string_list_value(learning_path.get("keywords")),
+        }
+
+
+    def _normalize_recommended_learning_paths(
+        self,
+        learning_paths: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        """
+        Normalizira seznam priporočenih učnih poti.
+        """
+
+        return [
+            self._normalize_recommended_learning_path(learning_path)
+            for learning_path in learning_paths
+            if isinstance(learning_path, dict)
+        ]
+    
     async def get_all_modules(self) -> List[Dict[str, Any]]:
         """
         Vrne vse module.
@@ -343,8 +386,20 @@ class ModuleService:
             learning_unit_ids
         )
 
+        recommended_learning_paths: List[Dict[str, Any]] = []
+
+        if self.learning_path_repository is not None:
+            learning_paths = await self.learning_path_repository.get_learning_paths_by_module_id(
+                module_id=module_id,
+                limit=6,
+            )
+            recommended_learning_paths = self._normalize_recommended_learning_paths(
+                learning_paths
+            )
+
         module["learning_units"] = learning_unit_references
         module["learning_unit_details"] = learning_units
+        module["recommended_learning_paths"] = recommended_learning_paths
 
         return module
 

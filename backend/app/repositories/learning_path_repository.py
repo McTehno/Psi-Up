@@ -44,7 +44,33 @@ class LearningPathRepository:
         collection = self.database[self.collection_name]
 
         return collection.find_one({"_id": learning_path_id})
+    
+    async def get_learning_paths_by_module_id(
+        self,
+        module_id: str,
+        limit: int = 6,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vrne učne poti, ki vsebujejo izbrani modul.
 
+        Uporablja se za prikaz priporočenih oziroma povezanih učnih poti
+        na detail strani modula.
+
+        Rezultat omejimo, da frontend ne prikaže preveč povezanih učnih poti.
+        """
+
+        if not module_id:
+            return []
+
+        collection = self.database[self.collection_name]
+
+        return list(
+            collection.find(
+                {
+                    "modules.module_id": module_id
+                }
+            ).limit(limit)
+        )
     async def search_learning_paths(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče učne poti po iskalnem nizu.

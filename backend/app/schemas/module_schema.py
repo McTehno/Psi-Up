@@ -2,7 +2,10 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas.learning_unit_schema import LearningUnitReferenceResponse
+from app.schemas.learning_unit_schema import (
+    LearningUnitReferenceResponse,
+    LearningUnitResponse,
+)
 
 
 class ModuleResponse(BaseModel):
@@ -22,6 +25,8 @@ class ModuleResponse(BaseModel):
     learning_units: List[LearningUnitReferenceResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(populate_by_name=True)
+
+
 class RecommendedLearningPathResponse(BaseModel):
     """
     Shema za kratek prikaz priporočene učne poti na detail strani modula.
@@ -44,31 +49,17 @@ class ModuleDetailResponse(ModuleResponse):
     """
     Shema za detail prikaz modula.
 
-    Razširi osnovni modul s priporočenimi učnimi potmi, ki vsebujejo ta modul.
+    Razširi osnovni modul s podrobnostmi učnih enot in priporočenimi
+    učnimi potmi, ki vsebujejo ta modul.
     Rezultat je namenjen detail strani modula.
     """
+
+    learning_unit_details: List[LearningUnitResponse] = Field(default_factory=list)
 
     recommended_learning_paths: List[RecommendedLearningPathResponse] = Field(
         default_factory=list
     )
-    
-class RecommendedModuleResponse(BaseModel):
-    """
-    Shema za kratek prikaz priporočenega modula na detail strani učne enote.
 
-    Uporablja se, ko želimo prikazati module, ki vsebujejo izbrano učno enoto.
-    Ne vključuje learning_units seznama, ker frontend za ta prikaz potrebuje samo
-    osnovne podatke o modulu.
-    """
-
-    id: str = Field(alias="_id")
-    title: str
-    short_description: str
-    duration_hours: Optional[float] = None
-    keywords: List[str] = Field(default_factory=list)
-    domains: List[str] = Field(default_factory=list)
-
-    model_config = ConfigDict(populate_by_name=True)
 
 class ModuleReferenceResponse(BaseModel):
     """

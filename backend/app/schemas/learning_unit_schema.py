@@ -2,7 +2,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas.module_schema import RecommendedModuleResponse
 
 class DigCompCompetencyResponse(BaseModel):
     """
@@ -60,6 +59,23 @@ class LearningUnitResponse(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
     
+class RecommendedModuleResponse(BaseModel):
+    """
+    Shema za kratek prikaz priporočenega modula na detail strani učne enote.
+
+    Definirana je tukaj, da se izognemo circular importu med
+    learning_unit_schema.py in module_schema.py.
+    """
+
+    id: str = Field(alias="_id")
+    title: str
+    short_description: str
+    duration_hours: Optional[float] = None
+    keywords: List[str] = Field(default_factory=list)
+    domains: List[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(populate_by_name=True)
+
 class LearningUnitDetailResponse(LearningUnitResponse):
     """
     Shema za detail prikaz učne enote.

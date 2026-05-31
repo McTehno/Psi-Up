@@ -22,7 +22,36 @@ class ModuleResponse(BaseModel):
     learning_units: List[LearningUnitReferenceResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(populate_by_name=True)
+class RecommendedLearningPathResponse(BaseModel):
+    """
+    Shema za kratek prikaz priporočene učne poti na detail strani modula.
 
+    Uporablja se, ko želimo prikazati učne poti, ki vsebujejo izbrani modul.
+    Ne vključuje modules seznama, ker frontend za ta prikaz potrebuje samo
+    osnovne podatke o učni poti.
+    """
+
+    id: str = Field(alias="_id")
+    title: str
+    short_description: str
+    duration_hours: Optional[float] = None
+    keywords: List[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class ModuleDetailResponse(ModuleResponse):
+    """
+    Shema za detail prikaz modula.
+
+    Razširi osnovni modul s priporočenimi učnimi potmi, ki vsebujejo ta modul.
+    Rezultat je namenjen detail strani modula.
+    """
+
+    recommended_learning_paths: List[RecommendedLearningPathResponse] = Field(
+        default_factory=list
+    )
+    
 class RecommendedModuleResponse(BaseModel):
     """
     Shema za kratek prikaz priporočenega modula na detail strani učne enote.

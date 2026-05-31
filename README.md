@@ -1,4 +1,4 @@
-# Psi-Up
+# NIDiKo
 
 ## 1. Vizija projekta
 Vizija projekta je razviti pregleden in uporabniku prijazen priporočilni sistem, ki posamezniku pomaga izbrati ustrezno učno pot za razvoj digitalnih kompetenc. Sistem na podlagi uporabnikovega predznanja, ciljev in odgovorov v vprašalniku predlaga smiselno strukturirano učno pot, sestavljeno iz modulov in pripadajočih učnih enot.
@@ -165,6 +165,6 @@ Komentarje uporabljamo samo tam, kjer pojasnijo pomembno logiko ali odločitev.
 
 Dober primer:
 ```text
-# For the initial version, the system returns one recommended learning path based on the selected competency.
+# V začetni različici sistem vrne eno priporočeno učno pot na podlagi izbrane kompetence.
 ```
 

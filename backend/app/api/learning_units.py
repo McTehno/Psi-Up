@@ -4,7 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.database.mongodb import get_database
 
-from app.schemas.learning_unit_schema import LearningUnitResponse
+from app.schemas.learning_unit_schema import (
+    LearningUnitDetailResponse,
+    LearningUnitResponse,
+)
+
 from app.schemas.questionnaire_schema import (
     QuestionnaireResponse,
     QuestionnaireTargetType,
@@ -28,13 +32,18 @@ def get_learning_unit_service() -> LearningUnitService:
     Vrne LearningUnitService instanco.
 
     Ustvari povezavo:
-    database -> LearningUnitRepository -> LearningUnitService.
+    database -> LearningUnitRepository + ModuleRepository -> LearningUnitService.
     """
 
     database = get_database()
-    learning_unit_repository = LearningUnitRepository(database)
 
-    return LearningUnitService(learning_unit_repository)
+    learning_unit_repository = LearningUnitRepository(database)
+    module_repository = ModuleRepository(database)
+
+    return LearningUnitService(
+        learning_unit_repository=learning_unit_repository,
+        module_repository=module_repository,
+    )
 
 
 def get_questionnaire_service() -> QuestionnaireService:
@@ -103,7 +112,7 @@ async def get_learning_unit_by_id(
     return learning_unit
 
 
-@router.get("/{learning_unit_id}/detail", response_model=LearningUnitResponse)
+@router.get("/{learning_unit_id}/detail", response_model=LearningUnitDetailResponse)
 async def get_learning_unit_detail(
     learning_unit_id: str,
     learning_unit_service: LearningUnitService = Depends(get_learning_unit_service),

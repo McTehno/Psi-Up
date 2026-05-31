@@ -17,11 +17,16 @@ import {
   DetailHero,
   DetailMeta,
   DetailPageShell,
+  DetailRecommendationCarousel,
   DetailSection,
   DetailTags,
 } from '../../components/detail'
 import { appStyles } from '../../design'
-import type { LearningUnitResponse } from '../../types/learning-unit'
+import type {
+  LearningUnitDetailResponse,
+  LearningUnitResponse,
+} from '../../types/learning-unit'
+
 import { getLearningUnitDetail } from '../../services/learning-unit-service'
 import LearningUnitDetailContent from '../../features/learning-units/components/LearningUnitDetailContent'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
@@ -229,7 +234,7 @@ function LearningUnitDetailPage() {
   const { learningUnitId } = useParams()
   const navigate = useNavigate()
 
-  const [learningUnit, setLearningUnit] = useState<LearningUnitResponse | null>(null)
+  const [learningUnit, setLearningUnit] = useState<LearningUnitDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
@@ -328,6 +333,15 @@ function LearningUnitDetailPage() {
   const basicInfoFields = getBasicInfoFields(detail.extraFields)
   const canUseContentActions = Boolean(detail.id)
   const canStartQuestionnaire = hasSelfAssessmentQuestions(learningUnit)
+  const recommendedModuleItems = learningUnit.recommended_modules.map((module) => ({
+    id: module._id,
+    title: module.title,
+    description: module.short_description,
+    durationHours: module.duration_hours,
+    keywords: module.keywords,
+    href: `/modules/${module._id}`,
+    typeLabel: 'Modul',
+  }))
 
   return (
     <DetailPageShell>
@@ -431,7 +445,11 @@ function LearningUnitDetailPage() {
         learningUnit={learningUnit}
         assessmentResult={assessmentResult}
       />
-
+      <DetailRecommendationCarousel
+        title="Priporočeni moduli"
+        description="Moduli, ki vključujejo to učno enoto in ti lahko pomagajo razumeti širši kontekst vsebine."
+        items={recommendedModuleItems}
+      />
       <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
         <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
           <div>

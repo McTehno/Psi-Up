@@ -18,12 +18,20 @@ class LearningUnitService:
     Cilj ni spremeniti podatkov v bazi, ampak zagotoviti stabilen API response.
     """
 
-    def __init__(self, learning_unit_repository: Any):
-        """
-        Inicializira service z repository-jem za učne enote.
-        """
+def __init__(
+    self,
+    learning_unit_repository: Any,
+    module_repository: Optional[Any] = None,
+):
+    """
+    Inicializira service z repository-jem za učne enote.
 
-        self.learning_unit_repository = learning_unit_repository
+    Opcijsko prejme tudi repository za module, kadar service potrebuje
+    povezane module za detail prikaz učne enote.
+    """
+
+    self.learning_unit_repository = learning_unit_repository
+    self.module_repository = module_repository
 
     def _get_string_value(
         self,
@@ -152,6 +160,7 @@ class LearningUnitService:
         )
 
         return normalized_learning_unit
+    
 
     def _normalize_learning_units(
         self,
@@ -181,6 +190,43 @@ class LearningUnitService:
         learning_units = await self.learning_unit_repository.get_all_learning_units()
 
         return self._normalize_learning_units(learning_units)
+    
+def _normalize_recommended_module(
+    self,
+    module: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Normalizira kratek prikaz modula za recommended_modules.
+
+    Namen:
+    - preprečiti ResponseValidationError
+    - vrniti samo osnovne podatke, ki jih frontend potrebuje
+    - ne vračati celotnega learning_units seznama v tem prikazu
+    """
+
+    return {
+        "_id": self._get_string_value(module.get("_id")),
+        "title": self._get_string_value(module.get("title")),
+        "short_description": self._get_string_value(
+            module.get("short_description")
+        ),
+        "duration_hours": module.get("duration_hours"),
+        "keywords": self._get_string_list_value(module.get("keywords")),
+        "domains": self._get_string_list_value(module.get("domains")),
+    }
+def _normalize_recommended_modules(
+    self,
+    modules: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Normalizira seznam priporočenih modulov.
+    """
+
+    return [
+        self._normalize_recommended_module(module)
+        for module in modules
+        if isinstance(module, dict)
+    ]
 
     async def get_learning_unit_by_id(
         self,
@@ -220,23 +266,35 @@ class LearningUnitService:
 
         return self._normalize_learning_units(learning_units)
 
-    async def get_learning_unit_detail(
-        self,
-        learning_unit_id: str
-    ) -> Optional[Dict[str, Any]]:
-        """
-        Vrne podrobnosti učne enote za detail page.
+async def get_learning_unit_detail(
+    self,
+    learning_unit_id: str
+) -> Optional[Dict[str, Any]]:
+    """
+    Vrne podrobnosti učne enote za detail page.
 
-        Ker get_learning_unit_by_id že normalizira dokument,
-        tukaj dobimo stabilno obliko za response_model.
-        """
+    Poleg osnovnih podatkov učne enote doda tudi priporočene module,
+    ki vsebujejo to učno enoto.
+    """
 
-        learning_unit = await self.get_learning_unit_by_id(learning_unit_id)
+    learning_unit = await self.get_learning_unit_by_id(learning_unit_id)
 
-        if not learning_unit:
-            return None
+    if not learning_unit:
+        return None
 
-        return learning_unit
+    recommended_modules: List[Dict[str, Any]] = []
+
+    if self.module_repository is not None:
+        modules = await self.module_repository.get_modules_by_learning_unit_id(
+            learning_unit_id=learning_unit_id,
+            limit=6,
+        )
+        recommended_modules = self._normalize_recommended_modules(modules)
+
+    return {
+        **learning_unit,
+        "recommended_modules": recommended_modules,
+    }
 
     async def get_self_assessment_questions(
         self,

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
 import EmptyState from '../../../components/common/EmptyState';
+import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker';
 import { GoalBadge } from './GoalBadge';
 import bg0 from '../../../assets/module-details-background/module-details-background0.webp';
 import bg1 from '../../../assets/module-details-background/module-details-background1.webp';
@@ -25,13 +26,15 @@ interface LearningUnitVisualizerProps {
   details?: LearningUnitResponse[];
   completedUnitIds?: string[];
   moduleId?: string;
+  assessmentPositionUnitId?: string | null;
 }
 
 export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   references,
   details = [],
   completedUnitIds = [],
-  moduleId
+  moduleId,
+  assessmentPositionUnitId
 }) => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -340,6 +343,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const detail = details.find(d => d._id === ref.learning_unit_id);
             const isUnitCompleted = completedUnitIds.includes(ref.learning_unit_id);
             const isNodeActive = isMobile && activeNodeIdx === idx;
+            const isAssessmentPosition = assessmentPositionUnitId === ref.learning_unit_id;
 
             return (
               <div
@@ -347,6 +351,13 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 className="absolute z-10 flex flex-col items-center justify-start transform -translate-x-1/2"
                 style={{ left: `${(pos.x / 800) * 100}%`, top: `${pos.y - 28}px` }}
               >
+                {isAssessmentPosition && (
+                  <AssessmentPositionMarker
+                    label="Tukaj se nahajaš"
+                    className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
+                  />
+                )}
+
                 {/* Center Node */}
                 <button
                   type="button"
@@ -358,12 +369,16 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     ${isNodeActive
                       ? 'ring-4 ring-[#C98A43]/60 scale-110'
                       : 'hover:ring-8'}
-                    ${isUnitCompleted
-                      ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
-                      : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
+                    ${isAssessmentPosition
+                      ? 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
+                      : isUnitCompleted
+                        ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
+                        : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
                   `}
                 >
-                  {isUnitCompleted ? (
+                  {isAssessmentPosition ? (
+                    <BookOpen className="w-6 h-6 text-white" strokeWidth={2} />
+                  ) : isUnitCompleted ? (
                     <Check className="w-6 h-6 text-white" strokeWidth={3} />
                   ) : (
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />

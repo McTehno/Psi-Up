@@ -267,6 +267,15 @@ function ModuleDetailPage() {
     learningUnitDetails,
   )
 
+  let assessmentPositionUnitId: string | null = null
+  if (assessmentResult) {
+    if (assessmentResult.start_learning_unit_id) {
+      assessmentPositionUnitId = assessmentResult.start_learning_unit_id
+    } else if (assessmentResult.recommended_next_learning_units?.length > 0) {
+      assessmentPositionUnitId = assessmentResult.recommended_next_learning_units[0]
+    }
+  }
+
   return (
     <DetailPageShell>
       <div className="relative mb-8">
@@ -372,6 +381,7 @@ function ModuleDetailPage() {
           details={learningUnitDetails}
           completedUnitIds={completedUnitIds}
           moduleId={moduleId}
+          assessmentPositionUnitId={assessmentPositionUnitId}
         />
       </DetailSection>
 

@@ -16,18 +16,20 @@ import {
 import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
 import type { AssessmentStatus } from '../../../types/assessment'
+import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker'
 
-export type LearningPathMountainNode = {
-  id: string
-  order: number
-  title: string
-  description: string
-  moduleId: string
-  durationHours?: number | null
-  isRequired?: boolean
-  parallelGroup?: string | null
-  assessmentStatus?: AssessmentStatus | null
-}
+ export type LearningPathMountainNode = {
+   id: string
+   order: number
+   title: string
+   description: string
+   moduleId: string
+   durationHours?: number | null
+   isRequired?: boolean
+   parallelGroup?: string | null
+   assessmentStatus?: AssessmentStatus | null
+   isAssessmentPosition?: boolean
+ }
 
 type PositionedMountainNode = LearningPathMountainNode & {
   x: number
@@ -647,6 +649,30 @@ function ModuleDetailBox({
   )
 }
 
+function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
+  if (node.isAssessmentPosition) {
+    return 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
+  }
+
+  if (node.assessmentStatus === 'completed') {
+    return 'border-[#b7d7bd] bg-[#31583b] text-[#fffdf8] shadow-[0_14px_30px_rgba(49,88,59,0.18)]'
+  }
+
+  if (node.assessmentStatus === 'partially_completed') {
+    return 'border-[#f2c879] bg-[#fff8ee] text-[#8a5a17] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
+  }
+
+  return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
+}
+
+function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
+  if (node.isAssessmentPosition) {
+    return 'Tukaj se nahajaš'
+  }
+
+  return null
+}
+
 function MountainActions({
   isCompleted,
   onFavoriteClick,
@@ -1039,26 +1065,41 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         node.assessmentStatus,
       )      
       return (
-        <button
+        <div
           key={node.id}
-          type="button"
-          onClick={() => setSelectedNodeId(node.id)}
-          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 font-bold shadow-lg transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14 ${nodeAssessmentClassName} ${
-            hasParallelLabel
-              ? 'text-[0.78rem] min-[1500px]:text-sm'
-              : 'text-base min-[1500px]:text-lg'
-          } ${className} ${
-            isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : ''
-          }`}
+          className={[
+            'absolute z-30 -translate-x-1/2 -translate-y-1/2',
+            className,
+          ].join(' ')}
           style={{
             left: `${node.x}%`,
             top: `${node.y}%`,
           }}
-          aria-pressed={isSelected}
-          aria-label={`Odpri podrobnosti modula ${node.title}`}
         >
-          {node.displayLabel}
-        </button>
+          {getMountainNodeAssessmentLabel(node) && (
+            <AssessmentPositionMarker
+              label={getMountainNodeAssessmentLabel(node) ?? undefined}
+              className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
+            />
+          )}
+
+          <button
+            type="button"
+            onClick={() => setSelectedNodeId(node.id)}
+            className={[
+              'flex h-12 w-12 items-center justify-center rounded-full border-2 font-bold transition duration-200 hover:scale-105 hover:ring-4 hover:ring-[#F8E7BE]/70 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#F8E7BE]/70 min-[1500px]:h-14 min-[1500px]:w-14',
+              hasParallelLabel
+                ? 'text-[0.78rem] min-[1500px]:text-sm'
+                : 'text-base min-[1500px]:text-lg',
+              getMountainNodeAssessmentClassName(node),
+              isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
+            ].join(' ')}
+            aria-pressed={isSelected}
+            aria-label={`Odpri podrobnosti modula ${node.title}`}
+          >
+            {node.displayLabel}
+          </button>
+        </div>
       )
     })
   }

@@ -282,18 +282,6 @@ const desktopFinishFlagPosition: Position = { x: 74, y: 9 }
 const tabletFinishFlagPosition: Position = { x: 55, y: 7 }
 const mobileFinishFlagPosition: Position = { x: 54, y: 21 }
 
-function getNodeAssessmentClassName(status?: AssessmentStatus | null) {
-  if (!status || status === 'completed') {
-    return 'border-[#F8E7BE] bg-[#344E41] text-white hover:bg-[#5F6F52] focus-visible:ring-[#F8E7BE]/70'
-  }
-
-  if (status === 'partially_completed') {
-    return 'border-[#d8a24d] bg-[#F8E7BE] text-[#344E41] hover:bg-[#f3ddb0] focus-visible:ring-[#d8a24d]/40'
-  }
-
-  return 'border-[#DED2BC] bg-white/90 text-[#344E41] hover:bg-[#F7F1E6] focus-visible:ring-[#DED2BC]/70'
-}
-
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
     return 'Trajanje ni navedeno'
@@ -1061,9 +1049,9 @@ function renderPathSegments(segments: PathSegment[], className: string) {
     return nodesToRender.map((node) => {
       const isSelected = selectedNodeId === node.id
       const hasParallelLabel = node.parallelCount > 1
-      const nodeAssessmentClassName = getNodeAssessmentClassName(
-        node.assessmentStatus,
-      )      
+      const nodeAssessmentClassName = getMountainNodeAssessmentClassName(node)
+      const nodeAssessmentLabel = getMountainNodeAssessmentLabel(node)
+
       return (
         <div
           key={node.id}
@@ -1076,9 +1064,9 @@ function renderPathSegments(segments: PathSegment[], className: string) {
             top: `${node.y}%`,
           }}
         >
-          {getMountainNodeAssessmentLabel(node) && (
+          {nodeAssessmentLabel && (
             <AssessmentPositionMarker
-              label={getMountainNodeAssessmentLabel(node) ?? undefined}
+              label={nodeAssessmentLabel}
               className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
             />
           )}
@@ -1087,11 +1075,11 @@ function renderPathSegments(segments: PathSegment[], className: string) {
             type="button"
             onClick={() => setSelectedNodeId(node.id)}
             className={[
-              'flex h-12 w-12 items-center justify-center rounded-full border-2 font-bold transition duration-200 hover:scale-105 hover:ring-4 hover:ring-[#F8E7BE]/70 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#F8E7BE]/70 min-[1500px]:h-14 min-[1500px]:w-14',
+              'flex h-12 w-12 items-center justify-center rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
               hasParallelLabel
                 ? 'text-[0.78rem] min-[1500px]:text-sm'
                 : 'text-base min-[1500px]:text-lg',
-              getMountainNodeAssessmentClassName(node),
+              nodeAssessmentClassName,
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}

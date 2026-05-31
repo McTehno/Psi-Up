@@ -68,6 +68,43 @@ class FakeLearningUnitRepository:
         return learning_unit.get("self_assessment_questions")
 
 
+class FakeModuleRepository:
+    # Fake repository uporabimo za testiranje recommended_modules brez prave MongoDB baze.
+    def __init__(self):
+        self.received_learning_unit_id = None
+        self.received_limit = None
+        self.modules = [
+            {
+                "_id": "mod_001",
+                "title": "Razumevanje umetne inteligence",
+                "short_description": "Modul predstavi osnovne pojme umetne inteligence.",
+                "duration_hours": 1.75,
+                "keywords": ["UI", "umetna inteligenca", "", None, 123],
+                "domains": ["Umetna inteligenca", None],
+                "learning_units": [{"learning_unit_id": "ue_001"}],
+            },
+            {
+                "_id": "mod_002",
+                "title": None,
+                "short_description": None,
+                "duration_hours": None,
+                "keywords": None,
+                "domains": None,
+                "learning_units": [{"learning_unit_id": "ue_001"}],
+            },
+        ]
+
+    async def get_modules_by_learning_unit_id(
+        self,
+        learning_unit_id: str,
+        limit: int = 6,
+    ):
+        self.received_learning_unit_id = learning_unit_id
+        self.received_limit = limit
+
+        return self.modules[:limit]
+
+
 async def test_get_all_learning_units_returns_normalized_units():
     # Service normalizira vse učne enote, preden jih vrne API sloju.
     service = LearningUnitService(FakeLearningUnitRepository())
@@ -112,15 +149,46 @@ async def test_get_learning_units_by_ids_returns_normalized_units():
     assert result[1]["self_assessment_questions"] == []
 
 
-async def test_get_learning_unit_detail_returns_same_normalized_unit():
-    # Detail metoda uporablja osnovno metodo za pridobivanje učne enote.
-    service = LearningUnitService(FakeLearningUnitRepository())
+async def test_get_learning_unit_detail_returns_recommended_modules():
+    # Detail metoda doda povezane oziroma priporočene module za izbrano učno enoto.
+    module_repository = FakeModuleRepository()
+    service = LearningUnitService(
+        learning_unit_repository=FakeLearningUnitRepository(),
+        module_repository=module_repository,
+    )
 
     result = await service.get_learning_unit_detail("ue_001")
 
     assert result is not None
     assert result["_id"] == "ue_001"
     assert result["title"] == "Osnove umetne inteligence"
+
+    assert module_repository.received_learning_unit_id == "ue_001"
+    assert module_repository.received_limit == 6
+
+    assert len(result["recommended_modules"]) == 2
+
+    assert result["recommended_modules"][0]["_id"] == "mod_001"
+    assert result["recommended_modules"][0]["title"] == "Razumevanje umetne inteligence"
+    assert result["recommended_modules"][0]["keywords"] == ["UI", "umetna inteligenca"]
+    assert result["recommended_modules"][0]["domains"] == ["Umetna inteligenca"]
+
+    assert result["recommended_modules"][1]["_id"] == "mod_002"
+    assert result["recommended_modules"][1]["title"] == ""
+    assert result["recommended_modules"][1]["short_description"] == ""
+    assert result["recommended_modules"][1]["keywords"] == []
+    assert result["recommended_modules"][1]["domains"] == []
+
+
+async def test_get_learning_unit_detail_returns_empty_recommended_modules_without_module_repository():
+    # Če module_repository ni podan, detail response še vedno deluje in vrne prazen seznam.
+    service = LearningUnitService(FakeLearningUnitRepository())
+
+    result = await service.get_learning_unit_detail("ue_001")
+
+    assert result is not None
+    assert result["_id"] == "ue_001"
+    assert result["recommended_modules"] == []
 
 
 async def test_get_learning_unit_detail_returns_none_when_missing():

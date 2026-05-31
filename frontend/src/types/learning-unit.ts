@@ -1,9 +1,15 @@
+/**
+ * DigComp kompetenca, ki jo učna enota pokriva.
+ */
 export type DigCompCompetencyResponse = {
   code: string
   title: string
   description: string
 }
 
+/**
+ * Vprašanje za samooceno znotraj učne enote.
+ */
 export type SelfAssessmentQuestionResponse = {
   _id: string
   question: string
@@ -11,6 +17,27 @@ export type SelfAssessmentQuestionResponse = {
   related_topic?: string | null
 }
 
+/**
+ * Kratek prikaz modula, ki vsebuje izbrano učno enoto.
+ *
+ * Uporablja se na detail strani učne enote v sekciji
+ * priporočenih oziroma povezanih modulov.
+ */
+export type RecommendedModuleResponse = {
+  _id: string
+  title: string
+  short_description: string
+  duration_hours?: number | null
+  keywords: string[]
+  domains: string[]
+}
+
+/**
+ * Osnovni response za učno enoto.
+ *
+ * Uporablja se pri seznamih, osnovnem detail prikazu in kot osnova
+ * za razširjene detail response tipe.
+ */
 export type LearningUnitResponse = {
   _id: string
   title: string
@@ -32,6 +59,21 @@ export type LearningUnitResponse = {
   self_assessment_questions: SelfAssessmentQuestionResponse[]
 }
 
+/**
+ * Razširjen response za detail stran učne enote.
+ *
+ * Backend pri /learning-units/:id/detail doda tudi module,
+ * ki vsebujejo to učno enoto.
+ */
+export type LearningUnitDetailResponse = LearningUnitResponse & {
+  recommended_modules: RecommendedModuleResponse[]
+}
+
+/**
+ * Referenca učne enote znotraj modula.
+ *
+ * Uporablja se pri prikazu zaporedja učnih enot v modulu.
+ */
 export type LearningUnitReferenceResponse = {
   learning_unit_id: string
   order?: number | null

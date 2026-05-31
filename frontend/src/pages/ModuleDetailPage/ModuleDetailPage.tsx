@@ -14,6 +14,7 @@ import {
   DetailHero,
   DetailMeta,
   DetailPageShell,
+  DetailRecommendationCarousel,
   DetailSection,
   DetailTags,
 } from '../../components/detail'
@@ -23,7 +24,7 @@ import EmptyState from '../../components/common/EmptyState'
 
 import { getModuleDetail } from '../../services/module-service'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
-import type { ModuleResponse } from '../../types/module'
+import type { ModuleDetailResponse } from '../../types/module'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
@@ -128,7 +129,7 @@ function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
   const navigate = useNavigate()
 
-  const [moduleData, setModuleData] = useState<ModuleResponse | null>(null)
+  const [moduleData, setModuleData] = useState<ModuleDetailResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] =
@@ -261,6 +262,22 @@ function ModuleDetailPage() {
   const learningUnitReferences = getArrayOrEmpty(moduleData.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData.learning_unit_details)
 
+  const recommendedLearningPaths = getArrayOrEmpty(
+    moduleData.recommended_learning_paths,
+  )
+
+  const recommendedLearningPathItems = recommendedLearningPaths.map(
+    (learningPath) => ({
+      id: learningPath._id,
+      title: learningPath.title,
+      description: learningPath.short_description,
+      durationHours: learningPath.duration_hours,
+      keywords: learningPath.keywords,
+      href: `/learning-paths/${learningPath._id}`,
+      typeLabel: 'Učna pot',
+    }),
+  )
+
   const canUseContentActions = Boolean(detail.id)
   const canStartQuestionnaire = hasQuestionnaireContent(
     learningUnitReferences,
@@ -384,7 +401,12 @@ function ModuleDetailPage() {
           assessmentPositionUnitId={assessmentPositionUnitId}
         />
       </DetailSection>
-
+      <DetailRecommendationCarousel
+        eyebrow="Povezane učne poti"
+        title="Učne poti, ki vključujejo ta modul"
+        description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če želiš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
+        items={recommendedLearningPathItems}
+      />
       <section className="mt-12 overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
         <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
           <div>

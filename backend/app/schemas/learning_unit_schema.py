@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.module_schema import RecommendedModuleResponse
 
 class DigCompCompetencyResponse(BaseModel):
     """
@@ -58,7 +59,16 @@ class LearningUnitResponse(BaseModel):
     self_assessment_questions: List[SelfAssessmentQuestionResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(populate_by_name=True)
+    
+class LearningUnitDetailResponse(LearningUnitResponse):
+    """
+    Shema za detail prikaz učne enote.
 
+    Razširi osnovno učno enoto s priporočenimi moduli, ki vsebujejo to učno enoto.
+    Rezultat je namenjen detail strani učne enote.
+    """
+
+    recommended_modules: List[RecommendedModuleResponse] = Field(default_factory=list)
 
 class LearningUnitReferenceResponse(BaseModel):
     """

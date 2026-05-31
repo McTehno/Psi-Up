@@ -23,6 +23,23 @@ class ModuleResponse(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
+class RecommendedModuleResponse(BaseModel):
+    """
+    Shema za kratek prikaz priporočenega modula na detail strani učne enote.
+
+    Uporablja se, ko želimo prikazati module, ki vsebujejo izbrano učno enoto.
+    Ne vključuje learning_units seznama, ker frontend za ta prikaz potrebuje samo
+    osnovne podatke o modulu.
+    """
+
+    id: str = Field(alias="_id")
+    title: str
+    short_description: str
+    duration_hours: Optional[float] = None
+    keywords: List[str] = Field(default_factory=list)
+    domains: List[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(populate_by_name=True)
 
 class ModuleReferenceResponse(BaseModel):
     """

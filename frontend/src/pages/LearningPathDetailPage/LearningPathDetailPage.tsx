@@ -90,6 +90,21 @@ function getModuleAssessmentStatus(
   return null
 }
 
+function isAssessmentPositionModule(
+  moduleId: string,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult) {
+    return false
+  }
+
+  if (assessmentResult.start_module_id) {
+    return assessmentResult.start_module_id === moduleId
+  }
+
+  return assessmentResult.recommended_next_modules[0] === moduleId
+}
+
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,
   assessmentResult: AssessmentResultResponse | null = null,
@@ -124,6 +139,10 @@ function createMountainNodes(
       isRequired: moduleReference?.is_required ?? false,
       parallelGroup: moduleReference?.parallel_group ?? null,
       assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
+      isAssessmentPosition: isAssessmentPositionModule(
+      moduleId,
+      assessmentResult,
+    ),
     })
   })
 

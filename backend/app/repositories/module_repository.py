@@ -74,6 +74,32 @@ class ModuleRepository:
             if module_id in modules_by_id
         ]
 
+    async def get_modules_by_learning_unit_id(
+        self,
+        learning_unit_id: str,
+        limit: int = 6,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vrne module, ki vsebujejo izbrano učno enoto.
+
+        Uporablja se za prikaz priporočenih oziroma povezanih modulov
+        na detail strani učne enote.
+
+        Rezultat omejimo, da frontend ne prikaže preveč povezanih modulov.
+        """
+
+        if not learning_unit_id:
+            return []
+
+        collection = self.database[self.collection_name]
+
+        return list(
+            collection.find(
+                {
+                    "learning_units.learning_unit_id": learning_unit_id
+                }
+            ).limit(limit)
+        )    
     async def search_modules(self, query: str) -> List[Dict[str, Any]]:
         """
         Poišče module po iskalnem nizu.

@@ -20,6 +20,7 @@ from app.core.error_handlers import (
 )
 
 from app.api.voice_help import router as voice_help_router
+from app.api.assessment_assistant import router as assessment_assistant_router
 
 app = FastAPI(
     title="Psi-Up API",
@@ -52,6 +53,7 @@ app.include_router(learning_units_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(user_progress_router, prefix="/api")
 app.include_router(voice_help_router, prefix="/api")
+app.include_router(assessment_assistant_router, prefix="/api")
 
 @app.get("/")
 def read_root():

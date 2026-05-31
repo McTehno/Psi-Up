@@ -18,6 +18,9 @@ import { getModuleDetail } from '../../services/module-service'
 import { getQuestionnaire } from '../../services/questionnaire-service'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import type { LearningPathDetailResponse } from '../../types/learning-path'
+import AssessmentContextBox, {
+  type AssessmentAssistantDisplayExchange,
+} from '../../features/questionnaire/components/AssessmentContextBox'
 import type { ModuleResponse } from '../../types/module'
 import type {
   AssessmentEvaluateRequest,
@@ -27,7 +30,6 @@ import type {
   QuestionnaireTargetType,
 } from '../../types/questionnaire'
 import './QuestionnairePage.css'
-
 type AnswerOption = {
   answer: string
   weight: boolean
@@ -435,6 +437,8 @@ function QuestionnairePage() {
   const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [assistantExchange, setAssistantExchange] =
+  useState<AssessmentAssistantDisplayExchange | null>(null)
 
   useEffect(() => {
     document.body.classList.add('questionnaire-route')
@@ -720,6 +724,10 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
       : 'Zaključi →'
 
   useEffect(() => {
+    setAssistantExchange(null)
+  }, [currentQuestion?.runtimeId, targetId, targetType])
+
+  useEffect(() => {
     let isActive = true
 
     async function loadQuestionnaire() {
@@ -979,6 +987,7 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
         selectedGroup={selectedGroup}
         currentQuestion={currentQuestion}
         selectedAnswer={selectedAnswer}
+        assistantExchange={assistantExchange}
       >
         <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-800">
           <p className="text-sm font-semibold uppercase tracking-[0.2em]">
@@ -999,6 +1008,7 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
         selectedGroup={selectedGroup}
         currentQuestion={currentQuestion}
         selectedAnswer={selectedAnswer}
+        assistantExchange={assistantExchange}
       >
         <div className="rounded-3xl border border-[#e8ddcf] bg-white/80 p-6 text-sm text-[#5f5146] shadow-sm">
           Nalaganje vprašalnika ...
@@ -1016,6 +1026,7 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
         selectedGroup={selectedGroup}
         currentQuestion={currentQuestion}
         selectedAnswer={selectedAnswer}
+        assistantExchange={assistantExchange}
       >
         <div className="rounded-3xl border border-[#e8ddcf] bg-white/80 p-6 text-sm text-[#5f5146] shadow-sm">
           Ta cilj trenutno nima vprašanj.
@@ -1032,6 +1043,7 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
       selectedGroup={selectedGroup}
       currentQuestion={currentQuestion}
       selectedAnswer={selectedAnswer}
+      assistantExchange={assistantExchange}
     >
       <AssessmentHeader
         label="Vprašalnik"
@@ -1090,16 +1102,33 @@ const fallbackSteps: AssessmentProgressStep[] = questionGroups.map(
 
       <button
         type="button"
-        onClick={() => setIsChatOpen((value) => !value)}
+        onClick={() => {
+          setIsChatOpen((value) => {
+            const nextValue = !value
+            if (!nextValue) {
+              setAssistantExchange(null)
+            }
+            return nextValue
+          })
+        }}
         className="mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
       >
         {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
       </button>
 
-      {isChatOpen && (
-        <div className="mt-4 rounded-3xl border border-[#e7dac7] bg-[#F7F1E6] p-5 text-sm text-[#5f5146]">
-          Demo prostor za pomočnika. Logika vprašalnika je ločena od chata.
-        </div>
+      {isChatOpen && targetType && targetId && currentQuestion && (
+        <AssessmentContextBox
+          userId={ASSESSMENT_USER_ID}
+          targetType={targetType}
+          targetId={targetId}
+          learningPathId={targetType === 'learning_path' ? targetId : targetId}
+          moduleId={targetType === 'module' ? targetId : undefined}
+          learningUnitId={currentQuestion.learning_unit_id ?? undefined}
+          questionId={currentQuestion.id}
+          questionText={currentQuestion.question}
+          answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
+          onActiveExchangeChange={setAssistantExchange}
+        />
       )}
     </AssessmentLayout>
   )

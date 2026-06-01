@@ -3,6 +3,8 @@ import {useEffect, useMemo, useState } from 'react'
 import { sendAssessmentAssistantMessage } from '../../../services/assessment-assistant-service'
 import type { QuestionnaireTargetType } from '../../../types/questionnaire'
 
+import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+
 export type AssessmentAssistantDisplayExchange = {
   id: string
   userMessage: string
@@ -366,15 +368,14 @@ function AssessmentContextBox({
                       <span className="assessment-assistant-history__mobile-label">
                         Asistentka je odgovorila:
                       </span>
-                      <p
+                      <SimpleMarkdownText
+                        content={item.answer}
                         className={
                           item.isPending
                             ? 'assessment-assistant-history__mobile-text assessment-assistant-history__mobile-text--pending'
                             : 'assessment-assistant-history__mobile-text'
                         }
-                      >
-                        {item.answer}
-                      </p>
+                      />
                     </div>
                   )}
                 </li>

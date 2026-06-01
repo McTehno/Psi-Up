@@ -19,6 +19,8 @@ potem zbere self_assessment_questions.
 backend vzame vprašanja samo iz te učne enote.
 
 Vprašanja se deduplicirajo po normalizirani vsebini vprašanja.
+Uporabniku se isto vprašanje prikaže enkrat, sources pa hranijo vse povezane
+učne poti, module, učne enote, topic-e in kompetence.
 """
 
 
@@ -30,6 +32,24 @@ class QuestionnaireTargetType(str, Enum):
     LEARNING_PATH = "learning_path"
     MODULE = "module"
     LEARNING_UNIT = "learning_unit"
+
+
+class QuestionnaireQuestionSourceResponse(BaseModel):
+    """
+    Shema za en vir vprašanja.
+
+    Če se isto vprašanje pojavi v več učnih enotah ali modulih,
+    se vprašanje v vprašalniku prikaže samo enkrat, sources pa povejo,
+    na katere vsebine se ta odgovor nanaša.
+    """
+
+    learning_path_id: Optional[str] = None
+    module_id: Optional[str] = None
+    learning_unit_id: Optional[str] = None
+
+    topic_id: Optional[str] = None
+    related_topic: Optional[str] = None
+    competency_codes: List[str] = Field(default_factory=list)
 
 
 class QuestionnaireQuestionResponse(BaseModel):
@@ -55,6 +75,8 @@ class QuestionnaireQuestionResponse(BaseModel):
     related_topic: Optional[str] = None
     related_topic_id: Optional[str] = None
     related_competency_codes: List[str] = Field(default_factory=list)
+
+    sources: List[QuestionnaireQuestionSourceResponse] = Field(default_factory=list)
 
 
 class QuestionnaireResponse(BaseModel):

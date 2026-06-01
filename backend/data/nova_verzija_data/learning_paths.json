@@ -1,0 +1,101 @@
+[
+  {
+    "_id": "up_001",
+    "title": "Iskanje informacij z umetno inteligenco",
+    "short_description": "Učna pot za uporabo umetne inteligence pri iskanju in razumevanju informacij.",
+    "duration_hours": 4.25,
+    "keywords": ["umetna inteligenca", "UI", "iskanje informacij", "GenUI"],
+    "steps": [
+      {
+        "type": "module",
+        "ref_id": "mod_001",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_002",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["mod_001"]
+      }
+    ]
+  },
+  {
+    "_id": "up_002",
+    "title": "Ustvarjanje vrtilnih tabel v Excel",
+    "short_description": "Učna pot za pripravo podatkov in uporabo vrtilnih tabel v Excelu.",
+    "duration_hours": 14.5,
+    "keywords": ["Excel", "vrtilne tabele", "podatki", "analiza"],
+    "steps": [
+      {
+        "type": "module",
+        "ref_id": "mod_003",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_004",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["mod_003"]
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_005",
+        "order": 3,
+        "parallel_group": "excel_advanced_parallel",
+        "is_required": true,
+        "prerequisites": ["mod_003", "mod_004"]
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_006",
+        "order": 3,
+        "parallel_group": "excel_advanced_parallel",
+        "is_required": false,
+        "prerequisites": ["mod_003", "mod_004"]
+      }
+    ]
+  },
+  {
+    "_id": "up_003",
+    "title": "Ustvarjanje grafov v Excel",
+    "short_description": "Učna pot za pripravo podatkov in izdelavo grafov v Excelu.",
+    "duration_hours": 12.5,
+    "keywords": ["Excel", "grafi", "vizualizacija podatkov", "predstavitev"],
+    "steps": [
+      {
+        "type": "module",
+        "ref_id": "mod_003",
+        "order": 1,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": []
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_004",
+        "order": 2,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["mod_003"]
+      },
+      {
+        "type": "module",
+        "ref_id": "mod_006",
+        "order": 3,
+        "parallel_group": null,
+        "is_required": true,
+        "prerequisites": ["mod_003", "mod_004"]
+      }
+    ]
+  }
+]

@@ -19,6 +19,33 @@ class UserRepository:
         self.database = database
         self.collection_name = "users"
 
+    def _build_empty_progress(self) -> Dict[str, Any]:
+        """
+        Zgradi začetno progress strukturo za novega uporabnika.
+
+        Progress je shranjen znotraj users dokumenta.
+        """
+
+        return {
+            "saved": {
+                "learning_path_ids": [],
+                "module_ids": [],
+                "learning_unit_ids": [],
+            },
+            "favorites": {
+                "learning_path_ids": [],
+                "module_ids": [],
+                "learning_unit_ids": [],
+            },
+            "completed": {
+                "learning_path_ids": [],
+                "module_ids": [],
+                "learning_unit_ids": [],
+            },
+            "current_positions": [],
+            "questionnaire_answers": [],
+        }
+
     async def get_user_by_id(self, user_id: str) -> Optional[Dict[str, Any]]:
         """
         Vrne uporabnika glede na njegov lokalni ID.
@@ -63,10 +90,10 @@ class UserRepository:
             "auth_user_id": auth_user_id,
             "name": user_data.get("name"),
             "email": user_data.get("email"),
+            "progress": self._build_empty_progress(),
             "created_at": now,
             "updated_at": now,
         }
-
         collection.insert_one(new_user)
 
         return new_user

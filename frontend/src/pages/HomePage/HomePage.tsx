@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Lenis from 'lenis'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
-import HomeBackground from './components/HomeBackground'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
 import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
@@ -61,7 +60,6 @@ function HomePage() {
 
 	return (
 		<main className="relative isolate min-h-screen text-[#2f3328]">
-			<HomeBackground />
 			<HomeParallaxEnvironment />
 
 			<div

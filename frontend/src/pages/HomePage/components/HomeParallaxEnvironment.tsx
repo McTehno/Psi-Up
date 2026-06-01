@@ -50,13 +50,12 @@ function HomeParallaxEnvironment() {
 			aria-hidden="true"
 		>
 			<div className="sticky top-0 h-screen w-full overflow-hidden">
-				{/* ── Layer 1 · Sky / Fog colour fill ──────────────────── */}
+				{/* ── Layer 1 · Original HomeBackground Gradients & Orbs ──────────────────── */}
 				<div
-					className="absolute inset-0"
-					style={{
-						background: 'linear-gradient(180deg, #e8e3da 0%, #ebe6dc 30%, #f0ede6 60%, #fffdf8 100%)',
-					}}
+					className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(208,122,18,0.10),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(49,88,59,0.10),_transparent_24%),radial-gradient(circle_at_90%_80%,_rgba(234,223,206,0.45),_transparent_32%),linear-gradient(180deg,_#fffdf8,_#fff6eb)]"
 				/>
+				<div className="absolute left-0 top-36 h-72 w-72 rounded-full bg-[#fff4e6] blur-3xl" />
+				<div className="absolute right-0 top-24 h-96 w-96 rounded-full bg-[#f2f8f1] blur-3xl" />
 
 				{/* ── Layer 2 · Mountain image ─────────── */}
 				<motion.div

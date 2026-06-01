@@ -31,7 +31,7 @@ function HomeStorySection({
 			<div className="relative mx-auto min-h-[620px] w-full">
 				<RevealOnScroll
 					className={[
-						'relative z-20 max-w-[600px]',
+						'relative z-10 max-w-[600px]',
 						isRight ? 'ml-auto lg:mr-8' : 'mr-auto lg:ml-8',
 					].join(' ')}
 				>
@@ -53,7 +53,7 @@ function HomeStorySection({
 				<RevealOnScroll
 					delay={140}
 					className={[
-						'relative z-20 mt-10 grid max-w-[560px] gap-5 sm:grid-cols-2 lg:absolute lg:mt-0',
+						'relative z-10 mt-10 grid max-w-[560px] gap-5 sm:grid-cols-2 lg:absolute lg:mt-0',
 						isRight
 							? 'lg:left-10 lg:top-[260px]'
 							: 'lg:right-10 lg:top-[260px]',

@@ -40,17 +40,10 @@ class ModuleService:
     ) -> str:
         """
         Vrne varno string vrednost.
-
-        Če je vrednost None ali napačnega tipa, vrne fallback.
-        Napačnih tipov ne pretvarjamo na silo v string,
-        ker bi s tem lahko skrili napake v podatkih.
         """
 
-        if value is None:
-            return fallback
-
         if isinstance(value, str):
-            return value
+            return value.strip()
 
         return fallback
 
@@ -65,11 +58,8 @@ class ModuleService:
         na primer parallel_group.
         """
 
-        if value is None:
-            return None
-
-        if isinstance(value, str):
-            return value
+        if isinstance(value, str) and value.strip():
+            return value.strip()
 
         return None
 
@@ -80,8 +70,6 @@ class ModuleService:
     ) -> bool:
         """
         Vrne varno boolean vrednost.
-
-        Če vrednost ni boolean, vrne fallback.
         """
 
         if isinstance(value, bool):
@@ -98,7 +86,6 @@ class ModuleService:
         Vrne varno integer vrednost.
 
         Uporablja se za order pri referencah učnih enot.
-        Če order manjka ali ni integer, vrnemo fallback.
         """
 
         if isinstance(value, int):
@@ -112,10 +99,6 @@ class ModuleService:
     ) -> List[Any]:
         """
         Vrne varno list vrednost.
-
-        Če vrednost ni list, vrne prazen seznam.
-
-        Uporablja se za sezname, ki niso nujno samo stringi.
         """
 
         if isinstance(value, list):
@@ -129,15 +112,6 @@ class ModuleService:
     ) -> List[str]:
         """
         Vrne varen seznam stringov.
-
-        Če vrednost ni list, vrne prazen seznam.
-        Iz seznama odstrani elemente, ki niso string,
-        in prazne stringe.
-
-        Primer:
-        [None, 123, "modul", ""] -> ["modul"]
-
-        Uporablja se za keywords, domains in prerequisites.
         """
 
         if not isinstance(value, list):
@@ -155,18 +129,6 @@ class ModuleService:
     ) -> Optional[Dict[str, Any]]:
         """
         Normalizira eno referenco učne enote znotraj modula.
-
-        Primer reference v MongoDB:
-        {
-            "learning_unit_id": "ue_001",
-            "order": 1,
-            "parallel_group": null,
-            "is_required": true,
-            "prerequisites": []
-        }
-
-        Če reference nima veljavnega learning_unit_id, je ne vračamo,
-        ker se iz nje ne more varno pridobiti učne enote.
         """
 
         learning_unit_id = self._get_string_value(
@@ -198,8 +160,7 @@ class ModuleService:
         Normalizira seznam referenc učnih enot.
 
         Napačne elemente preskoči.
-        To prepreči napake pri pridobivanju learning_unit_ids
-        in pri frontend vizualizaciji modula.
+        Rezultat uredi po order, da API vrača stabilen vrstni red.
         """
 
         normalized_references: List[Dict[str, Any]] = []
@@ -215,7 +176,10 @@ class ModuleService:
             if normalized_reference:
                 normalized_references.append(normalized_reference)
 
-        return normalized_references
+        return sorted(
+            normalized_references,
+            key=lambda reference: reference.get("order", 0),
+        )
 
     def _normalize_module(
         self,
@@ -223,12 +187,6 @@ class ModuleService:
     ) -> Dict[str, Any]:
         """
         Normalizira modul pred vračanjem API response-a.
-
-        Namen:
-        - title in short_description ne smeta biti None
-        - keywords in domains morata biti seznama stringov
-        - learning_units mora biti varen seznam referenc
-        - dodatna polja se ohranijo
         """
 
         normalized_module = dict(module)
@@ -258,8 +216,6 @@ class ModuleService:
     ) -> List[Dict[str, Any]]:
         """
         Normalizira seznam modulov.
-
-        Tako en nepopoln modul ne povzroči padca celotnega response-a.
         """
 
         return [
@@ -267,18 +223,13 @@ class ModuleService:
             for module in modules
             if isinstance(module, dict)
         ]
-    
+
     def _normalize_recommended_learning_path(
         self,
         learning_path: Dict[str, Any],
     ) -> Dict[str, Any]:
         """
         Normalizira kratek prikaz učne poti za recommended_learning_paths.
-
-        Namen:
-        - preprečiti ResponseValidationError
-        - vrniti samo osnovne podatke, ki jih frontend potrebuje
-        - ne vračati celotnega modules seznama v tem prikazu
         """
 
         return {
@@ -290,7 +241,6 @@ class ModuleService:
             "duration_hours": learning_path.get("duration_hours"),
             "keywords": self._get_string_list_value(learning_path.get("keywords")),
         }
-
 
     def _normalize_recommended_learning_paths(
         self,
@@ -305,12 +255,10 @@ class ModuleService:
             for learning_path in learning_paths
             if isinstance(learning_path, dict)
         ]
-    
+
     async def get_all_modules(self) -> List[Dict[str, Any]]:
         """
         Vrne vse module.
-
-        Pred vračanjem podatke normalizira, da API response ostane stabilen.
         """
 
         modules = await self.module_repository.get_all_modules()
@@ -319,13 +267,10 @@ class ModuleService:
 
     async def get_module_by_id(
         self,
-        module_id: str
+        module_id: str,
     ) -> Optional[Dict[str, Any]]:
         """
         Vrne en modul glede na ID.
-
-        Če modul obstaja, ga pred vračanjem normalizira.
-        Če ne obstaja, vrne None, da API layer lahko vrne 404.
         """
 
         module = await self.module_repository.get_module_by_id(module_id)
@@ -337,12 +282,10 @@ class ModuleService:
 
     async def get_modules_by_ids(
         self,
-        module_ids: List[str]
+        module_ids: List[str],
     ) -> List[Dict[str, Any]]:
         """
         Vrne več modulov glede na seznam ID-jev.
-
-        Pred vračanjem normalizira vse najdene module.
         """
 
         modules = await self.module_repository.get_modules_by_ids(module_ids)
@@ -351,20 +294,10 @@ class ModuleService:
 
     async def get_module_detail(
         self,
-        module_id: str
+        module_id: str,
     ) -> Optional[Dict[str, Any]]:
         """
         Vrne podrobnosti modula za detail page.
-
-        Koraki:
-        - pridobi modul
-        - normalizira osnovne podatke modula
-        - iz varnih referenc pridobi learning_unit_ids
-        - pridobi podrobnosti učnih enot prek LearningUnitService
-        - doda learning_unit_details v response
-
-        LearningUnitService že normalizira učne enote,
-        zato so tudi learning_unit_details bolj stabilni.
         """
 
         module = await self.get_module_by_id(module_id)
@@ -405,7 +338,7 @@ class ModuleService:
 
     async def get_learning_unit_references_for_module(
         self,
-        module_id: str
+        module_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Vrne reference učnih enot znotraj modula.
@@ -422,18 +355,15 @@ class ModuleService:
     async def get_available_learning_units_for_module(
         self,
         module_id: str,
-        completed_learning_unit_ids: List[str]
+        completed_learning_unit_ids: List[str],
     ) -> List[Dict[str, Any]]:
         """
         Vrne učne enote, ki jih uporabnik lahko začne v modulu.
-
-        Repository trenutno izvaja logiko dostopnosti.
-        Tukaj rezultat dodatno normaliziramo, če gre za reference učnih enot.
         """
 
         available_learning_units = await self.module_repository.get_available_learning_units_for_module(
             module_id,
-            completed_learning_unit_ids
+            completed_learning_unit_ids,
         )
 
         return self._normalize_learning_unit_references(
@@ -442,15 +372,19 @@ class ModuleService:
 
     async def get_self_assessment_questions_for_module(
         self,
-        module_id: str
+        module_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Vrne vprašanja za samooceno za celoten modul.
 
         Koraki:
-        - pridobi varne reference učnih enot
-        - za vsako učno enoto pridobi vprašanja
-        - združi vprašanja v enoten seznam
+        - pridobi varne reference učnih enot,
+        - za vsako učno enoto pridobi vprašanja,
+        - vsakemu vprašanju doda module_id,
+        - združi vprašanja v enoten seznam.
+
+        To je pomembno za QuestionnaireService, ker potem lahko pri sources
+        ohrani povezavo na modul in učno enoto.
         """
 
         learning_unit_references = await self.get_learning_unit_references_for_module(
@@ -469,6 +403,17 @@ class ModuleService:
                 learning_unit_id
             )
 
-            questions.extend(unit_questions)
+            for question in self._get_list_value(unit_questions):
+                if not isinstance(question, dict):
+                    continue
+
+                prepared_question = {
+                    **question,
+                    "module_id": module_id,
+                    "learning_unit_id": question.get("learning_unit_id")
+                    or learning_unit_id,
+                }
+
+                questions.append(prepared_question)
 
         return questions

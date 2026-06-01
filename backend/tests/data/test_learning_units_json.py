@@ -160,7 +160,7 @@ def test_self_assessment_questions_have_required_fields():
             )
 
 
-def test_self_assessment_question_types_are_supported():
+def test_self_assessment_types_are_supported():
     # Trenutno podpiramo yes_no vprašanja.
     learning_units = load_json_file("learning_units.json")
 

@@ -10,13 +10,20 @@ class AssessmentService:
 
     Ta razred določi, katere učne enote oziroma moduli so že pokriti
     in kje naj uporabnik začne glede na odgovore.
+
+    Pomembno:
+    - vprašanja se lahko v vprašalniku prikažejo samo enkrat,
+      čeprav pripadajo več učnim enotam,
+    - zato odgovor povezujemo tudi po normalizirani vsebini vprašanja,
+      ne samo po question_id,
+    - uporabljamo topic_id in competency_codes, ne več samo besedila topic-a.
     """
 
     def __init__(
         self,
         learning_path_service: Any,
         module_service: Any,
-        learning_unit_service: Any
+        learning_unit_service: Any,
     ):
         """
         Inicializira service z odvisnimi service-i za učne poti, module in učne enote.
@@ -26,12 +33,215 @@ class AssessmentService:
         self.module_service = module_service
         self.learning_unit_service = learning_unit_service
 
+    def _get_list_value(
+        self,
+        value: Any,
+    ) -> List[Any]:
+        """
+        Vrne varno list vrednost.
+        """
+
+        if isinstance(value, list):
+            return value
+
+        return []
+
+    def _get_string_value(
+        self,
+        value: Any,
+        fallback: str = "",
+    ) -> str:
+        """
+        Vrne varno string vrednost.
+        """
+
+        if isinstance(value, str):
+            return value.strip()
+
+        return fallback
+
+    def _get_string_list_value(
+        self,
+        value: Any,
+    ) -> List[str]:
+        """
+        Vrne varen seznam stringov.
+        """
+
+        if not isinstance(value, list):
+            return []
+
+        return [
+            item.strip()
+            for item in value
+            if isinstance(item, str) and item.strip()
+        ]
+
+    def _normalize_question_text(
+        self,
+        question: Any,
+    ) -> str:
+        """
+        Normalizira besedilo vprašanja.
+
+        To uporabljamo zato, da en odgovor velja tudi za isto vprašanje,
+        ki se pojavi v več učnih enotah.
+        """
+
+        if not isinstance(question, str):
+            return ""
+
+        return " ".join(question.strip().lower().split())
+
+    def _add_unique(
+        self,
+        target: List[str],
+        values: List[str],
+    ) -> None:
+        """
+        V seznam doda vrednosti brez podvajanja.
+        """
+
+        for value in values:
+            if value not in target:
+                target.append(value)
+
+    def _build_answer_maps(
+        self,
+        answers: List[Dict[str, Any]],
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Zgradi dva lookup-a za odgovore:
+        - po question_id,
+        - po normalizirani vsebini vprašanja.
+
+        To je pomembno, ker se lahko isto vprašanje pojavi v več učnih enotah.
+        Če je frontend poslal samo eno prikazano vprašanje, ga še vedno najdemo
+        za vse enote z isto vsebino vprašanja.
+        """
+
+        by_question_id: Dict[str, Any] = {}
+        by_question_text: Dict[str, Any] = {}
+
+        for answer in self._get_list_value(answers):
+            if not isinstance(answer, dict):
+                continue
+
+            question_id = self._get_string_value(answer.get("question_id"))
+            question_text = self._normalize_question_text(answer.get("question"))
+
+            answer_value = answer.get("answer")
+
+            if question_id:
+                by_question_id[question_id] = answer_value
+
+            if question_text:
+                by_question_text[question_text] = answer_value
+
+        return {
+            "by_question_id": by_question_id,
+            "by_question_text": by_question_text,
+        }
+
+    def _get_answer_for_question(
+        self,
+        question: Dict[str, Any],
+        answer_maps: Dict[str, Dict[str, Any]],
+    ) -> Any:
+        """
+        Vrne odgovor za vprašanje.
+
+        Najprej poskusi po question_id.
+        Če ga ni, poskusi še po normalizirani vsebini vprašanja.
+        """
+
+        question_id = self._get_string_value(question.get("id"))
+        question_text = self._normalize_question_text(question.get("question"))
+
+        by_question_id = answer_maps.get("by_question_id", {})
+        by_question_text = answer_maps.get("by_question_text", {})
+
+        if question_id in by_question_id:
+            return by_question_id.get(question_id)
+
+        if question_text in by_question_text:
+            return by_question_text.get(question_text)
+
+        return None
+
+    def _get_topic_id_from_topic(
+        self,
+        topic: Any,
+    ) -> Optional[str]:
+        """
+        Vrne topic id iz content_topic objekta.
+        """
+
+        if not isinstance(topic, dict):
+            return None
+
+        topic_id = self._get_string_value(topic.get("id"))
+
+        if topic_id:
+            return topic_id
+
+        return None
+
+    def _get_topic_competency_codes(
+        self,
+        topic: Any,
+    ) -> List[str]:
+        """
+        Vrne competency kode iz content_topic objekta.
+        """
+
+        if not isinstance(topic, dict):
+            return []
+
+        return self._get_string_list_value(topic.get("related_competency_codes"))
+
+    def _get_all_topic_ids(
+        self,
+        content_topics: List[Any],
+    ) -> List[str]:
+        """
+        Vrne vse topic_id-je iz content_topics.
+        """
+
+        topic_ids: List[str] = []
+
+        for topic in self._get_list_value(content_topics):
+            topic_id = self._get_topic_id_from_topic(topic)
+
+            if topic_id and topic_id not in topic_ids:
+                topic_ids.append(topic_id)
+
+        return topic_ids
+
+    def _get_all_topic_competency_codes(
+        self,
+        content_topics: List[Any],
+    ) -> List[str]:
+        """
+        Vrne vse competency kode iz content_topics.
+        """
+
+        competency_codes: List[str] = []
+
+        for topic in self._get_list_value(content_topics):
+            self._add_unique(
+                competency_codes,
+                self._get_topic_competency_codes(topic),
+            )
+
+        return competency_codes
+
     async def evaluate_answers(
         self,
         user_id: str,
         target_type: QuestionnaireTargetType,
         target_id: str,
-        answers: List[Dict[str, Any]]
+        answers: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Oceni odgovore uporabnika in določi začetno točko.
@@ -39,21 +249,21 @@ class AssessmentService:
         Logika:
         - true pomeni, da uporabnik temo zna oziroma potrdi,
         - false pomeni, da uporabniku tema manjka,
-        - učna enota je opravljena, če so vsa njena vprašanja odgovorjena true.
+        - učna enota je opravljena, če nima manjkajočih topicov.
         """
 
         if target_type == QuestionnaireTargetType.LEARNING_PATH:
             return await self._evaluate_learning_path(
                 user_id=user_id,
                 learning_path_id=target_id,
-                answers=answers
+                answers=answers,
             )
 
         if target_type == QuestionnaireTargetType.MODULE:
             return await self._evaluate_module(
                 user_id=user_id,
                 module_id=target_id,
-                answers=answers
+                answers=answers,
             )
 
         if target_type == QuestionnaireTargetType.LEARNING_UNIT:
@@ -61,27 +271,31 @@ class AssessmentService:
                 user_id=user_id,
                 learning_unit_id=target_id,
                 answers=answers,
-                use_progressive_logic=False
+                use_progressive_logic=False,
             )
 
         return self._empty_result(
             user_id=user_id,
             target_type=target_type,
             target_id=target_id,
-            summary="Neznan tip vsebine za ocenjevanje."
+            summary="Neznan tip vsebine za ocenjevanje.",
         )
 
     async def _evaluate_learning_path(
         self,
         user_id: str,
         learning_path_id: str,
-        answers: List[Dict[str, Any]]
+        answers: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Oceni odgovore za celotno učno pot.
 
-        Učna pot se oceni tako, da se oceni vsak modul v učni poti.
-        Začetna točka je prvi modul oziroma učna enota, ki še ni opravljena.
+        Nova struktura učne poti uporablja steps.
+        Step je lahko:
+        - module,
+        - learning_unit.
+
+        Začetna točka je prvi step, ki še ni opravljen in ima izpolnjene prerequisites.
         """
 
         learning_path = await self.learning_path_service.get_learning_path_by_id(
@@ -93,10 +307,10 @@ class AssessmentService:
                 user_id=user_id,
                 target_type=QuestionnaireTargetType.LEARNING_PATH,
                 target_id=learning_path_id,
-                summary="Učna pot ne obstaja."
+                summary="Učna pot ne obstaja.",
             )
 
-        module_references = await self.learning_path_service.get_module_references_for_learning_path(
+        steps = await self.learning_path_service.get_step_references_for_learning_path(
             learning_path_id
         )
 
@@ -104,56 +318,140 @@ class AssessmentService:
         skipped_learning_units: List[str] = []
         recommended_next_modules: List[str] = []
         recommended_next_learning_units: List[str] = []
-        module_results: List[Dict[str, Any]] = []
+
         learning_unit_results: List[Dict[str, Any]] = []
+        module_results: List[Dict[str, Any]] = []
+
+        known_competency_codes: List[str] = []
+        missing_competency_codes: List[str] = []
 
         start_module_id: Optional[str] = None
         start_learning_unit_id: Optional[str] = None
 
-        completed_module_ids: List[str] = []
+        completed_step_ids: List[str] = []
 
-        for module_reference in module_references:
-            module_id = module_reference.get("module_id")
+        for step in steps:
+            step_type = step.get("type")
+            ref_id = step.get("ref_id")
 
-            if not module_id:
+            if not ref_id:
                 continue
 
-            module_result = await self._evaluate_module(
-                user_id=user_id,
-                module_id=module_id,
-                answers=answers
-            )
-
-            module_results.extend(module_result.get("module_results", []))
-            learning_unit_results.extend(module_result.get("learning_unit_results", []))
-            skipped_learning_units.extend(module_result.get("skipped_learning_units", []))
-
-            module_completed = module_id in module_result.get("skipped_modules", [])
-
-            if module_completed:
-                skipped_modules.append(module_id)
-                completed_module_ids.append(module_id)
-                continue
-
-            if start_module_id is None:
-                prerequisites = module_reference.get("prerequisites", [])
-                prerequisites_completed = all(
-                    prerequisite_id in completed_module_ids
-                    for prerequisite_id in prerequisites
+            if step_type == "module":
+                step_result = await self._evaluate_module(
+                    user_id=user_id,
+                    module_id=ref_id,
+                    answers=answers,
                 )
 
-                if prerequisites_completed:
-                    start_module_id = module_id
-                    start_learning_unit_id = module_result.get("start_learning_unit_id")
-                    recommended_next_modules.append(module_id)
+                module_results.extend(step_result.get("module_results", []))
+                learning_unit_results.extend(step_result.get("learning_unit_results", []))
 
-                    if start_learning_unit_id:
-                        recommended_next_learning_units.append(start_learning_unit_id)
+                skipped_modules.extend(step_result.get("skipped_modules", []))
+                skipped_learning_units.extend(
+                    step_result.get("skipped_learning_units", [])
+                )
 
-        if start_module_id is None:
-            summary = "Uporabnik je glede na odgovore pokril vse module v učni poti."
-        else:
+                self._add_unique(
+                    known_competency_codes,
+                    step_result.get("known_competency_codes", []),
+                )
+                self._add_unique(
+                    missing_competency_codes,
+                    step_result.get("missing_competency_codes", []),
+                )
+
+                is_completed = ref_id in step_result.get("skipped_modules", [])
+
+                if is_completed:
+                    completed_step_ids.append(ref_id)
+                    continue
+
+                if start_module_id is None and start_learning_unit_id is None:
+                    prerequisites = self._get_string_list_value(
+                        step.get("prerequisites")
+                    )
+
+                    prerequisites_completed = all(
+                        prerequisite_id in completed_step_ids
+                        for prerequisite_id in prerequisites
+                    )
+
+                    if prerequisites_completed:
+                        start_module_id = ref_id
+                        start_learning_unit_id = step_result.get(
+                            "start_learning_unit_id"
+                        )
+                        recommended_next_modules.append(ref_id)
+
+                        if start_learning_unit_id:
+                            recommended_next_learning_units.append(
+                                start_learning_unit_id
+                            )
+
+            elif step_type == "learning_unit":
+                step_result = await self._evaluate_learning_unit(
+                    user_id=user_id,
+                    learning_unit_id=ref_id,
+                    answers=answers,
+                    use_progressive_logic=True,
+                )
+
+                learning_unit_results.extend(step_result.get("learning_unit_results", []))
+                skipped_learning_units.extend(
+                    step_result.get("skipped_learning_units", [])
+                )
+
+                self._add_unique(
+                    known_competency_codes,
+                    step_result.get("known_competency_codes", []),
+                )
+                self._add_unique(
+                    missing_competency_codes,
+                    step_result.get("missing_competency_codes", []),
+                )
+
+                is_completed = ref_id in step_result.get("skipped_learning_units", [])
+
+                if is_completed:
+                    completed_step_ids.append(ref_id)
+                    continue
+
+                if start_module_id is None and start_learning_unit_id is None:
+                    prerequisites = self._get_string_list_value(
+                        step.get("prerequisites")
+                    )
+
+                    prerequisites_completed = all(
+                        prerequisite_id in completed_step_ids
+                        for prerequisite_id in prerequisites
+                    )
+
+                    if prerequisites_completed:
+                        start_learning_unit_id = ref_id
+                        recommended_next_learning_units.append(ref_id)
+
+        self._add_unique(
+            missing_competency_codes,
+            [
+                code
+                for code in missing_competency_codes
+                if code not in known_competency_codes
+            ],
+        )
+
+        missing_competency_codes = [
+            code
+            for code in missing_competency_codes
+            if code not in known_competency_codes
+        ]
+
+        if start_module_id is None and start_learning_unit_id is None:
+            summary = "Uporabnik je glede na odgovore pokril vse korake v učni poti."
+        elif start_module_id:
             summary = f"Uporabnik naj začne pri modulu {start_module_id}."
+        else:
+            summary = f"Uporabnik naj začne pri učni enoti {start_learning_unit_id}."
 
         return {
             "user_id": user_id,
@@ -165,6 +463,8 @@ class AssessmentService:
             "skipped_learning_units": skipped_learning_units,
             "recommended_next_modules": recommended_next_modules,
             "recommended_next_learning_units": recommended_next_learning_units,
+            "known_competency_codes": known_competency_codes,
+            "missing_competency_codes": missing_competency_codes,
             "learning_unit_results": learning_unit_results,
             "module_results": module_results,
             "summary": summary,
@@ -174,7 +474,7 @@ class AssessmentService:
         self,
         user_id: str,
         module_id: str,
-        answers: List[Dict[str, Any]]
+        answers: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Oceni odgovore za modul.
@@ -190,7 +490,7 @@ class AssessmentService:
                 user_id=user_id,
                 target_type=QuestionnaireTargetType.MODULE,
                 target_id=module_id,
-                summary="Modul ne obstaja."
+                summary="Modul ne obstaja.",
             )
 
         learning_unit_references = await self.module_service.get_learning_unit_references_for_module(
@@ -201,7 +501,11 @@ class AssessmentService:
         missing_learning_units: List[str] = []
         skipped_learning_units: List[str] = []
         recommended_next_learning_units: List[str] = []
+
         learning_unit_results: List[Dict[str, Any]] = []
+
+        known_competency_codes: List[str] = []
+        missing_competency_codes: List[str] = []
 
         start_learning_unit_id: Optional[str] = None
 
@@ -215,16 +519,28 @@ class AssessmentService:
                 user_id=user_id,
                 learning_unit_id=learning_unit_id,
                 answers=answers,
-                use_progressive_logic=True
+                use_progressive_logic=True,
             )
 
             unit_results = unit_result.get("learning_unit_results", [])
             learning_unit_results.extend(unit_results)
 
+            self._add_unique(
+                known_competency_codes,
+                unit_result.get("known_competency_codes", []),
+            )
+            self._add_unique(
+                missing_competency_codes,
+                unit_result.get("missing_competency_codes", []),
+            )
+
             is_completed = False
 
             if unit_results:
-                is_completed = unit_results[0].get("is_completed_by_assessment", False)
+                is_completed = unit_results[0].get(
+                    "is_completed_by_assessment",
+                    False,
+                )
 
             if is_completed:
                 completed_learning_units.append(learning_unit_id)
@@ -234,7 +550,10 @@ class AssessmentService:
             missing_learning_units.append(learning_unit_id)
 
             if start_learning_unit_id is None:
-                prerequisites = learning_unit_reference.get("prerequisites", [])
+                prerequisites = self._get_string_list_value(
+                    learning_unit_reference.get("prerequisites")
+                )
+
                 prerequisites_completed = all(
                     prerequisite_id in completed_learning_units
                     for prerequisite_id in prerequisites
@@ -247,13 +566,19 @@ class AssessmentService:
         required_learning_units = [
             item.get("learning_unit_id")
             for item in learning_unit_references
-            if item.get("is_required", True)
+            if item.get("is_required", True) and item.get("learning_unit_id")
         ]
 
         required_completed = all(
             learning_unit_id in completed_learning_units
             for learning_unit_id in required_learning_units
         )
+
+        missing_competency_codes = [
+            code
+            for code in missing_competency_codes
+            if code not in known_competency_codes
+        ]
 
         if required_completed:
             status = AssessmentStatus.COMPLETED
@@ -278,6 +603,8 @@ class AssessmentService:
             "skipped_learning_units": skipped_learning_units,
             "recommended_next_modules": [],
             "recommended_next_learning_units": recommended_next_learning_units,
+            "known_competency_codes": known_competency_codes,
+            "missing_competency_codes": missing_competency_codes,
             "learning_unit_results": learning_unit_results,
             "module_results": [
                 {
@@ -295,17 +622,17 @@ class AssessmentService:
         user_id: str,
         learning_unit_id: str,
         answers: List[Dict[str, Any]],
-        use_progressive_logic: bool = False
+        use_progressive_logic: bool = False,
     ) -> Dict[str, Any]:
         """
         Oceni odgovore za eno učno enoto.
 
-        Pri ocenjevanju posamezne učne enote se ocenjujejo posamezni content_topics.
+        Pri ocenjevanju posamezne učne enote se ocenjujejo content_topics.
 
-        Če je use_progressive_logic=True, se uporabi pravilo:
-        - prvo vprašanje učne enote je osnovno vprašanje,
-        - če je odgovor na prvo vprašanje false, se učna enota označi kot nepokrita,
-        - vsi content_topics učne enote se štejejo kot missing_topics.
+        Če je use_progressive_logic=True:
+        - prvo vprašanje učne enote obravnavamo kot osnovno vprašanje,
+        - če je odgovor false, se učna enota šteje kot nepokrita,
+        - vsi topic-i učne enote se štejejo kot missing_topic_ids.
         """
 
         learning_unit = await self.learning_unit_service.get_learning_unit_by_id(
@@ -317,49 +644,58 @@ class AssessmentService:
                 user_id=user_id,
                 target_type=QuestionnaireTargetType.LEARNING_UNIT,
                 target_id=learning_unit_id,
-                summary="Učna enota ne obstaja."
+                summary="Učna enota ne obstaja.",
             )
 
-        questions = learning_unit.get("self_assessment_questions", [])
-        content_topics = learning_unit.get("content_topics", [])
+        questions = self._get_list_value(
+            learning_unit.get("self_assessment_questions")
+        )
+        content_topics = self._get_list_value(
+            learning_unit.get("content_topics")
+        )
 
-        known_topics: List[str] = []
-        missing_topics: List[str] = []
+        answer_maps = self._build_answer_maps(answers)
 
-        answer_map = {
-            answer.get("question_id"): answer.get("answer")
-            for answer in answers
-            if answer.get("learning_unit_id") == learning_unit_id
-        }
+        known_topic_ids: List[str] = []
+        missing_topic_ids: List[str] = []
+
+        known_competency_codes: List[str] = []
+        missing_competency_codes: List[str] = []
+
+        all_topic_ids = self._get_all_topic_ids(content_topics)
+        all_competency_codes = self._get_all_topic_competency_codes(content_topics)
 
         if use_progressive_logic and questions:
             primary_question = questions[0]
-            primary_question_id = primary_question.get("id")
-            primary_answer = answer_map.get(primary_question_id)
+            primary_answer = self._get_answer_for_question(
+                question=primary_question,
+                answer_maps=answer_maps,
+            )
 
             if primary_answer is False:
-                known_topics = []
-                missing_topics = list(content_topics)
-
-                is_completed_by_assessment = False
-                start_learning_unit_id = learning_unit_id
+                missing_topic_ids = all_topic_ids
+                missing_competency_codes = all_competency_codes
 
                 return {
                     "user_id": user_id,
                     "target_type": QuestionnaireTargetType.LEARNING_UNIT,
                     "target_id": learning_unit_id,
                     "start_module_id": None,
-                    "start_learning_unit_id": start_learning_unit_id,
+                    "start_learning_unit_id": learning_unit_id,
                     "skipped_modules": [],
                     "skipped_learning_units": [],
                     "recommended_next_modules": [],
                     "recommended_next_learning_units": [learning_unit_id],
+                    "known_competency_codes": [],
+                    "missing_competency_codes": missing_competency_codes,
                     "learning_unit_results": [
                         {
                             "learning_unit_id": learning_unit_id,
-                            "known_topics": known_topics,
-                            "missing_topics": missing_topics,
-                            "is_completed_by_assessment": is_completed_by_assessment,
+                            "known_topic_ids": [],
+                            "missing_topic_ids": missing_topic_ids,
+                            "known_competency_codes": [],
+                            "missing_competency_codes": missing_competency_codes,
+                            "is_completed_by_assessment": False,
                         }
                     ],
                     "module_results": [],
@@ -367,26 +703,49 @@ class AssessmentService:
                 }
 
         for question in questions:
-            question_id = question.get("id")
-            related_topic = question.get("related_topic")
+            topic_id = self._get_string_value(
+                question.get("related_topic_id")
+            )
+            competency_codes = self._get_string_list_value(
+                question.get("related_competency_codes")
+            )
 
-            if not related_topic:
+            if not topic_id:
                 continue
 
-            answer_value = answer_map.get(question_id)
+            answer_value = self._get_answer_for_question(
+                question=question,
+                answer_maps=answer_maps,
+            )
 
             if answer_value is True:
-                if related_topic not in known_topics:
-                    known_topics.append(related_topic)
+                self._add_unique(known_topic_ids, [topic_id])
+                self._add_unique(known_competency_codes, competency_codes)
             else:
-                if related_topic not in missing_topics:
-                    missing_topics.append(related_topic)
+                self._add_unique(missing_topic_ids, [topic_id])
+                self._add_unique(missing_competency_codes, competency_codes)
 
         for topic in content_topics:
-            if topic not in known_topics and topic not in missing_topics:
-                missing_topics.append(topic)
+            topic_id = self._get_topic_id_from_topic(topic)
 
-        is_completed_by_assessment = bool(content_topics) and len(missing_topics) == 0
+            if not topic_id:
+                continue
+
+            if topic_id not in known_topic_ids and topic_id not in missing_topic_ids:
+                missing_topic_ids.append(topic_id)
+
+                self._add_unique(
+                    missing_competency_codes,
+                    self._get_topic_competency_codes(topic),
+                )
+
+        missing_competency_codes = [
+            code
+            for code in missing_competency_codes
+            if code not in known_competency_codes
+        ]
+
+        is_completed_by_assessment = bool(content_topics) and len(missing_topic_ids) == 0
 
         start_learning_unit_id = None if is_completed_by_assessment else learning_unit_id
 
@@ -409,11 +768,15 @@ class AssessmentService:
             "skipped_learning_units": skipped_learning_units,
             "recommended_next_modules": [],
             "recommended_next_learning_units": recommended_next_learning_units,
+            "known_competency_codes": known_competency_codes,
+            "missing_competency_codes": missing_competency_codes,
             "learning_unit_results": [
                 {
                     "learning_unit_id": learning_unit_id,
-                    "known_topics": known_topics,
-                    "missing_topics": missing_topics,
+                    "known_topic_ids": known_topic_ids,
+                    "missing_topic_ids": missing_topic_ids,
+                    "known_competency_codes": known_competency_codes,
+                    "missing_competency_codes": missing_competency_codes,
                     "is_completed_by_assessment": is_completed_by_assessment,
                 }
             ],
@@ -426,7 +789,7 @@ class AssessmentService:
         user_id: str,
         target_type: QuestionnaireTargetType,
         target_id: str,
-        summary: Optional[str] = None
+        summary: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Vrne osnovni prazen assessment rezultat.
@@ -442,6 +805,8 @@ class AssessmentService:
             "skipped_learning_units": [],
             "recommended_next_modules": [],
             "recommended_next_learning_units": [],
+            "known_competency_codes": [],
+            "missing_competency_codes": [],
             "learning_unit_results": [],
             "module_results": [],
             "summary": summary,

@@ -66,6 +66,15 @@ class UserProgressRepository:
         if not isinstance(progress, dict):
             progress = self._build_empty_progress()
 
+            collection.update_one(
+                {"_id": user_id},
+                {
+                    "$set": {
+                        "progress": progress,
+                        "updated_at": datetime.now(timezone.utc),
+                    }
+                },
+            )
         return {
             "_id": f"progress_{user_id}",
             "user_id": user_id,

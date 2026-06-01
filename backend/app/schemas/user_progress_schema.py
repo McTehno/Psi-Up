@@ -48,6 +48,7 @@ class QuestionnaireAnswerResponse(BaseModel):
     question: str
     question_type: str = "yes_no"
     answer: Union[bool, str, int, float, List[str], None] = None
+    was_answered: bool = True
 
     learning_path_id: Optional[str] = None
     module_id: Optional[str] = None

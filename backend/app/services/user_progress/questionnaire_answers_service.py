@@ -194,21 +194,32 @@ class QuestionnaireAnswersService:
 
         merged_answer["answered_at"] = datetime.now(timezone.utc)
 
+        if "was_answered" not in merged_answer:
+            merged_answer["was_answered"] = True
+
         return merged_answer
 
-    def _prepare_new_answer(self, answer: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Pripravi nov odgovor za shranjevanje.
+        def _prepare_new_answer(self, answer: Dict[str, Any]) -> Dict[str, Any]:
+            """
+            Pripravi nov odgovor za shranjevanje.
 
-        Če answered_at ni podan, ga nastavimo na trenutni čas.
-        """
+            Če answered_at ni podan, ga nastavimo na trenutni čas.
+            Če was_answered ni podan, ga nastavimo na True, ker odgovor
+            prihaja iz dejansko oddanih odgovorov uporabnika.
 
-        prepared_answer = dict(answer)
+            Backend-dodana neodgovorjena vprašanja bodo posebej označena z:
+            was_answered = False.
+            """
 
-        if not prepared_answer.get("answered_at"):
-            prepared_answer["answered_at"] = datetime.now(timezone.utc)
+            prepared_answer = dict(answer)
 
-        return prepared_answer
+            if not prepared_answer.get("answered_at"):
+                prepared_answer["answered_at"] = datetime.now(timezone.utc)
+
+            if "was_answered" not in prepared_answer:
+                prepared_answer["was_answered"] = True
+
+            return prepared_answer
 
     def _merge_answer_value(self, old_answer: Any, new_answer: Any) -> Any:
         """

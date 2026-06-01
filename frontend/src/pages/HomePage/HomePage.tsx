@@ -118,7 +118,7 @@ function HomePage() {
 						eyebrow="Moduli"
 						title="Večjo pot razdeli na razumljive korake."
 						description="Modul predstavlja zaokrožen del učne poti. Vsak modul ima svoj namen, zato lažje slediš napredku in razumeš, kaj posamezen korak prinese."
-						align="right"
+						align="left"
 						cards={[
 							{
 								title: 'Korak',

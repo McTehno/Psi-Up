@@ -1,8 +1,9 @@
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion'
 
 import fogVideo from '../../../assets/parallax/fog-background.mp4'
-import mountainImage from '../../../assets/parallax/mountain-journey-bg.webp'
+import pathMountainImage from '../../../assets/parallax/path-mountain.webp'
+import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
 
 /**
  * HomeParallaxEnvironment
@@ -37,17 +38,15 @@ function HomeParallaxEnvironment() {
 	})
 
 	/* ── Cloud layer transforms ──────────────────────────────────── */
-	// Continuous smooth ease across the entire scroll range so the clouds
-	// never hit an "invisible barrier". They clear the screen fully but
-	// keep drifting as long as the user scrolls.
+	// Clouds clear the screen fully by the time Učne poti starts (~0.32)
 	const cloudY = useTransform(
 		scrollYProgress,
-		[0, 0.20, 0.60, 1],
+		[0, 0.15, 0.35, 1],
 		['0%', '-15%', '-110%', '-150%'],
 	)
 	const cloudOpacity = useTransform(
 		scrollYProgress,
-		[0, 0.35, 0.60],
+		[0, 0.20, 0.32],
 		[1, 0.9, 0],
 	)
 	const cloudScale = useTransform(scrollYProgress, [0, 1], [1, 1.1])
@@ -56,13 +55,23 @@ function HomeParallaxEnvironment() {
 	// Mountain begins anchored at the top so the peaks aren't cut off,
 	// and rises gently into view as the clouds clear.
 	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%'])
-	const mountainScale = useTransform(scrollYProgress, [0, 1], [1.05, 1])
+	
+	// Zooms in as we scroll from Učne poti (~0.45) to Moduli (~0.65)
+	const mountainScale = useTransform(
+		scrollYProgress,
+		[0, 0.45, 0.65, 1],
+		[1.05, 1.05, 1.15, 1.15]
+	)
+
+	// The highlighted module mountain reveals from bottom to top using a gradient mask
+	const glowReveal = useTransform(scrollYProgress, [0.45, 0.65], [-20, 120])
+	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${glowReveal}%, rgba(0,0,0,0) calc(${glowReveal}% + 20%))`
 
 	return (
 		<div
 			ref={containerRef}
 			className="pointer-events-none absolute inset-x-0 top-0 -z-30"
-			style={{ height: '300vh' }}
+			style={{ height: '500vh' }}
 			aria-hidden="true"
 		>
 			<div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -81,13 +90,33 @@ function HomeParallaxEnvironment() {
 						scale: mountainScale,
 					}}
 				>
-					<img
-						src={mountainImage}
-						alt=""
-						className="h-full w-full object-cover object-center"
-						loading="eager"
-						draggable={false}
-					/>
+					<div className="relative h-full w-full">
+						{/* Base Mountain (Učne poti) */}
+						<img
+							src={pathMountainImage}
+							alt=""
+							className="absolute inset-0 h-full w-full object-cover object-center"
+							loading="eager"
+							draggable={false}
+						/>
+						
+						{/* Highlighted Mountain (Moduli) - Reveals from bottom to top */}
+						<motion.div
+							className="absolute inset-0 h-full w-full"
+							style={{ 
+								WebkitMaskImage: moduleGlowMask,
+								maskImage: moduleGlowMask
+							}}
+						>
+							<img
+								src={moduleMountainImage}
+								alt=""
+								className="h-full w-full object-cover object-center"
+								loading="eager"
+								draggable={false}
+							/>
+						</motion.div>
+					</div>
 
 					{/* Soft vignette blending the mountain top into the base */}
 					<div

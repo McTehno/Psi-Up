@@ -38,13 +38,10 @@ class LearningPathService:
     ) -> str:
         """
         Vrne varno string vrednost.
-
-        Če je vrednost None ali napačnega tipa, vrne fallback.
-        Napačnih tipov ne pretvarjamo na silo v string.
         """
 
         if isinstance(value, str):
-            return value
+            return value.strip()
 
         return fallback
 
@@ -54,16 +51,10 @@ class LearningPathService:
     ) -> Optional[str]:
         """
         Vrne optional string vrednost.
-
-        Uporablja se za polja, kjer je None dovoljen,
-        na primer parallel_group.
         """
 
-        if value is None:
-            return None
-
-        if isinstance(value, str):
-            return value
+        if isinstance(value, str) and value.strip():
+            return value.strip()
 
         return None
 
@@ -74,8 +65,6 @@ class LearningPathService:
     ) -> bool:
         """
         Vrne varno boolean vrednost.
-
-        Če vrednost ni boolean, vrne fallback.
         """
 
         if isinstance(value, bool):
@@ -90,9 +79,6 @@ class LearningPathService:
     ) -> int:
         """
         Vrne varno integer vrednost.
-
-        Uporablja se za order pri referencah korakov.
-        Če order manjka ali ni integer, vrnemo fallback.
         """
 
         if isinstance(value, int):
@@ -106,10 +92,6 @@ class LearningPathService:
     ) -> List[Any]:
         """
         Vrne varno list vrednost.
-
-        Če vrednost ni list, vrne prazen seznam.
-
-        Uporablja se za sezname, ki niso nujno samo stringi.
         """
 
         if isinstance(value, list):
@@ -123,15 +105,6 @@ class LearningPathService:
     ) -> List[str]:
         """
         Vrne varen seznam stringov.
-
-        Če vrednost ni list, vrne prazen seznam.
-        Iz seznama odstrani elemente, ki niso string,
-        in prazne stringe.
-
-        Primer:
-        [None, 123, "modul", ""] -> ["modul"]
-
-        Uporablja se za keywords in prerequisites.
         """
 
         if not isinstance(value, list):
@@ -153,18 +126,6 @@ class LearningPathService:
         Korak je lahko:
         - module
         - learning_unit
-
-        Primer reference v MongoDB:
-        {
-            "type": "module",
-            "ref_id": "mod_001",
-            "order": 1,
-            "parallel_group": null,
-            "is_required": true,
-            "prerequisites": []
-        }
-
-        Če step nima veljavnega type ali ref_id, ga ne vračamo.
         """
 
         step_type = self._get_string_value(reference.get("type"))
@@ -225,19 +186,8 @@ class LearningPathService:
         """
         Normalizira eno referenco modula.
 
-        To je compatibility metoda za dele backend logike,
+        Compatibility metoda za dele backend logike,
         ki še vedno pričakujejo module_id.
-
-        V novi strukturi lahko referenca pride kot:
-        {
-            "type": "module",
-            "ref_id": "mod_001"
-        }
-
-        ali kot starejša struktura:
-        {
-            "module_id": "mod_001"
-        }
         """
 
         module_id = self._get_string_value(
@@ -270,10 +220,6 @@ class LearningPathService:
     ) -> List[Dict[str, Any]]:
         """
         Normalizira seznam referenc modulov.
-
-        Napačne elemente preskoči.
-        To prepreči napake pri pridobivanju module_ids
-        in pri frontend vizualizaciji učne poti.
         """
 
         normalized_references: List[Dict[str, Any]] = []
@@ -298,12 +244,6 @@ class LearningPathService:
     ) -> Dict[str, Any]:
         """
         Normalizira učno pot pred vračanjem API response-a.
-
-        Namen:
-        - title in short_description ne smeta biti None
-        - keywords mora biti seznam stringov
-        - steps mora biti varen seznam korakov
-        - dodatna polja se ohranijo
         """
 
         normalized_learning_path = dict(learning_path)
@@ -332,8 +272,6 @@ class LearningPathService:
     ) -> List[Dict[str, Any]]:
         """
         Normalizira seznam učnih poti.
-
-        Tako ena nepopolna učna pot ne povzroči padca celotnega response-a.
         """
 
         return [
@@ -342,11 +280,36 @@ class LearningPathService:
             if isinstance(learning_path, dict)
         ]
 
+    def _add_learning_path_id_to_questions(
+        self,
+        questions: List[Dict[str, Any]],
+        learning_path_id: str,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vsakemu vprašanju doda learning_path_id.
+
+        To je pomembno za QuestionnaireService, ker sources potem hranijo
+        povezavo na učno pot, modul, učno enoto, topic in kompetence.
+        """
+
+        prepared_questions: List[Dict[str, Any]] = []
+
+        for question in self._get_list_value(questions):
+            if not isinstance(question, dict):
+                continue
+
+            prepared_questions.append(
+                {
+                    **question,
+                    "learning_path_id": learning_path_id,
+                }
+            )
+
+        return prepared_questions
+
     async def get_all_learning_paths(self) -> List[Dict[str, Any]]:
         """
         Vrne vse učne poti.
-
-        Pred vračanjem podatke normalizira, da API response ostane stabilen.
         """
 
         learning_paths = await self.learning_path_repository.get_all_learning_paths()
@@ -355,13 +318,10 @@ class LearningPathService:
 
     async def get_learning_path_by_id(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> Optional[Dict[str, Any]]:
         """
         Vrne eno učno pot glede na ID.
-
-        Če učna pot obstaja, jo pred vračanjem normalizira.
-        Če ne obstaja, vrne None, da API layer lahko vrne 404.
         """
 
         learning_path = await self.learning_path_repository.get_learning_path_by_id(
@@ -375,18 +335,10 @@ class LearningPathService:
 
     async def get_learning_path_detail(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> Optional[Dict[str, Any]]:
         """
         Vrne podrobnosti učne poti za detail page.
-
-        Koraki:
-        - pridobi učno pot
-        - normalizira osnovne podatke učne poti
-        - iz steps pridobi module_ids in learning_unit_ids
-        - pridobi podrobnosti modulov prek ModuleService
-        - pridobi podrobnosti samostojnih učnih enot prek LearningUnitService
-        - doda module_details in learning_unit_details v response
         """
 
         learning_path = await self.get_learning_path_by_id(learning_path_id)
@@ -423,12 +375,10 @@ class LearningPathService:
 
     async def get_step_references_for_learning_path(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Vrne reference korakov znotraj učne poti.
-
-        Reference se pred vračanjem normalizirajo.
         """
 
         references = await self.learning_path_repository.get_step_references_for_learning_path(
@@ -439,7 +389,7 @@ class LearningPathService:
 
     async def get_module_references_for_learning_path(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Vrne samo reference modulov znotraj učne poti.
@@ -461,18 +411,17 @@ class LearningPathService:
     async def get_available_modules_for_learning_path(
         self,
         learning_path_id: str,
-        completed_module_ids: List[str]
+        completed_module_ids: List[str],
     ) -> List[Dict[str, Any]]:
         """
         Vrne module, ki jih uporabnik lahko začne v učni poti.
 
-        Ta metoda zaenkrat obravnava samo step-e tipa module.
-        Dostopnost temelji na prerequisites.
+        Compatibility metoda za starejšo logiko.
         """
 
         available_modules = await self.learning_path_repository.get_available_modules_for_learning_path(
             learning_path_id,
-            completed_module_ids
+            completed_module_ids,
         )
 
         return self._normalize_module_references(available_modules)
@@ -480,13 +429,12 @@ class LearningPathService:
     async def get_available_steps_for_learning_path(
         self,
         learning_path_id: str,
-        completed_step_ids: List[str]
+        completed_step_ids: List[str],
     ) -> List[Dict[str, Any]]:
         """
         Vrne korake, ki jih uporabnik lahko začne v učni poti.
 
         Korak je dostopen, če so vsi njegovi prerequisites zaključeni.
-
         completed_step_ids lahko vsebuje ID-je modulov in učnih enot.
         """
 
@@ -495,7 +443,9 @@ class LearningPathService:
         available_steps: List[Dict[str, Any]] = []
 
         for step in steps:
-            prerequisites = step.get("prerequisites", [])
+            prerequisites = self._get_string_list_value(
+                step.get("prerequisites")
+            )
 
             all_prerequisites_completed = all(
                 prerequisite_id in completed_step_ids
@@ -509,19 +459,20 @@ class LearningPathService:
 
     async def get_self_assessment_questions_for_learning_path(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> List[Dict[str, Any]]:
         """
         Vrne vprašanja za samooceno za celotno učno pot.
 
         Koraki:
-        - pridobi steps učne poti
-        - če je step module, pridobi vprašanja prek ModuleService
-        - če je step learning_unit, pridobi vprašanja prek LearningUnitService
-        - združi vprašanja v enoten seznam
+        - pridobi steps učne poti,
+        - če je step module, pridobi vprašanja prek ModuleService,
+        - če je step learning_unit, pridobi vprašanja prek LearningUnitService,
+        - vsakemu vprašanju doda learning_path_id,
+        - združi vprašanja v enoten seznam.
 
         Deduplikacijo vprašanj po normalizirani vsebini vprašanja
-        bo izvedel QuestionnaireService.
+        in združevanje sources izvede QuestionnaireService.
         """
 
         steps = await self.get_step_references_for_learning_path(
@@ -542,13 +493,23 @@ class LearningPathService:
                     ref_id
                 )
 
-                questions.extend(module_questions)
+                questions.extend(
+                    self._add_learning_path_id_to_questions(
+                        questions=module_questions,
+                        learning_path_id=learning_path_id,
+                    )
+                )
 
             elif step_type == "learning_unit":
                 learning_unit_questions = await self.learning_unit_service.get_self_assessment_questions_for_learning_unit(
                     ref_id
                 )
 
-                questions.extend(learning_unit_questions)
+                questions.extend(
+                    self._add_learning_path_id_to_questions(
+                        questions=learning_unit_questions,
+                        learning_path_id=learning_path_id,
+                    )
+                )
 
         return questions

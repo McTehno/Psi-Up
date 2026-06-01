@@ -56,15 +56,15 @@ function HomeParallaxEnvironment() {
 	// and rises gently into view as the clouds clear.
 	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%'])
 	
-	// Zooms in as we scroll from Učne poti (~0.45) to Moduli (~0.65)
+	// Zooms in as we scroll from Učne poti (~0.40) to Moduli (~0.70)
 	const mountainScale = useTransform(
 		scrollYProgress,
-		[0, 0.45, 0.65, 1],
+		[0, 0.40, 0.70, 1],
 		[1.05, 1.05, 1.15, 1.15]
 	)
 
 	// The highlighted module mountain reveals from bottom to top using a gradient mask
-	const glowReveal = useTransform(scrollYProgress, [0.45, 0.65], [-20, 120])
+	const glowReveal = useTransform(scrollYProgress, [0.40, 0.70], [-20, 120])
 	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${glowReveal}%, rgba(0,0,0,0) calc(${glowReveal}% + 20%))`
 
 	return (

@@ -13,7 +13,7 @@ class ModuleResponse(BaseModel):
     Shema za modul.
 
     Modul predstavlja večjo enoto učne vsebine.
-    V novi strukturi je modul sestavljen iz več učnih enot.
+    Sestavljen je iz več učnih enot.
     """
 
     id: str = Field(alias="_id")
@@ -32,7 +32,7 @@ class RecommendedLearningPathResponse(BaseModel):
     Shema za kratek prikaz priporočene učne poti na detail strani modula.
 
     Uporablja se, ko želimo prikazati učne poti, ki vsebujejo izbrani modul.
-    Ne vključuje modules seznama, ker frontend za ta prikaz potrebuje samo
+    Ne vključuje steps seznama, ker frontend za ta prikaz potrebuje samo
     osnovne podatke o učni poti.
     """
 
@@ -63,17 +63,17 @@ class ModuleDetailResponse(ModuleResponse):
 
 class ModuleReferenceResponse(BaseModel):
     """
-    Shema za referenco modula znotraj učne poti.
+    Združljivostna shema za referenco modula.
 
-    Ta shema se uporablja v learning_paths.json, kjer učna pot vsebuje seznam modulov.
-    Polje prerequisites je glavni vir resnice za logiko vrstnega reda in dostopnosti.
-    Polji order in parallel_group sta pomoč za vizualni prikaz.
+    V novi strukturi learning_paths.json učna pot uporablja steps,
+    kjer je posamezen korak lahko module ali learning_unit.
+
+    Ta shema lahko začasno ostane zaradi starejših service/repository delov,
+    dokler celotna backend logika ni prestavljena na LearningPathStepReference.
     """
 
     module_id: str
     order: Optional[int] = None
     parallel_group: Optional[str] = None
     is_required: bool = True
-
-    # primer: "prerequisites": ["mod_003", "mod_004"]
     prerequisites: List[str] = Field(default_factory=list)

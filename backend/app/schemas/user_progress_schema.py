@@ -72,6 +72,24 @@ class QuestionnaireAnswersResponse(BaseModel):
     last_submitted_at: Optional[datetime] = None
     answers: List[QuestionnaireAnswerResponse] = Field(default_factory=list)
 
+class SaveQuestionnaireAnswersRequest(BaseModel):
+    """
+    Shema za shranjevanje odgovorov vprašalnika v users.progress.
+
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
+
+    Pomembno:
+    - question_type ni vedno yes_no.
+    - answer ni vedno bool.
+    - Pri implementaciji logike moramo paziti, da se yes/no pravila
+      uporabljajo samo za bool odgovore, ne za druge tipe vprašanj.
+    """
+
+    target_type: QuestionnaireTargetType
+    target_id: str
+    answers: List[QuestionnaireAnswerResponse] = Field(default_factory=list)
+
 
 class UserProgressResponse(BaseModel):
     """

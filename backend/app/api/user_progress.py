@@ -7,6 +7,7 @@ from app.schemas.user_progress_schema import (
     CompleteContentRequest,
     FavoriteContentRequest,
     SaveContentRequest,
+    SaveQuestionnaireAnswersRequest,
     UpdateCurrentPositionRequest,
     UserProgressResponse,
 )
@@ -16,18 +17,23 @@ from app.services.user_progress.current_position_service import CurrentPositionS
 from app.services.user_progress.favorite_content_service import FavoriteContentService
 from app.services.user_progress.saved_content_service import SavedContentService
 from app.services.user_progress.user_progress_service import UserProgressService
+from app.services.user_progress.questionnaire_answers_service import QuestionnaireAnswersService
+from app.services.validation.content_validation_service import ContentValidationService
+
 
 from app.repositories.user_repository import UserRepository
+
 from app.repositories.user_progress.user_progress_repository import UserProgressRepository
 from app.repositories.user_progress.saved_content_repository import SavedContentRepository
 from app.repositories.user_progress.favorite_content_repository import FavoriteContentRepository
 from app.repositories.user_progress.completed_content_repository import CompletedContentRepository
 from app.repositories.user_progress.current_position_repository import CurrentPositionRepository
+from app.repositories.user_progress.questionnaire_answers_repository import QuestionnaireAnswersRepository
 
 from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
 from app.repositories.module_repository import ModuleRepository
-from app.services.validation.content_validation_service import ContentValidationService
+
 
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
@@ -130,6 +136,19 @@ def get_current_position_service() -> CurrentPositionService:
     current_position_repository = CurrentPositionRepository(database)
 
     return CurrentPositionService(current_position_repository)
+
+def get_questionnaire_answers_service() -> QuestionnaireAnswersService:
+    """
+    Vrne QuestionnaireAnswersService instanco.
+
+    Ustvari povezavo:
+    database -> QuestionnaireAnswersRepository -> QuestionnaireAnswersService.
+    """
+
+    database = get_database()
+    questionnaire_answers_repository = QuestionnaireAnswersRepository(database)
+
+    return QuestionnaireAnswersService(questionnaire_answers_repository)
 
 
 def get_content_validation_service() -> ContentValidationService:
@@ -386,6 +405,44 @@ async def remove_completed_content(
         raise HTTPException(
             status_code=400,
             detail="Dokončane vsebine ni bilo mogoče odstraniti.",
+        )
+
+    return progress
+
+@router.post("/questionnaire-answers", response_model=UserProgressResponse)
+async def save_questionnaire_answers(
+    request: SaveQuestionnaireAnswersRequest,
+    user_id: str = Depends(get_authenticated_local_user_id),
+    questionnaire_answers_service: QuestionnaireAnswersService = Depends(
+        get_questionnaire_answers_service
+    ),
+) -> UserProgressResponse:
+    """
+    Shrani odgovore vprašalnika v progress prijavljenega uporabnika.
+
+    Odgovori se shranijo v users.progress.questionnaire_answers.
+    Za isti target_type + target_id se hrani zadnje veljavno stanje.
+
+    Pomembno:
+    - answer ni vedno bool.
+    - question_type ni vedno yes_no.
+    - yes/no merge logika je izolirana v QuestionnaireAnswersService.
+    """
+
+    progress = await questionnaire_answers_service.save_questionnaire_answers(
+        user_id=user_id,
+        target_type=request.target_type,
+        target_id=request.target_id,
+        answers=[
+            answer.model_dump()
+            for answer in request.answers
+        ],
+    )
+
+    if not progress:
+        raise HTTPException(
+            status_code=400,
+            detail="Odgovorov vprašalnika ni bilo mogoče shraniti.",
         )
 
     return progress

@@ -27,7 +27,7 @@ function HomeStorySection({
 	const isRight = align === 'right'
 
 	return (
-		<section id={id} className="relative min-h-[95vh] py-24 lg:py-36">
+		<section id={id} className="relative min-h-[150vh] py-52 lg:py-80">
 			<div className="relative mx-auto min-h-[620px] w-full">
 				<RevealOnScroll
 					className={[

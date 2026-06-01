@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Lenis from 'lenis'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
-import { digcompAreas } from './constants'
 import HomeBackground from './components/HomeBackground'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
 import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
 import HomeStorySection from './components/HomeStorySection'
-import HomeDigCompSection from './components/HomeDigCompSection'
 import HomeFinalCtaSection from './components/HomeFinalCtaSection'
 
 function HomePage() {
 	const navigate = useNavigate()
-
-	const [activeIndex, setActiveIndex] = useState(0)
-	const [rotationCount, setRotationCount] = useState(0)
 
 	const {
 		isSearchActive,
@@ -29,15 +24,6 @@ function HomePage() {
 		setSearchResults,
 		isSearching,
 	} = useGlobalSearch()
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setActiveIndex((prev) => (prev + 1) % digcompAreas.length)
-			setRotationCount((prev) => prev + 1)
-		}, 4000)
-
-		return () => clearInterval(interval)
-	}, [])
 
 	useEffect(() => {
 		document.body.style.overflow = isSearchActive ? 'hidden' : 'unset'
@@ -103,6 +89,9 @@ function HomePage() {
 					navigate={navigate}
 				/>
 
+				{/* ── Spacer: Hero → Učne poti ── */}
+				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
+
 				<HomeStorySection
 						id="learning-paths"
 						eyebrow="Učne poti"
@@ -122,6 +111,9 @@ function HomePage() {
 							},
 						]}
 					/>
+
+					{/* ── Spacer: Učne poti → Moduli ── */}
+					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
 					<HomeStorySection
 						id="modules"
@@ -143,6 +135,9 @@ function HomePage() {
 						]}
 					/>
 
+					{/* ── Spacer: Moduli → Učne enote ── */}
+					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
+
 					<HomeStorySection
 						id="learning-units"
 						eyebrow="Učne enote"
@@ -162,6 +157,9 @@ function HomePage() {
 							},
 						]}
 					/>
+
+					{/* ── Spacer: Učne enote → Vprašalnik ── */}
+					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
 					<HomeStorySection
 						id="questionnaire"
@@ -183,10 +181,8 @@ function HomePage() {
 						]}
 					/>
 
-					<HomeDigCompSection
-						activeIndex={activeIndex}
-						rotationCount={rotationCount}
-					/>
+					{/* ── Spacer: Vprašalnik → CTA ── */}
+					<div className="h-[40vh] lg:h-[56vh]" aria-hidden="true" />
 
 					<HomeFinalCtaSection />
 				</div>

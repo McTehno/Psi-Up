@@ -425,7 +425,7 @@ async def save_questionnaire_answers(
 
     Pomembno:
     - answer ni vedno bool.
-    - question_type ni vedno yes_no.
+    - type ni vedno yes_no.
     - yes/no merge logika je izolirana v QuestionnaireAnswersService.
     """
 

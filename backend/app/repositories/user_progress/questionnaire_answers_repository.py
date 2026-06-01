@@ -13,7 +13,7 @@ class QuestionnaireAnswersRepository:
 
     Repository skrbi samo za branje in pisanje v MongoDB.
     Poslovna pravila glede združevanja odgovorov so v service layerju,
-    ker answer ni vedno bool in question_type ni vedno yes_no.
+    ker answer ni vedno bool in type ni vedno yes_no.
     """
 
     def __init__(self, database: Any):

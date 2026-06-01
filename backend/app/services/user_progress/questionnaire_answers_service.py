@@ -13,7 +13,7 @@ class QuestionnaireAnswersService:
     users.progress.questionnaire_answers
 
     Pomembno:
-    - question_type ni vedno yes_no.
+    - type ni vedno yes_no.
     - answer ni vedno bool.
     - yes/no logika mora ostati ločena od drugih tipov vprašanj.
     - Pri drugih tipih odgovorov ne uporabljamo bool pravil.
@@ -199,7 +199,7 @@ class QuestionnaireAnswersService:
 
         return merged_answer
 
-        def _prepare_new_answer(self, answer: Dict[str, Any]) -> Dict[str, Any]:
+    def _prepare_new_answer(self, answer: Dict[str, Any]) -> Dict[str, Any]:
             """
             Pripravi nov odgovor za shranjevanje.
 

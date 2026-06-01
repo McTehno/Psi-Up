@@ -46,7 +46,7 @@ class QuestionnaireAnswerResponse(BaseModel):
 
     question_id: str
     question: str
-    question_type: str = "yes_no"
+    type: str = "yes_no"
     answer: Union[bool, str, int, float, List[str], None] = None
     was_answered: bool = True
 
@@ -81,7 +81,7 @@ class SaveQuestionnaireAnswersRequest(BaseModel):
     Backend ga določi iz JWT tokena.
 
     Pomembno:
-    - question_type ni vedno yes_no.
+    - type ni vedno yes_no.
     - answer ni vedno bool.
     - Pri implementaciji logike moramo paziti, da se yes/no pravila
       uporabljajo samo za bool odgovore, ne za druge tipe vprašanj.

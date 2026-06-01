@@ -39,7 +39,7 @@ class UserQuestionnaireAnswer(BaseModel):
 
     question_id: str
     question: str
-    question_type: str = "yes_no"
+    type: str = "yes_no"
     answer: Union[bool, str, int, float, List[str], None] = None
 
     learning_path_id: Optional[str] = None

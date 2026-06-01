@@ -49,6 +49,19 @@ class ModuleAssessmentResult(BaseModel):
     missing_learning_units: List[str] = Field(default_factory=list)
 
 
+class AssessmentCurrentPositionResponse(BaseModel):
+    """
+    Shema za trenutno pozicijo, določeno po assessmentu.
+
+    Uporabi se, da frontend lahko jasno prikaže,
+    kje naj uporabnik nadaljuje učenje.
+    """
+
+    learning_path_id: Optional[str] = None
+    current_module_id: Optional[str] = None
+    current_learning_unit_id: Optional[str] = None
+
+
 class AssessmentResultResponse(BaseModel):
     """
     Shema za celoten rezultat vprašalnika.
@@ -74,5 +87,11 @@ class AssessmentResultResponse(BaseModel):
 
     learning_unit_results: List[LearningUnitAssessmentResult] = Field(default_factory=list)
     module_results: List[ModuleAssessmentResult] = Field(default_factory=list)
+
+    completed_learning_unit_ids: List[str] = Field(default_factory=list)
+    completed_module_ids: List[str] = Field(default_factory=list)
+    completed_learning_path_ids: List[str] = Field(default_factory=list)
+
+    current_position: Optional[AssessmentCurrentPositionResponse] = None
 
     summary: Optional[str] = None

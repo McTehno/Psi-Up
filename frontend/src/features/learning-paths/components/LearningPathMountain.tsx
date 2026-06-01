@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Bookmark,
   BookOpen,
-  CheckCircle2,
   ChevronLeft,
   Clock,
   Flag,
@@ -18,18 +17,18 @@ import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.
 import type { AssessmentStatus } from '../../../types/assessment'
 import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker'
 
- export type LearningPathMountainNode = {
-   id: string
-   order: number
-   title: string
-   description: string
-   moduleId: string
-   durationHours?: number | null
-   isRequired?: boolean
-   parallelGroup?: string | null
-   assessmentStatus?: AssessmentStatus | null
-   isAssessmentPosition?: boolean
- }
+export type LearningPathMountainNode = {
+  id: string
+  order: number
+  title: string
+  description: string
+  moduleId: string
+  durationHours?: number | null
+  isRequired?: boolean
+  parallelGroup?: string | null
+  assessmentStatus?: AssessmentStatus | null
+  isAssessmentPosition?: boolean
+}
 
 type PositionedMountainNode = LearningPathMountainNode & {
   x: number
@@ -41,11 +40,15 @@ type PositionedMountainNode = LearningPathMountainNode & {
 
 type LearningPathMountainProps = {
   nodes: LearningPathMountainNode[]
+  durationLabel: string
+  moduleCount: number
+  learningUnitCount: number
+  isFavorite?: boolean
+  isSaved?: boolean
   isCompleted?: boolean
   celebrateCompletedOnMount?: boolean
-  onFavoriteClick?: LearningPathActionHandler
-  onSaveClick?: LearningPathActionHandler
-  onCompletedChange?: LearningPathCompletedActionHandler
+  onFavoriteClick?: () => void
+  onSaveClick?: () => void
   className?: string
 }
 
@@ -68,13 +71,8 @@ type PathSegment = {
 
 type LayoutVariant = 'mobile' | 'tablet' | 'desktop'
 
-type MountainAction = 'favorite' | 'save' | 'completed' | null
+type MountainAction = 'favorite' | 'save' | null
 
-type LearningPathActionResult = boolean | void | Promise<boolean | void>
-type LearningPathActionHandler = () => LearningPathActionResult
-type LearningPathCompletedActionHandler = (
-  isCompleted: boolean,
-) => LearningPathActionResult
 
 const MAX_VISIBLE_NODES = 7
 const PARALLEL_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -662,101 +660,68 @@ function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
 }
 
 function MountainActions({
-  isCompleted,
+  isFavorite,
+  isSaved,
   onFavoriteClick,
   onSaveClick,
-  onCompletedChange,
 }: {
-  isCompleted: boolean
-  onFavoriteClick?: LearningPathActionHandler
-  onSaveClick?: LearningPathActionHandler
-  onCompletedChange?: LearningPathCompletedActionHandler
+  isFavorite: boolean
+  isSaved: boolean
+  onFavoriteClick?: () => void
+  onSaveClick?: () => void
 }) {
   const [activeAction, setActiveAction] = useState<MountainAction>(null)
-  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted)
 
-  useEffect(() => {
-    setLocalIsCompleted(isCompleted)
-  }, [isCompleted])
-
-  async function handleAction(action: Exclude<MountainAction, null>) {
-    let nextCompletedValue: boolean | null = null
- 
-    if (action === 'favorite') {
-      const result = await onFavoriteClick?.()
-      if (result === false) return
-    }
- 
-    if (action === 'save') {
-      const result = await onSaveClick?.()
-      if (result === false) return
-    }
- 
-    if (action === 'completed') {
-      nextCompletedValue = !localIsCompleted
- 
-      const result = await onCompletedChange?.(nextCompletedValue)
-      if (result === false) return
-    }
- 
+  function handleAction(action: Exclude<MountainAction, null>) {
     setActiveAction(action)
- 
-    if (nextCompletedValue !== null) {
-      setLocalIsCompleted(nextCompletedValue)
+
+    if (action === 'favorite') {
+      onFavoriteClick?.()
     }
- 
+
+    if (action === 'save') {
+      onSaveClick?.()
+    }
+
     window.setTimeout(() => {
       setActiveAction(null)
     }, 450)
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex shrink-0 items-center gap-2">
       <button
         type="button"
-        onClick={() => void handleAction('favorite')}
+        onClick={() => handleAction('favorite')}
         className={[
-          'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
-          activeAction === 'favorite'
-            ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
+          'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
+          isFavorite || activeAction === 'favorite'
+            ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8] shadow-[0_10px_24px_rgba(49,88,59,0.18)]'
             : 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#31583b]/35 hover:bg-[#f2f8f1] hover:text-[#31583b]',
         ].join(' ')}
-        aria-label="Dodaj med priljubljene"
-        title="Priljubljeno"
+        aria-label={
+          isFavorite ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'
+        }
+        aria-pressed={isFavorite}
+        title={isFavorite ? 'Priljubljeno' : 'Dodaj med priljubljene'}
       >
-        <Heart className="h-5 w-5" />
+        <Heart className={isFavorite ? 'h-5 w-5 fill-current' : 'h-5 w-5'} />
       </button>
 
       <button
         type="button"
-        onClick={() => void handleAction('save')}
+        onClick={() => handleAction('save')}
         className={[
-          'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
-          activeAction === 'save'
-            ? 'border-[#d07a12] bg-[#d07a12] text-[#fffdf8]'
+          'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
+          isSaved || activeAction === 'save'
+            ? 'border-[#d07a12] bg-[#d07a12] text-[#fffdf8] shadow-[0_10px_24px_rgba(208,122,18,0.18)]'
             : 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#d07a12]/45 hover:bg-[#fff6eb] hover:text-[#d07a12]',
         ].join(' ')}
-        aria-label="Shrani za pozneje"
-        title="Shrani"
+        aria-label={isSaved ? 'Odstrani iz shranjenih' : 'Shrani za pozneje'}
+        aria-pressed={isSaved}
+        title={isSaved ? 'Shranjeno' : 'Shrani'}
       >
-        <Bookmark className="h-5 w-5" />
-      </button>
-
-      <button
-        type="button"
-        onClick={() => void handleAction('completed')}
-        className={[
-          'group inline-flex h-12 min-w-[210px] flex-1 items-center justify-center gap-2.5 rounded-full border px-5 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(49,88,59,0.14)] sm:flex-none',
-          localIsCompleted
-            ? 'border-[#b7d7bd] bg-[#f2f8f1] text-[#31583b] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
-            : activeAction === 'completed'
-              ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
-              : 'border-[#31583b]/75 bg-[#3f6b49] text-[#fffdf8] hover:border-[#31583b] hover:bg-[#31583b]',
-        ].join(' ')}
-        aria-pressed={localIsCompleted}
-      >
-        <CheckCircle2 className="h-5 w-5" />
-        {localIsCompleted ? 'Končano' : 'Označi kot dokončano'}
+        <Bookmark className={isSaved ? 'h-5 w-5 fill-current' : 'h-5 w-5'} />
       </button>
     </div>
   )
@@ -767,10 +732,10 @@ export type LearningPathOverviewCardProps = {
   moduleCount: number
   learningUnitCount: number
   hiddenNodeCount?: number
-  isCompleted: boolean
-  onFavoriteClick?: LearningPathActionHandler
-  onSaveClick?: LearningPathActionHandler
-  onCompletedChange?: LearningPathCompletedActionHandler
+  isFavorite?: boolean
+  isSaved?: boolean
+  onFavoriteClick?: () => void
+  onSaveClick?: () => void
   className?: string
 }
 
@@ -779,10 +744,10 @@ export function LearningPathOverviewCard({
   moduleCount,
   learningUnitCount,
   hiddenNodeCount = 0,
-  isCompleted,
+  isFavorite = false,
+  isSaved = false,
   onFavoriteClick,
   onSaveClick,
-  onCompletedChange,
   className = '',
 }: LearningPathOverviewCardProps) {
   return (
@@ -804,6 +769,13 @@ export function LearningPathOverviewCard({
             </p>
           )}
         </div>
+
+        <MountainActions
+          isFavorite={isFavorite}
+          isSaved={isSaved}
+          onFavoriteClick={onFavoriteClick}
+          onSaveClick={onSaveClick}
+        />
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -841,15 +813,6 @@ export function LearningPathOverviewCard({
             </strong>
           </div>
         ))}
-      </div>
-
-      <div className="mt-5 border-t border-[#eadfce] pt-5">
-        <MountainActions
-          isCompleted={isCompleted}
-          onFavoriteClick={onFavoriteClick}
-          onSaveClick={onSaveClick}
-          onCompletedChange={onCompletedChange}
-        />
       </div>
     </div>
   )

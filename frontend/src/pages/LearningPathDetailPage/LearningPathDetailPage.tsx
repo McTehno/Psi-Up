@@ -236,7 +236,6 @@ function LearningPathDetailPage() {
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isCompleted, setIsCompleted] = useState(false)
   const [assessmentResult, setAssessmentResult] =
     useState<AssessmentResultResponse | null>(null)
   const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
@@ -260,7 +259,8 @@ function LearningPathDetailPage() {
   })
 
   const {
-    isCompleted: progressIsCompleted,
+    isFavorite: progressIsFavorite,
+    isSaved: progressIsSaved,
     errorMessage: progressErrorMessage,
     clearError: clearProgressError,
     toggleAction,
@@ -272,9 +272,6 @@ function LearningPathDetailPage() {
     initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
   })
 
-  useEffect(() => {
-    setIsCompleted(isCompletedByAssessment || progressIsCompleted)
-  }, [isCompletedByAssessment, progressIsCompleted])
 
   useEffect(() => {
     let isActive = true
@@ -315,7 +312,6 @@ function LearningPathDetailPage() {
         setLearningPath(learningPathDetail)
         setAssessmentResult(sessionAssessmentResult)
         setIsCompletedByAssessment(nextIsCompletedByAssessment)
-        setIsCompleted(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
           return
@@ -380,20 +376,6 @@ function LearningPathDetailPage() {
     return Boolean(nextState)
   }
 
-  async function handleCompletedChange(_nextIsCompleted: boolean) {
-    if (!learningPathContentId) {
-      return false
-    }
-
-    const nextState = await toggleAction('completed')
-
-    if (!nextState) {
-      return false
-    }
-
-    setIsCompleted(isCompletedByAssessment || nextState.isCompleted)
-    return true
-  }
 
   if (isLoading) {
     return (
@@ -480,10 +462,10 @@ function LearningPathDetailPage() {
             moduleCount={moduleCount}
             learningUnitCount={learningUnitCount}
             hiddenNodeCount={hiddenNodeCount}
-            isCompleted={isCompleted}
+            isFavorite={progressIsFavorite}
+            isSaved={progressIsSaved}
             onFavoriteClick={handleFavoriteClick}
             onSaveClick={handleSaveClick}
-            onCompletedChange={handleCompletedChange}
           />
         </section>
 
@@ -492,11 +474,17 @@ function LearningPathDetailPage() {
             {hasMountainNodes ? (
               <LearningPathMountain
                 nodes={mountainNodes}
-                isCompleted={isCompleted}
+                durationLabel={formatDuration(
+                  learningPath.duration_hours,
+                  learningPath.duration_min,
+                )}
+                moduleCount={moduleCount}
+                learningUnitCount={learningUnitCount}
+                isFavorite={progressIsFavorite}
+                isSaved={progressIsSaved}
                 celebrateCompletedOnMount={isCompletedByAssessment}
                 onFavoriteClick={handleFavoriteClick}
                 onSaveClick={handleSaveClick}
-                onCompletedChange={handleCompletedChange}
                 className="h-full"
               />
             ) : (

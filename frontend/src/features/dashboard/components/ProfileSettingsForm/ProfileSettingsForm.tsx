@@ -33,7 +33,7 @@ export default function ProfileSettingsForm({
 		const trimmedEmail = email.trim()
 
 		if (!trimmedName) {
-			setErrorMessage('Uporabniško ime ne sme biti prazno.')
+			setErrorMessage('Vnosno polje ne sme biti prazno.')
 			setSuccessMessage('')
 			return
 		}
@@ -98,7 +98,7 @@ export default function ProfileSettingsForm({
 						htmlFor="dashboard-profile-name"
 						className="text-sm font-bold text-[#504639]"
 					>
-						Uporabniško ime
+						Ime in priimek
 					</label>
 					<input
 						id="dashboard-profile-name"

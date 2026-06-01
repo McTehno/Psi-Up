@@ -402,7 +402,7 @@ export default function DashboardPage() {
 			{activeModal === 'edit-profile' && localUser && (
 				<DashboardModal
 					title="Uredi profil"
-					description="Uredi uporabniško ime in email za svoj račun."
+					description="Uredi ime in email za svoj račun."
 					onClose={() => setActiveModal(null)}
 				>
 					<ProfileSettingsForm

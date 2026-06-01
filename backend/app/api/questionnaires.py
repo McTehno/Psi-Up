@@ -1,24 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.database.mongodb import get_database
+
 from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
 from app.repositories.module_repository import ModuleRepository
+
 from app.schemas.questionnaire_schema import (
     QuestionnaireResponse,
     QuestionnaireTargetType,
 )
+
 from app.services.learning_paths.learning_path_service import LearningPathService
 from app.services.learning_units.learning_unit_service import LearningUnitService
 from app.services.modules.module_service import ModuleService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
-router = APIRouter(prefix="/questionnaires", tags=["Questionnaires"])
 
-# TODO:
-# Trenutno vprašalnik za učno pot zbere vsa vprašanja iz vseh modulov.
-# Če bo vprašanj preveč, bo treba dodati logiko za omejevanje,
-# prioritizacijo ali filtriranje vprašanj.
+router = APIRouter(prefix="/questionnaires", tags=["Questionnaires"])
 
 
 def get_questionnaire_service() -> QuestionnaireService:
@@ -40,11 +39,13 @@ def get_questionnaire_service() -> QuestionnaireService:
     module_service = ModuleService(
         module_repository=module_repository,
         learning_unit_service=learning_unit_service,
+        learning_path_repository=learning_path_repository,
     )
 
     learning_path_service = LearningPathService(
         learning_path_repository=learning_path_repository,
         module_service=module_service,
+        learning_unit_service=learning_unit_service,
     )
 
     return QuestionnaireService(
@@ -58,11 +59,11 @@ def get_questionnaire_service() -> QuestionnaireService:
 async def get_questionnaire(
     target_type: QuestionnaireTargetType = Query(
         ...,
-        description="Tip vsebine, za katero želimo vprašalnik."
+        description="Tip vsebine, za katero želimo vprašalnik.",
     ),
     target_id: str = Query(
         ...,
-        description="ID učne poti, modula ali učne enote."
+        description="ID učne poti, modula ali učne enote.",
     ),
     questionnaire_service: QuestionnaireService = Depends(get_questionnaire_service),
 ) -> QuestionnaireResponse:

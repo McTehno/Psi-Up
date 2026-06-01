@@ -156,13 +156,13 @@ class QuestionnaireService:
         if not question_id or not question_text:
             return None
 
-        question_type = self._get_string_value(
+        type = self._get_string_value(
             question.get("type"),
             fallback="yes_no",
         )
 
-        if not question_type:
-            question_type = "yes_no"
+        if not type:
+            type = "yes_no"
 
         related_competency_codes = self._get_string_list_value(
             question.get("related_competency_codes")
@@ -171,7 +171,7 @@ class QuestionnaireService:
         return {
             "id": question_id,
             "question": question_text,
-            "type": question_type,
+            "type": type,
             "learning_path_id": self._get_optional_string_value(
                 question.get("learning_path_id")
             ),

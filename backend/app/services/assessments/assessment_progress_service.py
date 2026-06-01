@@ -135,6 +135,12 @@ class AssessmentProgressService:
         result["completed_learning_path_ids"] = completed_learning_path_ids
         result["current_position"] = current_position
 
+        result = self._sync_result_with_completed_progress(
+            result=result,
+            completed_learning_unit_ids=completed_learning_unit_ids,
+            completed_module_ids=completed_module_ids,
+        )
+
         result = self._clear_next_recommendations_if_learning_path_completed(
             target_type=target_type,
             target_id=target_id,
@@ -741,6 +747,105 @@ class AssessmentProgressService:
 
         return None
 
+    def _sync_result_with_completed_progress(
+        self,
+        result: Dict[str, Any],
+        completed_learning_unit_ids: List[str],
+        completed_module_ids: List[str],
+    ) -> Dict[str, Any]:
+        """
+        Uskladi assessment response z že shranjenim completed progressom.
+
+        AssessmentService oceni trenutno poslane odgovore. Pri partial submitu lahko zato
+        vrne, da so stare enote/moduli not_started, čeprav so že completed v users.progress.
+
+        Ta metoda poskrbi, da končni response vedno upošteva realno stanje progressa.
+        """
+
+        completed_learning_unit_set = set(completed_learning_unit_ids)
+        completed_module_set = set(completed_module_ids)
+
+        synced_learning_unit_results: List[Dict[str, Any]] = []
+
+        for unit_result in self._get_dict_list_value(
+            result.get("learning_unit_results")
+        ):
+            synced_unit_result = dict(unit_result)
+            learning_unit_id = synced_unit_result.get("learning_unit_id")
+
+            if (
+                isinstance(learning_unit_id, str)
+                and learning_unit_id in completed_learning_unit_set
+            ):
+                synced_unit_result["is_completed_by_assessment"] = True
+
+                if not synced_unit_result.get("known_topic_ids"):
+                    synced_unit_result["known_topic_ids"] = self._get_string_list_value(
+                        synced_unit_result.get("missing_topic_ids")
+                    )
+
+                synced_unit_result["missing_topic_ids"] = []
+
+                known_competency_codes = self._get_string_list_value(
+                    synced_unit_result.get("known_competency_codes")
+                )
+                missing_competency_codes = self._get_string_list_value(
+                    synced_unit_result.get("missing_competency_codes")
+                )
+
+                synced_unit_result["known_competency_codes"] = self._merge_unique_strings(
+                    known_competency_codes,
+                    missing_competency_codes,
+                )
+                synced_unit_result["missing_competency_codes"] = []
+
+            synced_learning_unit_results.append(synced_unit_result)
+
+        result["learning_unit_results"] = synced_learning_unit_results
+
+        synced_module_results: List[Dict[str, Any]] = []
+
+        for module_result in self._get_dict_list_value(
+            result.get("module_results")
+        ):
+            synced_module_result = dict(module_result)
+            module_id = synced_module_result.get("module_id")
+
+            if (
+                isinstance(module_id, str)
+                and module_id in completed_module_set
+            ):
+                synced_module_result["status"] = AssessmentStatus.COMPLETED.value
+
+                completed_learning_units = self._get_string_list_value(
+                    synced_module_result.get("completed_learning_units")
+                )
+                missing_learning_units = self._get_string_list_value(
+                    synced_module_result.get("missing_learning_units")
+                )
+
+                synced_module_result["completed_learning_units"] = self._merge_unique_strings(
+                    completed_learning_units,
+                    missing_learning_units,
+                )
+                synced_module_result["missing_learning_units"] = []
+
+            synced_module_results.append(synced_module_result)
+
+        result["module_results"] = synced_module_results
+
+        result["skipped_learning_units"] = self._merge_unique_strings(
+            self._get_string_list_value(result.get("skipped_learning_units")),
+            completed_learning_unit_ids,
+        )
+
+        result["skipped_modules"] = self._merge_unique_strings(
+            self._get_string_list_value(result.get("skipped_modules")),
+            completed_module_ids,
+        )
+
+        return result
+
     def _clear_next_recommendations_if_learning_path_completed(
         self,
         target_type: QuestionnaireTargetType,
@@ -794,6 +899,26 @@ class AssessmentProgressService:
             return f"question:{self._normalize_question_text(question_text)}"
 
         return None
+
+    def _merge_unique_strings(
+        self,
+        first_values: List[str],
+        second_values: List[str],
+    ) -> List[str]:
+        """
+        Združi dva seznama stringov brez podvajanja in ohrani vrstni red.
+        """
+
+        merged_values: List[str] = []
+
+        for value in first_values + second_values:
+            if not isinstance(value, str) or not value:
+                continue
+
+            if value not in merged_values:
+                merged_values.append(value)
+
+        return merged_values
 
     def _normalize_question_text(
         self,

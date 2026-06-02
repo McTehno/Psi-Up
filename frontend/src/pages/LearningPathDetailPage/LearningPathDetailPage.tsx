@@ -21,8 +21,8 @@ import type {
   AssessmentResultResponse,
   AssessmentStatus,
 } from '../../types/assessment'
-import type { LearningPathDetailResponse } from '../../types/learning-path'
-import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
+import type { LearningPathDetailResponse, LearningPathStepResponse } from '../../types/learning-path'
+import type { ModuleDetailResponse } from '../../types/module'
 
 const MAX_VISIBLE_NODES = 7
 
@@ -53,11 +53,11 @@ function getStringArrayOrEmpty(value: unknown) {
     .filter(Boolean)
 }
 
-function getModuleReferenceById(
+function getStepByModuleId(
   moduleId: string,
-  references: ModuleReferenceResponse[],
+  steps: LearningPathStepResponse[],
 ) {
-  return references.find((reference) => reference.module_id === moduleId)
+  return steps.find((step) => step.module_id === moduleId)
 }
 
 function getModuleAssessmentStatus(
@@ -112,23 +112,25 @@ function createMountainNodes(
   const moduleDetails = Array.isArray(learningPath.module_details)
     ? learningPath.module_details
     : []
-  const moduleReferences = Array.isArray(learningPath.modules)
-    ? learningPath.modules
+
+  const steps = Array.isArray(learningPath.steps)
+    ? learningPath.steps
     : []
+
   const nodes: LearningPathMountainNode[] = []
 
-  moduleDetails.forEach((module: ModuleResponse, index) => {
+  moduleDetails.forEach((module: ModuleDetailResponse, index) => {
     const moduleId = getBackendEntityId(module as BackendEntity)
 
     if (!moduleId) {
       return
     }
 
-    const moduleReference = getModuleReferenceById(moduleId, moduleReferences)
+    const step = getStepByModuleId(moduleId, steps)
 
     nodes.push({
       id: moduleId,
-      order: moduleReference?.order ?? index + 1,
+      order: step?.order ?? index + 1,
       title: getTextOrFallback(module.title, 'Neimenovan modul'),
       description: getTextOrFallback(
         module.short_description,
@@ -136,13 +138,13 @@ function createMountainNodes(
       ),
       moduleId,
       durationHours: module.duration_hours,
-      isRequired: moduleReference?.is_required ?? false,
-      parallelGroup: moduleReference?.parallel_group ?? null,
+      isRequired: step?.is_required ?? false,
+      parallelGroup: step?.parallel_group ?? null,
       assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
       isAssessmentPosition: isAssessmentPositionModule(
-      moduleId,
-      assessmentResult,
-    ),
+        moduleId,
+        assessmentResult,
+      ),
     })
   })
 
@@ -152,18 +154,18 @@ function createMountainNodes(
 }
 
 function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
-  const modules = Array.isArray(learningPath.modules)
-    ? learningPath.modules
-    : []
+  const steps = Array.isArray(learningPath.steps) ? learningPath.steps : []
+
   const moduleDetails = Array.isArray(learningPath.module_details)
     ? learningPath.module_details
     : []
-  const referenceModuleIds = modules
-    .map((moduleReference) => moduleReference.module_id)
+
+  const stepModuleIds = steps
+    .map((step) => step.module_id)
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 
-  if (referenceModuleIds.length > 0) {
-    return referenceModuleIds
+  if (stepModuleIds.length > 0) {
+    return stepModuleIds
   }
 
   return moduleDetails
@@ -191,20 +193,13 @@ function isLearningPathCompletedByAssessment(
   )
 }
 
-function formatDuration(
-  durationHours?: number | null,
-  durationMin?: number | null,
-) {
+function formatDuration(durationHours?: number | null) {
   if (durationHours != null) {
     if (durationHours === 1) {
       return '1 h'
     }
 
     return `${durationHours} h`
-  }
-
-  if (durationMin != null) {
-    return `${durationMin} min`
   }
 
   return 'Ni določeno'
@@ -423,7 +418,7 @@ function LearningPathDetailPage() {
   )
   const learningPathKeywords = getStringArrayOrEmpty(learningPath.keywords)
   const moduleCount =
-    learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
+  learningPath.module_details?.length ?? learningPath.steps?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
   const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
   const hasMountainNodes = mountainNodes.length > 0
@@ -455,10 +450,7 @@ function LearningPathDetailPage() {
 
         <section className="mb-6">
           <LearningPathOverviewCard
-            durationLabel={formatDuration(
-              learningPath.duration_hours,
-              learningPath.duration_min,
-            )}
+            durationLabel={formatDuration(learningPath.duration_hours)}
             moduleCount={moduleCount}
             learningUnitCount={learningUnitCount}
             hiddenNodeCount={hiddenNodeCount}
@@ -474,10 +466,7 @@ function LearningPathDetailPage() {
             {hasMountainNodes ? (
               <LearningPathMountain
                 nodes={mountainNodes}
-                durationLabel={formatDuration(
-                  learningPath.duration_hours,
-                  learningPath.duration_min,
-                )}
+                durationLabel={formatDuration(learningPath.duration_hours)}
                 moduleCount={moduleCount}
                 learningUnitCount={learningUnitCount}
                 isFavorite={progressIsFavorite}

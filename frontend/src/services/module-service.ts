@@ -1,10 +1,7 @@
 import { apiGet } from './api-client'
-import type {
-	ModuleDetailResponse,
-	ModuleResponse,
-} from '../types/module'
 import type { LearningUnitReferenceResponse } from '../types/learning-unit'
 import type { QuestionnaireResponse } from '../types/questionnaire'
+import type { ModuleDetailResponse, ModuleResponse } from '../types/module'
 
 function buildRepeatedQueryParam(
 	paramName: string,
@@ -46,9 +43,9 @@ export async function getModuleById(
  * in učne poti, ki vsebujejo izbrani modul.
  */
 export async function getModuleDetail(
-	moduleId: string,
+  moduleId: string,
 ): Promise<ModuleDetailResponse> {
-	return apiGet<ModuleDetailResponse>(`/modules/${moduleId}/detail`)
+  return apiGet(`/modules/${moduleId}/detail`)
 }
 
 /**

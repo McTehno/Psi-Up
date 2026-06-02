@@ -14,7 +14,7 @@ class FakeModuleService:
             {
                 "_id": "mod_001",
                 "title": "Razumevanje umetne inteligence",
-                "short_description": "Modul o osnovnih pojmih umetne inteligence.",
+                "short_description": "Modul predstavlja osnovne pojme umetne inteligence.",
                 "duration_hours": 1.75,
                 "keywords": ["umetna inteligenca", "UI"],
                 "domains": ["Umetna inteligenca"],
@@ -37,7 +37,7 @@ class FakeModuleService:
         return {
             "_id": module_id,
             "title": "Razumevanje umetne inteligence",
-            "short_description": "Modul o osnovnih pojmih umetne inteligence.",
+            "short_description": "Modul predstavlja osnovne pojme umetne inteligence.",
             "duration_hours": 1.75,
             "keywords": ["umetna inteligenca", "UI"],
             "domains": ["Umetna inteligenca"],
@@ -59,12 +59,38 @@ class FakeModuleService:
         return {
             "_id": module_id,
             "title": "Razumevanje umetne inteligence",
-            "short_description": "Modul o osnovnih pojmih umetne inteligence.",
+            "short_description": "Modul predstavlja osnovne pojme umetne inteligence.",
+            "duration_hours": 1.75,
+            "keywords": ["umetna inteligenca", "UI"],
+            "domains": ["Umetna inteligenca"],
+            "learning_units": [
+                {
+                    "learning_unit_id": "ue_001",
+                    "order": 1,
+                    "parallel_group": None,
+                    "is_required": True,
+                    "prerequisites": [],
+                }
+            ],
             "learning_unit_details": [
                 {
                     "_id": "ue_001",
-                    "title": "Kaj je umetna inteligenca?",
-                    "short_description": "Uvod v osnovne pojme.",
+                    "title": "Kaj je umetna inteligenca",
+                    "short_description": "Učna enota razloži osnovne pojme umetne inteligence.",
+                    "duration_hours": 0.5,
+                    "keywords": ["umetna inteligenca"],
+                    "domains": ["Umetna inteligenca"],
+                    "content_topics": [],
+                    "self_assessment_questions": [],
+                }
+            ],
+            "recommended_learning_paths": [
+                {
+                    "_id": "up_001",
+                    "title": "Iskanje informacij z umetno inteligenco",
+                    "short_description": "Učna pot za uporabo umetne inteligence.",
+                    "duration_hours": 4.25,
+                    "keywords": ["umetna inteligenca", "iskanje"],
                 }
             ],
         }
@@ -137,8 +163,19 @@ class FakeQuestionnaireService:
                     "id": "q_001",
                     "question": "Razumem vsebino modula.",
                     "type": "yes_no",
+                    "module_id": target_id,
                     "learning_unit_id": "ue_001",
                     "related_topic": "Osnovni pojmi",
+                    "related_topic_id": "topic_001",
+                    "related_competency_codes": ["1.1"],
+                    "sources": [
+                        {
+                            "module_id": target_id,
+                            "learning_unit_id": "ue_001",
+                            "topic_id": "topic_001",
+                            "competency_codes": ["1.1"],
+                        }
+                    ],
                 }
             ],
         }
@@ -179,6 +216,8 @@ def test_get_modules_returns_list():
     assert len(data) == 1
     assert data[0]["_id"] == "mod_001"
     assert data[0]["title"] == "Razumevanje umetne inteligence"
+    assert "learning_units" in data[0]
+    assert data[0]["learning_units"][0]["learning_unit_id"] == "ue_001"
 
 
 def test_get_module_by_id_returns_module():
@@ -191,6 +230,7 @@ def test_get_module_by_id_returns_module():
 
     assert data["_id"] == "mod_001"
     assert data["title"] == "Razumevanje umetne inteligence"
+    assert len(data["learning_units"]) == 1
 
 
 def test_get_module_by_id_returns_404_when_missing():
@@ -207,7 +247,7 @@ def test_get_module_by_id_returns_404_when_missing():
 
 
 def test_get_module_detail_returns_detail():
-    # Detail endpoint vrne modul z dodatnimi podatki.
+    # Detail endpoint vrne modul z learning_unit_details in recommended_learning_paths.
     response = client.get("/api/modules/mod_001/detail")
 
     assert response.status_code == 200
@@ -216,7 +256,11 @@ def test_get_module_detail_returns_detail():
 
     assert data["_id"] == "mod_001"
     assert data["title"] == "Razumevanje umetne inteligence"
+    assert len(data["learning_units"]) == 1
     assert len(data["learning_unit_details"]) == 1
+    assert len(data["recommended_learning_paths"]) == 1
+    assert data["learning_unit_details"][0]["_id"] == "ue_001"
+    assert data["recommended_learning_paths"][0]["_id"] == "up_001"
 
 
 def test_get_module_detail_returns_404_when_missing():
@@ -233,7 +277,7 @@ def test_get_module_detail_returns_404_when_missing():
 
 
 def test_get_module_learning_units_returns_references():
-    # Endpoint vrne reference učnih enot znotraj modula.
+    # Endpoint /learning-units vrne reference učnih enot znotraj modula.
     response = client.get("/api/modules/mod_001/learning-units")
 
     assert response.status_code == 200
@@ -243,6 +287,7 @@ def test_get_module_learning_units_returns_references():
     assert len(data) == 2
     assert data[0]["learning_unit_id"] == "ue_001"
     assert data[1]["learning_unit_id"] == "ue_002"
+    assert data[1]["prerequisites"] == ["ue_001"]
 
 
 def test_get_available_learning_units_without_completed_ids():
@@ -258,7 +303,7 @@ def test_get_available_learning_units_without_completed_ids():
 
 
 def test_get_available_learning_units_with_completed_ids():
-    # Če je ue_001 zaključena, postane dostopna tudi ue_002.
+    # Če je ue_001 completed, postane dostopna tudi ue_002.
     response = client.get(
         "/api/modules/mod_001/available-learning-units",
         params={
@@ -286,6 +331,7 @@ def test_get_module_questionnaire_returns_questionnaire():
     assert data["target_type"] == "module"
     assert data["target_id"] == "mod_001"
     assert data["title"] == "Vprašalnik za modul"
+    assert len(data["questions"]) == 1
 
 
 def test_get_module_questionnaire_returns_404_when_missing():

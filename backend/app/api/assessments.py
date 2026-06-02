@@ -97,6 +97,7 @@ def get_assessment_progress_service() -> AssessmentProgressService:
 
     completed_content_service = CompletedContentService(
         completed_content_repository=completed_content_repository,
+        module_service=module_service,
     )
 
     current_position_service = CurrentPositionService(

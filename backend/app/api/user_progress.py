@@ -34,6 +34,9 @@ from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
 from app.repositories.module_repository import ModuleRepository
 
+from app.services.learning_units.learning_unit_service import LearningUnitService
+from app.services.modules.module_service import ModuleService
+
 
 
 router = APIRouter(prefix="/user-progress", tags=["User progress"])
@@ -115,13 +118,26 @@ def get_completed_content_service() -> CompletedContentService:
     Vrne CompletedContentService instanco.
 
     Ustvari povezavo:
-    database -> CompletedContentRepository -> CompletedContentService.
+    database -> repositories -> services -> CompletedContentService.
     """
 
     database = get_database()
-    completed_content_repository = CompletedContentRepository(database)
 
-    return CompletedContentService(completed_content_repository)
+    completed_content_repository = CompletedContentRepository(database)
+    module_repository = ModuleRepository(database)
+    learning_unit_repository = LearningUnitRepository(database)
+
+    learning_unit_service = LearningUnitService(learning_unit_repository)
+
+    module_service = ModuleService(
+        module_repository=module_repository,
+        learning_unit_service=learning_unit_service,
+    )
+
+    return CompletedContentService(
+        completed_content_repository=completed_content_repository,
+        module_service=module_service,
+    )
 
 
 def get_current_position_service() -> CurrentPositionService:

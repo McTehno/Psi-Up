@@ -106,6 +106,40 @@ class AssessmentService:
             if value not in target:
                 target.append(value)
 
+    def _deduplicate_learning_unit_results(
+        self,
+        learning_unit_results: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        """
+        Odstrani podvojene rezultate učnih enot.
+
+        Pri ocenjevanju učne poti se ista učna enota lahko pojavi v več modulih.
+        V learning_unit_results jo za frontend vrnemo samo enkrat, ker rezultat
+        predstavlja stanje učne enote, ne stanje učne enote znotraj posameznega modula.
+        """
+
+        deduplicated_results: List[Dict[str, Any]] = []
+        seen_learning_unit_ids: set[str] = set()
+
+        for result in self._get_list_value(learning_unit_results):
+            if not isinstance(result, dict):
+                continue
+
+            learning_unit_id = self._get_string_value(
+                result.get("learning_unit_id")
+            )
+
+            if not learning_unit_id:
+                continue
+
+            if learning_unit_id in seen_learning_unit_ids:
+                continue
+
+            seen_learning_unit_ids.add(learning_unit_id)
+            deduplicated_results.append(result)
+
+        return deduplicated_results
+
     def _build_answer_maps(
         self,
         answers: List[Dict[str, Any]],
@@ -453,6 +487,10 @@ class AssessmentService:
         else:
             summary = f"Uporabnik naj začne pri učni enoti {start_learning_unit_id}."
 
+        learning_unit_results = self._deduplicate_learning_unit_results(
+            learning_unit_results
+        )
+        
         return {
             "user_id": user_id,
             "target_type": QuestionnaireTargetType.LEARNING_PATH,

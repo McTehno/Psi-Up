@@ -1,35 +1,205 @@
-import json
-from pathlib import Path
+import pytest
+
+from app.main import app
 
 
-BACKEND_ROOT = Path(__file__).resolve().parents[1]
+@pytest.fixture(autouse=True)
+def clear_dependency_overrides():
+    """
+    Počisti FastAPI dependency overrides pred in po vsakem testu.
 
-DATA_DIR_CANDIDATES = [
-    BACKEND_ROOT / "data" / "nova_verzija_data",
-    BACKEND_ROOT / "data" / "mongodb",
-]
+    To prepreči, da bi override iz enega API testa vplival na drug test.
+    """
 
+    app.dependency_overrides.clear()
 
-def get_data_dir() -> Path:
-    # Podpiramo novo in starejšo mapo z JSON podatki.
-    for data_dir in DATA_DIR_CANDIDATES:
-        if data_dir.exists():
-            return data_dir
+    yield
 
-    raise FileNotFoundError(
-        "Mapa z JSON podatki ni najdena. Pričakovana pot je "
-        "backend/data/nova_verzija_data ali backend/data/mongodb."
-    )
+    app.dependency_overrides.clear()
 
 
-def load_json_file(file_name: str):
-    # JSON datoteke beremo prek helper funkcije, da se pot ne ponavlja v testih.
-    file_path = get_data_dir() / file_name
+@pytest.fixture
+def sample_user_id():
+    """
+    Skupni testni user_id.
+    """
 
-    with file_path.open("r", encoding="utf-8") as file:
-        return json.load(file)
+    return "user_001"
 
 
-def get_document_id(document: dict) -> str:
-    # V MongoDB podatkih uporabljamo _id.
-    return document["_id"]
+@pytest.fixture
+def sample_learning_path_id():
+    """
+    Skupni testni learning path ID.
+    """
+
+    return "lp_001"
+
+
+@pytest.fixture
+def sample_module_id():
+    """
+    Skupni testni module ID.
+    """
+
+    return "mod_001"
+
+
+@pytest.fixture
+def sample_learning_unit_id():
+    """
+    Skupni testni learning unit ID.
+    """
+
+    return "ue_001"
+
+
+@pytest.fixture
+def sample_topic_id():
+    """
+    Skupni testni topic ID.
+    """
+
+    return "topic_001"
+
+
+@pytest.fixture
+def sample_competency_code():
+    """
+    Skupna testna DigComp competency code vrednost.
+    """
+
+    return "1.2"
+
+
+@pytest.fixture
+def sample_progress_response():
+    """
+    Osnovna stabilna user progress struktura za API/service teste.
+    """
+
+    return {
+        "_id": "progress_user_001",
+        "user_id": "user_001",
+        "saved": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "favorites": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "completed": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "current_positions": [],
+        "questionnaire_answers": [],
+    }
+
+
+@pytest.fixture
+def sample_questionnaire_answer():
+    """
+    Osnovni odgovor iz vprašalnika.
+    """
+
+    return {
+        "question_id": "q_001",
+        "question": "Razumem osnovne pojme.",
+        "type": "yes_no",
+        "answer": True,
+        "learning_path_id": "lp_001",
+        "module_id": "mod_001",
+        "learning_unit_id": "ue_001",
+        "topic_id": "topic_001",
+        "competency_codes": ["1.2"],
+    }
+
+
+@pytest.fixture
+def sample_learning_unit_document():
+    """
+    Osnovni dokument učne enote za service teste.
+    """
+
+    return {
+        "_id": "ue_001",
+        "title": "Osnovni pojmi umetne inteligence",
+        "short_description": "Kratek uvod v osnovne pojme umetne inteligence.",
+        "keywords": ["umetna inteligenca", "osnove"],
+        "content_topics": [
+            {
+                "id": "topic_001",
+                "title": "Osnovni pojmi",
+                "related_competency_codes": ["1.2"],
+            }
+        ],
+        "digcomp_competencies": [
+            {
+                "code": "1.2",
+                "title": "Vrednotenje podatkov, informacij in digitalnih vsebin",
+                "area": "Informacijska in podatkovna pismenost",
+            }
+        ],
+        "self_assessment_questions": [
+            {
+                "id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "type": "yes_no",
+                "related_topic": "Osnovni pojmi",
+                "related_topic_id": "topic_001",
+                "related_competency_codes": ["1.2"],
+            }
+        ],
+    }
+
+
+@pytest.fixture
+def sample_module_document():
+    """
+    Osnovni dokument modula za service/repository teste.
+    """
+
+    return {
+        "_id": "mod_001",
+        "title": "Razumevanje umetne inteligence",
+        "short_description": "Modul za osnovno razumevanje umetne inteligence.",
+        "keywords": ["umetna inteligenca", "modul"],
+        "learning_units": [
+            {
+                "learning_unit_id": "ue_001",
+                "order": 1,
+                "parallel_group": None,
+                "is_required": True,
+                "prerequisites": [],
+            }
+        ],
+    }
+
+
+@pytest.fixture
+def sample_learning_path_document():
+    """
+    Osnovni dokument učne poti za service/repository teste.
+    """
+
+    return {
+        "_id": "lp_001",
+        "title": "Učna pot digitalnih kompetenc",
+        "short_description": "Učna pot za razvoj digitalnih kompetenc.",
+        "keywords": ["digitalne kompetence", "učna pot"],
+        "steps": [
+            {
+                "type": "module",
+                "ref_id": "mod_001",
+                "order": 1,
+                "parallel_group": None,
+                "is_required": True,
+                "prerequisites": [],
+            }
+        ],
+    }

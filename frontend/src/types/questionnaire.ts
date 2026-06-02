@@ -38,9 +38,11 @@ export type QuestionnaireAnswerRequest = {
   competency_codes: string[]
 }
 
-export type AssessmentEvaluateRequest = {
-  user_id?: string
+export type QuestionnaireSubmitRequest = {
+  user_id: string
   target_type: QuestionnaireTargetType
   target_id: string
   answers: QuestionnaireAnswerRequest[]
 }
+
+export type AssessmentEvaluateRequest = QuestionnaireSubmitRequest

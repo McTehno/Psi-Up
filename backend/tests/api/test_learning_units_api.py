@@ -13,20 +13,43 @@ class FakeLearningUnitService:
         return [
             {
                 "_id": "ue_001",
-                "title": "Kaj je umetna inteligenca?",
+                "title": "Osnovni pojmi umetne inteligence",
                 "short_description": "Uvod v osnovne pojme umetne inteligence.",
                 "duration_hours": 0.5,
                 "keywords": ["umetna inteligenca", "UI"],
-                "content_topics": ["Osnovni pojmi"],
-                "acquired_competencies": ["Razumevanje osnov UI"],
-                "digcomp_competencies": [],
+                "content_topics": [
+                    {
+                        "id": "topic_ue_001_001",
+                        "title": "Razumevanje pojma umetna inteligenca",
+                        "related_competency_codes": ["1.2"],
+                    }
+                ],
+                "acquired_competencies": [
+                    "Udeleženec razume osnovni koncept umetne inteligence"
+                ],
+                "digcomp_competencies": [
+                    {
+                        "code": "1.2",
+                        "title": "Vrednotenje podatkov, informacij in digitalnih vsebin",
+                        "description": "Prepoznava in razume digitalne informacije.",
+                    }
+                ],
                 "delivery_mode": "Spletno",
-                "provider": "NIDiKo",
-                "target_audience": "Začetniki",
-                "prerequisites": [],
+                "provider": "NIDiKo demo izvajalec",
+                "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+                "prerequisites": ["Osnovna uporaba računalnika"],
                 "knowledge_assessment": "Kratek kviz",
-                "certificate": "Potrdilo",
-                "self_assessment_questions": [],
+                "certificate": "Potrdilo o udeležbi",
+                "self_assessment_questions": [
+                    {
+                        "id": "q_ue_001_001",
+                        "question": "Razumem osnovni koncept umetne inteligence.",
+                        "type": "yes_no",
+                        "related_topic": "Razumevanje pojma umetna inteligenca",
+                        "related_topic_id": "topic_ue_001_001",
+                        "related_competency_codes": ["1.2"],
+                    }
+                ],
             }
         ]
 
@@ -36,24 +59,99 @@ class FakeLearningUnitService:
 
         return {
             "_id": learning_unit_id,
-            "title": "Kaj je umetna inteligenca?",
+            "title": "Osnovni pojmi umetne inteligence",
             "short_description": "Uvod v osnovne pojme umetne inteligence.",
             "duration_hours": 0.5,
             "keywords": ["umetna inteligenca", "UI"],
-            "content_topics": ["Osnovni pojmi"],
-            "acquired_competencies": ["Razumevanje osnov UI"],
-            "digcomp_competencies": [],
+            "content_topics": [
+                {
+                    "id": "topic_ue_001_001",
+                    "title": "Razumevanje pojma umetna inteligenca",
+                    "related_competency_codes": ["1.2"],
+                }
+            ],
+            "acquired_competencies": [
+                "Udeleženec razume osnovni koncept umetne inteligence"
+            ],
+            "digcomp_competencies": [
+                {
+                    "code": "1.2",
+                    "title": "Vrednotenje podatkov, informacij in digitalnih vsebin",
+                    "description": "Prepoznava in razume digitalne informacije.",
+                }
+            ],
             "delivery_mode": "Spletno",
-            "provider": "NIDiKo",
-            "target_audience": "Začetniki",
-            "prerequisites": [],
+            "provider": "NIDiKo demo izvajalec",
+            "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+            "prerequisites": ["Osnovna uporaba računalnika"],
             "knowledge_assessment": "Kratek kviz",
-            "certificate": "Potrdilo",
-            "self_assessment_questions": [],
+            "certificate": "Potrdilo o udeležbi",
+            "self_assessment_questions": [
+                {
+                    "id": "q_ue_001_001",
+                    "question": "Razumem osnovni koncept umetne inteligence.",
+                    "type": "yes_no",
+                    "related_topic": "Razumevanje pojma umetna inteligenca",
+                    "related_topic_id": "topic_ue_001_001",
+                    "related_competency_codes": ["1.2"],
+                }
+            ],
         }
 
     async def get_learning_unit_detail(self, learning_unit_id: str):
-        return await self.get_learning_unit_by_id(learning_unit_id)
+        if learning_unit_id == "missing_id":
+            return None
+
+        return {
+            "_id": learning_unit_id,
+            "title": "Osnovni pojmi umetne inteligence",
+            "short_description": "Uvod v osnovne pojme umetne inteligence.",
+            "duration_hours": 0.5,
+            "keywords": ["umetna inteligenca", "UI"],
+            "content_topics": [
+                {
+                    "id": "topic_ue_001_001",
+                    "title": "Razumevanje pojma umetna inteligenca",
+                    "related_competency_codes": ["1.2"],
+                }
+            ],
+            "acquired_competencies": [
+                "Udeleženec razume osnovni koncept umetne inteligence"
+            ],
+            "digcomp_competencies": [
+                {
+                    "code": "1.2",
+                    "title": "Vrednotenje podatkov, informacij in digitalnih vsebin",
+                    "description": "Prepoznava in razume digitalne informacije.",
+                }
+            ],
+            "delivery_mode": "Spletno",
+            "provider": "NIDiKo demo izvajalec",
+            "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+            "prerequisites": ["Osnovna uporaba računalnika"],
+            "knowledge_assessment": "Kratek kviz",
+            "certificate": "Potrdilo o udeležbi",
+            "self_assessment_questions": [
+                {
+                    "id": "q_ue_001_001",
+                    "question": "Razumem osnovni koncept umetne inteligence.",
+                    "type": "yes_no",
+                    "related_topic": "Razumevanje pojma umetna inteligenca",
+                    "related_topic_id": "topic_ue_001_001",
+                    "related_competency_codes": ["1.2"],
+                }
+            ],
+            "recommended_modules": [
+                {
+                    "_id": "mod_001",
+                    "title": "Razumevanje umetne inteligence",
+                    "short_description": "Modul predstavlja osnovne pojme umetne inteligence.",
+                    "duration_hours": 1.75,
+                    "keywords": ["umetna inteligenca", "UI"],
+                    "domains": ["Umetna inteligenca"],
+                }
+            ],
+        }
 
 
 class FakeQuestionnaireService:
@@ -68,11 +166,20 @@ class FakeQuestionnaireService:
             "title": "Vprašalnik za učno enoto",
             "questions": [
                 {
-                    "id": "q_001",
-                    "question": "Razumem osnovne pojme umetne inteligence.",
+                    "id": "q_ue_001_001",
+                    "question": "Razumem osnovni koncept umetne inteligence.",
                     "type": "yes_no",
                     "learning_unit_id": target_id,
-                    "related_topic": "Osnovni pojmi",
+                    "related_topic": "Razumevanje pojma umetna inteligenca",
+                    "related_topic_id": "topic_ue_001_001",
+                    "related_competency_codes": ["1.2"],
+                    "sources": [
+                        {
+                            "learning_unit_id": target_id,
+                            "topic_id": "topic_ue_001_001",
+                            "competency_codes": ["1.2"],
+                        }
+                    ],
                 }
             ],
         }
@@ -112,11 +219,13 @@ def test_get_learning_units_returns_list():
 
     assert len(data) == 1
     assert data[0]["_id"] == "ue_001"
-    assert data[0]["title"] == "Kaj je umetna inteligenca?"
+    assert data[0]["title"] == "Osnovni pojmi umetne inteligence"
+    assert len(data[0]["content_topics"]) == 1
+    assert len(data[0]["self_assessment_questions"]) == 1
 
 
-def test_get_learning_unit_by_id_returns_unit():
-    # Preverimo, da endpoint vrne učno enoto po ID.
+def test_get_learning_unit_by_id_returns_learning_unit():
+    # Preverimo, da endpoint vrne eno učno enoto po ID.
     response = client.get("/api/learning-units/ue_001")
 
     assert response.status_code == 200
@@ -124,7 +233,9 @@ def test_get_learning_unit_by_id_returns_unit():
     data = response.json()
 
     assert data["_id"] == "ue_001"
-    assert data["title"] == "Kaj je umetna inteligenca?"
+    assert data["title"] == "Osnovni pojmi umetne inteligence"
+    assert data["content_topics"][0]["id"] == "topic_ue_001_001"
+    assert data["digcomp_competencies"][0]["code"] == "1.2"
 
 
 def test_get_learning_unit_by_id_returns_404_when_missing():
@@ -140,8 +251,8 @@ def test_get_learning_unit_by_id_returns_404_when_missing():
     assert data["error"]["message"] == "Učna enota ni najdena."
 
 
-def test_get_learning_unit_detail_returns_unit():
-    # Detail endpoint trenutno vrne enako strukturo učne enote.
+def test_get_learning_unit_detail_returns_detail():
+    # Detail endpoint vrne učno enoto z recommended_modules.
     response = client.get("/api/learning-units/ue_001/detail")
 
     assert response.status_code == 200
@@ -149,7 +260,10 @@ def test_get_learning_unit_detail_returns_unit():
     data = response.json()
 
     assert data["_id"] == "ue_001"
-    assert data["title"] == "Kaj je umetna inteligenca?"
+    assert data["title"] == "Osnovni pojmi umetne inteligence"
+    assert len(data["recommended_modules"]) == 1
+    assert data["recommended_modules"][0]["_id"] == "mod_001"
+    assert data["recommended_modules"][0]["title"] == "Razumevanje umetne inteligence"
 
 
 def test_get_learning_unit_detail_returns_404_when_missing():
@@ -177,6 +291,7 @@ def test_get_learning_unit_questionnaire_returns_questionnaire():
     assert data["target_id"] == "ue_001"
     assert data["title"] == "Vprašalnik za učno enoto"
     assert len(data["questions"]) == 1
+    assert data["questions"][0]["learning_unit_id"] == "ue_001"
 
 
 def test_get_learning_unit_questionnaire_returns_404_when_missing():

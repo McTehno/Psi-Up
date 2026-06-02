@@ -302,3 +302,39 @@ def test_questionnaire_answers_are_overridden_for_same_target(client):
 
     assert saved_second_answer["answer"] is True
     assert saved_second_answer["was_answered"] is True
+
+#parallel_group znotraj modula
+def test_module_parallel_group_completes_one_parallel_unit_and_recommends_missing_one(client):
+    user_id = unique_user_id("module_parallel")
+    questionnaire = get_questionnaire(client, "module", "mod_002")
+
+    answers = []
+    answers.extend(answers_for_learning_unit(questionnaire, "ue_001", True))
+    answers.extend(answers_for_learning_unit(questionnaire, "ue_002", True))
+
+    ue_003_first_question = find_question(questionnaire, "q_ue_003_001")
+    answers.append(answer_for_question(ue_003_first_question, False))
+
+    answers.extend(answers_for_learning_unit(questionnaire, "ue_004", True))
+
+    result = submit_assessment(
+        client=client,
+        user_id=user_id,
+        target_type="module",
+        target_id="mod_002",
+        answers=answers,
+    )
+
+    assert_contains_all(
+        result["completed_learning_unit_ids"],
+        ["ue_001", "ue_002", "ue_004"],
+    )
+    assert "ue_003" not in result["completed_learning_unit_ids"]
+    assert result["completed_module_ids"] == []
+
+    assert result["start_learning_unit_id"] == "ue_003"
+    assert result["recommended_next_learning_units"] == ["ue_003"]
+
+    module_result = result["module_results"][0]
+    assert module_result["status"] == "partially_completed"
+    assert "ue_003" in module_result["missing_learning_units"]

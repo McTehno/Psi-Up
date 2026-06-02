@@ -88,9 +88,9 @@ function HeroSearchResults({
 												</span>
 											</div>
 
-											{result.shortDescription && (
+											{result.description && (
 												<p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#706b60]">
-													{result.shortDescription}
+													{result.description}
 												</p>
 											)}
 

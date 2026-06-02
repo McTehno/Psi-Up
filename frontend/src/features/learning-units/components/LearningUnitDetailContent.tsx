@@ -274,10 +274,10 @@ function LearningUnitDetailContent({
 		) ?? null
 
 	const knownTopics = getStringArrayOrEmpty(
-		learningUnitAssessmentResult?.known_topics,
+		learningUnitAssessmentResult?.known_topic_ids,
 	)
 	const missingTopics = getStringArrayOrEmpty(
-		learningUnitAssessmentResult?.missing_topics,
+		learningUnitAssessmentResult?.missing_topic_ids,
 	)
 
 	const showAssessmentResult = Boolean(learningUnitAssessmentResult)

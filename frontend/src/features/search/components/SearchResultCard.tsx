@@ -42,9 +42,9 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
                     </div>
                 </div>
                 
-                {result.shortDescription && (
+                {result.description && (
                     <p className="mt-3 text-sm leading-relaxed text-brown-600 line-clamp-3">
-                        {result.shortDescription}
+                        {result.description}
                     </p>
                 )}
                 

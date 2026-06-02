@@ -1649,3 +1649,31 @@ body.questionnaire-route {
     font-style: italic;
   }
 }
+
+.simple-markdown-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.simple-markdown-text p {
+  margin: 0;
+}
+
+.simple-markdown-text ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.simple-markdown-text li {
+  margin: 0.2rem 0;
+  padding-left: 0.15rem;
+}
+
+.simple-markdown-text strong {
+  font-weight: 800;
+}
+
+.simple-markdown-text em {
+  font-style: italic;
+}

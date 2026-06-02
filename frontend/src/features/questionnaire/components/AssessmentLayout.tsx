@@ -1,3 +1,5 @@
+import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+
 type Competency = {
   competency_id: string
   title?: string
@@ -103,15 +105,14 @@ function AssessmentLayout({
                   <span className="assistant-note__section-label">
                     Asistentka je odgovorila:
                   </span>
-                  <p
+                  <SimpleMarkdownText
+                    content={assistantExchange.answer}
                     className={
                       assistantExchange.isPending
                         ? 'assistant-note__answer assistant-note__answer--pending'
                         : 'assistant-note__answer'
                     }
-                  >
-                    {assistantExchange.answer}
-                  </p>
+                  />
                 </div>
               )}
 

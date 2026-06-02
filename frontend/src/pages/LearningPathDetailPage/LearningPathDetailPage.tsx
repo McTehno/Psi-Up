@@ -53,11 +53,59 @@ function getStringArrayOrEmpty(value: unknown) {
     .filter(Boolean)
 }
 
-function getStepByModuleId(
-  moduleId: string,
-  steps: LearningPathStepResponse[],
+function getLearningPathStepKind(step: LearningPathStepResponse) {
+  return step.step_type ?? step.type ?? 'module'
+}
+
+function getLearningPathStepModuleId(step: LearningPathStepResponse) {
+  return step.module_id ?? step.ref_id ?? null
+}
+
+function getStepOrder(step: LearningPathStepResponse, index: number) {
+  return step.order ?? index + 1
+}
+
+function createParallelGroupOrderMap(steps: LearningPathStepResponse[]) {
+  const parallelGroupOrderMap = new Map<string, number>()
+
+  steps.forEach((step, index) => {
+    if (getLearningPathStepKind(step) !== 'module') {
+      return
+    }
+
+    const parallelGroup = step.parallel_group?.trim()
+
+    if (!parallelGroup) {
+      return
+    }
+
+    const stepOrder = getStepOrder(step, index)
+    const currentOrder = parallelGroupOrderMap.get(parallelGroup)
+
+    if (currentOrder === undefined || stepOrder < currentOrder) {
+      parallelGroupOrderMap.set(parallelGroup, stepOrder)
+    }
+  })
+
+  return parallelGroupOrderMap
+}
+
+function getMountainNodeOrder(
+  step: LearningPathStepResponse | undefined,
+  fallbackOrder: number,
+  parallelGroupOrderMap: Map<string, number>,
 ) {
-  return steps.find((step) => step.module_id === moduleId)
+  if (!step) {
+    return fallbackOrder
+  }
+
+  const parallelGroup = step.parallel_group?.trim()
+
+  if (parallelGroup) {
+    return parallelGroupOrderMap.get(parallelGroup) ?? step.order ?? fallbackOrder
+  }
+
+  return step.order ?? fallbackOrder
 }
 
 function getModuleAssessmentStatus(
@@ -113,24 +161,53 @@ function createMountainNodes(
     ? learningPath.module_details
     : []
 
-  const steps = Array.isArray(learningPath.steps)
-    ? learningPath.steps
-    : []
+  const steps = Array.isArray(learningPath.steps) ? learningPath.steps : []
+  const parallelGroupOrderMap = createParallelGroupOrderMap(steps)
 
+  const moduleById = new Map(
+    moduleDetails
+      .map((module) => {
+        const moduleId = getBackendEntityId(module as BackendEntity)
+
+        if (!moduleId) {
+          return null
+        }
+
+        return [moduleId, module] as const
+      })
+      .filter(
+        (entry): entry is readonly [string, ModuleDetailResponse] =>
+          entry !== null,
+      ),
+  )
+
+  const usedModuleIds = new Set<string>()
   const nodes: LearningPathMountainNode[] = []
 
-  moduleDetails.forEach((module: ModuleDetailResponse, index) => {
-    const moduleId = getBackendEntityId(module as BackendEntity)
+  steps.forEach((step, stepIndex) => {
+    if (getLearningPathStepKind(step) !== 'module') {
+      return
+    }
+
+    const moduleId = getLearningPathStepModuleId(step)
 
     if (!moduleId) {
       return
     }
 
-    const step = getStepByModuleId(moduleId, steps)
+    const module = moduleById.get(moduleId)
+
+    if (!module) {
+      return
+    }
+
+    usedModuleIds.add(moduleId)
+
+    const parallelGroup = step.parallel_group?.trim() || null
 
     nodes.push({
       id: moduleId,
-      order: step?.order ?? index + 1,
+      order: getMountainNodeOrder(step, stepIndex + 1, parallelGroupOrderMap),
       title: getTextOrFallback(module.title, 'Neimenovan modul'),
       description: getTextOrFallback(
         module.short_description,
@@ -138,8 +215,35 @@ function createMountainNodes(
       ),
       moduleId,
       durationHours: module.duration_hours,
-      isRequired: step?.is_required ?? false,
-      parallelGroup: step?.parallel_group ?? null,
+      isRequired: step.is_required ?? false,
+      parallelGroup,
+      assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
+      isAssessmentPosition: isAssessmentPositionModule(
+        moduleId,
+        assessmentResult,
+      ),
+    })
+  })
+
+  moduleDetails.forEach((module, index) => {
+    const moduleId = getBackendEntityId(module as BackendEntity)
+
+    if (!moduleId || usedModuleIds.has(moduleId)) {
+      return
+    }
+
+    nodes.push({
+      id: moduleId,
+      order: steps.length + index + 1,
+      title: getTextOrFallback(module.title, 'Neimenovan modul'),
+      description: getTextOrFallback(
+        module.short_description,
+        'Opis modula trenutno ni na voljo.',
+      ),
+      moduleId,
+      durationHours: module.duration_hours,
+      isRequired: false,
+      parallelGroup: null,
       assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
       isAssessmentPosition: isAssessmentPositionModule(
         moduleId,
@@ -149,7 +253,20 @@ function createMountainNodes(
   })
 
   return nodes
-    .sort((firstNode, secondNode) => firstNode.order - secondNode.order)
+    .sort((firstNode, secondNode) => {
+      if (firstNode.order !== secondNode.order) {
+        return firstNode.order - secondNode.order
+      }
+
+      const firstParallelGroup = firstNode.parallelGroup ?? ''
+      const secondParallelGroup = secondNode.parallelGroup ?? ''
+
+      if (firstParallelGroup !== secondParallelGroup) {
+        return firstParallelGroup.localeCompare(secondParallelGroup, 'sl')
+      }
+
+      return firstNode.title.localeCompare(secondNode.title, 'sl')
+    })
     .slice(0, MAX_VISIBLE_NODES)
 }
 
@@ -161,7 +278,8 @@ function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
     : []
 
   const stepModuleIds = steps
-    .map((step) => step.module_id)
+    .filter((step) => getLearningPathStepKind(step) === 'module')
+    .map(getLearningPathStepModuleId)
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 
   if (stepModuleIds.length > 0) {

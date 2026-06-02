@@ -35,6 +35,7 @@ import type {
 } from '../../types/questionnaire'
 
 import './QuestionnairePage.css'
+import { useAuth } from '../../features/auth/contexts/AuthContext'
 
 type AnswerOption = {
   answer: string
@@ -70,7 +71,8 @@ type BackendEntity = {
   _id?: string
 }
 
-const ASSESSMENT_USER_ID = 'demo_user'
+// Nina: izbrisujem demo user
+// const ASSESSMENT_USER_ID = 'demo_user'
 
 const yesNoAnswers: AnswerOption[] = [
   { answer: 'Da', weight: true },
@@ -521,6 +523,8 @@ function createFallbackProgressSteps(params: {
 function QuestionnairePage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  //Nina: dodano
+  const { session, localUser } = useAuth()
 
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
@@ -594,9 +598,9 @@ function QuestionnairePage() {
   const nextQuestion =
     currentQuestion && selectedAnswer && !shouldFinishAfterCurrentAnswer
       ? getNextQuestion({
-          currentQuestion,
-          groups: questionGroups,
-        })
+        currentQuestion,
+        groups: questionGroups,
+      })
       : null
 
   const confirmedQuestionCount =
@@ -1129,22 +1133,25 @@ function QuestionnairePage() {
     try {
       const answers = shouldAutoMarkRemainingAsFalse
         ? createAutoFalsePayload(
-            questionnaire,
-            questionIdsToSubmit,
-            selectedAnswers,
-            targetType,
-            targetId,
-          )
+          questionnaire,
+          questionIdsToSubmit,
+          selectedAnswers,
+          targetType,
+          targetId,
+        )
         : createAnswerPayload(
-            questionIdsToSubmit,
-            questionById,
-            selectedAnswers,
-            targetType,
-            targetId,
-          )
-
+          questionIdsToSubmit,
+          questionById,
+          selectedAnswers,
+          targetType,
+          targetId,
+        )
+      if (!session?.access_token || !localUser?._id) {
+        alert('Za oddajo vprašalnika se moraš prijaviti.')
+        return
+      }
       const payload: AssessmentEvaluateRequest = {
-        user_id: ASSESSMENT_USER_ID,
+        user_id: localUser._id,
         target_type: targetType,
         target_id: targetId,
         answers,
@@ -1347,7 +1354,7 @@ function QuestionnairePage() {
 
           {isChatOpen && (
             <AssessmentContextBox
-              userId={ASSESSMENT_USER_ID}
+              userId={localUser?._id ?? ''}
               targetType={targetType}
               targetId={targetId}
               learningPathId={

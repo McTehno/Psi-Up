@@ -6,8 +6,13 @@ from app.schemas.questionnaire_schema import QuestionnaireTargetType
 
 
 class FakeQuestionnaireService:
-    # Fake service uporabimo, da API test preverja endpoint, ne questionnaire service logike.
-    async def generate_questionnaire(self, target_type, target_id: str):
+    # Fake service uporabimo, da API test preverja endpoint,
+    # ne pa dejanske logike zbiranja vprašanj.
+    async def generate_questionnaire(
+        self,
+        target_type: QuestionnaireTargetType,
+        target_id: str,
+    ):
         if target_id == "missing_id":
             return None
 
@@ -18,17 +23,54 @@ class FakeQuestionnaireService:
             "questions": [
                 {
                     "id": "q_001",
-                    "question": "Razumem osnovne pojme.",
+                    "question": "Razumem vsebino.",
                     "type": "yes_no",
-                    "learning_unit_id": "ue_001",
-                    "related_topic": "Osnovni pojmi",
+                    "learning_path_id": (
+                        target_id
+                        if target_type == QuestionnaireTargetType.LEARNING_PATH
+                        else None
+                    ),
+                    "module_id": (
+                        target_id
+                        if target_type == QuestionnaireTargetType.MODULE
+                        else "mod_001"
+                    ),
+                    "learning_unit_id": (
+                        target_id
+                        if target_type == QuestionnaireTargetType.LEARNING_UNIT
+                        else "ue_001"
+                    ),
+                    "related_topic": "Testna tema",
+                    "related_topic_id": "topic_001",
+                    "related_competency_codes": ["1.2"],
+                    "sources": [
+                        {
+                            "learning_path_id": (
+                                target_id
+                                if target_type == QuestionnaireTargetType.LEARNING_PATH
+                                else None
+                            ),
+                            "module_id": (
+                                target_id
+                                if target_type == QuestionnaireTargetType.MODULE
+                                else "mod_001"
+                            ),
+                            "learning_unit_id": (
+                                target_id
+                                if target_type == QuestionnaireTargetType.LEARNING_UNIT
+                                else "ue_001"
+                            ),
+                            "topic_id": "topic_001",
+                            "related_topic": "Testna tema",
+                            "competency_codes": ["1.2"],
+                        }
+                    ],
                 }
             ],
         }
 
 
 def override_questionnaire_service():
-    # FastAPI dependency override poskrbi, da endpoint uporablja fake service.
     return FakeQuestionnaireService()
 
 
@@ -36,7 +78,7 @@ client = TestClient(app)
 
 
 def setup_function():
-    # Pred vsakim testom zamenjamo pravi QuestionnaireService s fake service-om.
+    # Pred vsakim testom nastavimo fake QuestionnaireService.
     app.dependency_overrides[get_questionnaire_service] = override_questionnaire_service
 
 
@@ -45,12 +87,55 @@ def teardown_function():
     app.dependency_overrides.clear()
 
 
-def test_get_questionnaire_returns_questionnaire_for_learning_unit():
-    # Preverimo uspešen primer za vprašalnik učne enote.
+def test_get_questionnaire_for_learning_path_returns_questionnaire():
+    # Endpoint vrne vprašalnik za učno pot.
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_type": QuestionnaireTargetType.LEARNING_UNIT.value,
+            "target_type": "learning_path",
+            "target_id": "lp_001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["target_type"] == "learning_path"
+    assert data["target_id"] == "lp_001"
+    assert data["title"] == "Testni vprašalnik"
+    assert len(data["questions"]) == 1
+    assert data["questions"][0]["id"] == "q_001"
+    assert data["questions"][0]["learning_path_id"] == "lp_001"
+
+
+def test_get_questionnaire_for_module_returns_questionnaire():
+    # Endpoint vrne vprašalnik za modul.
+    response = client.get(
+        "/api/questionnaires",
+        params={
+            "target_type": "module",
+            "target_id": "mod_001",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["target_type"] == "module"
+    assert data["target_id"] == "mod_001"
+    assert data["title"] == "Testni vprašalnik"
+    assert len(data["questions"]) == 1
+    assert data["questions"][0]["module_id"] == "mod_001"
+
+
+def test_get_questionnaire_for_learning_unit_returns_questionnaire():
+    # Endpoint vrne vprašalnik za učno enoto.
+    response = client.get(
+        "/api/questionnaires",
+        params={
+            "target_type": "learning_unit",
             "target_id": "ue_001",
         },
     )
@@ -63,16 +148,15 @@ def test_get_questionnaire_returns_questionnaire_for_learning_unit():
     assert data["target_id"] == "ue_001"
     assert data["title"] == "Testni vprašalnik"
     assert len(data["questions"]) == 1
-    assert data["questions"][0]["id"] == "q_001"
     assert data["questions"][0]["learning_unit_id"] == "ue_001"
 
 
-def test_get_questionnaire_returns_questionnaire_for_module():
-    # Preverimo, da endpoint sprejme target_type module.
+def test_get_questionnaire_returns_sources():
+    # Vprašanje vsebuje sources, da backend ve, od kod vprašanje izvira.
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_type": QuestionnaireTargetType.MODULE.value,
+            "target_type": "module",
             "target_id": "mod_001",
         },
     )
@@ -81,26 +165,13 @@ def test_get_questionnaire_returns_questionnaire_for_module():
 
     data = response.json()
 
-    assert data["target_type"] == "module"
-    assert data["target_id"] == "mod_001"
+    source = data["questions"][0]["sources"][0]
 
-
-def test_get_questionnaire_returns_questionnaire_for_learning_path():
-    # Preverimo, da endpoint sprejme target_type learning_path.
-    response = client.get(
-        "/api/questionnaires",
-        params={
-            "target_type": QuestionnaireTargetType.LEARNING_PATH.value,
-            "target_id": "up_001",
-        },
-    )
-
-    assert response.status_code == 200
-
-    data = response.json()
-
-    assert data["target_type"] == "learning_path"
-    assert data["target_id"] == "up_001"
+    assert source["module_id"] == "mod_001"
+    assert source["learning_unit_id"] == "ue_001"
+    assert source["topic_id"] == "topic_001"
+    assert source["related_topic"] == "Testna tema"
+    assert source["competency_codes"] == ["1.2"]
 
 
 def test_get_questionnaire_returns_404_when_missing():
@@ -108,7 +179,7 @@ def test_get_questionnaire_returns_404_when_missing():
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_type": QuestionnaireTargetType.LEARNING_UNIT.value,
+            "target_type": "module",
             "target_id": "missing_id",
         },
     )
@@ -122,37 +193,37 @@ def test_get_questionnaire_returns_404_when_missing():
     assert data["error"]["message"] == "Vprašalnik ni najden."
 
 
-def test_get_questionnaire_requires_target_type():
-    # Endpoint mora vrniti 422, če target_type manjka.
+def test_get_questionnaire_returns_422_for_invalid_target_type():
+    # Pydantic/FastAPI zavrne neveljaven target_type.
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_id": "ue_001",
+            "target_type": "invalid_target",
+            "target_id": "target_001",
         },
     )
 
     assert response.status_code == 422
 
 
-def test_get_questionnaire_requires_target_id():
-    # Endpoint mora vrniti 422, če target_id manjka.
+def test_get_questionnaire_returns_422_when_target_type_missing():
+    # target_type je obvezen query parameter.
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_type": QuestionnaireTargetType.LEARNING_UNIT.value,
+            "target_id": "mod_001",
         },
     )
 
     assert response.status_code == 422
 
 
-def test_get_questionnaire_rejects_invalid_target_type():
-    # Pydantic/FastAPI mora zavrniti target_type, ki ni del enum-a.
+def test_get_questionnaire_returns_422_when_target_id_missing():
+    # target_id je obvezen query parameter.
     response = client.get(
         "/api/questionnaires",
         params={
-            "target_type": "invalid_type",
-            "target_id": "ue_001",
+            "target_type": "module",
         },
     )
 

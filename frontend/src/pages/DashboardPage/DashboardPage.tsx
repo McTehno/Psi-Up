@@ -28,6 +28,12 @@ import './DashboardPage.css'
 
 type DashboardTab = 'favorites' | 'saved' | 'completed'
 type DashboardModalType = 'edit-profile' | 'change-password' | null
+type ContentType = 'learning_path' | 'module' | 'learning_unit'
+
+type DashboardContentItem = {
+	id: string
+	type: ContentType
+}
 
 const tabs: { key: DashboardTab; label: string; icon: typeof Heart }[] = [
 	{ key: 'favorites', label: 'Priljubljeno', icon: Heart },
@@ -37,30 +43,30 @@ const tabs: { key: DashboardTab; label: string; icon: typeof Heart }[] = [
 
 type ContentItemProps = {
 	id: string
-	type: 'learning_path' | 'module' | 'learning_unit'
+	type: ContentType
 	index: number
 }
 
-const typeLabels: Record<string, string> = {
+const typeLabels: Record<ContentType, string> = {
 	learning_path: 'Učna pot',
 	module: 'Modul',
 	learning_unit: 'Učna enota',
 }
 
-const typeRoutes: Record<string, string> = {
+const typeRoutes: Record<ContentType, string> = {
 	learning_path: '/learning-paths',
 	module: '/modules',
 	learning_unit: '/learning-units',
 }
 
-const typeIcons: Record<string, typeof Route> = {
+const typeIcons: Record<ContentType, typeof Route> = {
 	learning_path: Route,
 	module: Circle,
 	learning_unit: CircleDot,
 }
 
 const typeColors: Record<
-	string,
+	ContentType,
 	{ border: string; iconBg: string; iconText: string }
 > = {
 	learning_path: {
@@ -104,6 +110,7 @@ function ContentItem({ id, type, index }: ContentItemProps) {
 				console.error('Error fetching title for', id, e)
 			}
 		}
+
 		fetchTitle()
 	}, [id, type])
 
@@ -148,29 +155,30 @@ export default function DashboardPage() {
 		user?.user_metadata?.full_name ||
 		user?.user_metadata?.name ||
 		'Uporabnik'
+
 	const displayEmail = localUser?.email || user?.email || ''
 
 	const initials = displayName
 		.split(' ')
-		.map((w: string) => w[0])
+		.map((word: string) => word[0])
 		.join('')
 		.toUpperCase()
 		.slice(0, 2)
 
-	function getTabItems(): { id: string; type: 'learning_path' | 'module' | 'learning_unit' }[] {
+	function getTabItems(): DashboardContentItem[] {
 		if (!progress) return []
 
 		if (activeTab === 'favorites') {
 			return [
-				...progress.favorite_learning_paths.map((id) => ({
+				...progress.favorites.learning_path_ids.map((id: string) => ({
 					id,
 					type: 'learning_path' as const,
 				})),
-				...progress.favorite_modules.map((id) => ({
+				...progress.favorites.module_ids.map((id: string) => ({
 					id,
 					type: 'module' as const,
 				})),
-				...progress.favorite_learning_units.map((id) => ({
+				...progress.favorites.learning_unit_ids.map((id: string) => ({
 					id,
 					type: 'learning_unit' as const,
 				})),
@@ -179,15 +187,15 @@ export default function DashboardPage() {
 
 		if (activeTab === 'saved') {
 			return [
-				...progress.saved_learning_paths.map((id) => ({
+				...progress.saved.learning_path_ids.map((id: string) => ({
 					id,
 					type: 'learning_path' as const,
 				})),
-				...progress.saved_modules.map((id) => ({
+				...progress.saved.module_ids.map((id: string) => ({
 					id,
 					type: 'module' as const,
 				})),
-				...progress.saved_learning_units.map((id) => ({
+				...progress.saved.learning_unit_ids.map((id: string) => ({
 					id,
 					type: 'learning_unit' as const,
 				})),
@@ -195,15 +203,15 @@ export default function DashboardPage() {
 		}
 
 		return [
-			...progress.completed_learning_paths.map((id) => ({
+			...progress.completed.learning_path_ids.map((id: string) => ({
 				id,
 				type: 'learning_path' as const,
 			})),
-			...progress.completed_modules.map((id) => ({
+			...progress.completed.module_ids.map((id: string) => ({
 				id,
 				type: 'module' as const,
 			})),
-			...progress.completed_learning_units.map((id) => ({
+			...progress.completed.learning_unit_ids.map((id: string) => ({
 				id,
 				type: 'learning_unit' as const,
 			})),
@@ -211,6 +219,24 @@ export default function DashboardPage() {
 	}
 
 	const tabItems = getTabItems()
+
+	const favoriteCount = progress
+		? progress.favorites.learning_path_ids.length +
+			progress.favorites.module_ids.length +
+			progress.favorites.learning_unit_ids.length
+		: 0
+
+	const savedCount = progress
+		? progress.saved.learning_path_ids.length +
+			progress.saved.module_ids.length +
+			progress.saved.learning_unit_ids.length
+		: 0
+
+	const completedCount = progress
+		? progress.completed.learning_path_ids.length +
+			progress.completed.module_ids.length +
+			progress.completed.learning_unit_ids.length
+		: 0
 
 	const tabAccent: Record<DashboardTab, { underline: string; activeText: string }> = {
 		favorites: { underline: 'bg-[#31583b]', activeText: 'text-[#31583b]' },
@@ -223,7 +249,6 @@ export default function DashboardPage() {
 	return (
 		<div className="min-h-screen pb-20">
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32">
-				{/* ── Profile Card ── */}
 				<div className="dashboard-profile-card relative overflow-hidden rounded-[28px] border border-[#eadfce]/60 bg-[#fffdf8]/70 p-6 shadow-[0_16px_48px_rgba(57,47,35,0.08)] backdrop-blur-xl sm:p-8">
 					<div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px]">
 						<div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#d07a12]/[0.06] blur-3xl" />
@@ -250,25 +275,19 @@ export default function DashboardPage() {
 									<div className="flex items-center gap-1.5">
 										<Heart className="h-3.5 w-3.5 text-[#31583b]" />
 										<span className="text-xs font-bold text-[#504639]">
-											{progress.favorite_learning_paths.length +
-												progress.favorite_modules.length +
-												progress.favorite_learning_units.length}
+											{favoriteCount}
 										</span>
 									</div>
 									<div className="flex items-center gap-1.5">
 										<Bookmark className="h-3.5 w-3.5 text-[#d07a12]" />
 										<span className="text-xs font-bold text-[#504639]">
-											{progress.saved_learning_paths.length +
-												progress.saved_modules.length +
-												progress.saved_learning_units.length}
+											{savedCount}
 										</span>
 									</div>
 									<div className="flex items-center gap-1.5">
 										<CheckCircle2 className="h-3.5 w-3.5 text-[#5e845c]" />
 										<span className="text-xs font-bold text-[#504639]">
-											{progress.completed_learning_paths.length +
-												progress.completed_modules.length +
-												progress.completed_learning_units.length}
+											{completedCount}
 										</span>
 									</div>
 								</div>
@@ -299,7 +318,6 @@ export default function DashboardPage() {
 					</div>
 				</div>
 
-				{/* ── Tabs + Content Section ── */}
 				<div className="dashboard-content-section mt-8">
 					<div className="flex items-center gap-1 rounded-2xl border border-[#eadfce]/60 bg-[#fffdf8]/50 p-1.5 shadow-sm backdrop-blur-lg">
 						{tabs.map((tab) => {
@@ -331,7 +349,10 @@ export default function DashboardPage() {
 									{isActive && (
 										<span
 											className={`dashboard-tab-active absolute -bottom-1.5 left-[20%] right-[20%] h-[3px] rounded-full ${accent.underline}`}
-											style={{ animation: 'tab-underline-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+											style={{
+												animation:
+													'tab-underline-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+											}}
 										/>
 									)}
 								</button>

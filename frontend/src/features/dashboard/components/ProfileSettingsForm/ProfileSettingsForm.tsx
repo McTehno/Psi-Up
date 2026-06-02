@@ -106,7 +106,7 @@ export default function ProfileSettingsForm({
 						value={name}
 						onChange={(event) => setName(event.target.value)}
 						className="mt-2 w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#31583b]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(49,88,59,0.08)]"
-						placeholder="Vnesi uporabniško ime"
+						placeholder="Vnesi ime in priimek"
 						disabled={isSubmitting}
 					/>
 				</div>

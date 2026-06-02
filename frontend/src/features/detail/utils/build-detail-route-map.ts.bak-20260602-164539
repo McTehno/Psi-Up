@@ -1,8 +1,5 @@
 import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
-import type {
-  LearningPathResponse,
-  LearningPathStepResponse,
-} from '../../../types/learning-path'
+import type { LearningPathResponse } from '../../../types/learning-path'
 import type {
   ModuleReferenceResponse,
   ModuleResponse,
@@ -82,36 +79,6 @@ function sortByOrder<T extends { order?: number | null }>(items: T[]) {
   })
 }
 
-function getLearningPathStepKind(step: LearningPathStepResponse) {
-  return step.step_type ?? step.type ?? 'module'
-}
-
-function getLearningPathStepModuleId(step: LearningPathStepResponse) {
-  return step.module_id ?? step.ref_id ?? null
-}
-
-function toModuleReference(
-  step: LearningPathStepResponse,
-): ModuleReferenceResponse | null {
-  if (getLearningPathStepKind(step) !== 'module') {
-    return null
-  }
-
-  const moduleId = getLearningPathStepModuleId(step)
-
-  if (!moduleId) {
-    return null
-  }
-
-  return {
-    module_id: moduleId,
-    order: step.order ?? null,
-    parallel_group: step.parallel_group ?? null,
-    is_required: step.is_required ?? false,
-    prerequisites: step.prerequisites ?? [],
-  }
-}
-
 function buildModuleRouteItem(
   reference: ModuleReferenceResponse,
   module: ModuleResponse,
@@ -119,7 +86,7 @@ function buildModuleRouteItem(
   userProgress?: UserProgressResponse | null
 ): DetailRouteItem {
   return {
-    id: reference.module_id,
+    id: (reference.module_id ?? reference.ref_id ?? ''),
     title: module.title,
     description: module.short_description,
     typeLabel: 'Modul',
@@ -128,7 +95,7 @@ function buildModuleRouteItem(
     parallelGroup: reference.parallel_group,
     isRequired: reference.is_required,
     prerequisites: reference.prerequisites,
-    status: getModuleStatus(reference.module_id, currentPosition, userProgress),
+    status: getModuleStatus((reference.module_id ?? reference.ref_id ?? ''), currentPosition, userProgress),
   }
 }
 
@@ -166,19 +133,20 @@ export function buildLearningPathRouteMapItems({
     userProgress
   )
 
-  const moduleReferences = sortByOrder(
-    learningPath.steps
-      .map(toModuleReference)
-      .filter(
-        (reference): reference is ModuleReferenceResponse =>
-          reference !== null,
-      ),
-  )
+  const moduleReferences: ModuleReferenceResponse[] = learningPath.steps
+    .filter((step) => step.type === 'module' || step.step_type === 'module')
+    .map((step) => ({
+      module_id: step.module_id,
+      order: step.order,
+      parallel_group: step.parallel_group,
+      is_required: step.is_required,
+      prerequisites: step.prerequisites,
+    }))
 
   return sortByOrder(moduleReferences)
     .map((reference) => {
       const module = modules.find(
-        (moduleItem) => getResponseId(moduleItem) === reference.module_id,
+        (moduleItem) => getResponseId(moduleItem) === (reference.module_id ?? reference.ref_id ?? '')
       )
 
       if (!module) {
@@ -189,7 +157,7 @@ export function buildLearningPathRouteMapItems({
         reference,
         module,
         currentPosition,
-        userProgress,
+        userProgress
       )
     })
     .filter((item): item is DetailRouteItem => item !== null)

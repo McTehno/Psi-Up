@@ -101,9 +101,21 @@ class AssessmentProgressService:
             existing_completed=existing_completed,
         )
 
+        result = self._sync_result_with_completed_progress(
+            result=result,
+            completed_learning_unit_ids=completed_learning_unit_ids,
+            completed_module_ids=existing_completed.get("module_ids", []),
+        )
+
         completed_module_ids = self._extract_completed_module_ids(
             result=result,
             existing_completed=existing_completed,
+        )
+
+        result = self._sync_result_with_completed_progress(
+            result=result,
+            completed_learning_unit_ids=completed_learning_unit_ids,
+            completed_module_ids=completed_module_ids,
         )
 
         completed_learning_path_ids = await self._extract_completed_learning_path_ids(
@@ -113,6 +125,7 @@ class AssessmentProgressService:
             completed_learning_unit_ids=completed_learning_unit_ids,
             existing_completed=existing_completed,
         )
+
 
         await self._save_completed_content(
             user_id=user_id,
@@ -854,6 +867,8 @@ class AssessmentProgressService:
                     synced_missing_learning_units,
                 )
                 synced_module_result["missing_learning_units"] = []
+            elif synced_completed_learning_units and not synced_missing_learning_units:
+                synced_module_result["status"] = AssessmentStatus.COMPLETED.value
             elif synced_completed_learning_units:
                 synced_module_result["status"] = AssessmentStatus.PARTIALLY_COMPLETED.value
             else:

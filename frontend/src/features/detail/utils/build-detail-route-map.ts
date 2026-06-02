@@ -47,7 +47,7 @@ function getModuleStatus(
     return 'current'
   }
 
-  if (userProgress?.completed_modules.includes(moduleId)) {
+  if (userProgress?.completed.module_ids.includes(moduleId)) {
     return 'completed'
   }
 
@@ -63,7 +63,7 @@ function getLearningUnitStatus(
     return 'current'
   }
 
-  if (userProgress?.completed_learning_units.includes(learningUnitId)) {
+  if (userProgress?.completed.learning_unit_ids.includes(learningUnitId)) {
     return 'completed'
   }
 
@@ -133,7 +133,17 @@ export function buildLearningPathRouteMapItems({
     userProgress
   )
 
-  return sortByOrder(learningPath.modules)
+  const moduleReferences: ModuleReferenceResponse[] = learningPath.steps
+    .filter((step) => step.type === 'module' || step.step_type === 'module')
+    .map((step) => ({
+      module_id: step.module_id,
+      order: step.order,
+      parallel_group: step.parallel_group,
+      is_required: step.is_required,
+      prerequisites: step.prerequisites,
+    }))
+
+  return sortByOrder(moduleReferences)
     .map((reference) => {
       const module = modules.find(
         (moduleItem) => getResponseId(moduleItem) === reference.module_id
@@ -152,6 +162,7 @@ export function buildLearningPathRouteMapItems({
     })
     .filter((item): item is DetailRouteItem => item !== null)
 }
+
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
     return null
@@ -175,6 +186,7 @@ function formatDuration(durationHours?: number | null) {
 
   return `${durationHours} ur`
 }
+
 export function buildModuleRouteMapItems({
   module,
   learningUnits,

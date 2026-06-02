@@ -2,7 +2,7 @@ import { apiGet } from './api-client'
 import type {
 	LearningPathDetailResponse,
 	LearningPathResponse,
-	LearningPathStepReference,
+	LearningPathStepResponse,
 } from '../types/learning-path'
 import type { ModuleReferenceResponse } from '../types/module'
 import type { QuestionnaireResponse } from '../types/questionnaire'
@@ -44,8 +44,8 @@ export async function getLearningPathDetail(
 
 export async function getLearningPathSteps(
 	learningPathId: string,
-): Promise<LearningPathStepReference[]> {
-	return apiGet<LearningPathStepReference[]>(
+): Promise<LearningPathStepResponse[]> {
+	return apiGet<LearningPathStepResponse[]>(
 		`/learning-paths/${learningPathId}/steps`,
 	)
 }
@@ -67,13 +67,13 @@ export async function getLearningPathModules(
 export async function getLearningPathAvailableSteps(
 	learningPathId: string,
 	completedStepIds: string[] = [],
-): Promise<LearningPathStepReference[]> {
+): Promise<LearningPathStepResponse[]> {
 	const query = buildRepeatedQueryParam(
 		'completed_step_ids',
 		completedStepIds,
 	)
 
-	return apiGet<LearningPathStepReference[]>(
+	return apiGet<LearningPathStepResponse[]>(
 		`/learning-paths/${learningPathId}/available-steps${query}`,
 	)
 }

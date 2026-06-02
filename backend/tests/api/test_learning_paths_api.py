@@ -17,14 +17,23 @@ class FakeLearningPathService:
                 "short_description": "Učna pot za uporabo umetne inteligence.",
                 "duration_hours": 4.25,
                 "keywords": ["umetna inteligenca", "iskanje"],
-                "modules": [
+                "steps": [
                     {
-                        "module_id": "mod_001",
+                        "type": "module",
+                        "ref_id": "mod_001",
                         "order": 1,
                         "parallel_group": None,
                         "is_required": True,
                         "prerequisites": [],
-                    }
+                    },
+                    {
+                        "type": "learning_unit",
+                        "ref_id": "ue_001",
+                        "order": 2,
+                        "parallel_group": None,
+                        "is_required": False,
+                        "prerequisites": ["mod_001"],
+                    },
                 ],
             }
         ]
@@ -39,9 +48,10 @@ class FakeLearningPathService:
             "short_description": "Učna pot za uporabo umetne inteligence.",
             "duration_hours": 4.25,
             "keywords": ["umetna inteligenca", "iskanje"],
-            "modules": [
+            "steps": [
                 {
-                    "module_id": "mod_001",
+                    "type": "module",
+                    "ref_id": "mod_001",
                     "order": 1,
                     "parallel_group": None,
                     "is_required": True,
@@ -58,6 +68,26 @@ class FakeLearningPathService:
             "_id": learning_path_id,
             "title": "Iskanje informacij z umetno inteligenco",
             "short_description": "Učna pot za uporabo umetne inteligence.",
+            "duration_hours": 4.25,
+            "keywords": ["umetna inteligenca", "iskanje"],
+            "steps": [
+                {
+                    "type": "module",
+                    "ref_id": "mod_001",
+                    "order": 1,
+                    "parallel_group": None,
+                    "is_required": True,
+                    "prerequisites": [],
+                },
+                {
+                    "type": "learning_unit",
+                    "ref_id": "ue_001",
+                    "order": 2,
+                    "parallel_group": None,
+                    "is_required": False,
+                    "prerequisites": ["mod_001"],
+                },
+            ],
             "module_details": [
                 {
                     "_id": "mod_001",
@@ -65,7 +95,37 @@ class FakeLearningPathService:
                     "short_description": "Modul o osnovah UI.",
                 }
             ],
+            "learning_unit_details": [
+                {
+                    "_id": "ue_001",
+                    "title": "Samostojna učna enota",
+                    "short_description": "Primer samostojne učne enote.",
+                }
+            ],
         }
+
+    async def get_step_references_for_learning_path(self, learning_path_id: str):
+        if learning_path_id == "missing_id":
+            return []
+
+        return [
+            {
+                "type": "module",
+                "ref_id": "mod_001",
+                "order": 1,
+                "parallel_group": None,
+                "is_required": True,
+                "prerequisites": [],
+            },
+            {
+                "type": "learning_unit",
+                "ref_id": "ue_001",
+                "order": 2,
+                "parallel_group": None,
+                "is_required": False,
+                "prerequisites": ["mod_001"],
+            },
+        ]
 
     async def get_module_references_for_learning_path(self, learning_path_id: str):
         if learning_path_id == "missing_id":
@@ -87,6 +147,39 @@ class FakeLearningPathService:
                 "prerequisites": ["mod_001"],
             },
         ]
+
+    async def get_available_steps_for_learning_path(
+        self,
+        learning_path_id: str,
+        completed_step_ids: list[str],
+    ):
+        if learning_path_id == "missing_id":
+            return []
+
+        available = [
+            {
+                "type": "module",
+                "ref_id": "mod_001",
+                "order": 1,
+                "parallel_group": None,
+                "is_required": True,
+                "prerequisites": [],
+            }
+        ]
+
+        if "mod_001" in completed_step_ids:
+            available.append(
+                {
+                    "type": "learning_unit",
+                    "ref_id": "ue_001",
+                    "order": 2,
+                    "parallel_group": None,
+                    "is_required": False,
+                    "prerequisites": ["mod_001"],
+                }
+            )
+
+        return available
 
     async def get_available_modules_for_learning_path(
         self,
@@ -135,8 +228,21 @@ class FakeQuestionnaireService:
                     "id": "q_001",
                     "question": "Razumem vsebino učne poti.",
                     "type": "yes_no",
+                    "learning_path_id": target_id,
+                    "module_id": "mod_001",
                     "learning_unit_id": "ue_001",
                     "related_topic": "Osnovni pojmi",
+                    "related_topic_id": "topic_001",
+                    "related_competency_codes": ["1.1"],
+                    "sources": [
+                        {
+                            "learning_path_id": target_id,
+                            "module_id": "mod_001",
+                            "learning_unit_id": "ue_001",
+                            "topic_id": "topic_001",
+                            "competency_codes": ["1.1"],
+                        }
+                    ],
                 }
             ],
         }
@@ -167,7 +273,7 @@ def teardown_function():
 
 
 def test_get_learning_paths_returns_list():
-    # Preverimo, da endpoint vrne seznam učnih poti.
+    # Preverimo, da endpoint vrne seznam učnih poti z novo steps strukturo.
     response = client.get("/api/learning-paths")
 
     assert response.status_code == 200
@@ -177,6 +283,9 @@ def test_get_learning_paths_returns_list():
     assert len(data) == 1
     assert data[0]["_id"] == "up_001"
     assert data[0]["title"] == "Iskanje informacij z umetno inteligenco"
+    assert "steps" in data[0]
+    assert "modules" not in data[0]
+    assert data[0]["steps"][0]["type"] == "module"
 
 
 def test_get_learning_path_by_id_returns_path():
@@ -189,6 +298,8 @@ def test_get_learning_path_by_id_returns_path():
 
     assert data["_id"] == "up_001"
     assert data["title"] == "Iskanje informacij z umetno inteligenco"
+    assert "steps" in data
+    assert data["steps"][0]["ref_id"] == "mod_001"
 
 
 def test_get_learning_path_by_id_returns_404_when_missing():
@@ -214,7 +325,9 @@ def test_get_learning_path_detail_returns_detail():
 
     assert data["_id"] == "up_001"
     assert data["title"] == "Iskanje informacij z umetno inteligenco"
+    assert len(data["steps"]) == 2
     assert len(data["module_details"]) == 1
+    assert len(data["learning_unit_details"]) == 1
 
 
 def test_get_learning_path_detail_returns_404_when_missing():
@@ -230,8 +343,23 @@ def test_get_learning_path_detail_returns_404_when_missing():
     assert data["error"]["message"] == "Učna pot ni najdena."
 
 
+def test_get_learning_path_steps_returns_references():
+    # Endpoint /steps vrne novo strukturo korakov učne poti.
+    response = client.get("/api/learning-paths/up_001/steps")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["type"] == "module"
+    assert data[0]["ref_id"] == "mod_001"
+    assert data[1]["type"] == "learning_unit"
+    assert data[1]["ref_id"] == "ue_001"
+
+
 def test_get_learning_path_modules_returns_references():
-    # Endpoint vrne reference modulov znotraj učne poti.
+    # Compatibility endpoint /modules še vedno vrne samo module.
     response = client.get("/api/learning-paths/up_001/modules")
 
     assert response.status_code == 200
@@ -241,6 +369,37 @@ def test_get_learning_path_modules_returns_references():
     assert len(data) == 2
     assert data[0]["module_id"] == "mod_001"
     assert data[1]["module_id"] == "mod_002"
+
+
+def test_get_available_steps_without_completed_ids():
+    # Brez zaključenih predpogojev je dostopen samo prvi step.
+    response = client.get("/api/learning-paths/up_001/available-steps")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["type"] == "module"
+    assert data[0]["ref_id"] == "mod_001"
+
+
+def test_get_available_steps_with_completed_ids():
+    # Če je mod_001 completed, postane dostopen tudi naslednji step.
+    response = client.get(
+        "/api/learning-paths/up_001/available-steps",
+        params={
+            "completed_step_ids": ["mod_001"],
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["ref_id"] == "mod_001"
+    assert data[1]["ref_id"] == "ue_001"
 
 
 def test_get_available_modules_without_completed_ids():
@@ -284,6 +443,7 @@ def test_get_learning_path_questionnaire_returns_questionnaire():
     assert data["target_type"] == "learning_path"
     assert data["target_id"] == "up_001"
     assert data["title"] == "Vprašalnik za učno pot"
+    assert len(data["questions"]) == 1
 
 
 def test_get_learning_path_questionnaire_returns_404_when_missing():

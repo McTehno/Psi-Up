@@ -5,6 +5,7 @@ import fogVideo from '../../../assets/parallax/fog-background.mp4'
 import pathMountainImage from '../../../assets/parallax/path-mountain.webp'
 import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
 import unitMountainImage from '../../../assets/parallax/unit-mountain.webp'
+import GlowingOrbs from './GlowingOrbs'
 
 /**
  * HomeParallaxEnvironment
@@ -39,7 +40,7 @@ function HomeParallaxEnvironment() {
 
 	/* ── Mountain layer transforms ───────────────────────────────── */
 	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
-	
+
 	// Pan left for Učne enote
 	const mountainX = useTransform(
 		scrollYProgress,
@@ -62,6 +63,9 @@ function HomeParallaxEnvironment() {
 	// The highlighted unit mountain reveals from bottom to top
 	const unitGlowReveal = useTransform(scrollYProgress, [0.62, 0.72], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
+
+	// The glowing orbs fade in simultaneously with the unit mountain reveal
+	const orbsOpacity = useTransform(scrollYProgress, [0.65, 0.72], [0, 1])
 
 	return (
 		<div
@@ -96,11 +100,11 @@ function HomeParallaxEnvironment() {
 							loading="eager"
 							draggable={false}
 						/>
-						
+
 						{/* Highlighted Mountain (Moduli) - Reveals from bottom to top */}
 						<motion.div
 							className="absolute inset-0 h-full w-full"
-							style={{ 
+							style={{
 								WebkitMaskImage: moduleGlowMask,
 								maskImage: moduleGlowMask
 							}}
@@ -117,7 +121,7 @@ function HomeParallaxEnvironment() {
 						{/* Highlighted Mountain (Učne enote) - Reveals from bottom to top */}
 						<motion.div
 							className="absolute inset-0 h-full w-full"
-							style={{ 
+							style={{
 								WebkitMaskImage: unitGlowMask,
 								maskImage: unitGlowMask
 							}}
@@ -129,6 +133,14 @@ function HomeParallaxEnvironment() {
 								loading="eager"
 								draggable={false}
 							/>
+						</motion.div>
+
+						{/* Glowing Orbs explicitly outside masks to avoid rendering bugs, matching mountain coordinates */}
+						<motion.div 
+							className="absolute inset-0 h-full w-full z-[100] pointer-events-none"
+							style={{ opacity: orbsOpacity }}
+						>
+							<GlowingOrbs />
 						</motion.div>
 					</div>
 

@@ -1,9 +1,9 @@
-import type { ModuleDetailResponse } from './module'
+import type { ModuleDetailResponse, ModuleReferenceResponse } from './module'
 import type { LearningUnitResponse } from './learning-unit'
 
 export type LearningPathStepType = 'module' | 'learning_unit'
 
-export type LearningPathStepResponse = {
+export type LearningPathStepReference = {
   type?: LearningPathStepType | string | null
   step_type?: LearningPathStepType | string | null
   ref_id?: string | null
@@ -15,7 +15,10 @@ export type LearningPathStepResponse = {
   prerequisites?: string[] | null
 }
 
-export type LearningPathStepReference = LearningPathStepResponse
+/**
+ * Compatibility alias za strani, ki se vedno uporabljajo staro ime.
+ */
+export type LearningPathStepResponse = LearningPathStepReference
 
 export type LearningPathResponse = {
   id?: string
@@ -24,7 +27,13 @@ export type LearningPathResponse = {
   short_description: string
   duration_hours?: number | null
   keywords: string[]
-  steps: LearningPathStepResponse[]
+  steps: LearningPathStepReference[]
+
+  /**
+   * Compatibility fallback za star frontend.
+   * Runtime naj uporablja steps, to je samo zato, da stari kosi kode ne padejo med refactorjem.
+   */
+  modules?: ModuleReferenceResponse[]
 }
 
 export type LearningPathDetailResponse = LearningPathResponse & {

@@ -770,3 +770,502 @@ def test_empty_result_returns_stable_structure(service):
         "module_results": [],
         "summary": "Test summary.",
     }
+
+@pytest.fixture
+def second_learning_unit():
+    """
+    Druga testna učna enota.
+
+    Uporabimo jo pri testih, kjer modul ali učna pot vsebuje več učnih enot.
+    """
+
+    return {
+        "_id": "ue_002",
+        "title": "Nadaljevanje",
+        "content_topics": [
+            {
+                "id": "topic_003",
+                "title": "Nadaljevanje",
+                "related_competency_codes": ["3.1"],
+            }
+        ],
+        "self_assessment_questions": [
+            {
+                "id": "q_003",
+                "question": "Znam nadaljevanje.",
+                "related_topic_id": "topic_003",
+                "related_competency_codes": ["3.1"],
+            }
+        ],
+    }
+
+
+@pytest.fixture
+def third_learning_unit():
+    """
+    Tretja testna učna enota.
+
+    Uporabimo jo za parallel_group scenarij v modulu.
+    """
+
+    return {
+        "_id": "ue_003",
+        "title": "Vzporedna učna enota A",
+        "content_topics": [
+            {
+                "id": "topic_004",
+                "title": "Vzporedna vsebina A",
+                "related_competency_codes": ["4.1"],
+            }
+        ],
+        "self_assessment_questions": [
+            {
+                "id": "q_004",
+                "question": "Znam vzporedno vsebino A.",
+                "related_topic_id": "topic_004",
+                "related_competency_codes": ["4.1"],
+            }
+        ],
+    }
+
+
+@pytest.fixture
+def fourth_learning_unit():
+    """
+    Četrta testna učna enota.
+
+    Uporabimo jo kot drugo učno enoto v isti parallel_group.
+    """
+
+    return {
+        "_id": "ue_004",
+        "title": "Vzporedna učna enota B",
+        "content_topics": [
+            {
+                "id": "topic_005",
+                "title": "Vzporedna vsebina B",
+                "related_competency_codes": ["4.2"],
+            }
+        ],
+        "self_assessment_questions": [
+            {
+                "id": "q_005",
+                "question": "Znam vzporedno vsebino B.",
+                "related_topic_id": "topic_005",
+                "related_competency_codes": ["4.2"],
+            }
+        ],
+    }
+
+
+#Modul s parallel_group
+@pytest.mark.asyncio
+async def test_evaluate_module_with_parallel_units_keeps_completed_parallel_unit(
+    service,
+    module_service,
+    learning_unit_service,
+    learning_unit,
+    second_learning_unit,
+    third_learning_unit,
+    fourth_learning_unit,
+):
+    """
+    Modul vsebuje dve vzporedni učni enoti:
+    - ue_003 manjka,
+    - ue_004 je pokrita.
+
+    Pričakovanje:
+    - ue_004 je v skipped_learning_units,
+    - ue_003 je v missing_learning_units,
+    - modul je partially_completed,
+    - priporočena naslednja učna enota je ue_003.
+    """
+
+    module_service.get_module_by_id.return_value = {
+        "_id": "mod_002",
+        "title": "Modul z vzporednimi učnimi enotami",
+    }
+
+    module_service.get_learning_unit_references_for_module.return_value = [
+        {
+            "learning_unit_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        },
+        {
+            "learning_unit_id": "ue_002",
+            "order": 2,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": ["ue_001"],
+        },
+        {
+            "learning_unit_id": "ue_003",
+            "order": 3,
+            "parallel_group": "parallel_A",
+            "is_required": True,
+            "prerequisites": ["ue_001", "ue_002"],
+        },
+        {
+            "learning_unit_id": "ue_004",
+            "order": 3,
+            "parallel_group": "parallel_A",
+            "is_required": True,
+            "prerequisites": ["ue_001", "ue_002"],
+        },
+    ]
+
+    learning_unit_service.get_learning_unit_by_id.side_effect = [
+        learning_unit,
+        second_learning_unit,
+        third_learning_unit,
+        fourth_learning_unit,
+    ]
+
+    result = await service.evaluate_answers(
+        user_id="user_001",
+        target_type=QuestionnaireTargetType.MODULE,
+        target_id="mod_002",
+        answers=[
+            {
+                "question_id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_002",
+                "question": "Poznam primere uporabe.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_003",
+                "question": "Znam nadaljevanje.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_004",
+                "question": "Znam vzporedno vsebino A.",
+                "answer": False,
+            },
+            {
+                "question_id": "q_005",
+                "question": "Znam vzporedno vsebino B.",
+                "answer": True,
+            },
+        ],
+    )
+
+    assert result["module_results"][0]["status"] == AssessmentStatus.PARTIALLY_COMPLETED
+
+    assert result["module_results"][0]["completed_learning_units"] == [
+        "ue_001",
+        "ue_002",
+        "ue_004",
+    ]
+
+    assert result["module_results"][0]["missing_learning_units"] == ["ue_003"]
+
+    assert result["skipped_learning_units"] == [
+        "ue_001",
+        "ue_002",
+        "ue_004",
+    ]
+
+    assert result["start_learning_unit_id"] == "ue_003"
+    assert result["recommended_next_learning_units"] == ["ue_003"]
+
+#Learning path z neposredno učno enoto kot step
+@pytest.mark.asyncio
+async def test_evaluate_learning_path_supports_direct_learning_unit_step(
+    service,
+    learning_path_service,
+    learning_unit_service,
+    learning_unit,
+):
+    """
+    Učna pot vsebuje neposredno učno enoto kot step.
+
+    Če uporabnik te učne enote ne zna, jo service priporoči kot začetno točko.
+    """
+
+    learning_path_service.get_learning_path_by_id.return_value = {
+        "_id": "up_004",
+        "title": "Mešana učna pot",
+    }
+
+    learning_path_service.get_step_references_for_learning_path.return_value = [
+        {
+            "type": "learning_unit",
+            "ref_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        }
+    ]
+
+    learning_unit_service.get_learning_unit_by_id.return_value = learning_unit
+
+    result = await service.evaluate_answers(
+        user_id="user_001",
+        target_type=QuestionnaireTargetType.LEARNING_PATH,
+        target_id="up_004",
+        answers=[
+            {
+                "question_id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "answer": False,
+            }
+        ],
+    )
+
+    assert result["target_type"] == QuestionnaireTargetType.LEARNING_PATH
+    assert result["target_id"] == "up_004"
+
+    assert result["start_module_id"] is None
+    assert result["start_learning_unit_id"] == "ue_001"
+
+    assert result["recommended_next_modules"] == []
+    assert result["recommended_next_learning_units"] == ["ue_001"]
+
+    assert result["skipped_learning_units"] == []
+    assert result["summary"] == "Uporabnik naj začne pri učni enoti ue_001."
+
+#Learning path preskoči direct learning_unit, če je pokrita
+@pytest.mark.asyncio
+async def test_evaluate_learning_path_skips_completed_direct_learning_unit_step(
+    service,
+    learning_path_service,
+    learning_unit_service,
+    learning_unit,
+):
+    """
+    Če je direct learning_unit step pokrit,
+    ga learning path preskoči.
+    """
+
+    learning_path_service.get_learning_path_by_id.return_value = {
+        "_id": "up_004",
+        "title": "Mešana učna pot",
+    }
+
+    learning_path_service.get_step_references_for_learning_path.return_value = [
+        {
+            "type": "learning_unit",
+            "ref_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        }
+    ]
+
+    learning_unit_service.get_learning_unit_by_id.return_value = learning_unit
+
+    result = await service.evaluate_answers(
+        user_id="user_001",
+        target_type=QuestionnaireTargetType.LEARNING_PATH,
+        target_id="up_004",
+        answers=[
+            {
+                "question_id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_002",
+                "question": "Poznam primere uporabe.",
+                "answer": True,
+            },
+        ],
+    )
+
+    assert result["start_module_id"] is None
+    assert result["start_learning_unit_id"] is None
+
+    assert result["skipped_learning_units"] == ["ue_001"]
+    assert result["recommended_next_learning_units"] == []
+
+    assert result["summary"] == "Uporabnik je glede na odgovore pokril vse korake v učni poti."
+
+#Learning path: direct learning_unit + naslednji modul
+@pytest.mark.asyncio
+async def test_evaluate_learning_path_moves_from_direct_unit_to_next_module(
+    service,
+    learning_path_service,
+    module_service,
+    learning_unit_service,
+    learning_unit,
+    second_learning_unit,
+):
+    """
+    Učna pot ima:
+    - direct learning_unit step ue_001,
+    - nato module step mod_001.
+
+    Če je ue_001 pokrita, mod_001 pa še ne,
+    mora service priporočiti mod_001 in prvo manjkajočo učno enoto v njem.
+    """
+
+    learning_path_service.get_learning_path_by_id.return_value = {
+        "_id": "up_004",
+        "title": "Mešana učna pot",
+    }
+
+    learning_path_service.get_step_references_for_learning_path.return_value = [
+        {
+            "type": "learning_unit",
+            "ref_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        },
+        {
+            "type": "module",
+            "ref_id": "mod_001",
+            "order": 2,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": ["ue_001"],
+        },
+    ]
+
+    module_service.get_module_by_id.return_value = {
+        "_id": "mod_001",
+        "title": "Modul 1",
+    }
+
+    module_service.get_learning_unit_references_for_module.return_value = [
+        {
+            "learning_unit_id": "ue_002",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        }
+    ]
+
+    learning_unit_service.get_learning_unit_by_id.side_effect = [
+        learning_unit,
+        second_learning_unit,
+    ]
+
+    result = await service.evaluate_answers(
+        user_id="user_001",
+        target_type=QuestionnaireTargetType.LEARNING_PATH,
+        target_id="up_004",
+        answers=[
+            {
+                "question_id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_002",
+                "question": "Poznam primere uporabe.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_003",
+                "question": "Znam nadaljevanje.",
+                "answer": False,
+            },
+        ],
+    )
+
+    assert result["skipped_learning_units"] == ["ue_001"]
+
+    assert result["start_module_id"] == "mod_001"
+    assert result["start_learning_unit_id"] == "ue_002"
+
+    assert result["recommended_next_modules"] == ["mod_001"]
+    assert result["recommended_next_learning_units"] == ["ue_002"]
+
+#Deduplikacija learning_unit_results
+@pytest.mark.asyncio
+async def test_evaluate_learning_path_deduplicates_learning_unit_results(
+    service,
+    learning_path_service,
+    module_service,
+    learning_unit_service,
+    learning_unit,
+):
+    """
+    Ista učna enota se pojavi:
+    - kot direct learning_unit step,
+    - in znotraj modula.
+
+    V learning_unit_results mora biti samo en rezultat za ue_001.
+    """
+
+    learning_path_service.get_learning_path_by_id.return_value = {
+        "_id": "up_duplicate",
+        "title": "Učna pot s podvojeno učno enoto",
+    }
+
+    learning_path_service.get_step_references_for_learning_path.return_value = [
+        {
+            "type": "learning_unit",
+            "ref_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        },
+        {
+            "type": "module",
+            "ref_id": "mod_001",
+            "order": 2,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": ["ue_001"],
+        },
+    ]
+
+    module_service.get_module_by_id.return_value = {
+        "_id": "mod_001",
+        "title": "Modul 1",
+    }
+
+    module_service.get_learning_unit_references_for_module.return_value = [
+        {
+            "learning_unit_id": "ue_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
+        }
+    ]
+
+    learning_unit_service.get_learning_unit_by_id.side_effect = [
+        learning_unit,
+        learning_unit,
+    ]
+
+    result = await service.evaluate_answers(
+        user_id="user_001",
+        target_type=QuestionnaireTargetType.LEARNING_PATH,
+        target_id="up_duplicate",
+        answers=[
+            {
+                "question_id": "q_001",
+                "question": "Razumem osnovne pojme.",
+                "answer": True,
+            },
+            {
+                "question_id": "q_002",
+                "question": "Poznam primere uporabe.",
+                "answer": True,
+            },
+        ],
+    )
+
+    learning_unit_result_ids = [
+        unit_result["learning_unit_id"]
+        for unit_result in result["learning_unit_results"]
+    ]
+
+    assert learning_unit_result_ids.count("ue_001") == 1

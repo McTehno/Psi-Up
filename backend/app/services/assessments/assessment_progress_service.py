@@ -779,11 +779,17 @@ class AssessmentProgressService:
             ):
                 synced_unit_result["is_completed_by_assessment"] = True
 
-                if not synced_unit_result.get("known_topic_ids"):
-                    synced_unit_result["known_topic_ids"] = self._get_string_list_value(
-                        synced_unit_result.get("missing_topic_ids")
-                    )
+                known_topic_ids = self._get_string_list_value(
+                    synced_unit_result.get("known_topic_ids")
+                )
+                missing_topic_ids = self._get_string_list_value(
+                    synced_unit_result.get("missing_topic_ids")
+                )
 
+                synced_unit_result["known_topic_ids"] = self._merge_unique_strings(
+                    known_topic_ids,
+                    missing_topic_ids,
+                )
                 synced_unit_result["missing_topic_ids"] = []
 
                 known_competency_codes = self._get_string_list_value(
@@ -811,24 +817,47 @@ class AssessmentProgressService:
             synced_module_result = dict(module_result)
             module_id = synced_module_result.get("module_id")
 
+            completed_learning_units = self._get_string_list_value(
+                synced_module_result.get("completed_learning_units")
+            )
+            missing_learning_units = self._get_string_list_value(
+                synced_module_result.get("missing_learning_units")
+            )
+
+            newly_completed_learning_units = [
+                learning_unit_id
+                for learning_unit_id in missing_learning_units
+                if learning_unit_id in completed_learning_unit_set
+            ]
+
+            synced_completed_learning_units = self._merge_unique_strings(
+                completed_learning_units,
+                newly_completed_learning_units,
+            )
+
+            synced_missing_learning_units = [
+                learning_unit_id
+                for learning_unit_id in missing_learning_units
+                if learning_unit_id not in completed_learning_unit_set
+            ]
+
+            synced_module_result["completed_learning_units"] = synced_completed_learning_units
+            synced_module_result["missing_learning_units"] = synced_missing_learning_units
+
             if (
                 isinstance(module_id, str)
                 and module_id in completed_module_set
             ):
                 synced_module_result["status"] = AssessmentStatus.COMPLETED.value
-
-                completed_learning_units = self._get_string_list_value(
-                    synced_module_result.get("completed_learning_units")
-                )
-                missing_learning_units = self._get_string_list_value(
-                    synced_module_result.get("missing_learning_units")
-                )
-
                 synced_module_result["completed_learning_units"] = self._merge_unique_strings(
-                    completed_learning_units,
-                    missing_learning_units,
+                    synced_completed_learning_units,
+                    synced_missing_learning_units,
                 )
                 synced_module_result["missing_learning_units"] = []
+            elif synced_completed_learning_units:
+                synced_module_result["status"] = AssessmentStatus.PARTIALLY_COMPLETED.value
+            else:
+                synced_module_result["status"] = AssessmentStatus.NOT_STARTED.value
 
             synced_module_results.append(synced_module_result)
 
@@ -843,6 +872,78 @@ class AssessmentProgressService:
             self._get_string_list_value(result.get("skipped_modules")),
             completed_module_ids,
         )
+
+        result["recommended_next_learning_units"] = [
+            learning_unit_id
+            for learning_unit_id in self._get_string_list_value(
+                result.get("recommended_next_learning_units")
+            )
+            if learning_unit_id not in completed_learning_unit_set
+        ]
+
+        result["recommended_next_modules"] = [
+            module_id
+            for module_id in self._get_string_list_value(
+                result.get("recommended_next_modules")
+            )
+            if module_id not in completed_module_set
+        ]
+
+        start_learning_unit_id = result.get("start_learning_unit_id")
+
+        if (
+            isinstance(start_learning_unit_id, str)
+            and start_learning_unit_id in completed_learning_unit_set
+        ):
+            current_position = result.get("current_position")
+
+            if isinstance(current_position, dict):
+                result["start_learning_unit_id"] = current_position.get(
+                    "current_learning_unit_id"
+                )
+                result["start_module_id"] = current_position.get(
+                    "current_module_id"
+                )
+            else:
+                result["start_learning_unit_id"] = None
+
+        start_module_id = result.get("start_module_id")
+
+        if (
+            isinstance(start_module_id, str)
+            and start_module_id in completed_module_set
+        ):
+            current_position = result.get("current_position")
+
+            if isinstance(current_position, dict):
+                result["start_module_id"] = current_position.get(
+                    "current_module_id"
+                )
+                result["start_learning_unit_id"] = current_position.get(
+                    "current_learning_unit_id"
+                )
+            else:
+                result["start_module_id"] = None
+
+        current_position = result.get("current_position")
+
+        if isinstance(current_position, dict):
+            current_module_id = current_position.get("current_module_id")
+            current_learning_unit_id = current_position.get("current_learning_unit_id")
+
+            if (
+                isinstance(current_module_id, str)
+                and current_module_id not in completed_module_set
+                and current_module_id not in result["recommended_next_modules"]
+            ):
+                result["recommended_next_modules"].append(current_module_id)
+
+            if (
+                isinstance(current_learning_unit_id, str)
+                and current_learning_unit_id not in completed_learning_unit_set
+                and current_learning_unit_id not in result["recommended_next_learning_units"]
+            ):
+                result["recommended_next_learning_units"].append(current_learning_unit_id)
 
         return result
 

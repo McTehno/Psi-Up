@@ -244,3 +244,61 @@ def test_completed_learning_unit_cannot_be_downgraded_to_no(client):
     saved_answer = find_saved_answer(questionnaire_answer, "q_ue_003_001")
 
     assert saved_answer["answer"] is True
+
+#questionnaire_answers se override-a, ne dodaja novega poskusa
+
+def test_questionnaire_answers_are_overridden_for_same_target(client):
+    user_id = unique_user_id("override")
+    questionnaire = get_questionnaire(client, "module", "mod_002")
+
+    first_question = find_question(questionnaire, "q_ue_003_001")
+    second_question = find_question(questionnaire, "q_ue_004_001")
+
+    submit_assessment(
+        client=client,
+        user_id=user_id,
+        target_type="module",
+        target_id="mod_002",
+        answers=[
+            answer_for_question(first_question, True),
+        ],
+    )
+
+    first_progress = get_user_progress(client, user_id)
+    first_questionnaire_answer = get_questionnaire_answer(
+        first_progress,
+        "module",
+        "mod_002",
+    )
+    first_submitted_at = first_questionnaire_answer["last_submitted_at"]
+
+    submit_assessment(
+        client=client,
+        user_id=user_id,
+        target_type="module",
+        target_id="mod_002",
+        answers=[
+            answer_for_question(second_question, True),
+        ],
+    )
+
+    second_progress = get_user_progress(client, user_id)
+
+    matching_answers = [
+        item
+        for item in second_progress["questionnaire_answers"]
+        if item["target_type"] == "module" and item["target_id"] == "mod_002"
+    ]
+
+    assert len(matching_answers) == 1
+
+    second_questionnaire_answer = matching_answers[0]
+    assert second_questionnaire_answer["last_submitted_at"] != first_submitted_at
+
+    saved_second_answer = find_saved_answer(
+        second_questionnaire_answer,
+        "q_ue_004_001",
+    )
+
+    assert saved_second_answer["answer"] is True
+    assert saved_second_answer["was_answered"] is True

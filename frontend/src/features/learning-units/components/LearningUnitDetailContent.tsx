@@ -57,6 +57,11 @@ type SafeDigCompCompetency = {
 	title: string
 	description: string
 }
+type SafeContentTopic = {
+	id: string
+	title: string
+	relatedCompetencyCodes: string[]
+}
 
 const menuItems: MenuItem[] = [
 	{
@@ -130,6 +135,39 @@ function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
 			),
 		}))
 }
+/**
+ * Vrne varne vsebinske sklope.
+ * 	
+ * 	
+ * 	
+ *Namen:
+ * - preprečiti crash, če content_topics manjka
+ * - zagotoviti fallback za id in title
+ * - preskočiti elemente, ki niso objekti
+ */
+
+function getSafeContentTopics(value: unknown): SafeContentTopic[] {
+	return getArrayOrEmpty(value as Record<string, unknown>[])
+		.filter(
+			(item): item is Record<string, unknown> =>
+				Boolean(item) && typeof item === 'object' && !Array.isArray(item),
+		)
+		.map((item) => ({
+			id: getTextOrFallback(
+				typeof item.id === 'string' ? item.id : undefined,
+				'',
+			),
+			title: getTextOrFallback(
+				typeof item.title === 'string' ? item.title : undefined,
+				'Neimenovan vsebinski sklop',
+			),
+			relatedCompetencyCodes: getStringArrayOrEmpty(
+				item.related_competency_codes,
+			),
+		}))
+		.filter((topic) => topic.id || topic.title)
+}
+
 
 /**
  * Vrne mehke barve za DigComp področje glede na prvo številko kode.
@@ -259,7 +297,7 @@ function LearningUnitDetailContent({
 	 * Ti array-i se uporabljajo namesto direktnega dostopa do backend polj.
 	 * Tako komponenta ne pade, če backend vrne null ali manjkajoče polje.
 	 */
-	const contentTopics = getStringArrayOrEmpty(learningUnit.content_topics)
+	const contentTopics = getSafeContentTopics(learningUnit.content_topics)
 	const acquiredCompetencies = getStringArrayOrEmpty(
 		learningUnit.acquired_competencies,
 	)
@@ -323,17 +361,17 @@ function LearningUnitDetailContent({
 						contentTopics.map((topic, index) => {
 							const status = learningUnitAssessmentResult
 								? getTopicAssessmentStatus(
-										topic,
-										knownTopics,
-										missingTopics,
-									)
+									topic.id,
+									knownTopics,
+									missingTopics,
+								)
 								: 'default'
 
 							const style = getTopicAssessmentStyle(status)
 
 							return (
 								<div
-									key={topic}
+									key={topic.id || topic.title}
 									className={[
 										'flex items-start gap-3 px-3 py-4 sm:gap-5 sm:px-4 sm:py-5',
 										style.row,
@@ -366,7 +404,7 @@ function LearningUnitDetailContent({
 												style.text,
 											].join(' ')}
 										>
-											{topic}
+											{topic.title}
 										</h4>
 
 										{showAssessmentResult && status !== 'default' && (

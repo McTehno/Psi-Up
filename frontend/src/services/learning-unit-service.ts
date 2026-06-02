@@ -1,7 +1,7 @@
 import { apiGet } from './api-client'
 import type {
-  LearningUnitDetailResponse,
-  LearningUnitResponse,
+	LearningUnitDetailResponse,
+	LearningUnitResponse,
 } from '../types/learning-unit'
 import type { QuestionnaireResponse } from '../types/questionnaire'
 
@@ -9,18 +9,18 @@ import type { QuestionnaireResponse } from '../types/questionnaire'
  * Vrne vse učne enote.
  */
 export async function getLearningUnits(): Promise<LearningUnitResponse[]> {
-  return apiGet<LearningUnitResponse[]>('/learning-units')
+	return apiGet<LearningUnitResponse[]>('/learning-units')
 }
 
 /**
  * Vrne osnovne podatke ene učne enote.
  */
 export async function getLearningUnitById(
-  learningUnitId: string,
+	learningUnitId: string,
 ): Promise<LearningUnitResponse> {
-  return apiGet<LearningUnitResponse>(
-    `/learning-units/${learningUnitId}`,
-  )
+	return apiGet<LearningUnitResponse>(
+		`/learning-units/${learningUnitId}`,
+	)
 }
 
 /**
@@ -30,20 +30,20 @@ export async function getLearningUnitById(
  * ki vsebujejo izbrano učno enoto.
  */
 export async function getLearningUnitDetail(
-  learningUnitId: string,
+	learningUnitId: string,
 ): Promise<LearningUnitDetailResponse> {
-  return apiGet<LearningUnitDetailResponse>(
-    `/learning-units/${learningUnitId}/detail`,
-  )
+	return apiGet<LearningUnitDetailResponse>(
+		`/learning-units/${learningUnitId}/detail`,
+	)
 }
 
 /**
  * Vrne vprašalnik za izbrano učno enoto.
  */
 export async function getLearningUnitQuestionnaire(
-  learningUnitId: string,
+	learningUnitId: string,
 ): Promise<QuestionnaireResponse> {
-  return apiGet<QuestionnaireResponse>(
-    `/learning-units/${learningUnitId}/questionnaire`,
-  )
+	return apiGet<QuestionnaireResponse>(
+		`/learning-units/${learningUnitId}/questionnaire`,
+	)
 }

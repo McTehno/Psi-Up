@@ -1,7 +1,27 @@
 import { apiGet } from './api-client'
-import type { ModuleDetailResponse, ModuleResponse } from '../types/module'
-import type { LearningUnitResponse } from '../types/learning-unit'
+import type {
+	ModuleDetailResponse,
+	ModuleResponse,
+} from '../types/module'
+import type { LearningUnitReferenceResponse } from '../types/learning-unit'
 import type { QuestionnaireResponse } from '../types/questionnaire'
+
+function buildRepeatedQueryParam(
+	paramName: string,
+	values: string[],
+): string {
+	if (values.length === 0) {
+		return ''
+	}
+
+	const params = new URLSearchParams()
+
+	values.forEach((value) => {
+		params.append(paramName, value)
+	})
+
+	return `?${params.toString()}`
+}
 
 /**
  * Vrne vse module.
@@ -22,7 +42,7 @@ export async function getModuleById(
 /**
  * Vrne detail podatke modula.
  *
- * Detail endpoint poleg osnovnih podatkov vrne tudi učne enote
+ * Detail endpoint poleg osnovnih podatkov vrne tudi podrobnosti učnih enot
  * in učne poti, ki vsebujejo izbrani modul.
  */
 export async function getModuleDetail(
@@ -32,24 +52,30 @@ export async function getModuleDetail(
 }
 
 /**
- * Vrne učne enote izbranega modula.
+ * Vrne reference učnih enot znotraj izbranega modula.
  */
 export async function getModuleLearningUnits(
 	moduleId: string,
-): Promise<LearningUnitResponse[]> {
-	return apiGet<LearningUnitResponse[]>(
+): Promise<LearningUnitReferenceResponse[]> {
+	return apiGet<LearningUnitReferenceResponse[]>(
 		`/modules/${moduleId}/learning-units`,
 	)
 }
 
 /**
- * Vrne učne enote, ki so na voljo za dodajanje v izbrani modul.
+ * Vrne učne enote, ki jih uporabnik lahko začne glede na zaključene predpogoje.
  */
 export async function getModuleAvailableLearningUnits(
 	moduleId: string,
-): Promise<LearningUnitResponse[]> {
-	return apiGet<LearningUnitResponse[]>(
-		`/modules/${moduleId}/available-learning-units`,
+	completedLearningUnitIds: string[] = [],
+): Promise<LearningUnitReferenceResponse[]> {
+	const query = buildRepeatedQueryParam(
+		'completed_learning_unit_ids',
+		completedLearningUnitIds,
+	)
+
+	return apiGet<LearningUnitReferenceResponse[]>(
+		`/modules/${moduleId}/available-learning-units${query}`,
 	)
 }
 

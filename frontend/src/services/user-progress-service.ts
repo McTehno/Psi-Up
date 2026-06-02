@@ -1,10 +1,17 @@
-import type { UserProgressResponse } from '../types/user-progress'
-import { apiGet } from './api-client'
+import type {
+	ContentType,
+	SaveQuestionnaireAnswersRequest,
+	UpdateCurrentPositionRequest,
+	UserProgressResponse,
+} from '../types/user-progress'
+import {
+	apiDeleteWithBody,
+	apiGet,
+	apiPost,
+	apiPut,
+} from './api-client'
 
-export type UserProgressContentType =
-	| 'learning_path'
-	| 'module'
-	| 'learning_unit'
+export type UserProgressContentType = ContentType
 
 export type UserProgressAction = 'save' | 'favorite' | 'complete'
 
@@ -18,53 +25,35 @@ type UpdateUserProgressParams = {
 	isActive: boolean
 	contentId: string
 	contentType: UserProgressContentType
-	accessToken: string
-}
 
-function getApiBaseUrl() {
-	return import.meta.env.VITE_API_URL || 'http://localhost:8000'
-}
-
-function getAuthHeaders(accessToken: string) {
-	return {
-		'Content-Type': 'application/json',
-		Authorization: `Bearer ${accessToken}`,
-	}
-}
-
-async function readProgressResponse(
-	response: Response,
-): Promise<UserProgressResponse> {
-	const data = await response.json()
-
-	if (!response.ok) {
-		throw new Error(
-			data?.error?.message || 'Napaka pri posodobitvi uporabniškega napredka.',
-		)
-	}
-
-	return data
+	/**
+	 * Compatibility parameter.
+	 *
+	 * Starejši hooki ga še lahko pošiljajo, ampak api-client že sam
+	 * prebere access token iz Supabase session.
+	 */
+	accessToken?: string
 }
 
 export async function getUserProgress(
 	userId: string,
 	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	if (!accessToken) {
-		return apiGet<UserProgressResponse>(`/user-progress/${userId}`)
-	}
+	void accessToken
 
-	const response = await fetch(
-		`${getApiBaseUrl()}/api/user-progress/${userId}`,
-		{
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		},
+	return apiGet<UserProgressResponse>(`/user-progress/${userId}`)
+}
+
+export async function ensureUserProgress(
+	userId: string,
+	accessToken?: string,
+): Promise<UserProgressResponse> {
+	void accessToken
+
+	return apiPost<UserProgressResponse, Record<string, never>>(
+		`/user-progress/${userId}/ensure`,
+		{},
 	)
-
-	return readProgressResponse(response)
 }
 
 export async function updateUserProgress({
@@ -74,94 +63,120 @@ export async function updateUserProgress({
 	contentType,
 	accessToken,
 }: UpdateUserProgressParams): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/${action}`, {
-		method: isActive ? 'DELETE' : 'POST',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify({
-			content_id: contentId,
-			content_type: contentType,
-		}),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	const request: UserProgressRequest = {
+		content_id: contentId,
+		content_type: contentType,
+	}
+
+	if (isActive) {
+		return apiDeleteWithBody<UserProgressResponse, UserProgressRequest>(
+			`/user-progress/${action}`,
+			request,
+		)
+	}
+
+	return apiPost<UserProgressResponse, UserProgressRequest>(
+		`/user-progress/${action}`,
+		request,
+	)
 }
 
 export async function saveContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/save`, {
-		method: 'POST',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiPost<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/save',
+		request,
+	)
 }
 
 export async function unsaveContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/save`, {
-		method: 'DELETE',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiDeleteWithBody<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/save',
+		request,
+	)
 }
 
 export async function favoriteContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/favorite`, {
-		method: 'POST',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiPost<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/favorite',
+		request,
+	)
 }
 
 export async function unfavoriteContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/favorite`, {
-		method: 'DELETE',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiDeleteWithBody<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/favorite',
+		request,
+	)
 }
 
 export async function completeContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/complete`, {
-		method: 'POST',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiPost<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/complete',
+		request,
+	)
 }
 
 export async function uncompleteContent(
 	request: UserProgressRequest,
-	accessToken: string,
+	accessToken?: string,
 ): Promise<UserProgressResponse> {
-	const response = await fetch(`${getApiBaseUrl()}/api/user-progress/complete`, {
-		method: 'DELETE',
-		headers: getAuthHeaders(accessToken),
-		body: JSON.stringify(request),
-	})
+	void accessToken
 
-	return readProgressResponse(response)
+	return apiDeleteWithBody<UserProgressResponse, UserProgressRequest>(
+		'/user-progress/complete',
+		request,
+	)
+}
+
+export async function saveQuestionnaireAnswers(
+	request: SaveQuestionnaireAnswersRequest,
+	accessToken?: string,
+): Promise<UserProgressResponse> {
+	void accessToken
+
+	return apiPost<UserProgressResponse, SaveQuestionnaireAnswersRequest>(
+		'/user-progress/questionnaire-answers',
+		request,
+	)
+}
+
+export async function updateCurrentPosition(
+	request: UpdateCurrentPositionRequest,
+	accessToken?: string,
+): Promise<UserProgressResponse> {
+	void accessToken
+
+	return apiPut<UserProgressResponse, UpdateCurrentPositionRequest>(
+		'/user-progress/current-position',
+		request,
+	)
 }
 
 export function isContentSaved(
@@ -170,14 +185,14 @@ export function isContentSaved(
 	contentType: UserProgressContentType,
 ) {
 	if (contentType === 'learning_path') {
-		return progress.saved_learning_paths.includes(contentId)
+		return progress.saved.learning_path_ids.includes(contentId)
 	}
 
 	if (contentType === 'module') {
-		return progress.saved_modules.includes(contentId)
+		return progress.saved.module_ids.includes(contentId)
 	}
 
-	return progress.saved_learning_units.includes(contentId)
+	return progress.saved.learning_unit_ids.includes(contentId)
 }
 
 export function isContentFavorite(
@@ -186,14 +201,14 @@ export function isContentFavorite(
 	contentType: UserProgressContentType,
 ) {
 	if (contentType === 'learning_path') {
-		return progress.favorite_learning_paths.includes(contentId)
+		return progress.favorites.learning_path_ids.includes(contentId)
 	}
 
 	if (contentType === 'module') {
-		return progress.favorite_modules.includes(contentId)
+		return progress.favorites.module_ids.includes(contentId)
 	}
 
-	return progress.favorite_learning_units.includes(contentId)
+	return progress.favorites.learning_unit_ids.includes(contentId)
 }
 
 export function isContentCompleted(
@@ -202,12 +217,12 @@ export function isContentCompleted(
 	contentType: UserProgressContentType,
 ) {
 	if (contentType === 'learning_path') {
-		return progress.completed_learning_paths.includes(contentId)
+		return progress.completed.learning_path_ids.includes(contentId)
 	}
 
 	if (contentType === 'module') {
-		return progress.completed_modules.includes(contentId)
+		return progress.completed.module_ids.includes(contentId)
 	}
 
-	return progress.completed_learning_units.includes(contentId)
+	return progress.completed.learning_unit_ids.includes(contentId)
 }

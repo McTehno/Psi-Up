@@ -262,21 +262,9 @@ function ModuleDetailPage() {
   const learningUnitReferences = getArrayOrEmpty(moduleData.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData.learning_unit_details)
 
-  const recommendedLearningPaths = getArrayOrEmpty(
-    moduleData.recommended_learning_paths,
-  )
-
-  const recommendedLearningPathItems = recommendedLearningPaths.map(
-    (learningPath) => ({
-      id: learningPath._id,
-      title: learningPath.title,
-      description: learningPath.short_description,
-      durationHours: learningPath.duration_hours,
-      keywords: learningPath.keywords,
-      href: `/learning-paths/${learningPath._id}`,
-      typeLabel: 'Učna pot',
-    }),
-  )
+  const recommendedLearningPathItems: Parameters<
+	typeof DetailRecommendationCarousel
+>[0]['items'] = []
 
   const canUseContentActions = Boolean(detail.id)
   const canStartQuestionnaire = hasQuestionnaireContent(

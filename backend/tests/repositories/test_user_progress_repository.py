@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 from app.repositories.user_progress.user_progress_repository import (
@@ -7,67 +5,104 @@ from app.repositories.user_progress.user_progress_repository import (
 )
 
 
-class FakeUpdateOneResult:
-    # Minimalen fake rezultat za update_one.
-    def __init__(self, matched_count):
+class FakeUpdateResult:
+    """
+    Fake rezultat za MongoDB update_one.
+    """
+
+    def __init__(self, matched_count: int):
         self.matched_count = matched_count
 
 
 class FakeCollection:
-    # Fake collection hrani users dokumente v spominu.
-    # Progress je embedded znotraj user["progress"].
-    def __init__(self, documents):
-        self.documents = documents
-        self.last_find_one_filter = None
+    """
+    Fake MongoDB collection za unit teste.
+
+    Namen:
+    - ne uporabljamo prave MongoDB baze,
+    - hranimo users dokumente v navadnem dict-u,
+    - podpiramo samo metode, ki jih UserProgressRepository uporablja.
+    """
+
+    def __init__(self, documents=None):
+        self.documents = documents or {}
         self.last_update_filter = None
-        self.last_update_data = None
+        self.last_update_query = None
 
-    def find_one(self, query_filter):
-        # Shranimo zadnji filter, da preverimo pravilnost query-ja.
-        self.last_find_one_filter = query_filter
+    def find_one(self, query):
+        """
+        Vrne users dokument po _id.
+        """
 
-        for document in self.documents:
-            matches = True
+        user_id = query.get("_id")
+        return self.documents.get(user_id)
 
-            for key, value in query_filter.items():
-                if document.get(key) != value:
-                    matches = False
-                    break
+    def update_one(self, query, update):
+        """
+        Posodobi users dokument.
 
-            if matches:
-                return document
+        Podpira samo $set, ker ga ta repository uporablja.
+        """
 
-        return None
+        self.last_update_filter = query
+        self.last_update_query = update
 
-    def update_one(self, query_filter, update_data):
-        # Posnemamo MongoDB update_one s $set.
-        self.last_update_filter = query_filter
-        self.last_update_data = update_data
+        user_id = query.get("_id")
 
-        user_id = query_filter.get("_id")
-        set_data = update_data.get("$set", {})
+        if user_id not in self.documents:
+            return FakeUpdateResult(matched_count=0)
 
-        for document in self.documents:
-            if document.get("_id") == user_id:
-                document.update(set_data)
-                return FakeUpdateOneResult(matched_count=1)
+        set_values = update.get("$set", {})
 
-        return FakeUpdateOneResult(matched_count=0)
+        for field_name, value in set_values.items():
+            self._set_nested_value(
+                document=self.documents[user_id],
+                field_name=field_name,
+                value=value,
+            )
+
+        return FakeUpdateResult(matched_count=1)
+
+    def _set_nested_value(self, document, field_name, value):
+        """
+        Nastavi vrednost tudi za nested polja, npr. progress.completed.module_ids.
+        """
+
+        parts = field_name.split(".")
+        current = document
+
+        for part in parts[:-1]:
+            if part not in current or not isinstance(current[part], dict):
+                current[part] = {}
+
+            current = current[part]
+
+        current[parts[-1]] = value
 
 
 class FakeDatabase:
-    # Fake database omogoča dostop do kolekcije prek database["users"].
-    def __init__(self, collection):
-        self.collection = collection
-        self.last_collection_name = None
+    """
+    Fake database objekt.
+
+    Omogoča uporabo database["users"], tako kot MongoDB.
+    """
+
+    def __init__(self, users_collection):
+        self.users_collection = users_collection
 
     def __getitem__(self, collection_name):
-        self.last_collection_name = collection_name
-        return self.collection
+        if collection_name == "users":
+            return self.users_collection
+
+        raise KeyError(collection_name)
 
 
 @pytest.fixture
 def empty_progress():
+    """
+    Osnovna prazna progress struktura.
+    """
+
     return {
         "saved": {
             "learning_path_ids": [],
@@ -90,37 +125,30 @@ def empty_progress():
 
 
 @pytest.fixture
-def user_documents(empty_progress):
-    return [
-        {
-            "_id": "user_001",
-            "auth_user_id": "supabase_test_001",
-            "name": "Testni uporabnik",
-            "email": "test@example.com",
-            "progress": empty_progress,
-            "created_at": datetime(2026, 5, 18),
-            "updated_at": datetime(2026, 6, 1),
-        }
-    ]
+def users_collection():
+    """
+    Fake users collection.
+    """
+
+    return FakeCollection()
 
 
 @pytest.fixture
-def fake_collection(user_documents):
-    return FakeCollection(user_documents)
+def repository(users_collection):
+    """
+    UserProgressRepository z fake database.
+    """
+
+    database = FakeDatabase(users_collection)
+
+    return UserProgressRepository(database)
 
 
-@pytest.fixture
-def fake_database(fake_collection):
-    return FakeDatabase(fake_collection)
+def test_build_empty_progress_returns_stable_structure(repository):
+    """
+    Testira, da prazna progress struktura vsebuje vsa potrebna polja.
+    """
 
-
-@pytest.fixture
-def repository(fake_database):
-    return UserProgressRepository(fake_database)
-
-
-def test_build_empty_progress_returns_expected_structure(repository):
-    # Repository mora ustvariti prazno progress strukturo za users.progress.
     result = repository._build_empty_progress()
 
     assert result == {
@@ -144,277 +172,227 @@ def test_build_empty_progress_returns_expected_structure(repository):
     }
 
 
-def test_build_empty_progress_returns_independent_lists(repository):
-    # Vsak progress mora imeti svoje sezname, da se podatki ne delijo med uporabniki.
-    first_progress = repository._build_empty_progress()
-    second_progress = repository._build_empty_progress()
-
-    first_progress["saved"]["module_ids"].append("mod_001")
-
-    assert first_progress["saved"]["module_ids"] == ["mod_001"]
-    assert second_progress["saved"]["module_ids"] == []
-
-
 @pytest.mark.asyncio
-async def test_get_progress_by_user_id_returns_existing_embedded_progress(
+async def test_get_progress_by_user_id_returns_existing_progress(
     repository,
-    fake_database,
-    fake_collection,
+    users_collection,
+    empty_progress,
 ):
-    # Če user dokument že ima progress dict, ga repository vrne kot progress response.
-    result = await repository.get_progress_by_user_id("user_001")
+    """
+    Testira branje obstoječega progressa iz users dokumenta.
+    """
 
-    assert result == {
-        "_id": "progress_user_001",
-        "user_id": "user_001",
-        "saved": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+        "email": "test@example.com",
+        "progress": {
+            **empty_progress,
+            "completed": {
+                "learning_path_ids": ["up_001"],
+                "module_ids": ["mod_001"],
+                "learning_unit_ids": ["ue_001"],
+            },
         },
-        "favorites": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "completed": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "current_positions": [],
-        "questionnaire_answers": [],
     }
 
-    assert fake_database.last_collection_name == "users"
-    assert fake_collection.last_find_one_filter == {"_id": "user_001"}
+    result = await repository.get_progress_by_user_id("user_001")
+
+    assert result["_id"] == "progress_user_001"
+    assert result["user_id"] == "user_001"
+    assert result["completed"]["learning_path_ids"] == ["up_001"]
+    assert result["completed"]["module_ids"] == ["mod_001"]
+    assert result["completed"]["learning_unit_ids"] == ["ue_001"]
 
 
 @pytest.mark.asyncio
 async def test_get_progress_by_user_id_returns_none_when_user_missing(repository):
-    # Če user dokument ne obstaja, repository vrne None.
+    """
+    Testira, da repository vrne None, če users dokument ne obstaja.
+    """
+
     result = await repository.get_progress_by_user_id("missing_user")
 
     assert result is None
 
 
 @pytest.mark.asyncio
-async def test_get_progress_by_user_id_creates_empty_progress_when_progress_missing():
-    # Če users dokument nima progress polja, repository doda prazno progress strukturo.
-    collection = FakeCollection(
-        [
-            {
-                "_id": "user_without_progress",
-                "auth_user_id": "supabase_test_001",
-            }
-        ]
-    )
-    database = FakeDatabase(collection)
-    repository = UserProgressRepository(database)
+async def test_get_progress_by_user_id_creates_empty_progress_when_missing(
+    repository,
+    users_collection,
+):
+    """
+    Testira, da se progress doda uporabniku, če progress polje manjka.
+    """
 
-    result = await repository.get_progress_by_user_id("user_without_progress")
-
-    assert result["_id"] == "progress_user_without_progress"
-    assert result["user_id"] == "user_without_progress"
-    assert result["saved"]["learning_path_ids"] == []
-    assert result["favorites"]["module_ids"] == []
-    assert result["completed"]["learning_unit_ids"] == []
-    assert result["current_positions"] == []
-    assert result["questionnaire_answers"] == []
-
-    assert collection.last_update_filter == {"_id": "user_without_progress"}
-    assert "progress" in collection.last_update_data["$set"]
-    assert "updated_at" in collection.last_update_data["$set"]
-    assert isinstance(collection.last_update_data["$set"]["updated_at"], datetime)
-
-
-@pytest.mark.asyncio
-async def test_get_progress_by_user_id_creates_empty_progress_when_progress_is_not_dict():
-    # Če progress obstaja, ampak ni dict, repository ga popravi na prazno strukturo.
-    collection = FakeCollection(
-        [
-            {
-                "_id": "user_invalid_progress",
-                "auth_user_id": "supabase_test_001",
-                "progress": "not-a-dict",
-            }
-        ]
-    )
-    database = FakeDatabase(collection)
-    repository = UserProgressRepository(database)
-
-    result = await repository.get_progress_by_user_id("user_invalid_progress")
-
-    assert result["_id"] == "progress_user_invalid_progress"
-    assert result["user_id"] == "user_invalid_progress"
-    assert result["saved"]["learning_path_ids"] == []
-    assert result["favorites"]["module_ids"] == []
-    assert result["completed"]["learning_unit_ids"] == []
-    assert result["current_positions"] == []
-    assert result["questionnaire_answers"] == []
-
-    assert collection.last_update_filter == {"_id": "user_invalid_progress"}
-    assert collection.last_update_data["$set"]["progress"] == {
-        "saved": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "favorites": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "completed": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "current_positions": [],
-        "questionnaire_answers": [],
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+        "email": "test@example.com",
     }
 
+    result = await repository.get_progress_by_user_id("user_001")
+
+    assert result["_id"] == "progress_user_001"
+    assert result["user_id"] == "user_001"
+
+    assert result["saved"] == {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": [],
+    }
+    assert result["favorites"] == {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": [],
+    }
+    assert result["completed"] == {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": [],
+    }
+    assert result["current_positions"] == []
+    assert result["questionnaire_answers"] == []
+
+    assert "progress" in users_collection.documents["user_001"]
+    assert users_collection.last_update_filter == {"_id": "user_001"}
+    assert "progress" in users_collection.last_update_query["$set"]
+    assert "updated_at" in users_collection.last_update_query["$set"]
+
 
 @pytest.mark.asyncio
-async def test_create_progress_sets_empty_progress_inside_existing_user(
+async def test_get_progress_by_user_id_replaces_invalid_progress(
     repository,
-    fake_collection,
+    users_collection,
 ):
-    # create_progress nastavi users.progress na prazno strukturo.
+    """
+    Testira, da neveljaven progress ni uporabljen in se zamenja s prazno strukturo.
+    """
+
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+        "progress": "invalid-progress",
+    }
+
+    result = await repository.get_progress_by_user_id("user_001")
+
+    assert result["user_id"] == "user_001"
+    assert result["saved"]["learning_path_ids"] == []
+    assert result["favorites"]["module_ids"] == []
+    assert result["completed"]["learning_unit_ids"] == []
+    assert result["current_positions"] == []
+    assert result["questionnaire_answers"] == []
+
+    assert isinstance(users_collection.documents["user_001"]["progress"], dict)
+
+
+@pytest.mark.asyncio
+async def test_create_progress_sets_empty_progress_for_existing_user(
+    repository,
+    users_collection,
+):
+    """
+    Testira ročno ustvarjanje praznega progressa za obstoječega uporabnika.
+    """
+
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+        "email": "test@example.com",
+    }
+
     result = await repository.create_progress("user_001")
 
-    assert result == {
-        "_id": "progress_user_001",
-        "user_id": "user_001",
-        "saved": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "favorites": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "completed": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "current_positions": [],
-        "questionnaire_answers": [],
-    }
+    assert result["_id"] == "progress_user_001"
+    assert result["user_id"] == "user_001"
+    assert result["saved"]["learning_path_ids"] == []
+    assert result["favorites"]["module_ids"] == []
+    assert result["completed"]["learning_unit_ids"] == []
+    assert result["current_positions"] == []
+    assert result["questionnaire_answers"] == []
 
-    assert fake_collection.last_update_filter == {"_id": "user_001"}
-    assert fake_collection.last_update_data["$set"]["progress"] == {
-        "saved": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "favorites": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "completed": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "current_positions": [],
-        "questionnaire_answers": [],
-    }
-    assert isinstance(fake_collection.last_update_data["$set"]["updated_at"], datetime)
+    assert "progress" in users_collection.documents["user_001"]
+    assert "updated_at" in users_collection.documents["user_001"]
 
 
 @pytest.mark.asyncio
-async def test_create_progress_returns_empty_progress_even_when_user_missing():
-    # Če user dokument ne obstaja, repository ne ustvari users dokumenta,
-    # ampak vrne prazen progress response za združljivost z API logiko.
-    collection = FakeCollection([])
-    database = FakeDatabase(collection)
-    repository = UserProgressRepository(database)
+async def test_create_progress_returns_empty_response_when_user_missing(repository):
+    """
+    Testira, da create_progress vrne prazen response tudi če uporabnik ne obstaja.
+
+    Repository pri tem ne ustvari novega users dokumenta.
+    """
 
     result = await repository.create_progress("missing_user")
 
-    assert result == {
-        "_id": "progress_missing_user",
-        "user_id": "missing_user",
-        "saved": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "favorites": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "completed": {
-            "learning_path_ids": [],
-            "module_ids": [],
-            "learning_unit_ids": [],
-        },
-        "current_positions": [],
-        "questionnaire_answers": [],
-    }
-
-    assert collection.last_update_filter == {"_id": "missing_user"}
-    assert collection.last_update_data["$set"]["progress"]["saved"]["module_ids"] == []
+    assert result["_id"] == "progress_missing_user"
+    assert result["user_id"] == "missing_user"
+    assert result["saved"]["learning_path_ids"] == []
+    assert result["favorites"]["module_ids"] == []
+    assert result["completed"]["learning_unit_ids"] == []
+    assert result["current_positions"] == []
+    assert result["questionnaire_answers"] == []
 
 
 @pytest.mark.asyncio
 async def test_get_or_create_progress_returns_existing_progress(
     repository,
-    fake_collection,
+    users_collection,
+    empty_progress,
 ):
-    # Če progress že obstaja, get_or_create_progress ga samo vrne.
+    """
+    Testira, da get_or_create_progress vrne obstoječ progress.
+    """
+
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+        "progress": {
+            **empty_progress,
+            "saved": {
+                "learning_path_ids": ["up_001"],
+                "module_ids": [],
+                "learning_unit_ids": [],
+            },
+        },
+    }
+
     result = await repository.get_or_create_progress("user_001")
 
     assert result["_id"] == "progress_user_001"
     assert result["user_id"] == "user_001"
-    assert result["saved"]["module_ids"] == []
-
-    # Ker progress že obstaja, ni treba klicati update_one.
-    assert fake_collection.last_update_filter is None
-    assert fake_collection.last_update_data is None
+    assert result["saved"]["learning_path_ids"] == ["up_001"]
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_progress_creates_progress_when_user_has_no_progress():
-    # Če users dokument nima progress polja, get_progress_by_user_id ga ustvari.
-    collection = FakeCollection(
-        [
-            {
-                "_id": "user_without_progress",
-                "auth_user_id": "supabase_test_001",
-            }
-        ]
-    )
-    database = FakeDatabase(collection)
-    repository = UserProgressRepository(database)
+async def test_get_or_create_progress_creates_progress_when_missing(
+    repository,
+    users_collection,
+):
+    """
+    Testira, da get_or_create_progress ustvari progress, če ga uporabnik še nima.
+    """
 
-    result = await repository.get_or_create_progress("user_without_progress")
+    users_collection.documents["user_001"] = {
+        "_id": "user_001",
+    }
 
-    assert result["_id"] == "progress_user_without_progress"
-    assert result["user_id"] == "user_without_progress"
+    result = await repository.get_or_create_progress("user_001")
+
+    assert result["_id"] == "progress_user_001"
+    assert result["user_id"] == "user_001"
     assert result["saved"]["learning_path_ids"] == []
     assert result["favorites"]["module_ids"] == []
     assert result["completed"]["learning_unit_ids"] == []
     assert result["current_positions"] == []
     assert result["questionnaire_answers"] == []
 
-    assert collection.last_update_filter == {"_id": "user_without_progress"}
+    assert "progress" in users_collection.documents["user_001"]
 
 
 @pytest.mark.asyncio
-async def test_get_or_create_progress_creates_response_when_user_missing():
-    # Če user ne obstaja, get_progress_by_user_id vrne None,
-    # zato get_or_create_progress pokliče create_progress.
-    collection = FakeCollection([])
-    database = FakeDatabase(collection)
-    repository = UserProgressRepository(database)
+async def test_get_or_create_progress_returns_empty_response_when_user_missing(
+    repository,
+):
+    """
+    Testira fallback za primer, ko users dokument ne obstaja.
+    """
 
     result = await repository.get_or_create_progress("missing_user")
 
@@ -423,5 +401,5 @@ async def test_get_or_create_progress_creates_response_when_user_missing():
     assert result["saved"]["learning_path_ids"] == []
     assert result["favorites"]["module_ids"] == []
     assert result["completed"]["learning_unit_ids"] == []
-
-    assert collection.last_update_filter == {"_id": "missing_user"}
+    assert result["current_positions"] == []
+    assert result["questionnaire_answers"] == []

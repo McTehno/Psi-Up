@@ -1,117 +1,160 @@
+import pytest
+from unittest.mock import AsyncMock
+
 from app.services.user_progress.user_progress_service import UserProgressService
 
 
-class FakeUserProgressRepository:
-    # Fake repository omogoča testiranje service sloja brez prave baze.
-    def __init__(self):
-        self.progress_documents = {
-            "user_001": {
-                "_id": "progress_user_001",
-                "user_id": "user_001",
-                "saved_learning_paths": [],
-                "saved_modules": [],
-                "saved_learning_units": [],
-                "favorite_learning_paths": [],
-                "favorite_modules": [],
-                "favorite_learning_units": [],
-                "completed_learning_paths": [],
-                "completed_modules": [],
-                "completed_learning_units": [],
-                "current_positions": [],
-            }
-        }
-        self.created_user_ids: list[str] = []
-
-    async def get_progress_by_user_id(self, user_id: str):
-        return self.progress_documents.get(user_id)
-
-    async def create_progress(self, user_id: str):
-        self.created_user_ids.append(user_id)
-
-        progress = {
-            "_id": f"progress_{user_id}",
-            "user_id": user_id,
-            "saved_learning_paths": [],
-            "saved_modules": [],
-            "saved_learning_units": [],
-            "favorite_learning_paths": [],
-            "favorite_modules": [],
-            "favorite_learning_units": [],
-            "completed_learning_paths": [],
-            "completed_modules": [],
-            "completed_learning_units": [],
-            "current_positions": [],
-        }
-
-        self.progress_documents[user_id] = progress
-
-        return progress
-
-    async def get_or_create_progress(self, user_id: str):
-        existing_progress = await self.get_progress_by_user_id(user_id)
-
-        if existing_progress:
-            return existing_progress
-
-        return await self.create_progress(user_id)
+# Mock repository-ja za user progress.
+# Tako testiramo service logiko brez povezave z MongoDB.
+@pytest.fixture
+def user_progress_repository():
+    return AsyncMock()
 
 
-def test_create_service_repository():
-    # Helper test za pripravo fake repository-ja.
-    repository = FakeUserProgressRepository()
-    service = UserProgressService(repository)
+# Glavni fixture za UserProgressService.
+@pytest.fixture
+def service(user_progress_repository):
+    return UserProgressService(
+        user_progress_repository=user_progress_repository,
+    )
 
-    assert service.user_progress_repository == repository
+
+@pytest.fixture
+def progress_response():
+    # Osnovni progress response v novi embedded strukturi.
+    return {
+        "_id": "progress_user_001",
+        "user_id": "user_001",
+        "saved": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "favorites": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "completed": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "current_positions": [],
+        "questionnaire_answers": [],
+    }
 
 
-async def test_get_progress_by_user_id_returns_existing_progress():
-    # Service vrne obstoječ progress zapis.
-    repository = FakeUserProgressRepository()
-    service = UserProgressService(repository)
+@pytest.mark.asyncio
+async def test_get_progress_by_user_id_returns_progress(
+    service,
+    user_progress_repository,
+    progress_response,
+):
+    # Arrange: repository vrne obstoječ progress.
+    user_progress_repository.get_progress_by_user_id.return_value = progress_response
 
+    # Act: service pridobi progress po user_id.
     result = await service.get_progress_by_user_id("user_001")
 
-    assert result is not None
-    assert result["user_id"] == "user_001"
+    # Assert: service vrne rezultat repository-ja.
+    assert result == progress_response
+    user_progress_repository.get_progress_by_user_id.assert_awaited_once_with(
+        "user_001"
+    )
 
 
-async def test_get_progress_by_user_id_returns_none_when_missing():
-    # Če progress ne obstaja, service vrne None.
-    service = UserProgressService(FakeUserProgressRepository())
+@pytest.mark.asyncio
+async def test_get_progress_by_user_id_returns_none_when_missing(
+    service,
+    user_progress_repository,
+):
+    # Arrange: repository ne najde progressa.
+    user_progress_repository.get_progress_by_user_id.return_value = None
 
+    # Act: poskusimo pridobiti progress.
     result = await service.get_progress_by_user_id("missing_user")
 
+    # Assert: service vrne None.
     assert result is None
+    user_progress_repository.get_progress_by_user_id.assert_awaited_once_with(
+        "missing_user"
+    )
 
 
-async def test_create_progress_delegates_to_repository():
-    # Service ustvari začetni progress prek repository sloja.
-    repository = FakeUserProgressRepository()
-    service = UserProgressService(repository)
+@pytest.mark.asyncio
+async def test_create_progress_returns_created_progress(
+    service,
+    user_progress_repository,
+    progress_response,
+):
+    # Arrange: repository ustvari začetni progress.
+    user_progress_repository.create_progress.return_value = progress_response
 
-    result = await service.create_progress("user_002")
+    # Act: service ustvari progress.
+    result = await service.create_progress("user_001")
 
-    assert result["user_id"] == "user_002"
-    assert repository.created_user_ids == ["user_002"]
+    # Assert: service vrne ustvarjen progress.
+    assert result == progress_response
+    user_progress_repository.create_progress.assert_awaited_once_with("user_001")
 
 
-async def test_get_or_create_progress_returns_existing_progress():
-    # Če progress obstaja, ga service vrne brez ustvarjanja novega.
-    repository = FakeUserProgressRepository()
-    service = UserProgressService(repository)
+@pytest.mark.asyncio
+async def test_get_or_create_progress_returns_existing_or_created_progress(
+    service,
+    user_progress_repository,
+    progress_response,
+):
+    # Arrange: repository vrne obstoječ ali novo ustvarjen progress.
+    user_progress_repository.get_or_create_progress.return_value = progress_response
 
+    # Act: service zagotovi progress za uporabnika.
     result = await service.get_or_create_progress("user_001")
 
-    assert result["user_id"] == "user_001"
-    assert repository.created_user_ids == []
+    # Assert: service delegira logiko v repository.
+    assert result == progress_response
+    user_progress_repository.get_or_create_progress.assert_awaited_once_with(
+        "user_001"
+    )
 
 
-async def test_get_or_create_progress_creates_when_missing():
-    # Če progress ne obstaja, ga service ustvari.
-    repository = FakeUserProgressRepository()
-    service = UserProgressService(repository)
+@pytest.mark.asyncio
+async def test_get_or_create_progress_can_return_progress_for_missing_user(
+    service,
+    user_progress_repository,
+):
+    # Repository po trenutni implementaciji lahko vrne prazen progress response
+    # tudi, če users dokument ne obstaja.
+    user_progress_repository.get_or_create_progress.return_value = {
+        "_id": "progress_missing_user",
+        "user_id": "missing_user",
+        "saved": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "favorites": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "completed": {
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        "current_positions": [],
+        "questionnaire_answers": [],
+    }
 
-    result = await service.get_or_create_progress("user_002")
+    # Act: service pokliče repository.
+    result = await service.get_or_create_progress("missing_user")
 
-    assert result["user_id"] == "user_002"
-    assert repository.created_user_ids == ["user_002"]
+    # Assert: service ne dodaja dodatne validacije, ampak vrne repository rezultat.
+    assert result["_id"] == "progress_missing_user"
+    assert result["user_id"] == "missing_user"
+    assert result["saved"]["module_ids"] == []
+
+    user_progress_repository.get_or_create_progress.assert_awaited_once_with(
+        "missing_user"
+    )

@@ -91,99 +91,99 @@ function HomePage() {
 				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
 				<HomeStorySection
-						id="learning-paths"
-						eyebrow="Učne poti"
-						title="Začni z večjo sliko."
-						description="Učna pot ti pokaže celotno smer učenja. Namesto posameznih nepovezanih vsebin vidiš zaporedje korakov, ki te vodijo proti jasnemu cilju."
-						align="left"
-						cards={[
-							{
-								title: 'Pregled',
-								front: 'Vidiš celotno pot',
-								back: 'Učna pot združi module in učne enote v logično zaporedje.',
-							},
-							{
-								title: 'Usmeritev',
-								front: 'Lažje izbereš začetek',
-								back: 'Pomaga ti razumeti, katero področje je zate najbolj smiselno.',
-							},
-						]}
-					/>
+					id="learning-paths"
+					eyebrow="Učne poti"
+					title="Začni z večjo sliko."
+					description="Učna pot ti pokaže celotno smer učenja. Namesto posameznih nepovezanih vsebin vidiš zaporedje korakov, ki te vodijo proti jasnemu cilju."
+					align="left"
+					cards={[
+						{
+							title: 'Pregled',
+							front: 'Vidiš celotno pot',
+							back: 'Učna pot združi module in učne enote v logično zaporedje.',
+						},
+						{
+							title: 'Usmeritev',
+							front: 'Lažje izbereš začetek',
+							back: 'Pomaga ti razumeti, katero področje je zate najbolj smiselno.',
+						},
+					]}
+				/>
 
-					{/* ── Spacer: Učne poti → Moduli ── */}
-					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
+				{/* ── Spacer: Učne poti → Moduli ── */}
+				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
-					<HomeStorySection
-						id="modules"
-						eyebrow="Moduli"
-						title="Večjo pot razdeli na razumljive korake."
-						description="Modul predstavlja zaokrožen del učne poti. Vsak modul ima svoj namen, zato lažje slediš napredku in razumeš, kaj posamezen korak prinese."
-						align="left"
-						cards={[
-							{
-								title: 'Korak',
-								front: 'Manjši del večje poti',
-								back: 'Modul razdeli širše področje na bolj obvladljive vsebinske sklope.',
-							},
-							{
-								title: 'Napredek',
-								front: 'Slediš svojemu tempu',
-								back: 'Vsak modul ti pomaga videti, kaj si že pregledal in kaj še sledi.',
-							},
-						]}
-					/>
+				<HomeStorySection
+					id="modules"
+					eyebrow="Moduli"
+					title="Večjo pot razdeli na razumljive korake."
+					description="Modul predstavlja zaokrožen del učne poti. Vsak modul ima svoj namen, zato lažje slediš napredku in razumeš, kaj posamezen korak prinese."
+					align="left"
+					cards={[
+						{
+							title: 'Korak',
+							front: 'Manjši del večje poti',
+							back: 'Modul razdeli širše področje na bolj obvladljive vsebinske sklope.',
+						},
+						{
+							title: 'Napredek',
+							front: 'Slediš svojemu tempu',
+							back: 'Vsak modul ti pomaga videti, kaj si že pregledal in kaj še sledi.',
+						},
+					]}
+				/>
 
-					{/* ── Spacer: Moduli → Učne enote ── */}
-					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
+				{/* ── Spacer: Moduli → Učne enote ── */}
+				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
-					<HomeStorySection
-						id="learning-units"
-						eyebrow="Učne enote"
-						title="Uči se skozi kratke in konkretne vsebine."
-						description="Učna enota je najmanjši del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula."
-						align="left"
-						cards={[
-							{
-								title: 'Fokus',
-								front: 'Ena vsebina naenkrat',
-								back: 'Vsaka učna enota predstavi jasen in omejen del znanja.',
-							},
-							{
-								title: 'Samostojnost',
-								front: 'Pregledaš jo lahko posebej',
-								back: 'Enote lahko raziskuješ znotraj modula ali kot samostojen vir.',
-							},
-						]}
-					/>
+				<HomeStorySection
+					id="learning-units"
+					eyebrow="Učne enote"
+					title="Uči se skozi kratke in konkretne vsebine."
+					description="Učna enota je najmanjši del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula."
+					align="left"
+					cards={[
+						{
+							title: 'Fokus',
+							front: 'Ena vsebina naenkrat',
+							back: 'Vsaka učna enota predstavi jasen in omejen del znanja.',
+						},
+						{
+							title: 'Samostojnost',
+							front: 'Pregledaš jo lahko posebej',
+							back: 'Enote lahko raziskuješ znotraj modula ali kot samostojen vir.',
+						},
+					]}
+				/>
 
-					{/* ── Spacer: Učne enote → Vprašalnik ── */}
-					<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
+				{/* ── Spacer: Učne enote → Vprašalnik ── */}
+				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
 
-					<HomeStorySection
-						id="questionnaire"
-						eyebrow="Vprašalnik"
-						title="Preveri, kje si trenutno."
-						description="Vprašalnik ti pomaga oceniti trenutno znanje in prepoznati področja, kjer imaš največ prostora za napredek."
-						align="right"
-						cards={[
-							{
-								title: 'Samoocena',
-								front: 'Razumeš svoje izhodišče',
-								back: 'Odgovori pokažejo, katera področja že poznaš in katera potrebujejo več pozornosti.',
-							},
-							{
-								title: 'Priporočilo',
-								front: 'Dobiš bolj jasno smer',
-								back: 'Rezultat ti pomaga izbrati primernejšo pot, modul ali naslednjo vsebino.',
-							},
-						]}
-					/>
+				<HomeStorySection
+					id="questionnaire"
+					eyebrow="Vprašalnik"
+					title="Preveri, kje si trenutno."
+					description="Vprašalnik ti pomaga oceniti trenutno znanje in prepoznati področja, kjer imaš največ prostora za napredek."
+					align="left"
+					cards={[
+						{
+							title: 'Samoocena',
+							front: 'Razumeš svoje izhodišče',
+							back: 'Odgovori pokažejo, katera področja že poznaš in katera potrebujejo več pozornosti.',
+						},
+						{
+							title: 'Priporočilo',
+							front: 'Dobiš bolj jasno smer',
+							back: 'Rezultat ti pomaga izbrati primernejšo pot, modul ali naslednjo vsebino.',
+						},
+					]}
+				/>
 
-					{/* ── Spacer: Vprašalnik → CTA ── */}
-					<div className="h-[40vh] lg:h-[56vh]" aria-hidden="true" />
+				{/* ── Spacer: Vprašalnik → CTA ── */}
+				<div className="h-[40vh] lg:h-[56vh]" aria-hidden="true" />
 
-					<HomeFinalCtaSection />
-				</div>
+				<HomeFinalCtaSection />
+			</div>
 		</main>
 	)
 }

@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motio
 import fogVideo from '../../../assets/parallax/fog-background.mp4'
 import pathMountainImage from '../../../assets/parallax/path-mountain.webp'
 import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
+import unitMountainImage from '../../../assets/parallax/unit-mountain.webp'
 
 /**
  * HomeParallaxEnvironment
@@ -11,23 +12,8 @@ import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
  * A cinematic parallax background that reveals a mountain landscape
  * from behind a looping cloud video as the user scrolls.
  *
- * On page load the clouds fully cover the viewport, hiding the
- * mountains. As the user scrolls through the hero section the clouds
- * drift upward with increasing speed, gradually unveiling the mountain
- * image beneath. By the time the "Učne poti" section enters the
- * viewport (~50 % scroll progress), the clouds have completely exited.
- *
- * Scroll math
- * ───────────
- * Container height = 300 vh  →  scrollYProgress 0 … 1
- * Hero ≈ 100 vh, spacer ≈ 56–70 vh  →  Učne poti starts at ≈ 160 vh
- * 160 / 300 ≈ 0.53  →  clouds should be fully gone by progress ≈ 0.50
- *
- * Z-stack inside the sticky viewport (back → front)
- * ──────────────────────────────────────────────────
- *   1. Warm radial-gradient base + ambient blur orbs
- *   2. Mountain photograph  (slow parallax, gentle rise)
- *   3. Cloud video          (fast parallax upward, CSS bottom-mask, fades out)
+ * The container spans 800vh, covering the Hero down to Učne enote,
+ * unpinning gracefully before Vprašalnik.
  */
 function HomeParallaxEnvironment() {
 	const containerRef = useRef<HTMLDivElement | null>(null)
@@ -38,40 +24,50 @@ function HomeParallaxEnvironment() {
 	})
 
 	/* ── Cloud layer transforms ──────────────────────────────────── */
-	// Clouds clear the screen fully by the time Učne poti starts (~0.32)
+	// Clouds clear the screen fully by the time Učne poti starts (~0.18)
 	const cloudY = useTransform(
 		scrollYProgress,
-		[0, 0.15, 0.35, 1],
+		[0, 0.08, 0.20, 1],
 		['0%', '-15%', '-110%', '-150%'],
 	)
 	const cloudOpacity = useTransform(
 		scrollYProgress,
-		[0, 0.20, 0.32],
+		[0, 0.12, 0.18],
 		[1, 0.9, 0],
 	)
 	const cloudScale = useTransform(scrollYProgress, [0, 1], [1, 1.1])
 
 	/* ── Mountain layer transforms ───────────────────────────────── */
-	// Mountain begins anchored at the top so the peaks aren't cut off,
-	// and rises gently into view as the clouds clear.
-	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%'])
+	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
 	
-	// Zooms in as we scroll from Učne poti (~0.40) to Moduli (~0.70)
-	const mountainScale = useTransform(
+	// Pan left for Učne enote
+	const mountainX = useTransform(
 		scrollYProgress,
-		[0, 0.40, 0.70, 1],
-		[1.05, 1.05, 1.15, 1.15]
+		[0, 0.62, 0.82],
+		['0%', '0%', '-12%']
 	)
 
-	// The highlighted module mountain reveals from bottom to top using a gradient mask
-	const glowReveal = useTransform(scrollYProgress, [0.40, 0.70], [-20, 120])
-	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${glowReveal}%, rgba(0,0,0,0) calc(${glowReveal}% + 20%))`
+	// Zooms in as we scroll from Učne poti to Moduli (0.40 - 0.50), 
+	// and again from Moduli to Učne enote (0.62 - 0.72)
+	const mountainScale = useTransform(
+		scrollYProgress,
+		[0, 0.40, 0.50, 0.62, 0.72, 1],
+		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30]
+	)
+
+	// The highlighted module mountain reveals from bottom to top
+	const moduleGlowReveal = useTransform(scrollYProgress, [0.40, 0.50], [-20, 120])
+	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${moduleGlowReveal}%, rgba(0,0,0,0) calc(${moduleGlowReveal}% + 20%))`
+
+	// The highlighted unit mountain reveals from bottom to top
+	const unitGlowReveal = useTransform(scrollYProgress, [0.62, 0.72], [-20, 120])
+	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
 	return (
 		<div
 			ref={containerRef}
 			className="pointer-events-none absolute inset-x-0 top-0 -z-30"
-			style={{ height: '500vh' }}
+			style={{ height: '800vh' }}
 			aria-hidden="true"
 		>
 			<div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -86,6 +82,7 @@ function HomeParallaxEnvironment() {
 				<motion.div
 					className="absolute inset-x-0 top-0 h-[120%] w-full pt-[12vh]"
 					style={{
+						x: mountainX,
 						y: mountainY,
 						scale: mountainScale,
 					}}
@@ -116,6 +113,23 @@ function HomeParallaxEnvironment() {
 								draggable={false}
 							/>
 						</motion.div>
+
+						{/* Highlighted Mountain (Učne enote) - Reveals from bottom to top */}
+						<motion.div
+							className="absolute inset-0 h-full w-full"
+							style={{ 
+								WebkitMaskImage: unitGlowMask,
+								maskImage: unitGlowMask
+							}}
+						>
+							<img
+								src={unitMountainImage}
+								alt=""
+								className="h-full w-full object-cover object-center"
+								loading="eager"
+								draggable={false}
+							/>
+						</motion.div>
 					</div>
 
 					{/* Soft vignette blending the mountain top into the base */}
@@ -135,13 +149,6 @@ function HomeParallaxEnvironment() {
 						y: cloudY,
 						scale: cloudScale,
 						opacity: cloudOpacity,
-						/*
-						 * Bottom-edge mask: the top 70 % of the cloud layer
-						 * is fully opaque (70 % of 130 vh ≈ 91 vh – nearly
-						 * the entire viewport). The remaining 30 % fades to
-						 * transparent so the mountain peeks through softly
-						 * at the very bottom before the clouds drift away.
-						 */
 						WebkitMaskImage:
 							'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)',
 						maskImage:

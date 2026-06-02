@@ -338,3 +338,38 @@ def test_module_parallel_group_completes_one_parallel_unit_and_recommends_missin
     module_result = result["module_results"][0]
     assert module_result["status"] == "partially_completed"
     assert "ue_003" in module_result["missing_learning_units"]
+
+
+#parallel_group znotraj learning path: optional modul ne blokira, required blokira
+def test_learning_path_parallel_required_module_blocks_optional_does_not_block(client):
+    user_id = unique_user_id("learning_path_parallel")
+    questionnaire = get_questionnaire(client, "learning_path", "up_002")
+
+    answers = []
+    answers.extend(answers_for_module(questionnaire, "mod_003", True))
+    answers.extend(answers_for_module(questionnaire, "mod_004", True))
+
+    mod_005_first_question = find_question(questionnaire, "q_ue_010_001")
+    answers.append(answer_for_question(mod_005_first_question, False))
+
+    answers.extend(answers_for_module(questionnaire, "mod_006", True))
+
+    result = submit_assessment(
+        client=client,
+        user_id=user_id,
+        target_type="learning_path",
+        target_id="up_002",
+        answers=answers,
+    )
+
+    assert_contains_all(
+        result["completed_module_ids"],
+        ["mod_003", "mod_004", "mod_006"],
+    )
+    assert "mod_005" not in result["completed_module_ids"]
+    assert result["completed_learning_path_ids"] == []
+
+    assert result["start_module_id"] == "mod_005"
+    assert result["start_learning_unit_id"] == "ue_010"
+    assert result["recommended_next_modules"] == ["mod_005"]
+    assert result["recommended_next_learning_units"] == ["ue_010"]

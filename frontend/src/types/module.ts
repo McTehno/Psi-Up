@@ -7,7 +7,7 @@ import type {
  * Kratek prikaz učne poti, ki vsebuje izbrani modul.
  *
  * Uporablja se na detail strani modula v sekciji
- * povezanih učnih poti.
+ * priporočenih oziroma povezanih učnih poti.
  */
 export type RecommendedLearningPathResponse = {
 	_id: string
@@ -20,8 +20,8 @@ export type RecommendedLearningPathResponse = {
 /**
  * Osnovni response za modul.
  *
- * Uporablja se pri seznamih, osnovnem prikazu in kot osnova
- * za razširjene detail response tipe.
+ * Uporablja se pri seznamih, osnovnem prikazu modula
+ * in kot osnova za razširjen detail response.
  */
 export type ModuleResponse = {
 	_id: string
@@ -31,16 +31,16 @@ export type ModuleResponse = {
 	keywords: string[]
 	domains: string[]
 	learning_units: LearningUnitReferenceResponse[]
-	learning_unit_details?: LearningUnitResponse[]
 }
 
 /**
  * Razširjen response za detail stran modula.
  *
- * Backend pri /modules/:id/detail doda tudi učne poti,
- * ki vsebujejo izbrani modul.
+ * Backend pri /modules/:id/detail poleg osnovnih podatkov modula
+ * vrne tudi podrobnosti učnih enot in učne poti, ki vsebujejo ta modul.
  */
 export type ModuleDetailResponse = ModuleResponse & {
+	learning_unit_details: LearningUnitResponse[]
 	recommended_learning_paths: RecommendedLearningPathResponse[]
 }
 

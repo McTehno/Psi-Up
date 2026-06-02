@@ -1,55 +1,93 @@
 export type ContentType = 'learning_path' | 'module' | 'learning_unit'
 
+export type QuestionnaireTargetType =
+	| 'learning_path'
+	| 'module'
+	| 'learning_unit'
+
+export type QuestionnaireAnswerValue =
+	| boolean
+	| string
+	| number
+	| string[]
+	| null
+
+export type ContentProgressResponse = {
+	learning_path_ids: string[]
+	module_ids: string[]
+	learning_unit_ids: string[]
+}
+
 export type CurrentPositionResponse = {
-  learning_path_id?: string | null
-  current_module_id?: string | null
-  current_learning_unit_id?: string | null
+	learning_path_id: string
+	current_module_id?: string | null
+	current_learning_unit_id?: string | null
+	updated_at?: string | null
+}
+
+export type QuestionnaireAnswerResponse = {
+	question_id: string
+	question: string
+	type: string
+	answer: QuestionnaireAnswerValue
+	was_answered: boolean
+
+	learning_path_id?: string | null
+	module_id?: string | null
+	learning_unit_id?: string | null
+
+	topic_id?: string | null
+	competency_codes: string[]
+
+	answered_at?: string | null
+}
+
+export type QuestionnaireAnswersResponse = {
+	target_type: QuestionnaireTargetType
+	target_id: string
+	last_submitted_at?: string | null
+	answers: QuestionnaireAnswerResponse[]
+}
+
+export type SaveQuestionnaireAnswersRequest = {
+	target_type: QuestionnaireTargetType
+	target_id: string
+	answers: QuestionnaireAnswerResponse[]
 }
 
 export type UserProgressResponse = {
-  id: string
-  user_id: string
+	_id?: string | null
+	user_id: string
 
-  saved_learning_paths: string[]
-  saved_modules: string[]
-  saved_learning_units: string[]
+	saved: ContentProgressResponse
+	favorites: ContentProgressResponse
+	completed: ContentProgressResponse
 
-  favorite_learning_paths: string[]
-  favorite_modules: string[]
-  favorite_learning_units: string[]
-
-  completed_learning_paths: string[]
-  completed_modules: string[]
-  completed_learning_units: string[]
-
-  current_positions: CurrentPositionResponse[]
+	current_positions: CurrentPositionResponse[]
+	questionnaire_answers: QuestionnaireAnswersResponse[]
 }
 
 export type UserProgressCreateRequest = {
-  user_id: string
+	user_id: string
 }
 
 export type SaveContentRequest = {
-  user_id: string
-  content_id: string
-  content_type: ContentType
+	content_id: string
+	content_type: ContentType
 }
 
 export type FavoriteContentRequest = {
-  user_id: string
-  content_id: string
-  content_type: ContentType
+	content_id: string
+	content_type: ContentType
 }
 
 export type CompleteContentRequest = {
-  user_id: string
-  content_id: string
-  content_type: ContentType
+	content_id: string
+	content_type: ContentType
 }
 
 export type UpdateCurrentPositionRequest = {
-  user_id: string
-  learning_path_id?: string | null
-  current_module_id?: string | null
-  current_learning_unit_id?: string | null
+	learning_path_id: string
+	current_module_id?: string | null
+	current_learning_unit_id?: string | null
 }

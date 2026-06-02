@@ -75,9 +75,12 @@ class AssessmentProgressService:
             target_id=target_id,
         )
 
+        existing_completed = await self._get_existing_completed(user_id)
+
         prepared_answers = self._build_complete_answers(
             all_questions=all_questions,
             submitted_answers=submitted_answers,
+            existing_completed=existing_completed,
         )
 
         await self.questionnaire_answers_service.save_questionnaire_answers(
@@ -86,8 +89,6 @@ class AssessmentProgressService:
             target_id=target_id,
             answers=prepared_answers,
         )
-
-        existing_completed = await self._get_existing_completed(user_id)
 
         result = await self.assessment_service.evaluate_answers(
             user_id=user_id,
@@ -153,6 +154,9 @@ class AssessmentProgressService:
             completed_learning_unit_ids=completed_learning_unit_ids,
             completed_module_ids=completed_module_ids,
         )
+
+        result = self._sync_global_competency_codes_from_results(result)
+        result = self._sync_summary_with_completed_status(result)
 
         result = self._clear_next_recommendations_if_learning_path_completed(
             target_type=target_type,
@@ -272,6 +276,7 @@ class AssessmentProgressService:
         self,
         all_questions: List[Dict[str, Any]],
         submitted_answers: List[Dict[str, Any]],
+        existing_completed: Dict[str, List[str]],
     ) -> List[Dict[str, Any]]:
         """
         Združi vsa relevantna vprašanja s poslanimi odgovori.
@@ -312,6 +317,15 @@ class AssessmentProgressService:
                         question=question,
                         answer=submitted_answers_by_key[key],
                     )
+                )
+                continue
+
+            if self._is_question_from_completed_content(
+                question=question,
+                existing_completed=existing_completed,
+            ):
+                complete_answers.append(
+                    self._build_completed_unanswered_answer(question)
                 )
                 continue
 
@@ -423,6 +437,81 @@ class AssessmentProgressService:
         unanswered_answer["was_answered"] = False
 
         return unanswered_answer
+
+    def _is_question_from_completed_content(
+        self,
+        question: Dict[str, Any],
+        existing_completed: Dict[str, List[str]],
+    ) -> bool:
+        """
+        Preveri, ali vprašanje pripada že dokončani vsebini.
+
+        Če je učna enota ali modul že completed, potem vprašanje pri novem
+        submitu ne sme biti shranjeno kot answer=False samo zato, ker ga
+        uporabnik ni ponovno odgovoril.
+        """
+
+        learning_unit_id = question.get("learning_unit_id")
+        module_id = question.get("module_id")
+        learning_path_id = question.get("learning_path_id")
+
+        completed_learning_unit_ids = set(
+            existing_completed.get("learning_unit_ids", [])
+        )
+        completed_module_ids = set(
+            existing_completed.get("module_ids", [])
+        )
+        completed_learning_path_ids = set(
+            existing_completed.get("learning_path_ids", [])
+        )
+
+        if (
+            isinstance(learning_unit_id, str)
+            and learning_unit_id in completed_learning_unit_ids
+        ):
+            return True
+
+        if (
+            isinstance(module_id, str)
+            and module_id in completed_module_ids
+        ):
+            return True
+
+        if (
+            isinstance(learning_path_id, str)
+            and learning_path_id in completed_learning_path_ids
+        ):
+            return True
+
+        return False
+    def _build_completed_unanswered_answer(
+        self,
+        question: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Zgradi odgovor za vprašanje, ki ni bilo ponovno odgovorjeno,
+        ampak pripada že dokončani vsebini.
+
+        answer=True pomeni, da vsebina šteje kot znana.
+        was_answered=False pomeni, da uporabnik tega vprašanja v tem submitu
+        ni dejansko kliknil.
+        """
+
+        completed_answer = dict(question)
+
+        question_id = question.get("question_id") or question.get("id")
+
+        if question_id:
+            completed_answer["question_id"] = question_id
+
+        question_type = self._get_question_type(question)
+
+        completed_answer["type"] = question_type
+        completed_answer["question_type"] = question_type
+        completed_answer["answer"] = True
+        completed_answer["was_answered"] = False
+
+        return completed_answer
 
     async def _get_existing_completed(
         self,
@@ -1035,7 +1124,99 @@ class AssessmentProgressService:
                 merged_values.append(value)
 
         return merged_values
+    
+    def _add_unique_strings(
+        self,
+        target: List[str],
+        values: List[str],
+    ) -> None:
+        """
+        Doda string vrednosti v seznam brez podvajanja.
+        """
 
+        for value in values:
+            if not isinstance(value, str) or not value:
+                continue
+
+            if value not in target:
+                target.append(value)
+    def _sync_summary_with_completed_status(
+        self,
+        result: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Uskladi summary s končnim statusom po sync-u completed progressa.
+        """
+
+        target_type = result.get("target_type")
+        target_id = result.get("target_id")
+
+        if target_type == QuestionnaireTargetType.MODULE:
+            module_results = self._get_dict_list_value(
+                result.get("module_results")
+            )
+
+            if len(module_results) == 1:
+                module_result = module_results[0]
+
+                if module_result.get("status") == AssessmentStatus.COMPLETED.value:
+                    result["summary"] = (
+                        f"Uporabnik je glede na odgovore zaključil modul {target_id}."
+                    )
+
+                elif module_result.get("status") == AssessmentStatus.PARTIALLY_COMPLETED.value:
+                    result["summary"] = (
+                        f"Uporabnik je delno pokril modul {target_id}."
+                    )
+
+                elif module_result.get("status") == AssessmentStatus.NOT_STARTED.value:
+                    result["summary"] = (
+                        f"Uporabnik naj začne modul {target_id} od začetka."
+                    )
+
+        return result
+    
+    def _sync_global_competency_codes_from_results(
+        self,
+        result: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Uskladi globalne known/missing competency kode z learning_unit_results.
+
+        Po sync-u completed progressa se lahko posamezna učna enota spremeni
+        iz missing v completed. Zato moramo globalne sezname ponovno zgraditi
+        iz končnih rezultatov učnih enot.
+        """
+
+        known_competency_codes: List[str] = []
+        missing_competency_codes: List[str] = []
+
+        for unit_result in self._get_dict_list_value(
+            result.get("learning_unit_results")
+        ):
+            self._add_unique_strings(
+                known_competency_codes,
+                self._get_string_list_value(
+                    unit_result.get("known_competency_codes")
+                ),
+            )
+
+            self._add_unique_strings(
+                missing_competency_codes,
+                self._get_string_list_value(
+                    unit_result.get("missing_competency_codes")
+                ),
+            )
+
+        result["known_competency_codes"] = known_competency_codes
+        result["missing_competency_codes"] = [
+            competency_code
+            for competency_code in missing_competency_codes
+            if competency_code not in known_competency_codes
+        ]
+
+        return result
+    
     def _normalize_question_text(
         self,
         question: str,

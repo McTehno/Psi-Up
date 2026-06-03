@@ -239,6 +239,136 @@ class QuestionnaireAnswersService:
 
         return new_answer
 
+    async def get_latest_explicit_answer_maps(
+        self,
+        user_id: str,
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Vrne mapo zadnjih eksplicitnih odgovorov uporabnika.
+
+        Upoštevamo samo odgovore z was_answered=True.
+        Če isto vprašanje obstaja v več targetih, zmaga odgovor z najnovejšim answered_at.
+        """
+
+        if not user_id:
+            return {}
+
+        questionnaire_answers = (
+            await self.questionnaire_answers_repository.get_all_questionnaire_answers(
+                user_id=user_id
+            )
+        )
+
+        latest_answers_by_key: Dict[str, Dict[str, Any]] = {}
+
+        for entry in questionnaire_answers:
+            if not isinstance(entry, dict):
+                continue
+
+            answers = entry.get("answers", [])
+
+            if not isinstance(answers, list):
+                continue
+
+            for answer in answers:
+                if not isinstance(answer, dict):
+                    continue
+
+                if answer.get("was_answered") is not True:
+                    continue
+
+                keys = self._get_answer_keys(answer)
+
+                if not keys:
+                    continue
+
+                for key in keys:
+                    existing_answer = latest_answers_by_key.get(key)
+
+                    if not existing_answer:
+                        latest_answers_by_key[key] = dict(answer)
+                        continue
+
+                    if self._is_newer_answer(
+                        new_answer=answer,
+                        existing_answer=existing_answer,
+                    ):
+                        latest_answers_by_key[key] = dict(answer)
+
+        return latest_answers_by_key
+
+    def _is_newer_answer(
+        self,
+        new_answer: Dict[str, Any],
+        existing_answer: Dict[str, Any],
+    ) -> bool:
+        """
+        Preveri, ali je novi odgovor novejši od že shranjenega odgovora.
+        """
+
+        new_answered_at = self._parse_datetime_value(new_answer.get("answered_at"))
+        existing_answered_at = self._parse_datetime_value(
+            existing_answer.get("answered_at")
+        )
+
+        if new_answered_at is None and existing_answered_at is None:
+            return True
+
+        if new_answered_at is None:
+            return False
+
+        if existing_answered_at is None:
+            return True
+
+        return new_answered_at >= existing_answered_at
+    
+    
+    def _parse_datetime_value(
+        self,
+        value: Any,
+    ) -> Optional[datetime]:
+        """
+        Varno pretvori datetime vrednost.
+
+        MongoDB lahko vrne datetime objekt, API/podatki pa lahko vsebujejo string.
+        """
+
+        if isinstance(value, datetime):
+            return value
+
+        if isinstance(value, str) and value.strip():
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                return None
+
+        return None
+    def _get_answer_keys(
+        self,
+        answer: Dict[str, Any],
+    ) -> List[str]:
+        """
+        Vrne vse možne ključe za odgovor.
+
+        Uporabimo:
+        - question_id oziroma id;
+        - normalizirano besedilo vprašanja.
+        """
+
+        keys: List[str] = []
+
+        question_id = answer.get("question_id") or answer.get("id")
+
+        if isinstance(question_id, str) and question_id.strip():
+            keys.append(f"id:{question_id.strip()}")
+
+        question = answer.get("question")
+
+        if isinstance(question, str) and question.strip():
+            keys.append(f"question:{self._normalize_question_text(question)}")
+
+        return keys
+
     def _get_answer_key(self, answer: Dict[str, Any]) -> Optional[str]:
         """
         Vrne ključ za primerjavo odgovorov.

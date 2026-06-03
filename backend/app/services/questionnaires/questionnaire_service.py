@@ -280,25 +280,36 @@ class QuestionnaireService:
         self,
         target_type: QuestionnaireTargetType,
         target_id: str,
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Ustvari vprašalnik za izbrano vsebino.
         """
 
         if target_type == QuestionnaireTargetType.LEARNING_PATH:
-            return await self._generate_for_learning_path(target_id)
+            return await self._generate_for_learning_path(
+                learning_path_id=target_id,
+                latest_explicit_answers=latest_explicit_answers,
+            )
 
         if target_type == QuestionnaireTargetType.MODULE:
-            return await self._generate_for_module(target_id)
+            return await self._generate_for_module(
+                module_id=target_id,
+                latest_explicit_answers=latest_explicit_answers,
+            )
 
         if target_type == QuestionnaireTargetType.LEARNING_UNIT:
-            return await self._generate_for_learning_unit(target_id)
+            return await self._generate_for_learning_unit(
+                learning_unit_id=target_id,
+                latest_explicit_answers=latest_explicit_answers,
+            )
 
         return None
 
     async def _generate_for_learning_path(
         self,
         learning_path_id: str,
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Ustvari vprašalnik za učno pot.
@@ -322,7 +333,10 @@ class QuestionnaireService:
         )
 
         normalized_questions = self._normalize_questions(questions)
-
+        normalized_questions = self._apply_answer_prefill(
+            questions=normalized_questions,
+            latest_explicit_answers=latest_explicit_answers,
+        )
         return {
             "target_type": QuestionnaireTargetType.LEARNING_PATH,
             "target_id": learning_path_id,
@@ -333,6 +347,7 @@ class QuestionnaireService:
     async def _generate_for_module(
         self,
         module_id: str,
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Ustvari vprašalnik za modul.
@@ -353,6 +368,11 @@ class QuestionnaireService:
 
         normalized_questions = self._normalize_questions(questions)
 
+        normalized_questions = self._apply_answer_prefill(
+            questions=normalized_questions,
+            latest_explicit_answers=latest_explicit_answers,
+        )
+
         return {
             "target_type": QuestionnaireTargetType.MODULE,
             "target_id": module_id,
@@ -363,6 +383,7 @@ class QuestionnaireService:
     async def _generate_for_learning_unit(
         self,
         learning_unit_id: str,
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Ustvari vprašalnik za učno enoto.
@@ -382,10 +403,94 @@ class QuestionnaireService:
         )
 
         normalized_questions = self._normalize_questions(questions)
-
+        normalized_questions = self._apply_answer_prefill(
+            questions=normalized_questions,
+            latest_explicit_answers=latest_explicit_answers,
+        )
         return {
             "target_type": QuestionnaireTargetType.LEARNING_UNIT,
             "target_id": learning_unit_id,
             "title": learning_unit.get("title"),
             "questions": normalized_questions,
         }
+    def _get_answer_keys(
+        self,
+        value: Dict[str, Any],
+    ) -> List[str]:
+        """
+        Vrne vse možne ključe za vprašanje.
+        """
+
+        keys: List[str] = []
+
+        question_id = value.get("question_id") or value.get("id")
+
+        if isinstance(question_id, str) and question_id.strip():
+            keys.append(f"id:{question_id.strip()}")
+
+        question_text = value.get("question")
+
+        if isinstance(question_text, str) and question_text.strip():
+            keys.append(f"question:{self._normalize_question_text(question_text)}")
+
+        return keys
+    
+    def _get_answer_key(
+        self,
+        value: Dict[str, Any],
+    ) -> Optional[str]:
+        """
+        Vrne ključ za povezovanje vprašanja in odgovora.
+
+        Najprej uporabimo id/question_id.
+        Če tega ni, uporabimo normalizirano besedilo vprašanja.
+        """
+
+        question_id = value.get("question_id") or value.get("id")
+
+        if isinstance(question_id, str) and question_id.strip():
+            return f"id:{question_id.strip()}"
+
+        question_text = value.get("question")
+
+        if isinstance(question_text, str) and question_text.strip():
+            return f"question:{self._normalize_question_text(question_text)}"
+
+        return None
+    
+    def _apply_answer_prefill(
+        self,
+        questions: List[Dict[str, Any]],
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Doda prefill podatke na vprašanja glede na zadnje eksplicitne odgovore.
+        """
+
+        latest_explicit_answers = latest_explicit_answers or {}
+
+        prefilled_questions: List[Dict[str, Any]] = []
+
+        for question in questions:
+            prepared_question = dict(question)
+            keys = self._get_answer_keys(prepared_question)
+
+            latest_answer = None
+
+            for key in keys:
+                if key in latest_explicit_answers:
+                    latest_answer = latest_explicit_answers[key]
+                    break
+
+            if latest_answer:
+                prepared_question["answer"] = latest_answer.get("answer")
+                prepared_question["is_prefilled"] = True
+                prepared_question["prefill_source"] = "last_answer"
+            else:
+                prepared_question["answer"] = None
+                prepared_question["is_prefilled"] = False
+                prepared_question["prefill_source"] = None
+
+            prefilled_questions.append(prepared_question)
+
+        return prefilled_questions

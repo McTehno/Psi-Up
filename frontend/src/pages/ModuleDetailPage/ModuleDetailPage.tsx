@@ -32,6 +32,9 @@ import { useUserProgressState } from '../../hooks/useUserProgressState'
 import { getArrayOrEmpty } from '../../utils/display'
 import { normalizeDetailContent } from '../../utils/normalizers/detail-normalizers'
 
+
+
+
 /**
  * ModuleDetailPage prikazuje podrobnosti enega modula.
  *
@@ -135,10 +138,29 @@ function ModuleDetailPage() {
   const [assessmentResult, setAssessmentResult] =
     useState<AssessmentResultResponse | null>(null)
 
-  const { isFavorite, isSaved, isCompleted } = useUserProgressState({
+  const [localIsCompleted, setLocalIsCompleted] = useState(false)
+  const [manualCompletionOverride, setManualCompletionOverride] =
+    useState<boolean | null>(null)
+  const [localCompletedUnitIds, setLocalCompletedUnitIds] = useState<string[]>([])
+
+  const {
+    isFavorite,
+    isSaved,
+    isCompleted,
+    userProgress,
+  } = useUserProgressState({
     contentId: moduleData?._id,
     contentType: 'module',
   })
+
+  useEffect(() => {
+    setLocalIsCompleted(isCompleted)
+  }, [isCompleted])
+
+  useEffect(() => {
+    setLocalCompletedUnitIds(userProgress?.completed.learning_unit_ids ?? [])
+  }, [userProgress])
+
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -192,8 +214,49 @@ function ModuleDetailPage() {
       setAssessmentResult(null)
     }
   }, [moduleId])
+  const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
+  const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
   const completedUnitIds = useMemo(() => {
+    const completed = new Set<string>()
+
+    if (manualCompletionOverride === true) {
+      learningUnitReferences.forEach((reference) => {
+        if (
+          reference &&
+          typeof reference === 'object' &&
+          '_id' in reference &&
+          typeof reference._id === 'string'
+        ) {
+          completed.add(reference._id)
+        }
+
+        if (
+          reference &&
+          typeof reference === 'object' &&
+          'learning_unit_id' in reference &&
+          typeof reference.learning_unit_id === 'string'
+        ) {
+          completed.add(reference.learning_unit_id)
+        }
+      })
+
+      learningUnitDetails.forEach((learningUnit) => {
+        if (
+          learningUnit &&
+          typeof learningUnit === 'object' &&
+          '_id' in learningUnit &&
+          typeof learningUnit._id === 'string'
+        ) {
+          completed.add(learningUnit._id)
+        }
+      })
+
+      localCompletedUnitIds.forEach((id) => completed.add(id))
+
+      return Array.from(completed)
+    }
+
     if (!assessmentResult) {
       return []
     }
@@ -201,8 +264,6 @@ function ModuleDetailPage() {
     const moduleResult = assessmentResult.module_results?.find(
       (moduleResult) => moduleResult.module_id === moduleId,
     )
-
-    const completed = new Set<string>()
 
     if (moduleResult?.completed_learning_units) {
       moduleResult.completed_learning_units.forEach((id) => completed.add(id))
@@ -221,7 +282,14 @@ function ModuleDetailPage() {
     }
 
     return Array.from(completed)
-  }, [assessmentResult, moduleId])
+  }, [
+    assessmentResult,
+    learningUnitDetails,
+    learningUnitReferences,
+    localCompletedUnitIds,
+    manualCompletionOverride,
+    moduleId,
+  ])
 
   function handleStartQuestionnaire() {
     if (!moduleId) return
@@ -258,8 +326,6 @@ function ModuleDetailPage() {
 
   const detail = normalizeDetailContent(moduleData, 'Neimenovan modul')
   const moduleContentId = moduleData._id ?? detail.id ?? moduleId ?? ''
-  const learningUnitReferences = getArrayOrEmpty(moduleData.learning_units)
-  const learningUnitDetails = getArrayOrEmpty(moduleData.learning_unit_details)
 
   const recommendedLearningPathItems: Parameters<
     typeof DetailRecommendationCarousel
@@ -284,14 +350,13 @@ function ModuleDetailPage() {
 
   let assessmentPositionUnitId: string | null = null
 
-  if (assessmentResult) {
+  if (manualCompletionOverride !== true && assessmentResult) {
     if (assessmentResult.start_learning_unit_id) {
       assessmentPositionUnitId = assessmentResult.start_learning_unit_id
     } else if (assessmentResult.recommended_next_learning_units?.length > 0) {
       assessmentPositionUnitId = assessmentResult.recommended_next_learning_units[0]
     }
   }
-
   return (
     <DetailPageShell>
       <div className="relative">
@@ -309,7 +374,20 @@ function ModuleDetailPage() {
               contentType="module"
               initialIsFavorite={isFavorite}
               initialIsSaved={isSaved}
-              initialIsCompleted={isCompleted}
+              initialIsCompleted={localIsCompleted}
+              onCompletedChange={(nextIsCompleted, nextProgress) => {
+                setLocalIsCompleted(nextIsCompleted)
+
+                if (nextIsCompleted) {
+                  setManualCompletionOverride(true)
+                } else {
+                  setManualCompletionOverride(null)
+                }
+
+                setLocalCompletedUnitIds(
+                  nextProgress?.completed.learning_unit_ids ?? [],
+                )
+              }}
             />
           )}
         </div>

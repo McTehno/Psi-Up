@@ -7,22 +7,22 @@ type HomeOrbsLayerProps = {
 
 function HomeOrbsLayer({ scrollYProgress }: HomeOrbsLayerProps) {
 	// Mountain transforms to stay perfectly in sync
-	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+	const mountainY = useTransform(scrollYProgress, [0, 0.762], ['0%', '-20%'])
 
 	const mountainX = useTransform(
 		scrollYProgress,
-		[0, 0.62, 0.82],
+		[0, 0.472, 0.625],
 		['0%', '0%', '-12%']
 	)
 
 	const mountainScale = useTransform(
 		scrollYProgress,
-		[0, 0.40, 0.50, 0.62, 0.72, 1],
+		[0, 0.305, 0.381, 0.472, 0.549, 0.762],
 		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30]
 	)
 
 	// The highlighted unit mountain reveals from bottom to top
-	const unitGlowReveal = useTransform(scrollYProgress, [0.62, 0.72], [-20, 120])
+	const unitGlowReveal = useTransform(scrollYProgress, [0.472, 0.549], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
 	return (
@@ -44,7 +44,7 @@ function HomeOrbsLayer({ scrollYProgress }: HomeOrbsLayerProps) {
 							maskImage: unitGlowMask,
 						}}
 					>
-						<GlowingOrbs />
+						<GlowingOrbs scrollYProgress={scrollYProgress} />
 					</motion.div>
 				</div>
 			</motion.div>

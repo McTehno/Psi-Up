@@ -71,7 +71,7 @@ function HomePage() {
 			<div
 				ref={parallaxContainerRef}
 				className="absolute inset-x-0 top-0 pointer-events-none"
-				style={{ height: '800vh' }}
+				style={{ height: '1050vh' }}
 				aria-hidden="true"
 			>
 				<HomeParallaxEnvironment scrollYProgress={scrollYProgress} />

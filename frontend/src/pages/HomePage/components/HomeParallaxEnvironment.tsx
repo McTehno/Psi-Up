@@ -20,43 +20,43 @@ type HomeParallaxEnvironmentProps = {
 
 function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentProps) {
 	/* ── Cloud layer transforms ──────────────────────────────────── */
-	// Clouds clear the screen fully by the time Učne poti starts (~0.18)
+	// Clouds clear the screen fully by the time Učne poti starts (~0.14)
 	const cloudY = useTransform(
 		scrollYProgress,
-		[0, 0.08, 0.20, 1],
+		[0, 0.061, 0.152, 0.762],
 		['0%', '-15%', '-110%', '-150%'],
 	)
 	const cloudOpacity = useTransform(
 		scrollYProgress,
-		[0, 0.12, 0.18],
+		[0, 0.091, 0.137],
 		[1, 0.9, 0],
 	)
-	const cloudScale = useTransform(scrollYProgress, [0, 1], [1, 1.1])
+	const cloudScale = useTransform(scrollYProgress, [0, 0.762], [1, 1.1])
 
 	/* ── Mountain layer transforms ───────────────────────────────── */
-	const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+	const mountainY = useTransform(scrollYProgress, [0, 0.762], ['0%', '-20%'])
 
 	// Pan left for Učne enote
 	const mountainX = useTransform(
 		scrollYProgress,
-		[0, 0.62, 0.82],
+		[0, 0.472, 0.625],
 		['0%', '0%', '-12%']
 	)
 
-	// Zooms in as we scroll from Učne poti to Moduli (0.40 - 0.50), 
-	// and again from Moduli to Učne enote (0.62 - 0.72)
+	// Zooms in as we scroll from Učne poti to Moduli (0.30 - 0.38), 
+	// and again from Moduli to Učne enote (0.47 - 0.55)
 	const mountainScale = useTransform(
 		scrollYProgress,
-		[0, 0.40, 0.50, 0.62, 0.72, 1],
+		[0, 0.305, 0.381, 0.472, 0.549, 0.762],
 		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30]
 	)
 
 	// The highlighted module mountain reveals from bottom to top
-	const moduleGlowReveal = useTransform(scrollYProgress, [0.40, 0.50], [-20, 120])
+	const moduleGlowReveal = useTransform(scrollYProgress, [0.305, 0.381], [-20, 120])
 	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${moduleGlowReveal}%, rgba(0,0,0,0) calc(${moduleGlowReveal}% + 20%))`
 
 	// The highlighted unit mountain reveals from bottom to top
-	const unitGlowReveal = useTransform(scrollYProgress, [0.62, 0.72], [-20, 120])
+	const unitGlowReveal = useTransform(scrollYProgress, [0.472, 0.549], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
 

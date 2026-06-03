@@ -60,7 +60,6 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	const unitGlowReveal = useTransform(scrollYProgress, [0.472, 0.549], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
-
 	return (
 		<div className="sticky top-0 h-screen w-full overflow-hidden -z-30 pointer-events-none">
 			{/* ── Layer 1 · Warm gradient base + ambient orbs ──────── */}
@@ -123,7 +122,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 								loading="eager"
 								draggable={false}
 							/>
-							{/* Glowing Orbs and Pin: share the exact same mask as the unit mountain so they wipe-reveal perfectly together */}
+							{/* Glowing Orbs: share the exact same mask as the unit mountain so they wipe-reveal perfectly together */}
 							<div className="absolute inset-0 z-[100]">
 								<GlowingOrbs scrollYProgress={scrollYProgress} />
 							</div>

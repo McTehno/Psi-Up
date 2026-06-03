@@ -1,4 +1,5 @@
-import { motion, MotionValue, useTransform, useMotionTemplate } from 'framer-motion'
+import { useState } from 'react'
+import { motion, MotionValue, useTransform, useMotionTemplate, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 
 // Theme Colors
 const GREEN_COLOR = 'rgba(47, 74, 49, 1)' // #2f4a31
@@ -121,9 +122,17 @@ type GlowingOrbsProps = {
 }
 
 export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
-  // Location Pin animations
-  const pinScale = useTransform(scrollYProgress, [0.82, 0.85], [0, 1])
-  const pinOpacity = useTransform(scrollYProgress, [0.82, 0.84], [0, 1])
+  // Instead of useTransform which has notorious WebKit GPU culling bugs on hard refresh,
+  // we trigger a React state when the user reaches the Vprašalnik section.
+  const [showPin, setShowPin] = useState(false)
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest >= 0.82 && !showPin) {
+      setShowPin(true)
+    } else if (latest < 0.82 && showPin) {
+      setShowPin(false)
+    }
+  })
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
@@ -144,33 +153,32 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
         ))}
       </div>
 
-      {/* Standalone Location Pin */}
-      <div
-        className="absolute pointer-events-none top-[58%] left-[90%] md:left-[65%] md:ml-[5px] -mt-[40px] -translate-x-1/2 z-50"
-      >
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-        >
-          <motion.div
-            className="flex items-center justify-center"
-            style={{
-              scale: pinScale,
-              opacity: pinOpacity,
-            }}
-          >
-            <div className="relative">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 drop-shadow-md text-[#2f4a31]">
-                <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-              </svg>
+      {/* Standalone Location Pin (Mounted dynamically to completely avoid scroll-linked bugs) */}
+      <div className="absolute pointer-events-none top-[58%] left-[90%] md:left-[65%] md:ml-[5px] -mt-[56px] -translate-x-1/2 z-[999]">
+        <AnimatePresence>
+          {showPin && (
+            <motion.div
+              initial={{ scale: 0, y: -30, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0, y: -20, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+            >
               <motion.div
-                className="absolute inset-0 rounded-full bg-white/30"
-                animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative flex items-center justify-center"
+              >
+                {/* Pure CSS background pulse */}
+                <div className="absolute inset-0 rounded-full bg-white/40 z-20 animate-ping" style={{ animationDuration: '2s' }} />
+                <div className="absolute inset-0 rounded-full bg-white/80 blur-[12px] scale-150" />
+
+                <svg viewBox="0 0 24 24" fill="currentColor" className="relative w-12 h-12 text-[#2f4a31] drop-shadow-[0_0_8px_rgba(255,255,255,1)] z-10">
+                  <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+                </svg>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

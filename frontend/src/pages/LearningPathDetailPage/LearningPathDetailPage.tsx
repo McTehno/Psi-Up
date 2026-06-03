@@ -7,7 +7,6 @@ import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
 import AuthRequiredDialog from '../../components/common/AuthRequiredDialog'
 import { DetailTags } from '../../components/detail'
-import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
   LearningPathMountain,
   LearningPathOverviewCard,
@@ -23,6 +22,7 @@ import type {
 } from '../../types/assessment'
 import type { LearningPathDetailResponse, LearningPathStepResponse } from '../../types/learning-path'
 import type { ModuleDetailResponse } from '../../types/module'
+import LearningPathAssistantBox from '../../features/learning-paths/components/LearningPathAssistantBox'
 
 const MAX_VISIBLE_NODES = 7
 
@@ -605,10 +605,8 @@ function LearningPathDetailPage() {
           </div>
 
           <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
-            <CollapsibleChatPanel
-              title="Chat pride kasneje"
-              description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
-              footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+            <LearningPathAssistantBox
+              learningPathId={learningPathContentId ?? learningPathId ?? ''}
               variant="desktop"
               className="pointer-events-auto"
             />
@@ -616,10 +614,8 @@ function LearningPathDetailPage() {
         </div>
 
         <section className="mt-8 min-[1500px]:hidden">
-          <CollapsibleChatPanel
-            title="Chat pride kasneje"
-            description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
-            footerText="Kasneje lahko tukaj dodamo vprašanja o trenutni učni poti, priporočila in pomoč pri posameznih modulih."
+          <LearningPathAssistantBox
+            learningPathId={learningPathContentId ?? learningPathId ?? ''}
             variant="mobile"
           />
         </section>

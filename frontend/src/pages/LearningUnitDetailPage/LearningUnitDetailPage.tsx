@@ -238,6 +238,10 @@ function LearningUnitDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResultResponse | null>(null)
+  const [localIsCompleted, setLocalIsCompleted] = useState(false)
+  const [manualCompletionOverride, setManualCompletionOverride] =
+    useState<boolean | null>(null)
+
 
   const {
     isFavorite,
@@ -247,6 +251,10 @@ function LearningUnitDetailPage() {
     contentId: learningUnit?._id,
     contentType: 'learning_unit',
   })
+
+  useEffect(() => {
+    setLocalIsCompleted(isCompleted)
+  }, [isCompleted])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -359,7 +367,11 @@ function LearningUnitDetailPage() {
             contentType="learning_unit"
             initialIsFavorite={isFavorite}
             initialIsSaved={isSaved}
-            initialIsCompleted={isCompleted}
+            initialIsCompleted={localIsCompleted}
+            onCompletedChange={(nextIsCompleted) => {
+              setLocalIsCompleted(nextIsCompleted)
+              setManualCompletionOverride(nextIsCompleted)
+            }}
           />
         )}
       </div>
@@ -444,6 +456,8 @@ function LearningUnitDetailPage() {
       <LearningUnitDetailContent
         learningUnit={learningUnit}
         assessmentResult={assessmentResult}
+        isCompleted={localIsCompleted}
+        manualCompletionOverride={manualCompletionOverride}
       />
       <DetailRecommendationCarousel
         title="Priporočeni moduli"

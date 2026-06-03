@@ -5,8 +5,8 @@ import { motion, MotionValue } from 'framer-motion'
 const modules = [
   {
     id: 'mod1_bottom',
-    color: 'rgba(191, 123, 86, 0.8)', // Terracotta 500
-    glowColor: 'rgba(191, 123, 86, 0.4)',
+    color: 'rgba(187, 166, 136, 0.95)', // Warm Beige / Brown 300
+    glowColor: 'rgba(187, 166, 136, 0.5)',
     orbs: [
       { id: 'u1', top: '72%', left: '59%', delay: 0 },
       { id: 'u2', top: '77%', left: '63%', delay: 0.2 },
@@ -16,8 +16,8 @@ const modules = [
   },
   {
     id: 'mod2_mid',
-    color: 'rgba(122, 158, 120, 0.8)', // Forest 400
-    glowColor: 'rgba(122, 158, 120, 0.4)',
+    color: 'rgba(215, 202, 180, 0.95)', // Sand / Grey-Beige
+    glowColor: 'rgba(215, 202, 180, 0.5)',
     orbs: [
       { id: 'u5', top: '58%', left: '65%', delay: 0.5 },
       { id: 'u6', top: '68%', left: '69%', delay: 0.7 },
@@ -27,8 +27,8 @@ const modules = [
   },
   {
     id: 'mod3_top',
-    color: 'rgba(224, 213, 195, 0.9)', // Sand 300
-    glowColor: 'rgba(224, 213, 195, 0.5)',
+    color: 'rgba(245, 240, 230, 0.95)', // Soft Warm Off-White / Cream
+    glowColor: 'rgba(245, 240, 230, 0.5)',
     orbs: [
       { id: 'u8', top: '52%', left: '70%', delay: 0.6 },
       { id: 'u9', top: '59%', left: '76%', delay: 0.8 },
@@ -38,8 +38,8 @@ const modules = [
   },
   {
     id: 'mod4_highest',
-    color: 'rgba(255, 253, 248, 0.9)', // Pure bright highlight
-    glowColor: 'rgba(255, 253, 248, 0.5)',
+    color: 'rgba(255, 255, 255, 0.98)', // Pure Luminescent White
+    glowColor: 'rgba(255, 255, 255, 0.6)',
     orbs: [
       { id: 'u12', top: '39%', left: '74%', delay: 0.1 },
       { id: 'u13', top: '46%', left: '78%', delay: 0.4 },
@@ -78,7 +78,7 @@ export default function GlowingOrbs() {
                 delay: orb.delay,
               }}
             >
-              {/* Optional inner core for the orb */}
+              {/* Inner core glow */}
               <div className="absolute inset-0 rounded-full bg-white opacity-80 blur-[1px]" />
             </motion.div>
           ))}

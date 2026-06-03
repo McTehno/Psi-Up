@@ -64,8 +64,6 @@ function HomeParallaxEnvironment() {
 	const unitGlowReveal = useTransform(scrollYProgress, [0.62, 0.72], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
-	// The glowing orbs fade in simultaneously with the unit mountain reveal
-	const orbsOpacity = useTransform(scrollYProgress, [0.65, 0.72], [0, 1])
 
 	return (
 		<div
@@ -93,17 +91,19 @@ function HomeParallaxEnvironment() {
 				>
 					<div className="relative h-full w-full">
 						{/* Base Mountain (Učne poti) */}
-						<img
-							src={pathMountainImage}
-							alt=""
-							className="absolute inset-0 h-full w-full object-cover object-center"
-							loading="eager"
-							draggable={false}
-						/>
+						<div className="absolute inset-0 z-0">
+							<img
+								src={pathMountainImage}
+								alt=""
+								className="h-full w-full object-cover object-center"
+								loading="eager"
+								draggable={false}
+							/>
+						</div>
 
 						{/* Highlighted Mountain (Moduli) - Reveals from bottom to top */}
 						<motion.div
-							className="absolute inset-0 h-full w-full"
+							className="absolute inset-0 h-full w-full z-10"
 							style={{
 								WebkitMaskImage: moduleGlowMask,
 								maskImage: moduleGlowMask
@@ -120,7 +120,7 @@ function HomeParallaxEnvironment() {
 
 						{/* Highlighted Mountain (Učne enote) - Reveals from bottom to top */}
 						<motion.div
-							className="absolute inset-0 h-full w-full"
+							className="absolute inset-0 h-full w-full z-20"
 							style={{
 								WebkitMaskImage: unitGlowMask,
 								maskImage: unitGlowMask
@@ -135,10 +135,13 @@ function HomeParallaxEnvironment() {
 							/>
 						</motion.div>
 
-						{/* Glowing Orbs explicitly outside masks to avoid rendering bugs, matching mountain coordinates */}
+						{/* Glowing Orbs: uses the same mask as unit-mountain so they wipe-reveal together from bottom to top */}
 						<motion.div 
 							className="absolute inset-0 h-full w-full z-[100] pointer-events-none"
-							style={{ opacity: orbsOpacity }}
+							style={{ 
+								WebkitMaskImage: unitGlowMask,
+								maskImage: unitGlowMask
+							}}
 						>
 							<GlowingOrbs />
 						</motion.div>
@@ -146,7 +149,7 @@ function HomeParallaxEnvironment() {
 
 					{/* Soft vignette blending the mountain top into the base */}
 					<div
-						className="absolute inset-x-0 top-0 h-[30%]"
+						className="absolute inset-x-0 top-0 h-[30%] z-[110]"
 						style={{
 							background:
 								'linear-gradient(to bottom, #fffdf8 0%, rgba(255,253,248,0.5) 40%, transparent 100%)',

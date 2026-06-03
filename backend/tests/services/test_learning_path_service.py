@@ -602,12 +602,20 @@ async def test_get_self_assessment_questions_for_learning_path_collects_question
             "question": "Znam osnovo modula.",
             "module_id": "mod_001",
             "learning_path_id": "up_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
         },
         {
             "id": "q_ue_001_001",
             "question": "Znam osnovo učne enote.",
             "learning_unit_id": "ue_001",
             "learning_path_id": "up_001",
+            "order": 2,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
         },
     ]
 

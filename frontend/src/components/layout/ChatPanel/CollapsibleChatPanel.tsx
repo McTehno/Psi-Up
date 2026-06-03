@@ -14,18 +14,16 @@ type CollapsibleChatPanelVariant = 'desktop' | 'mobile'
 type CollapsibleChatPanelProps = {
   title?: string
   description?: string
-  footerText?: string
   variant?: CollapsibleChatPanelVariant
   className?: string
+  children?: React.ReactNode
   onExpandedChange?: (isExpanded: boolean) => void
 }
 
 export function CollapsibleChatPanel({
-  title = 'Chat pride kasneje',
-  description = 'Ta prostor je rezerviran za pogovor z asistentom.',
-  footerText = 'Kasneje lahko tukaj dodamo vprašanja, priporočila in pomoč glede trenutne strani.',
   variant = 'desktop',
   className = '',
+  children,
   onExpandedChange,
 }: CollapsibleChatPanelProps) {
   const [isHovered, setIsHovered] = useState(false)
@@ -66,10 +64,6 @@ export function CollapsibleChatPanel({
                 <Sparkles className="h-3.5 w-3.5" />
                 LLM pomočnik
               </p>
-
-              <h2 className="mt-1 truncate text-2xl font-bold tracking-[-0.04em] text-[#2b2118]">
-                {title}
-              </h2>
             </div>
 
             <button
@@ -98,28 +92,24 @@ export function CollapsibleChatPanel({
             }`}
           >
             <div className="overflow-hidden">
-              <p className="text-base leading-8 text-[#6d665d]">
-                {description}
-              </p>
-
               <div className="mt-6 flex min-h-[220px] cursor-text flex-col rounded-[1.75rem] border border-white/45 bg-white/22 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
-                <div className="flex-1 text-base leading-8 text-[#6d665d]">
-                  Klikni kamorkoli v panel, da chat ostane odprt.
-                </div>
+                {children ?? (
+                  <>
+                    <div className="flex-1 text-base leading-8 text-[#6d665d]">
+                      Klikni kamorkoli v panel, da chat ostane odprt.
+                    </div>
 
-                <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
-                  <span className="min-w-0 flex-1 truncate">
-                    Vprašaj pomočnika ...
-                  </span>
+                    <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
+                      <span className="min-w-0 flex-1 truncate">
+                        Vprašaj pomočnika ...
+                      </span>
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
-                    <Send className="h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-[1.5rem] border border-white/45 bg-white/24 p-5 text-base leading-8 text-[#5f6652] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl">
-                {footerText}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
+                        <Send className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -195,33 +185,25 @@ export function CollapsibleChatPanel({
                 <Sparkles className="h-4 w-4" />
                 LLM pomočnik
               </p>
-
-              <h2 className="mt-3 text-[2rem] font-bold leading-tight tracking-[-0.04em] text-[#2b2118]">
-                {title}
-              </h2>
-
-              <p className="mt-4 text-base leading-8 text-[#6d665d]">
-                {description}
-              </p>
             </div>
 
             <div className="mt-8 flex min-h-[250px] cursor-text flex-col rounded-[2rem] border border-white/45 bg-white/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
-              <div className="flex-1 text-base leading-8 text-[#6d665d]">
-                Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
-                miško.
-              </div>
+              {children ?? (
+                <>
+                  <div className="flex-1 text-base leading-8 text-[#6d665d]">
+                    Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
+                    miško.
+                  </div>
 
-              <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
-                <span className="flex-1">Vprašaj pomočnika ...</span>
+                  <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
+                    <span className="flex-1">Vprašaj pomočnika ...</span>
 
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
-                  <Send className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-auto rounded-[1.75rem] border border-white/45 bg-white/24 p-5 text-base leading-8 text-[#5f6652] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl">
-              {footerText}
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
+                      <Send className="h-4 w-4" />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

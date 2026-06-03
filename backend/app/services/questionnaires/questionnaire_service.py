@@ -53,6 +53,33 @@ class QuestionnaireService:
             return ""
 
         return " ".join(question.strip().lower().split())
+    def _get_optional_int_value(
+        self,
+        value: Any,
+    ) -> Optional[int]:
+        """
+        Vrne optional integer vrednost.
+        """
+
+        if isinstance(value, int):
+            return value
+
+        return None
+
+
+    def _get_bool_value(
+        self,
+        value: Any,
+        fallback: bool = True,
+    ) -> bool:
+        """
+        Vrne varno boolean vrednost.
+        """
+
+        if isinstance(value, bool):
+            return value
+
+        return fallback
 
     def _get_string_value(
         self,
@@ -134,6 +161,16 @@ class QuestionnaireService:
             "competency_codes": self._get_string_list_value(
                 question.get("related_competency_codes")
             ),
+            "order": self._get_optional_int_value(question.get("order")),
+            "parallel_group": self._get_optional_string_value(
+                question.get("parallel_group")
+            ),
+            "is_required": self._get_bool_value(
+                question.get("is_required")
+            ),
+            "prerequisites": self._get_string_list_value(
+                question.get("prerequisites")
+            ),
         }
 
     def _normalize_question(
@@ -180,6 +217,17 @@ class QuestionnaireService:
             ),
             "learning_unit_id": self._get_optional_string_value(
                 question.get("learning_unit_id")
+            ),
+            "order": self._get_optional_int_value(question.get("order")
+            ),
+            "parallel_group": self._get_optional_string_value(
+                question.get("parallel_group")
+            ),
+            "is_required": self._get_bool_value(
+                question.get("is_required")
+            ),
+            "prerequisites": self._get_string_list_value(
+                question.get("prerequisites")
             ),
             "related_topic": self._get_optional_string_value(
                 question.get("related_topic")

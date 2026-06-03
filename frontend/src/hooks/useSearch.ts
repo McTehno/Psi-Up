@@ -48,7 +48,7 @@ export function useSearch() {
           .map((filter: SearchFilterOption) => filter.value)
 
         const urlParams = new URLSearchParams()
-        urlParams.append('query', searchQuery)
+        urlParams.append("query", searchQuery);
 
         types.forEach((type) => {
           if (type !== null) {

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
+
 import { supabase } from '../../../services/supabase-client'
-import { createUserProfile } from '../../../services/user-service'
+import { createUserProfile, updateUser } from '../../../services/user-service'
 import type { UserResponse } from '../../../types/user'
 
 type AuthContextType = {
@@ -9,6 +10,7 @@ type AuthContextType = {
   user: User | null
   localUser: UserResponse | null
   isLoading: boolean
+  updateLocalUser: (updatedUser: UserResponse) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   localUser: null,
   isLoading: true,
+  updateLocalUser: () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -36,11 +39,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         auth_user_id: supabaseUser.id,
         email: supabaseUser.email,
       })
+
+      if (supabaseUser.email && profile.email !== supabaseUser.email) {
+        const updatedProfile = await updateUser(profile._id, {
+          email: supabaseUser.email,
+        })
+
+        setLocalUser(updatedProfile)
+        return
+      }
+
       setLocalUser(profile)
     } catch (err) {
       console.error('Failed to sync local user profile:', err)
       setLocalUser(null)
     }
+  }
+
+  function updateLocalUser(updatedUser: UserResponse) {
+    setLocalUser(updatedUser)
   }
 
   useEffect(() => {
@@ -63,7 +80,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ session, user, localUser, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        user,
+        localUser,
+        isLoading,
+        updateLocalUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

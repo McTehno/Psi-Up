@@ -2,22 +2,19 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.schemas.module_schema import ModuleResponse
-from app.schemas.questionnaire_schema import QuestionnaireResponse, QuestionnaireTargetType
-from app.services.modules.module_service import ModuleService
-from app.services.questionnaires.questionnaire_service import QuestionnaireService
-
 from app.database.mongodb import get_database
 
+from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
 from app.repositories.module_repository import ModuleRepository
-from app.repositories.learning_path_repository import LearningPathRepository
 
+from app.schemas.module_schema import ModuleDetailResponse, ModuleResponse
+from app.schemas.questionnaire_schema import QuestionnaireResponse, QuestionnaireTargetType
 
-from app.services.learning_units.learning_unit_service import LearningUnitService
 from app.services.learning_paths.learning_path_service import LearningPathService
+from app.services.learning_units.learning_unit_service import LearningUnitService
 from app.services.modules.module_service import ModuleService
-
+from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
 
 router = APIRouter(prefix="/modules", tags=["Modules"])
@@ -28,19 +25,24 @@ def get_module_service() -> ModuleService:
     Vrne ModuleService instanco.
 
     Ustvari povezavo:
-    database -> ModuleRepository + LearningUnitRepository -> ModuleService.
+    database -> ModuleRepository + LearningUnitRepository + LearningPathRepository
+    -> services -> ModuleService.
     """
 
     database = get_database()
 
     module_repository = ModuleRepository(database)
     learning_unit_repository = LearningUnitRepository(database)
+    learning_path_repository = LearningPathRepository(database)
+
     learning_unit_service = LearningUnitService(learning_unit_repository)
 
     return ModuleService(
         module_repository=module_repository,
         learning_unit_service=learning_unit_service,
+        learning_path_repository=learning_path_repository,
     )
+
 
 def get_questionnaire_service() -> QuestionnaireService:
     """
@@ -61,11 +63,13 @@ def get_questionnaire_service() -> QuestionnaireService:
     module_service = ModuleService(
         module_repository=module_repository,
         learning_unit_service=learning_unit_service,
+        learning_path_repository=learning_path_repository,
     )
 
     learning_path_service = LearningPathService(
         learning_path_repository=learning_path_repository,
         module_service=module_service,
+        learning_unit_service=learning_unit_service,
     )
 
     return QuestionnaireService(
@@ -81,10 +85,6 @@ async def get_modules(
 ) -> List[ModuleResponse]:
     """
     Vrne vse module.
-
-    TODO:
-    - Poklicati ModuleService.
-    - Dodati paginacijo, če bo podatkov veliko.
     """
 
     modules = await module_service.get_all_modules()
@@ -98,10 +98,6 @@ async def get_module_by_id(
 ) -> ModuleResponse:
     """
     Vrne en modul po ID.
-
-    TODO:
-    - Dodati boljšo obravnavo napak.
-    - Preveriti, ali ID obstaja v bazi.
     """
 
     module = await module_service.get_module_by_id(module_id)
@@ -112,18 +108,13 @@ async def get_module_by_id(
     return module
 
 
-@router.get("/{module_id}/detail")
+@router.get("/{module_id}/detail", response_model=ModuleDetailResponse)
 async def get_module_detail(
     module_id: str,
     module_service: ModuleService = Depends(get_module_service),
 ):
     """
     Vrne podrobnosti modula za detail page.
-
-    TODO:
-    - Vrne osnovne podatke modula.
-    - Vrne tudi podrobnosti učnih enot znotraj modula.
-    - Po potrebi dodati response_model, ko bo končna oblika potrjena.
     """
 
     module = await module_service.get_module_detail(module_id)
@@ -141,11 +132,6 @@ async def get_module_learning_units(
 ):
     """
     Vrne reference učnih enot znotraj modula.
-
-    TODO:
-    - Po potrebi vrniti tudi celotne podatke učnih enot, ne samo reference.
-    - Urediti prikaz glede na order in parallel_group.
-    - Dejanska logika dostopnosti mora temeljiti na prerequisites.
     """
 
     learning_units = await module_service.get_learning_unit_references_for_module(
@@ -163,11 +149,6 @@ async def get_available_learning_units_for_module(
 ):
     """
     Vrne učne enote, ki jih uporabnik lahko začne glede na zaključene predpogoje.
-
-    TODO:
-    - completed_learning_unit_ids bo kasneje verjetno prišel iz user_progress.
-    - Trenutno je pripravljen kot query parameter za testiranje.
-    - Prerequisites so glavni vir logike dostopnosti.
     """
 
     available_learning_units = await module_service.get_available_learning_units_for_module(
@@ -185,10 +166,6 @@ async def get_module_questionnaire(
 ) -> QuestionnaireResponse:
     """
     Vrne vprašalnik za izbran modul.
-
-    TODO:
-    - Poklicati QuestionnaireService za target_type module.
-    - Dodati obravnavo primera, ko vprašalnik ne obstaja.
     """
 
     questionnaire = await questionnaire_service.generate_questionnaire(

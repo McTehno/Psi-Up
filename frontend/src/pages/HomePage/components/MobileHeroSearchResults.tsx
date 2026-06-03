@@ -94,9 +94,9 @@ function MobileHeroSearchResults({
                                         </span>
                                     </div>
 
-                                    {result.shortDescription && (
+                                    {result.description && (
                                         <p className="mt-1 line-clamp-1 text-[11px] leading-4 text-[#706b60]">
-                                            {result.shortDescription}
+                                            {result.description}
                                         </p>
                                     )}
 

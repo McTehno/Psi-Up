@@ -107,12 +107,12 @@ export default function LoginPage() {
       />
       {/* Large centered window containing the entire login/register experience */}
       <div
-        className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8] scale-[0.8] origin-center"
-        style={{ height: 'min(85vh, 720px)' }}
+        className="relative w-full max-w-[920px] overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8]"
+        style={{ height: 'min(85vh, 600px)' }}
       >
         {/* Login Background Image Wrapper */}
         <div
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${isRegister ? 'opacity-0' : 'opacity-100'
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out z-0 ${isRegister ? 'opacity-0' : 'opacity-100'
             }`}
           style={{
             backgroundImage: `url(${loginBgImage})`,
@@ -123,7 +123,7 @@ export default function LoginPage() {
 
         {/* Register Background Image Wrapper */}
         <div
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${isRegister ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out z-0 ${isRegister ? 'opacity-100' : 'opacity-0'
             }`}
           style={{
             backgroundImage: `url(${registerBgImage})`,

@@ -2,7 +2,8 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
-
+from typing import List, Optional
+from pydantic import BaseModel, Field, field_validator
 
 class SearchContentType(str, Enum):
     """
@@ -52,3 +53,42 @@ class SearchResponse(BaseModel):
     query: str
     types: List[SearchContentType] = Field(default_factory=list)
     results: List[SearchResultResponse] = Field(default_factory=list)
+
+class SearchResult(BaseModel):
+    id: str
+    type: str
+    title: str = "Brez naslova"
+    description: Optional[str] = ""
+    keywords: List[str] = Field(default_factory=list)
+
+    @field_validator("title", mode="before")
+    @classmethod
+    def normalize_title(cls, value):
+        return value or "Brez naslova"
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def normalize_description(cls, value):
+        return value or ""
+
+    @field_validator("keywords", mode="before")
+    @classmethod
+    def normalize_keywords(cls, value):
+        if value is None:
+            return []
+
+        if isinstance(value, list):
+            return [str(item) for item in value if item is not None]
+
+        if isinstance(value, str):
+            return [
+                keyword.strip()
+                for keyword in value.split(",")
+                if keyword.strip()
+            ]
+
+        return []
+
+
+class SearchResponse(BaseModel):
+    results: List[SearchResult] = Field(default_factory=list)

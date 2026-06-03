@@ -1,9 +1,12 @@
 import { apiPost } from './api-client'
 import type { AssessmentResultResponse } from '../types/assessment'
-import type { AssessmentEvaluateRequest } from '../types/questionnaire'
+import type { QuestionnaireSubmitRequest } from '../types/questionnaire'
 
 export async function evaluateAssessment(
-  request: AssessmentEvaluateRequest,
+	request: QuestionnaireSubmitRequest,
 ): Promise<AssessmentResultResponse> {
-  return apiPost('/assessments/evaluate', request)
+	return apiPost<AssessmentResultResponse, QuestionnaireSubmitRequest>(
+		'/assessments/evaluate',
+		request,
+	)
 }

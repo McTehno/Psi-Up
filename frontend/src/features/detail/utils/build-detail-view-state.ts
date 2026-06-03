@@ -2,19 +2,23 @@ import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/
 import type { AssistantContextType } from '../../assistant'
 import {
   getLearningPathDetail,
-  getLearningPathModules,
   getLearningPaths,
 } from '../../../services/learning-path-service'
 import {
   getModuleDetail,
-  getModuleLearningUnits,
   getModules,
 } from '../../../services/module-service'
 import { getLearningUnitDetail } from '../../../services/learning-unit-service'
 import { getUserProgress } from '../../../services/user-progress-service'
-import type { LearningPathResponse } from '../../../types/learning-path'
+import type {
+  LearningPathDetailResponse,
+  LearningPathResponse,
+} from '../../../types/learning-path'
 import type { LearningUnitResponse } from '../../../types/learning-unit'
-import type { ModuleResponse } from '../../../types/module'
+import type {
+  ModuleDetailResponse,
+  ModuleResponse,
+} from '../../../types/module'
 import type {
   CurrentPositionResponse,
   UserProgressResponse,
@@ -147,6 +151,12 @@ function buildDurationMeta(durationHours?: number | null): DetailMetaItem[] {
   return [{ label: 'Trajanje', value: duration }]
 }
 
+function getTopicTitles(learningUnit: LearningUnitResponse): string[] {
+  return learningUnit.content_topics
+    .map((topic) => topic.title?.trim())
+    .filter((title): title is string => Boolean(title))
+}
+
 function buildLearningPathMeta(
   learningPath: LearningPathResponse,
   modules: ModuleResponse[]
@@ -185,11 +195,12 @@ function buildLearningUnitMeta(
 async function buildLearningPathView(
   learningPathId: string
 ): Promise<DetailViewState> {
-  const [learningPath, modules, userProgress] = await Promise.all([
-    getLearningPathDetail(learningPathId),
-    getLearningPathModules(learningPathId),
+  const [learningPath, userProgress] = await Promise.all([
+    getLearningPathDetail(learningPathId) as Promise<LearningPathDetailResponse>,
     loadUserProgress(),
   ])
+
+  const modules = learningPath.module_details ?? []
 
   return {
     targetType: 'learning_path',
@@ -212,12 +223,12 @@ async function buildLearningPathView(
 }
 
 async function buildModuleView(moduleId: string): Promise<DetailViewState> {
-  const [module, learningUnits, userProgress] = await Promise.all([
-    getModuleDetail(moduleId),
-    getModuleLearningUnits(moduleId),
+  const [module, userProgress] = await Promise.all([
+    getModuleDetail(moduleId) as Promise<ModuleDetailResponse>,
     loadUserProgress(),
   ])
 
+  const learningUnits = module.learning_unit_details ?? []
   const currentPosition = findCurrentPositionByModule(moduleId, userProgress)
 
   return {
@@ -250,7 +261,7 @@ async function buildModuleView(moduleId: string): Promise<DetailViewState> {
 async function findLearningUnitContext(
   learningUnitId: string
 ): Promise<{
-  parentModule: ModuleResponse | null
+  parentModule: ModuleDetailResponse | null
   parentLearningPath: LearningPathResponse | null
   parentLearningUnits: LearningUnitResponse[]
 }> {
@@ -271,15 +282,17 @@ async function findLearningUnitContext(
     : null
 
   const parentModule = parentModuleId
-    ? await getModuleDetail(parentModuleId)
+    ? ((await getModuleDetail(parentModuleId)) as ModuleDetailResponse)
     : null
 
   const parentLearningPath = parentModuleId
     ? learningPaths.find((learningPath) =>
-        learningPath.modules.some(
-          (reference) => reference.module_id === parentModuleId
-        )
-      ) ?? null
+      learningPath.steps.some(
+        (reference) =>
+          (reference.type === 'module' || reference.step_type === 'module') &&
+          reference.module_id === parentModuleId
+      )
+    ) ?? null
     : null
 
   const parentLearningUnits = parentModule?.learning_unit_details ?? []
@@ -311,11 +324,11 @@ async function buildLearningUnitView(
 
   const routeMapItems = parentModule
     ? buildModuleRouteMapItems({
-        module: parentModule,
-        learningUnits: parentLearningUnits,
-        currentPosition,
-        userProgress,
-      })
+      module: parentModule,
+      learningUnits: parentLearningUnits,
+      currentPosition,
+      userProgress,
+    })
     : []
 
   const routeMapDescription = parentModule
@@ -333,7 +346,7 @@ async function buildLearningUnitView(
     tagsSection: {
       title: 'Teme',
       description: 'Vsebinske teme, ki jih pokriva ta učna enota.',
-      tags: learningUnit.content_topics,
+      tags: getTopicTitles(learningUnit),
       emptyMessage: 'Ta učna enota nima dodanih vsebinskih tem.',
     },
     routeMapTitle: 'Kontekst učne enote',

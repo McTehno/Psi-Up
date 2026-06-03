@@ -1,20 +1,3 @@
-import voiceFirstQuestion from '../../../assets/audio/voiceFirstQuestion.m4a'
-
-// import voiceQuestionOne from '../../../assets/audio/voiceQuestionOne.m4a'
-// import voiceQuestionTwo from '../../../assets/audio/voiceQuestionTwo.m4a'
-
-export const assessmentAudio = {
-	groupSelection: voiceFirstQuestion,
-
-	questions: [
-		voiceFirstQuestion,
-		voiceFirstQuestion,
-		voiceFirstQuestion,
-		voiceFirstQuestion,
-		voiceFirstQuestion,
-	],
-}
-
 export const assessmentCopy = {
 	groupSelection: {
 		label: 'Pa pričnimo',

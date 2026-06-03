@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-
+import AuthRequiredDialog from '../../common/AuthRequiredDialog'
 import { Bookmark, CheckCircle2, Heart } from 'lucide-react'
 
 import { useUserProgressActions } from '../../../hooks/useUserProgressActions'
@@ -38,8 +37,6 @@ function DetailActions({
 	placement = 'overlay',
 	className = '',
 }: DetailActionsProps) {
-	const navigate = useNavigate()
-	const location = useLocation()
 	const [activeAction, setActiveAction] = useState<DetailAction>(null)
 
 	const {
@@ -167,55 +164,10 @@ function DetailActions({
 				</div>
 			</div>
 
-			{errorMessage === 'AUTH_REQUIRED' && (
-				<div className="fixed inset-0 z-[90] flex items-center justify-center px-5">
-					<button
-						type="button"
-						className="absolute inset-0 cursor-default bg-[#fffdf8]/25 backdrop-blur-[10px] backdrop-saturate-150"
-						onClick={clearError}
-						aria-label="Zapri prijavno okno"
-					/>
-
-					<div className="relative z-10 w-full max-w-sm rounded-[28px] border border-[#eadfce]/80 bg-[#fffdf8]/75 p-6 text-center shadow-[0_24px_70px_rgba(57,47,35,0.16)] backdrop-blur-2xl">
-						<p className="text-xs font-bold uppercase tracking-[0.24em] text-[#706b60]">
-							Prijava je potrebna
-						</p>
-
-						<h3 className="mt-4 font-serif text-2xl leading-tight text-[#2f4a31]">
-							Za to dejanje se moraš prijaviti.
-						</h3>
-
-						<p className="mt-3 text-sm leading-6 text-[#706b60]">
-							Po prijavi lahko shranjuješ, všečkaš in označuješ vsebine kot
-							dokončane.
-						</p>
-
-						<div className="mt-6 flex justify-center gap-3">
-							<button
-								type="button"
-								onClick={() =>
-									navigate('/login', {
-										state: {
-											from: `${location.pathname}${location.search}`,
-										},
-									})
-								}
-								className="inline-flex items-center justify-center rounded-full border border-[#31583b] bg-[#31583b] px-5 py-2.5 text-sm font-bold text-[#fffdf8] shadow-[0_12px_28px_rgba(49,88,59,0.22)] transition hover:bg-[#2a4d33]"
-							>
-								Prijavi se
-							</button>
-
-							<button
-								type="button"
-								onClick={clearError}
-								className="inline-flex items-center justify-center rounded-full border border-[#ded5c6] bg-[#fffdf8]/70 px-5 py-2.5 text-sm font-bold text-[#706b60] transition hover:bg-[#f4eee4]"
-							>
-								Zapri
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			<AuthRequiredDialog
+			isOpen={errorMessage === 'AUTH_REQUIRED'}
+			onClose={clearError}
+			/>
 
 			{errorMessage && errorMessage !== 'AUTH_REQUIRED' && (
 				<p className="rounded-full bg-[#fff6eb] px-3 py-2 text-xs font-semibold text-[#706b60]">

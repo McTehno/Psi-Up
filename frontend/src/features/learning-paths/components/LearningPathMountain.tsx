@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Bookmark,
   BookOpen,
-  CheckCircle2,
   ChevronLeft,
   Clock,
   Flag,
@@ -13,9 +12,10 @@ import {
   Layers3,
 } from 'lucide-react'
 
-import mountainJourneyBg from '../../../assets/mountain-journey-bg.webp'
+import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
 import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
 import type { AssessmentStatus } from '../../../types/assessment'
+import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker'
 
 export type LearningPathMountainNode = {
   id: string
@@ -27,6 +27,7 @@ export type LearningPathMountainNode = {
   isRequired?: boolean
   parallelGroup?: string | null
   assessmentStatus?: AssessmentStatus | null
+  isAssessmentPosition?: boolean
 }
 
 type PositionedMountainNode = LearningPathMountainNode & {
@@ -42,11 +43,12 @@ type LearningPathMountainProps = {
   durationLabel: string
   moduleCount: number
   learningUnitCount: number
+  isFavorite?: boolean
+  isSaved?: boolean
   isCompleted?: boolean
   celebrateCompletedOnMount?: boolean
   onFavoriteClick?: () => void
   onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
   className?: string
 }
 
@@ -69,7 +71,8 @@ type PathSegment = {
 
 type LayoutVariant = 'mobile' | 'tablet' | 'desktop'
 
-type MountainAction = 'favorite' | 'save' | 'completed' | null
+type MountainAction = 'favorite' | 'save' | null
+
 
 const MAX_VISIBLE_NODES = 7
 const PARALLEL_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -276,18 +279,6 @@ const mobileParallelOffsets: Record<number, Position[]> = {
 const desktopFinishFlagPosition: Position = { x: 74, y: 9 }
 const tabletFinishFlagPosition: Position = { x: 55, y: 7 }
 const mobileFinishFlagPosition: Position = { x: 54, y: 21 }
-
-function getNodeAssessmentClassName(status?: AssessmentStatus | null) {
-  if (!status || status === 'completed') {
-    return 'border-[#F8E7BE] bg-[#344E41] text-white hover:bg-[#5F6F52] focus-visible:ring-[#F8E7BE]/70'
-  }
-
-  if (status === 'partially_completed') {
-    return 'border-[#d8a24d] bg-[#F8E7BE] text-[#344E41] hover:bg-[#f3ddb0] focus-visible:ring-[#d8a24d]/40'
-  }
-
-  return 'border-[#DED2BC] bg-white/90 text-[#344E41] hover:bg-[#F7F1E6] focus-visible:ring-[#DED2BC]/70'
-}
 
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
@@ -644,23 +635,42 @@ function ModuleDetailBox({
   )
 }
 
+function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
+  if (node.isAssessmentPosition) {
+    return 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
+  }
+
+  if (node.assessmentStatus === 'completed') {
+    return 'border-[#b7d7bd] bg-[#31583b] text-[#fffdf8] shadow-[0_14px_30px_rgba(49,88,59,0.18)]'
+  }
+
+  if (node.assessmentStatus === 'partially_completed') {
+    return 'border-[#f2c879] bg-[#fff8ee] text-[#8a5a17] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
+  }
+
+  return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
+}
+
+function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
+  if (node.isAssessmentPosition) {
+    return 'Tukaj se nahajaš'
+  }
+
+  return null
+}
+
 function MountainActions({
-  isCompleted,
+  isFavorite,
+  isSaved,
   onFavoriteClick,
   onSaveClick,
-  onCompletedChange,
 }: {
-  isCompleted: boolean
+  isFavorite: boolean
+  isSaved: boolean
   onFavoriteClick?: () => void
   onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
 }) {
   const [activeAction, setActiveAction] = useState<MountainAction>(null)
-  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted)
-
-  useEffect(() => {
-    setLocalIsCompleted(isCompleted)
-  }, [isCompleted])
 
   function handleAction(action: Exclude<MountainAction, null>) {
     setActiveAction(action)
@@ -673,66 +683,45 @@ function MountainActions({
       onSaveClick?.()
     }
 
-    if (action === 'completed') {
-      setLocalIsCompleted((currentValue) => {
-        const nextValue = !currentValue
-        onCompletedChange?.(nextValue)
-        return nextValue
-      })
-    }
-
     window.setTimeout(() => {
       setActiveAction(null)
     }, 450)
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex shrink-0 items-center gap-2">
       <button
         type="button"
         onClick={() => handleAction('favorite')}
         className={[
-          'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
-          activeAction === 'favorite'
-            ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
+          'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
+          isFavorite || activeAction === 'favorite'
+            ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8] shadow-[0_10px_24px_rgba(49,88,59,0.18)]'
             : 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#31583b]/35 hover:bg-[#f2f8f1] hover:text-[#31583b]',
         ].join(' ')}
-        aria-label="Dodaj med priljubljene"
-        title="Priljubljeno"
+        aria-label={
+          isFavorite ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'
+        }
+        aria-pressed={isFavorite}
+        title={isFavorite ? 'Priljubljeno' : 'Dodaj med priljubljene'}
       >
-        <Heart className="h-5 w-5" />
+        <Heart className={isFavorite ? 'h-5 w-5 fill-current' : 'h-5 w-5'} />
       </button>
 
       <button
         type="button"
         onClick={() => handleAction('save')}
         className={[
-          'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
-          activeAction === 'save'
-            ? 'border-[#d07a12] bg-[#d07a12] text-[#fffdf8]'
+          'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md',
+          isSaved || activeAction === 'save'
+            ? 'border-[#d07a12] bg-[#d07a12] text-[#fffdf8] shadow-[0_10px_24px_rgba(208,122,18,0.18)]'
             : 'border-[#eadfce] bg-[#fffdf8] text-[#111111] hover:border-[#d07a12]/45 hover:bg-[#fff6eb] hover:text-[#d07a12]',
         ].join(' ')}
-        aria-label="Shrani za pozneje"
-        title="Shrani"
+        aria-label={isSaved ? 'Odstrani iz shranjenih' : 'Shrani za pozneje'}
+        aria-pressed={isSaved}
+        title={isSaved ? 'Shranjeno' : 'Shrani'}
       >
-        <Bookmark className="h-5 w-5" />
-      </button>
-
-      <button
-        type="button"
-        onClick={() => handleAction('completed')}
-        className={[
-          'group inline-flex h-12 min-w-[210px] flex-1 items-center justify-center gap-2.5 rounded-full border px-5 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(49,88,59,0.14)] sm:flex-none',
-          localIsCompleted
-            ? 'border-[#b7d7bd] bg-[#f2f8f1] text-[#31583b] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
-            : activeAction === 'completed'
-              ? 'border-[#31583b] bg-[#31583b] text-[#fffdf8]'
-              : 'border-[#31583b]/75 bg-[#3f6b49] text-[#fffdf8] hover:border-[#31583b] hover:bg-[#31583b]',
-        ].join(' ')}
-        aria-pressed={localIsCompleted}
-      >
-        <CheckCircle2 className="h-5 w-5" />
-        {localIsCompleted ? 'Končano' : 'Označi kot dokončano'}
+        <Bookmark className={isSaved ? 'h-5 w-5 fill-current' : 'h-5 w-5'} />
       </button>
     </div>
   )
@@ -743,10 +732,10 @@ export type LearningPathOverviewCardProps = {
   moduleCount: number
   learningUnitCount: number
   hiddenNodeCount?: number
-  isCompleted: boolean
+  isFavorite?: boolean
+  isSaved?: boolean
   onFavoriteClick?: () => void
   onSaveClick?: () => void
-  onCompletedChange?: (isCompleted: boolean) => void
   className?: string
 }
 
@@ -755,10 +744,10 @@ export function LearningPathOverviewCard({
   moduleCount,
   learningUnitCount,
   hiddenNodeCount = 0,
-  isCompleted,
+  isFavorite = false,
+  isSaved = false,
   onFavoriteClick,
   onSaveClick,
-  onCompletedChange,
   className = '',
 }: LearningPathOverviewCardProps) {
   return (
@@ -780,6 +769,13 @@ export function LearningPathOverviewCard({
             </p>
           )}
         </div>
+
+        <MountainActions
+          isFavorite={isFavorite}
+          isSaved={isSaved}
+          onFavoriteClick={onFavoriteClick}
+          onSaveClick={onSaveClick}
+        />
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -817,15 +813,6 @@ export function LearningPathOverviewCard({
             </strong>
           </div>
         ))}
-      </div>
-
-      <div className="mt-5 border-t border-[#eadfce] pt-5">
-        <MountainActions
-          isCompleted={isCompleted}
-          onFavoriteClick={onFavoriteClick}
-          onSaveClick={onSaveClick}
-          onCompletedChange={onCompletedChange}
-        />
       </div>
     </div>
   )
@@ -870,14 +857,8 @@ function createWavyPathD(
 
 export function LearningPathMountain({
   nodes,
-  durationLabel,
-  moduleCount,
-  learningUnitCount,
   isCompleted = false,
   celebrateCompletedOnMount = false,
-  onFavoriteClick,
-  onSaveClick,
-  onCompletedChange,
   className = '',
 }: LearningPathMountainProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -991,40 +972,38 @@ export function LearningPathMountain({
     [mobilePathSegments, mobileFinishPathSegments],
   )
 
-  const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
-
-  function renderPathSegments(segments: PathSegment[], className: string) {
-    if (segments.length === 0) {
-      return null
-    }
-
-    return (
-      <svg
-        className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        {segments.map((segment) => (
-          <path
-            key={`${segment.from.id}-${segment.to.id}`}
-            d={createWavyPathD(
-              segment.from,
-              segment.to,
-              segment.isParallelTransition ? 1.5 : 2,
-            )}
-            fill="none"
-            stroke="#344E41"
-            strokeWidth="3.45"
-            strokeLinecap="round"
-            strokeDasharray="1.4 1.25"
-            opacity="0.62"
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-      </svg>
-    )
+function renderPathSegments(segments: PathSegment[], className: string) {
+  if (segments.length === 0) {
+    return null
   }
+
+  return (
+    <svg
+      className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      {segments.map((segment) => (
+        <path
+          key={`${segment.from.id}-${segment.to.id}`}
+          d={createWavyPathD(
+            segment.from,
+            segment.to,
+            segment.isParallelTransition ? 1.5 : 2,
+          )}
+          fill="none"
+          stroke="#344E41"
+          strokeWidth="3.45"
+          strokeLinecap="round"
+          strokeDasharray="1.4 1.25"
+          opacity="0.62"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+    </svg>
+  )
+}
 
   function renderNodes(
     nodesToRender: PositionedMountainNode[],
@@ -1033,28 +1012,45 @@ export function LearningPathMountain({
     return nodesToRender.map((node) => {
       const isSelected = selectedNodeId === node.id
       const hasParallelLabel = node.parallelCount > 1
-      const nodeAssessmentClassName = getNodeAssessmentClassName(
-        node.assessmentStatus,
-      )
+      const nodeAssessmentClassName = getMountainNodeAssessmentClassName(node)
+      const nodeAssessmentLabel = getMountainNodeAssessmentLabel(node)
+
       return (
-        <button
+        <div
           key={node.id}
-          type="button"
-          onClick={() => setSelectedNodeId(node.id)}
-          className={`absolute z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 font-bold shadow-lg transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14 ${nodeAssessmentClassName} ${hasParallelLabel
-              ? 'text-[0.78rem] min-[1500px]:text-sm'
-              : 'text-base min-[1500px]:text-lg'
-            } ${className} ${isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : ''
-            }`}
+          className={[
+            'absolute z-30 -translate-x-1/2 -translate-y-1/2',
+            className,
+          ].join(' ')}
           style={{
             left: `${node.x}%`,
             top: `${node.y}%`,
           }}
-          aria-pressed={isSelected}
-          aria-label={`Odpri podrobnosti modula ${node.title}`}
         >
-          {node.displayLabel}
-        </button>
+          {nodeAssessmentLabel && (
+            <AssessmentPositionMarker
+              label={nodeAssessmentLabel}
+              className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
+            />
+          )}
+
+          <button
+            type="button"
+            onClick={() => setSelectedNodeId(node.id)}
+            className={[
+              'flex h-12 w-12 items-center justify-center rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
+              hasParallelLabel
+                ? 'text-[0.78rem] min-[1500px]:text-sm'
+                : 'text-base min-[1500px]:text-lg',
+              nodeAssessmentClassName,
+              isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
+            ].join(' ')}
+            aria-pressed={isSelected}
+            aria-label={`Odpri podrobnosti modula ${node.title}`}
+          >
+            {node.displayLabel}
+          </button>
+        </div>
       )
     })
   }
@@ -1145,23 +1141,6 @@ export function LearningPathMountain({
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
 
-      <LearningPathOverviewCard
-        durationLabel={durationLabel}
-        moduleCount={moduleCount}
-        learningUnitCount={learningUnitCount}
-        hiddenNodeCount={hiddenNodeCount}
-        isCompleted={isCompleted}
-        onFavoriteClick={onFavoriteClick}
-        onSaveClick={onSaveClick}
-        onCompletedChange={(nextIsCompleted) => {
-          if (nextIsCompleted) {
-            setCompletionCelebrationKey((currentKey) => currentKey + 1)
-          }
-
-          onCompletedChange?.(nextIsCompleted)
-        }}
-        className="absolute left-8 top-8 z-40 hidden w-[460px] max-w-[calc(100%-3rem)] min-[1500px]:block"
-      />
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul

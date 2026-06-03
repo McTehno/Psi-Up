@@ -20,13 +20,18 @@ class LearningUnitAssessmentResult(BaseModel):
     """
     Shema za rezultat ocenjevanja posamezne učne enote.
 
-    Uporabi se za določanje, ali uporabnik določeno učno enoto že pozna
-    ali jo mora še opraviti.
+    Uporabi se za določanje, katere topic-e in kompetence uporabnik
+    že pozna ter katere še potrebuje.
     """
 
     learning_unit_id: str
-    known_topics: List[str] = Field(default_factory=list)
-    missing_topics: List[str] = Field(default_factory=list)
+
+    known_topic_ids: List[str] = Field(default_factory=list)
+    missing_topic_ids: List[str] = Field(default_factory=list)
+
+    known_competency_codes: List[str] = Field(default_factory=list)
+    missing_competency_codes: List[str] = Field(default_factory=list)
+
     is_completed_by_assessment: bool = False
 
 
@@ -42,6 +47,19 @@ class ModuleAssessmentResult(BaseModel):
     status: AssessmentStatus = AssessmentStatus.NOT_STARTED
     completed_learning_units: List[str] = Field(default_factory=list)
     missing_learning_units: List[str] = Field(default_factory=list)
+
+
+class AssessmentCurrentPositionResponse(BaseModel):
+    """
+    Shema za trenutno pozicijo, določeno po assessmentu.
+
+    Uporabi se, da frontend lahko jasno prikaže,
+    kje naj uporabnik nadaljuje učenje.
+    """
+
+    learning_path_id: Optional[str] = None
+    current_module_id: Optional[str] = None
+    current_learning_unit_id: Optional[str] = None
 
 
 class AssessmentResultResponse(BaseModel):
@@ -64,7 +82,16 @@ class AssessmentResultResponse(BaseModel):
     recommended_next_modules: List[str] = Field(default_factory=list)
     recommended_next_learning_units: List[str] = Field(default_factory=list)
 
+    known_competency_codes: List[str] = Field(default_factory=list)
+    missing_competency_codes: List[str] = Field(default_factory=list)
+
     learning_unit_results: List[LearningUnitAssessmentResult] = Field(default_factory=list)
     module_results: List[ModuleAssessmentResult] = Field(default_factory=list)
+
+    completed_learning_unit_ids: List[str] = Field(default_factory=list)
+    completed_module_ids: List[str] = Field(default_factory=list)
+    completed_learning_path_ids: List[str] = Field(default_factory=list)
+
+    current_position: Optional[AssessmentCurrentPositionResponse] = None
 
     summary: Optional[str] = None

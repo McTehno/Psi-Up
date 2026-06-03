@@ -1,0 +1,29 @@
+[
+  {
+    "_id": "user_001",
+    "auth_user_id": "supabase_test_001",
+    "name": "Testni uporabnik",
+    "email": "test@example.com",
+    "created_at": "2026-05-18T00:00:00Z",
+    "updated_at": "2026-06-01T00:00:00Z",
+    "progress": {
+      "saved": {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": []
+      },
+      "favorites": {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": []
+      },
+      "completed": {
+        "learning_path_ids": [],
+        "module_ids": [],
+        "learning_unit_ids": []
+      },
+      "current_positions": [],
+      "questionnaire_answers": []
+    }
+  }
+]

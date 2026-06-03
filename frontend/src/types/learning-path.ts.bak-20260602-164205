@@ -1,0 +1,30 @@
+import type { ModuleDetailResponse } from './module'
+import type { LearningUnitResponse } from './learning-unit'
+
+export type LearningPathStepType = 'module' | 'learning_unit'
+
+export type LearningPathStepReference = {
+  type: LearningPathStepType
+  ref_id: string
+  module_id?: string | null
+  learning_unit_id?: string | null
+  order?: number | null
+  parallel_group?: string | null
+  is_required?: boolean
+  prerequisites?: string[]
+}
+
+export type LearningPathResponse = {
+  _id: string
+  id?: string
+  title: string
+  short_description: string
+  duration_hours?: number | null
+  keywords: string[]
+  steps: LearningPathStepReference[]
+}
+
+export type LearningPathDetailResponse = LearningPathResponse & {
+  module_details?: ModuleDetailResponse[]
+  learning_unit_details?: LearningUnitResponse[]
+}

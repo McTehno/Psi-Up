@@ -1,28 +1,24 @@
 import { apiGet } from './api-client'
 import type {
-  QuestionnaireResponse,
-  QuestionnaireTargetType,
+	QuestionnaireResponse,
+	QuestionnaireTargetType,
 } from '../types/questionnaire'
 
-function getQuestionnaireEndpoint(
-  targetType: QuestionnaireTargetType,
-  targetId: string,
-) {
-  switch (targetType) {
-    case 'learning_path':
-      return `/learning-paths/${targetId}/questionnaire`
-    case 'module':
-      return `/modules/${targetId}/questionnaire`
-    case 'learning_unit':
-      return `/learning-units/${targetId}/questionnaire`
-    default:
-      throw new Error('Nepodprt tip vprašalnika.')
-  }
-}
-
 export async function getQuestionnaire(
-  targetType: QuestionnaireTargetType,
-  targetId: string,
+	targetType: QuestionnaireTargetType,
+	targetId: string,
+	userId?: string,
 ): Promise<QuestionnaireResponse> {
-  return apiGet(getQuestionnaireEndpoint(targetType, targetId))
+	const params = new URLSearchParams()
+
+	params.set('target_type', targetType)
+	params.set('target_id', targetId)
+
+	if (userId) {
+		params.set('user_id', userId)
+	}
+
+	return apiGet<QuestionnaireResponse>(
+		`/questionnaires?${params.toString()}`,
+	)
 }

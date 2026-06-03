@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
 import EmptyState from '../../../components/common/EmptyState';
+import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker';
 import { GoalBadge } from './GoalBadge';
+import { normalizeDetailContent } from '../../../utils/normalizers/detail-normalizers'
+
 import bg0 from '../../../assets/module-details-background/module-details-background0.webp';
 import bg1 from '../../../assets/module-details-background/module-details-background1.webp';
 import bg2 from '../../../assets/module-details-background/module-details-background2.webp';
@@ -25,13 +28,15 @@ interface LearningUnitVisualizerProps {
   details?: LearningUnitResponse[];
   completedUnitIds?: string[];
   moduleId?: string;
+  assessmentPositionUnitId?: string | null;
 }
 
 export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   references,
   details = [],
   completedUnitIds = [],
-  moduleId
+  moduleId,
+  assessmentPositionUnitId
 }) => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +44,20 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [activeNodeIdx, setActiveNodeIdx] = useState<number | null>(null);
 
+
+  const safeReferences = Array.isArray(references)
+    ? references.filter(
+      (reference) =>
+        typeof reference.learning_unit_id === 'string' &&
+        reference.learning_unit_id.trim().length > 0,
+    )
+    : []
+
+  const safeDetails = Array.isArray(details) ? details : []
+
+  const safeCompletedUnitIds = Array.isArray(completedUnitIds)
+    ? completedUnitIds
+    : []
   const bgIndex = useMemo(() => {
     if (!moduleId) return 0;
     let hash = 0;
@@ -121,7 +140,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     }
   }, [isMobile, handleUnitClick]);
 
-  const groupedUnits = references.reduce((acc, ref) => {
+  const groupedUnits = safeReferences.reduce((acc, ref) => {
     const order = ref.order ?? 999;
     if (!acc[order]) {
       acc[order] = [];
@@ -226,8 +245,20 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   // Mobile popup data
   const activeNode = activeNodeIdx !== null ? nodePositions[activeNodeIdx] : null;
   const activeRef = activeNode?.unit;
-  const activeDetail = activeRef ? details.find(d => d._id === activeRef.learning_unit_id) : undefined;
-  const isActiveCompleted = activeRef ? completedUnitIds.includes(activeRef.learning_unit_id) : false;
+  const activeDetail = activeRef
+    ? safeDetails.find((detail) => detail._id === activeRef.learning_unit_id)
+    : undefined
+
+  const activeNormalizedDetail = activeRef
+    ? normalizeDetailContent(
+      activeDetail ?? { learning_unit_id: activeRef.learning_unit_id },
+      'Neimenovana učna enota',
+    )
+    : null
+
+  const isActiveCompleted = activeRef
+    ? safeCompletedUnitIds.includes(activeRef.learning_unit_id)
+      : false
 
   // Compute mobile popup position (clamped to container bounds)
   const getPopupStyle = (): React.CSSProperties => {
@@ -337,9 +368,15 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
           {nodePositions.map((pos, idx) => {
             const ref = pos.unit;
-            const detail = details.find(d => d._id === ref.learning_unit_id);
-            const isUnitCompleted = completedUnitIds.includes(ref.learning_unit_id);
+            const detail = safeDetails.find((d) => d._id === ref.learning_unit_id)
+
+            const normalizedDetail = normalizeDetailContent(
+              detail ?? { learning_unit_id: ref.learning_unit_id },
+              'Neimenovana učna enota',
+            )
+            const isUnitCompleted = safeCompletedUnitIds.includes(ref.learning_unit_id);
             const isNodeActive = isMobile && activeNodeIdx === idx;
+            const isAssessmentPosition = assessmentPositionUnitId === ref.learning_unit_id;
 
             return (
               <div
@@ -347,6 +384,13 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 className="absolute z-10 flex flex-col items-center justify-start transform -translate-x-1/2"
                 style={{ left: `${(pos.x / 800) * 100}%`, top: `${pos.y - 28}px` }}
               >
+                {isAssessmentPosition && (
+                  <AssessmentPositionMarker
+                    label="Tukaj se nahajaš"
+                    className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
+                  />
+                )}
+
                 {/* Center Node */}
                 <button
                   type="button"
@@ -358,12 +402,16 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     ${isNodeActive
                       ? 'ring-4 ring-[#C98A43]/60 scale-110'
                       : 'hover:ring-8'}
-                    ${isUnitCompleted
-                      ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
-                      : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
+                    ${isAssessmentPosition
+                      ? 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
+                      : isUnitCompleted
+                        ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
+                        : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
                   `}
                 >
-                  {isUnitCompleted ? (
+                  {isAssessmentPosition ? (
+                    <BookOpen className="w-6 h-6 text-white" strokeWidth={2} />
+                  ) : isUnitCompleted ? (
                     <Check className="w-6 h-6 text-white" strokeWidth={3} />
                   ) : (
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />
@@ -374,7 +422,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {isMobile && !isUnitCompleted && (
                   <div className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300">
                     <h4 className="text-[11px] font-bold leading-snug line-clamp-2 text-[#4a392b]">
-                      {detail?.title || 'Neznana učna enota'}
+                      {normalizedDetail.title}
                     </h4>
                   </div>
                 )}
@@ -392,7 +440,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
                     <div className={`w-full flex items-start gap-2 ${pos.isOnRightSide ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
                       <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {detail?.title || 'Neznana učna enota'}
+                        {normalizedDetail.title}
                       </h4>
                       {isUnitCompleted ? (
                         <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
@@ -402,9 +450,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                         <ArrowRight className={`w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0 ${pos.isOnRightSide ? '' : 'rotate-180'}`} />
                       )}
                     </div>
-                    {detail?.short_description && (
+                    {normalizedDetail.description && (
                       <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {detail.short_description}
+                        {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
                       </p>
                     )}
                     {!ref.is_required && (
@@ -427,7 +475,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
                     <div className="w-full flex items-start justify-between gap-2">
                       <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
-                        {detail?.title || 'Neznana učna enota'}
+                        {normalizedDetail.title}
                       </h4>
                       {isUnitCompleted ? (
                         <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
@@ -437,9 +485,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                         <ArrowRight className="w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0" />
                       )}
                     </div>
-                    {detail?.short_description && (
+                    {normalizedDetail.description && (
                       <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
-                        {detail.short_description}
+                        {normalizedDetail.description}
                       </p>
                     )}
                     {!ref.is_required && (
@@ -481,12 +529,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 </div>
 
                 <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 pr-6 ${isActiveCompleted ? 'text-[#31583b]' : 'text-[#5c3724]'}`}>
-                  {activeDetail?.title || 'Neznana učna enota'}
+                  {activeNormalizedDetail?.title ?? 'Neimenovana učna enota'}
                 </h4>
 
-                {activeDetail?.short_description && (
+                {activeNormalizedDetail?.description && (
                   <p className={`text-xs line-clamp-3 mt-1.5 leading-relaxed ${isActiveCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
-                    {activeDetail.short_description}
+                    {activeNormalizedDetail.description}
                   </p>
                 )}
 

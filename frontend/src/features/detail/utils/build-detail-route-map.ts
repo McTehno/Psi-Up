@@ -1,5 +1,8 @@
 import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
-import type { LearningPathResponse } from '../../../types/learning-path'
+import type {
+  LearningPathResponse,
+  LearningPathStepResponse,
+} from '../../../types/learning-path'
 import type {
   ModuleReferenceResponse,
   ModuleResponse,
@@ -47,7 +50,7 @@ function getModuleStatus(
     return 'current'
   }
 
-  if (userProgress?.completed_modules.includes(moduleId)) {
+  if (userProgress?.completed.module_ids.includes(moduleId)) {
     return 'completed'
   }
 
@@ -63,7 +66,7 @@ function getLearningUnitStatus(
     return 'current'
   }
 
-  if (userProgress?.completed_learning_units.includes(learningUnitId)) {
+  if (userProgress?.completed.learning_unit_ids.includes(learningUnitId)) {
     return 'completed'
   }
 
@@ -77,6 +80,36 @@ function sortByOrder<T extends { order?: number | null }>(items: T[]) {
 
     return firstOrder - secondOrder
   })
+}
+
+function getLearningPathStepKind(step: LearningPathStepResponse) {
+  return step.step_type ?? step.type ?? 'module'
+}
+
+function getLearningPathStepModuleId(step: LearningPathStepResponse) {
+  return step.module_id ?? step.ref_id ?? null
+}
+
+function toModuleReference(
+  step: LearningPathStepResponse,
+): ModuleReferenceResponse | null {
+  if (getLearningPathStepKind(step) !== 'module') {
+    return null
+  }
+
+  const moduleId = getLearningPathStepModuleId(step)
+
+  if (!moduleId) {
+    return null
+  }
+
+  return {
+    module_id: moduleId,
+    order: step.order ?? null,
+    parallel_group: step.parallel_group ?? null,
+    is_required: step.is_required ?? false,
+    prerequisites: step.prerequisites ?? [],
+  }
 }
 
 function buildModuleRouteItem(
@@ -109,7 +142,7 @@ function buildLearningUnitRouteItem(
     id: reference.learning_unit_id,
     title: learningUnit.title,
     description: learningUnit.short_description,
-    typeLabel: 'Učna enota',
+    typeLabel: 'UÄŤna enota',
     durationLabel: formatDuration(learningUnit.duration_hours),
     order: reference.order,
     parallelGroup: reference.parallel_group,
@@ -133,10 +166,19 @@ export function buildLearningPathRouteMapItems({
     userProgress
   )
 
-  return sortByOrder(learningPath.modules)
+  const moduleReferences = sortByOrder(
+    learningPath.steps
+      .map(toModuleReference)
+      .filter(
+        (reference): reference is ModuleReferenceResponse =>
+          reference !== null,
+      ),
+  )
+
+  return sortByOrder(moduleReferences)
     .map((reference) => {
       const module = modules.find(
-        (moduleItem) => getResponseId(moduleItem) === reference.module_id
+        (moduleItem) => getResponseId(moduleItem) === reference.module_id,
       )
 
       if (!module) {
@@ -147,11 +189,12 @@ export function buildLearningPathRouteMapItems({
         reference,
         module,
         currentPosition,
-        userProgress
+        userProgress,
       )
     })
     .filter((item): item is DetailRouteItem => item !== null)
 }
+
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
     return null
@@ -175,6 +218,7 @@ function formatDuration(durationHours?: number | null) {
 
   return `${durationHours} ur`
 }
+
 export function buildModuleRouteMapItems({
   module,
   learningUnits,

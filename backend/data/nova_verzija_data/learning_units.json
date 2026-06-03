@@ -1,0 +1,1264 @@
+[
+  {
+    "_id": "ue_001",
+    "title": "Osnovni pojmi umetne inteligence",
+    "short_description": "Uvod v osnovne pojme umetne inteligence.",
+    "duration_hours": 0.5,
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "osnovni pojmi"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_001_001",
+        "title": "Razumevanje pojma umetna inteligenca",
+        "related_competency_codes": [
+          "1.2"
+        ]
+      },
+      {
+        "id": "topic_ue_001_002",
+        "title": "Prepoznavanje osnovnih primerov umetne inteligence",
+        "related_competency_codes": [
+          "1.2"
+        ]
+      },
+      {
+        "id": "topic_ue_001_003",
+        "title": "Razlikovanje med klasičnimi programi in sistemi umetne inteligence",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec razume osnovni koncept umetne inteligence",
+      "Udeleženec prepozna primere umetne inteligence v vsakdanjem življenju",
+      "Udeleženec zna pojasniti osnovno razliko med običajno programsko opremo in umetno inteligenco"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.2",
+        "title": "Vrednotenje podatkov, informacij in digitalnih vsebin",
+        "description": "Prepoznava in razume digitalne informacije ter ocenjuje njihovo uporabnost"
+      },
+      {
+        "code": "5.2",
+        "title": "Prepoznavanje potreb in tehnoloških rešitev",
+        "description": "Prepoznava, kdaj lahko digitalne tehnologije pomagajo pri reševanju nalog"
+      }
+    ],
+    "delivery_mode": "Spletno",
+    "provider": "NIDiKo demo izvajalec",
+    "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+    "prerequisites": [
+      "Osnovna uporaba računalnika ali pametne naprave",
+      "Osnovno razumevanje uporabe spletnih orodij"
+    ],
+    "knowledge_assessment": "Kratek kviz",
+    "certificate": "Potrdilo o udeležbi",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_001_001",
+        "question": "Razumem osnovni koncept umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Razumevanje pojma umetna inteligenca",
+        "related_topic_id": "topic_ue_001_001",
+        "related_competency_codes": [
+          "1.2"
+        ]
+      },
+      {
+        "id": "q_ue_001_002",
+        "question": "Znam prepoznati primere umetne inteligence v vsakdanjem življenju.",
+        "type": "yes_no",
+        "related_topic": "Prepoznavanje osnovnih primerov umetne inteligence",
+        "related_topic_id": "topic_ue_001_002",
+        "related_competency_codes": [
+          "1.2"
+        ]
+      },
+      {
+        "id": "q_ue_001_003",
+        "question": "Znam razlikovati med klasičnimi programi in sistemi umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Razlikovanje med klasičnimi programi in sistemi umetne inteligence",
+        "related_topic_id": "topic_ue_001_003",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_002",
+    "title": "Kako deluje umetna inteligenca?",
+    "short_description": "Razumevanje osnov delovanja umetne inteligence in pomena podatkov.",
+    "duration_hours": 0.5,
+    "keywords": [
+      "umetna inteligenca",
+      "UI",
+      "podatki",
+      "delovanje UI"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_002_001",
+        "title": "Vloga podatkov pri umetni inteligenci",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_002_002",
+        "title": "Osnovni princip učenja iz podatkov",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      },
+      {
+        "id": "topic_ue_002_003",
+        "title": "Primeri odločanja sistemov umetne inteligence",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec razume, zakaj so podatki pomembni pri umetni inteligenci",
+      "Udeleženec razume osnovno delovanje sistemov umetne inteligence",
+      "Udeleženec zna opisati preprost primer, kako sistem umetne inteligence uporablja podatke"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.3",
+        "title": "Upravljanje podatkov, informacij in digitalnih vsebin",
+        "description": "Razume pomen podatkov in njihove organizacije pri digitalnih rešitvah"
+      },
+      {
+        "code": "5.2",
+        "title": "Prepoznavanje potreb in tehnoloških rešitev",
+        "description": "Razume, kako digitalne tehnologije pomagajo pri avtomatizaciji in odločanju"
+      }
+    ],
+    "delivery_mode": "Spletno",
+    "provider": "NIDiKo demo izvajalec",
+    "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+    "prerequisites": [
+      "Poznavanje osnovnih pojmov umetne inteligence"
+    ],
+    "knowledge_assessment": "Kratek kviz",
+    "certificate": "Potrdilo o udeležbi",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_002_001",
+        "question": "Razumem, zakaj so podatki pomembni pri umetni inteligenci.",
+        "type": "yes_no",
+        "related_topic": "Vloga podatkov pri umetni inteligenci",
+        "related_topic_id": "topic_ue_002_001",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_002_002",
+        "question": "Razumem osnovno delovanje umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Osnovni princip učenja iz podatkov",
+        "related_topic_id": "topic_ue_002_002",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      },
+      {
+        "id": "q_ue_002_003",
+        "question": "Znam opisati primer, kako sistem umetne inteligence sprejema odločitve.",
+        "type": "yes_no",
+        "related_topic": "Primeri odločanja sistemov umetne inteligence",
+        "related_topic_id": "topic_ue_002_003",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_003",
+    "title": "Generativna UI v praksi",
+    "short_description": "Uporaba generativne umetne inteligence v praktičnih primerih.",
+    "duration_hours": 0.75,
+    "keywords": [
+      "generativna UI",
+      "GenUI",
+      "pozivi",
+      "orodja GenUI"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_003_001",
+        "title": "Primeri generativne umetne inteligence",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_003_002",
+        "title": "Uporaba orodij za ustvarjanje besedila in idej",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_003_003",
+        "title": "Priprava jasnih in uporabnih pozivov",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_003_004",
+        "title": "Kritično vrednotenje ustvarjenih rezultatov",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec prepozna primere generativne umetne inteligence",
+      "Udeleženec zna uporabiti osnovno orodje generativne umetne inteligence",
+      "Udeleženec pripravi jasen poziv za izbrano nalogo",
+      "Udeleženec kritično oceni rezultat, ki ga ustvari orodje generativne umetne inteligence"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "3.2",
+        "title": "Ustvarjanje digitalnih vsebin",
+        "description": "Ustvarja in ureja digitalno vsebino s pomočjo digitalnih orodij"
+      },
+      {
+        "code": "5.3",
+        "title": "Ustvarjalna uporaba digitalnih tehnologij",
+        "description": "Uporablja digitalna orodja za ustvarjalno reševanje konkretnih nalog"
+      }
+    ],
+    "delivery_mode": "Spletno",
+    "provider": "NIDiKo demo izvajalec",
+    "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+    "prerequisites": [
+      "Osnovna uporaba spletnega brskalnika",
+      "Osnovno razumevanje pojma umetna inteligenca"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Potrdilo o udeležbi",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_003_001",
+        "question": "Znam prepoznati primere generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Primeri generativne umetne inteligence",
+        "related_topic_id": "topic_ue_003_001",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_003_002",
+        "question": "Znam uporabljati orodja generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Uporaba orodij za ustvarjanje besedila in idej",
+        "related_topic_id": "topic_ue_003_002",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_003_003",
+        "question": "Znam pripraviti uporaben poziv za orodja generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Priprava jasnih in uporabnih pozivov",
+        "related_topic_id": "topic_ue_003_003",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_003_004",
+        "question": "Znam kritično oceniti rezultate, ki jih poda orodje generativne umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Kritično vrednotenje ustvarjenih rezultatov",
+        "related_topic_id": "topic_ue_003_004",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_004",
+    "title": "Etika UI in varna uporaba UI",
+    "short_description": "Razumevanje etičnih vidikov, tveganj in odgovorne uporabe umetne inteligence.",
+    "duration_hours": 0.75,
+    "keywords": [
+      "etika UI",
+      "varna uporaba UI",
+      "pristranskost",
+      "tveganja"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_004_001",
+        "title": "Etični vidiki uporabe umetne inteligence",
+        "related_competency_codes": [
+          "2.5"
+        ]
+      },
+      {
+        "id": "topic_ue_004_002",
+        "title": "Pristranskost v sistemih umetne inteligence",
+        "related_competency_codes": [
+          "2.5"
+        ]
+      },
+      {
+        "id": "topic_ue_004_003",
+        "title": "Tveganja pri uporabi umetne inteligence",
+        "related_competency_codes": [
+          "4.2"
+        ]
+      },
+      {
+        "id": "topic_ue_004_004",
+        "title": "Odgovorna in varna uporaba orodij umetne inteligence",
+        "related_competency_codes": [
+          "2.5",
+          "4.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec razume, da umetna inteligenca lahko vsebuje pristranskosti",
+      "Udeleženec prepozna osnovna tveganja pri uporabi umetne inteligence",
+      "Udeleženec zna opisati načela odgovorne uporabe umetne inteligence"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "2.5",
+        "title": "Spletni bonton",
+        "description": "Upošteva primerna pravila vedenja in odgovornosti v digitalnem okolju"
+      },
+      {
+        "code": "4.2",
+        "title": "Varovanje osebnih podatkov in zasebnosti",
+        "description": "Razume pomen zaščite osebnih podatkov pri uporabi digitalnih tehnologij"
+      }
+    ],
+    "delivery_mode": "Spletno",
+    "provider": "NIDiKo demo izvajalec",
+    "target_audience": "Odrasli uporabniki z osnovnim digitalnim znanjem",
+    "prerequisites": [
+      "Osnovno poznavanje uporabe digitalnih orodij",
+      "Osnovno razumevanje umetne inteligence"
+    ],
+    "knowledge_assessment": "Kratek kviz in refleksijsko vprašanje",
+    "certificate": "Potrdilo o udeležbi",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_004_001",
+        "question": "Razumem osnovne etične vidike uporabe umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Etični vidiki uporabe umetne inteligence",
+        "related_topic_id": "topic_ue_004_001",
+        "related_competency_codes": [
+          "2.5"
+        ]
+      },
+      {
+        "id": "q_ue_004_002",
+        "question": "Razumem, da lahko umetna inteligenca vsebuje pristranskosti.",
+        "type": "yes_no",
+        "related_topic": "Pristranskost v sistemih umetne inteligence",
+        "related_topic_id": "topic_ue_004_002",
+        "related_competency_codes": [
+          "2.5"
+        ]
+      },
+      {
+        "id": "q_ue_004_003",
+        "question": "Prepoznam tveganja pri uporabi umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Tveganja pri uporabi umetne inteligence",
+        "related_topic_id": "topic_ue_004_003",
+        "related_competency_codes": [
+          "4.2"
+        ]
+      },
+      {
+        "id": "q_ue_004_004",
+        "question": "Razumem pomen odgovorne uporabe umetne inteligence.",
+        "type": "yes_no",
+        "related_topic": "Odgovorna in varna uporaba orodij umetne inteligence",
+        "related_topic_id": "topic_ue_004_004",
+        "related_competency_codes": [
+          "2.5",
+          "4.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_005",
+    "title": "Osnove Excela",
+    "short_description": "Učna enota za osnovno uporabo Excela: vmesnik, vnos in urejanje podatkov ter shranjevanje datotek v različnih formatih.",
+    "duration_hours": 8,
+    "keywords": [
+      "Excel",
+      "preglednice",
+      "podatki",
+      "datoteke",
+      "xlsx",
+      "csv",
+      "pdf"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_005_001",
+        "title": "Razumevanje in učinkovita uporaba programskega vmesnika",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_005_002",
+        "title": "Vnašanje, urejanje in hramba podatkov",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_005_003",
+        "title": "Shranjevanje in odpiranje datotek v različnih formatih",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec se znajde v vmesniku Excel in učinkovito uporablja njegove osnovne elemente",
+      "Udeleženec vnaša, ureja in shranjuje podatke v preglednico",
+      "Udeleženec shrani in odpre datoteko v različnih formatih (xlsx, csv, pdf)"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "3.2",
+        "title": "Ustvarjanje digitalnih vsebin",
+        "description": "Ustvarja in ureja vsebino z digitalnimi orodji"
+      },
+      {
+        "code": "5.3",
+        "title": "Ustvarjalna uporaba digitalnih tehnologij",
+        "description": "Uporablja digitalna orodja za reševanje konkretnih nalog"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Osnovno poznavanje računalnika (vklop, uporaba miške, tipkovnice)"
+    ],
+    "knowledge_assessment": "Pisni test",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_005_001",
+        "question": "Znam uporabljati osnovni programski vmesnik Excela.",
+        "type": "yes_no",
+        "related_topic": "Razumevanje in učinkovita uporaba programskega vmesnika",
+        "related_topic_id": "topic_ue_005_001",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_005_002",
+        "question": "Znam vnesti, urediti in shraniti podatke v Excelu.",
+        "type": "yes_no",
+        "related_topic": "Vnašanje, urejanje in hramba podatkov",
+        "related_topic_id": "topic_ue_005_002",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_005_003",
+        "question": "Znam shraniti in odpreti Excel datoteko v različnih formatih.",
+        "type": "yes_no",
+        "related_topic": "Shranjevanje in odpiranje datotek v različnih formatih",
+        "related_topic_id": "topic_ue_005_003",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_006",
+    "title": "Formule in funkcije",
+    "short_description": "Uporaba osnovnih formul in funkcij v Excelu.",
+    "duration_hours": 1,
+    "keywords": [
+      "Excel",
+      "formule",
+      "funkcije",
+      "celice"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_006_001",
+        "title": "Zapisovanje osnovnih formul",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_006_002",
+        "title": "Uporaba osnovnih Excel funkcij",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_006_003",
+        "title": "Razumevanje relativnih in absolutnih sklicev na celice",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna zapisati in urediti osnovno formulo",
+      "Udeleženec zna uporabiti osnovne vgrajene funkcije v Excelu",
+      "Udeleženec razume razliko med relativnim in absolutnim naslovom celice"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "3.2",
+        "title": "Ustvarjanje digitalnih vsebin",
+        "description": "Ustvarja in ureja preglednice z uporabo digitalnih orodij"
+      },
+      {
+        "code": "5.3",
+        "title": "Ustvarjalna uporaba digitalnih tehnologij",
+        "description": "Uporablja digitalna orodja za izračune in reševanje nalog"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Poznavanje osnovnega vmesnika Excela",
+      "Osnovno vnašanje podatkov v preglednico"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_006_001",
+        "question": "Znam zapisati in urediti osnovno formulo v Excelu.",
+        "type": "yes_no",
+        "related_topic": "Zapisovanje osnovnih formul",
+        "related_topic_id": "topic_ue_006_001",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_006_002",
+        "question": "Znam uporabiti osnovne vgrajene funkcije v Excelu.",
+        "type": "yes_no",
+        "related_topic": "Uporaba osnovnih Excel funkcij",
+        "related_topic_id": "topic_ue_006_002",
+        "related_competency_codes": [
+          "3.2",
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_006_003",
+        "question": "Razumem razliko med absolutnim in relativnim naslovom celice.",
+        "type": "yes_no",
+        "related_topic": "Razumevanje relativnih in absolutnih sklicev na celice",
+        "related_topic_id": "topic_ue_006_003",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_007",
+    "title": "Oblikovanje preglednice",
+    "short_description": "Oblikovanje celic, pogojno oblikovanje in priprava preglednic za tisk.",
+    "duration_hours": 0.75,
+    "keywords": [
+      "Excel",
+      "oblikovanje",
+      "pogojno oblikovanje",
+      "tiskanje"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_007_001",
+        "title": "Oblikovanje celic in podatkov v preglednici",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_007_002",
+        "title": "Uporaba osnovnega in pogojnega oblikovanja",
+        "related_competency_codes": [
+          "3.3"
+        ]
+      },
+      {
+        "id": "topic_ue_007_003",
+        "title": "Priprava preglednice za tiskanje",
+        "related_competency_codes": [
+          "3.3"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna oblikovati celice in izboljšati preglednost podatkov",
+      "Udeleženec zna uporabiti pogojno oblikovanje za poudarjanje pomembnih podatkov",
+      "Udeleženec zna pripraviti preglednico za tisk"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "3.2",
+        "title": "Ustvarjanje digitalnih vsebin",
+        "description": "Ustvarja in oblikuje digitalno vsebino z uporabo digitalnih orodij"
+      },
+      {
+        "code": "3.3",
+        "title": "Umeščanje in poustvarjanje digitalnih vsebin",
+        "description": "Ureja in prilagaja digitalne vsebine glede na namen uporabe"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Poznavanje osnovnega vmesnika Excela",
+      "Osnovno vnašanje in urejanje podatkov v preglednici"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_007_001",
+        "question": "Znam oblikovati celice v Excelu.",
+        "type": "yes_no",
+        "related_topic": "Oblikovanje celic in podatkov v preglednici",
+        "related_topic_id": "topic_ue_007_001",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_007_002",
+        "question": "Znam uporabiti pogojno oblikovanje.",
+        "type": "yes_no",
+        "related_topic": "Uporaba osnovnega in pogojnega oblikovanja",
+        "related_topic_id": "topic_ue_007_002",
+        "related_competency_codes": [
+          "3.3"
+        ]
+      },
+      {
+        "id": "q_ue_007_003",
+        "question": "Znam pripraviti preglednico za tisk.",
+        "type": "yes_no",
+        "related_topic": "Priprava preglednice za tiskanje",
+        "related_topic_id": "topic_ue_007_003",
+        "related_competency_codes": [
+          "3.3"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_008",
+    "title": "Delo s podatki",
+    "short_description": "Uvoz, razvrščanje, filtriranje in iskanje podatkov v Excelu.",
+    "duration_hours": 1,
+    "keywords": [
+      "Excel",
+      "podatki",
+      "uvoz",
+      "filtriranje",
+      "razvrščanje"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_008_001",
+        "title": "Uvoz podatkov v Excel",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_008_002",
+        "title": "Razvrščanje podatkov po izbranih kriterijih",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_008_003",
+        "title": "Filtriranje in iskanje podatkov",
+        "related_competency_codes": [
+          "1.3",
+          "5.2"
+        ]
+      },
+      {
+        "id": "topic_ue_008_004",
+        "title": "Iskanje in zamenjava vrednosti v preglednici",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna uvoziti podatke v Excel",
+      "Udeleženec zna razvrščati podatke po različnih kriterijih",
+      "Udeleženec zna filtrirati podatke za lažji pregled",
+      "Udeleženec zna poiskati in zamenjati vrednosti v podatkih"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.3",
+        "title": "Upravljanje podatkov, informacij in digitalnih vsebin",
+        "description": "Organizira, shranjuje in obdeluje podatke v digitalnem okolju"
+      },
+      {
+        "code": "5.2",
+        "title": "Prepoznavanje potreb in tehnoloških rešitev",
+        "description": "Uporablja digitalna orodja za učinkovitejše delo s podatki"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Osnovno delo z Excelom",
+      "Poznavanje vnosa in urejanja podatkov"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_008_001",
+        "question": "Znam uvoziti podatke v Excel.",
+        "type": "yes_no",
+        "related_topic": "Uvoz podatkov v Excel",
+        "related_topic_id": "topic_ue_008_001",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_008_002",
+        "question": "Znam razvrščati podatke po kriterijih.",
+        "type": "yes_no",
+        "related_topic": "Razvrščanje podatkov po izbranih kriterijih",
+        "related_topic_id": "topic_ue_008_002",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_008_003",
+        "question": "Znam filtrirati podatke.",
+        "type": "yes_no",
+        "related_topic": "Filtriranje in iskanje podatkov",
+        "related_topic_id": "topic_ue_008_003",
+        "related_competency_codes": [
+          "1.3",
+          "5.2"
+        ]
+      },
+      {
+        "id": "q_ue_008_004",
+        "question": "Znam poiskati in zamenjati vrednosti v podatkih.",
+        "type": "yes_no",
+        "related_topic": "Iskanje in zamenjava vrednosti v preglednici",
+        "related_topic_id": "topic_ue_008_004",
+        "related_competency_codes": [
+          "5.2"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_009",
+    "title": "Priprava podatkov za analizo",
+    "short_description": "Priprava in strukturiranje podatkov za nadaljnjo analizo.",
+    "duration_hours": 0.75,
+    "keywords": [
+      "Excel",
+      "analiza podatkov",
+      "strukturiranje podatkov",
+      "napake"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_009_001",
+        "title": "Pregled podatkov pred analizo",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_009_002",
+        "title": "Iskanje in popravljanje napak v podatkih",
+        "related_competency_codes": [
+          "5.1"
+        ]
+      },
+      {
+        "id": "topic_ue_009_003",
+        "title": "Strukturiranje podatkov v ustrezno obliko",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_009_004",
+        "title": "Poimenovanje stolpcev in delovnih listov",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna prepoznati pogoste napake v podatkih",
+      "Udeleženec zna podatke strukturirati za nadaljnjo analizo",
+      "Udeleženec zna smiselno poimenovati stolpce in delovne liste",
+      "Udeleženec razume pomen urejenih podatkov za kakovostno analizo"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.3",
+        "title": "Upravljanje podatkov, informacij in digitalnih vsebin",
+        "description": "Ureja, organizira in pripravlja podatke za nadaljnjo uporabo"
+      },
+      {
+        "code": "5.1",
+        "title": "Reševanje tehničnih težav",
+        "description": "Prepoznava napake in težave pri delu z digitalnimi podatki"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Osnovno delo s podatki v Excelu",
+      "Poznavanje razvrščanja in filtriranja podatkov"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_009_001",
+        "question": "Znam pregledati podatke pred začetkom analize.",
+        "type": "yes_no",
+        "related_topic": "Pregled podatkov pred analizo",
+        "related_topic_id": "topic_ue_009_001",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_009_002",
+        "question": "Znam poiskati napake v podatkih.",
+        "type": "yes_no",
+        "related_topic": "Iskanje in popravljanje napak v podatkih",
+        "related_topic_id": "topic_ue_009_002",
+        "related_competency_codes": [
+          "5.1"
+        ]
+      },
+      {
+        "id": "q_ue_009_003",
+        "question": "Znam strukturirati podatke v ustrezno obliko za analizo.",
+        "type": "yes_no",
+        "related_topic": "Strukturiranje podatkov v ustrezno obliko",
+        "related_topic_id": "topic_ue_009_003",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_009_004",
+        "question": "Znam ustrezno poimenovati stolpce in delovne liste.",
+        "type": "yes_no",
+        "related_topic": "Poimenovanje stolpcev in delovnih listov",
+        "related_topic_id": "topic_ue_009_004",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_010",
+    "title": "Uvod v vrtilne tabele",
+    "short_description": "Razumevanje namena in osnovne uporabe vrtilnih tabel.",
+    "duration_hours": 1,
+    "keywords": [
+      "Excel",
+      "vrtilne tabele",
+      "podatki",
+      "analiza"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_010_001",
+        "title": "Namen vrtilnih tabel",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_010_002",
+        "title": "Priprava podatkov za vrtilno tabelo",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_010_003",
+        "title": "Ustvarjanje osnovne vrtilne tabele",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_010_004",
+        "title": "Upravljanje področij vrtilne tabele",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec razume namen vrtilnih tabel",
+      "Udeleženec zna ustvariti osnovno vrtilno tabelo",
+      "Udeleženec zna uporabljati področja vrtilne tabele",
+      "Udeleženec zna pregledno povzeti podatke s pomočjo vrtilne tabele"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.3",
+        "title": "Upravljanje podatkov, informacij in digitalnih vsebin",
+        "description": "Organizira in obdeluje podatke z digitalnimi orodji"
+      },
+      {
+        "code": "5.3",
+        "title": "Ustvarjalna uporaba digitalnih tehnologij",
+        "description": "Uporablja digitalna orodja za analizo in reševanje praktičnih nalog"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Poznavanje osnovnega dela s podatki v Excelu",
+      "Osnovno razumevanje urejenih tabel"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_010_001",
+        "question": "Razumem namen vrtilnih tabel.",
+        "type": "yes_no",
+        "related_topic": "Namen vrtilnih tabel",
+        "related_topic_id": "topic_ue_010_001",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_010_002",
+        "question": "Znam pripraviti podatke za izdelavo vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Priprava podatkov za vrtilno tabelo",
+        "related_topic_id": "topic_ue_010_002",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_010_003",
+        "question": "Znam ustvariti osnovno vrtilno tabelo.",
+        "type": "yes_no",
+        "related_topic": "Ustvarjanje osnovne vrtilne tabele",
+        "related_topic_id": "topic_ue_010_003",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_010_004",
+        "question": "Znam upravljati področja vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Upravljanje področij vrtilne tabele",
+        "related_topic_id": "topic_ue_010_004",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_011",
+    "title": "Napredne vrtilne tabele",
+    "short_description": "Napredna uporaba vrtilnih tabel za primerjavo in prikaz podatkov.",
+    "duration_hours": 1,
+    "keywords": [
+      "Excel",
+      "vrtilne tabele",
+      "deleži",
+      "odstotki",
+      "primerjava"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_011_001",
+        "title": "Združevanje podatkov po različnih kriterijih",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "topic_ue_011_002",
+        "title": "Prikaz deležev in odstotkov v vrtilnih tabelah",
+        "related_competency_codes": [
+          "1.3",
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_011_003",
+        "title": "Primerjava več skupin podatkov",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "topic_ue_011_004",
+        "title": "Prilagajanje prikaza rezultatov v vrtilni tabeli",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna združevati podatke po različnih kriterijih",
+      "Udeleženec zna prikazati deleže in odstotke",
+      "Udeleženec zna primerjati več skupin podatkov",
+      "Udeleženec zna prilagoditi prikaz rezultatov v vrtilni tabeli"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "1.3",
+        "title": "Upravljanje podatkov, informacij in digitalnih vsebin",
+        "description": "Napredno organizira, povzema in obdeluje podatke z digitalnimi orodji"
+      },
+      {
+        "code": "5.3",
+        "title": "Ustvarjalna uporaba digitalnih tehnologij",
+        "description": "Uporablja digitalna orodja za primerjavo, analizo in interpretacijo podatkov"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Poznavanje osnovne uporabe vrtilnih tabel",
+      "Osnovno delo s podatki v Excelu"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_011_001",
+        "question": "Znam združevati podatke po različnih kriterijih v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_topic": "Združevanje podatkov po različnih kriterijih",
+        "related_topic_id": "topic_ue_011_001",
+        "related_competency_codes": [
+          "1.3"
+        ]
+      },
+      {
+        "id": "q_ue_011_002",
+        "question": "Znam prikazati deleže in odstotke v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_topic": "Prikaz deležev in odstotkov v vrtilnih tabelah",
+        "related_topic_id": "topic_ue_011_002",
+        "related_competency_codes": [
+          "1.3",
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_011_003",
+        "question": "Znam primerjati več skupin podatkov.",
+        "type": "yes_no",
+        "related_topic": "Primerjava več skupin podatkov",
+        "related_topic_id": "topic_ue_011_003",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      },
+      {
+        "id": "q_ue_011_004",
+        "question": "Znam prilagoditi prikaz rezultatov v vrtilni tabeli.",
+        "type": "yes_no",
+        "related_topic": "Prilagajanje prikaza rezultatov v vrtilni tabeli",
+        "related_topic_id": "topic_ue_011_004",
+        "related_competency_codes": [
+          "5.3"
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "ue_012",
+    "title": "Vizualizacija podatkov",
+    "short_description": "Ustvarjanje grafov in priprava rezultatov za predstavitev.",
+    "duration_hours": 1,
+    "keywords": [
+      "Excel",
+      "grafi",
+      "vizualizacija",
+      "predstavitev",
+      "interaktivni filter"
+    ],
+    "content_topics": [
+      {
+        "id": "topic_ue_012_001",
+        "title": "Ustvarjanje grafov iz podatkov",
+        "related_competency_codes": [
+          "3.1",
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_012_002",
+        "title": "Ustvarjanje grafov iz vrtilnih tabel",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_012_003",
+        "title": "Uporaba interaktivnih filtrov",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "topic_ue_012_004",
+        "title": "Oblikovanje in izvoz rezultatov za predstavitev",
+        "related_competency_codes": [
+          "3.1",
+          "3.2"
+        ]
+      }
+    ],
+    "acquired_competencies": [
+      "Udeleženec zna ustvariti graf iz podatkov ali vrtilne tabele",
+      "Udeleženec razume uporabo interaktivnega filtra",
+      "Udeleženec zna oblikovati rezultate za predstavitev",
+      "Udeleženec zna izvoziti rezultate v primerni obliki za predstavitev"
+    ],
+    "digcomp_competencies": [
+      {
+        "code": "3.1",
+        "title": "Razvijanje digitalnih vsebin",
+        "description": "Ustvarja in prilagaja digitalne vsebine za predstavitev informacij"
+      },
+      {
+        "code": "3.2",
+        "title": "Ustvarjanje digitalnih vsebin",
+        "description": "Ustvarja vizualne prikaze in digitalne vsebine z uporabo digitalnih orodij"
+      }
+    ],
+    "delivery_mode": "V živo",
+    "provider": "Šolski center Kungota",
+    "target_audience": "Nad 50 let",
+    "prerequisites": [
+      "Poznavanje osnovnega dela s podatki v Excelu",
+      "Osnovno razumevanje vrtilnih tabel je priporočljivo"
+    ],
+    "knowledge_assessment": "Praktična naloga",
+    "certificate": "Mikrocertifikat",
+    "self_assessment_questions": [
+      {
+        "id": "q_ue_012_001",
+        "question": "Znam ustvariti graf iz podatkov ali vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Ustvarjanje grafov iz podatkov",
+        "related_topic_id": "topic_ue_012_001",
+        "related_competency_codes": [
+          "3.1",
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_012_002",
+        "question": "Znam ustvariti graf iz vrtilne tabele.",
+        "type": "yes_no",
+        "related_topic": "Ustvarjanje grafov iz vrtilnih tabel",
+        "related_topic_id": "topic_ue_012_002",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_012_003",
+        "question": "Razumem uporabo interaktivnega filtra.",
+        "type": "yes_no",
+        "related_topic": "Uporaba interaktivnih filtrov",
+        "related_topic_id": "topic_ue_012_003",
+        "related_competency_codes": [
+          "3.2"
+        ]
+      },
+      {
+        "id": "q_ue_012_004",
+        "question": "Znam oblikovati in izvoziti rezultate za predstavitev.",
+        "type": "yes_no",
+        "related_topic": "Oblikovanje in izvoz rezultatov za predstavitev",
+        "related_topic_id": "topic_ue_012_004",
+        "related_competency_codes": [
+          "3.1",
+          "3.2"
+        ]
+      }
+    ]
+  }
+]

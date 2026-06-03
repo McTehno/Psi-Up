@@ -5,6 +5,7 @@ import questionnaireIllustration from '../../assets/questionnaire-illustration.p
 import EmptyState from '../../components/common/EmptyState'
 import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
+import AuthRequiredDialog from '../../components/common/AuthRequiredDialog'
 import { DetailTags } from '../../components/detail'
 import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import {
@@ -12,17 +13,18 @@ import {
   LearningPathOverviewCard,
   type LearningPathMountainNode,
 } from '../../features/learning-paths/components/LearningPathMountain'
-import { getLearningPathDetail } from '../../services/learning-path-service'
-import type { LearningPathDetailResponse } from '../../types/learning-path'
-import type { ModuleReferenceResponse, ModuleResponse } from '../../types/module'
+import { useUserProgressActions } from '../../hooks/useUserProgressActions'
+import { useUserProgressState } from '../../hooks/useUserProgressState'
 import { getSessionAssessmentResult } from '../../services/assessment-session-service'
+import { getLearningPathDetail } from '../../services/learning-path-service'
 import type {
   AssessmentResultResponse,
   AssessmentStatus,
 } from '../../types/assessment'
+import type { LearningPathDetailResponse, LearningPathStepResponse } from '../../types/learning-path'
+import type { ModuleDetailResponse } from '../../types/module'
 
 const MAX_VISIBLE_NODES = 7
-
 
 type BackendEntity = {
   id?: string
@@ -33,11 +35,77 @@ function getBackendEntityId(entity: BackendEntity) {
   return entity.id ?? entity._id
 }
 
-function getModuleReferenceById(
-  moduleId: string,
-  references: ModuleReferenceResponse[],
+function getTextOrFallback(
+  value: string | null | undefined,
+  fallback: string,
 ) {
-  return references.find((reference) => reference.module_id === moduleId)
+  return value?.trim() || fallback
+}
+
+function getStringArrayOrEmpty(value: unknown) {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function getLearningPathStepKind(step: LearningPathStepResponse) {
+  return step.step_type ?? step.type ?? 'module'
+}
+
+function getLearningPathStepModuleId(step: LearningPathStepResponse) {
+  return step.module_id ?? step.ref_id ?? null
+}
+
+function getStepOrder(step: LearningPathStepResponse, index: number) {
+  return step.order ?? index + 1
+}
+
+function createParallelGroupOrderMap(steps: LearningPathStepResponse[]) {
+  const parallelGroupOrderMap = new Map<string, number>()
+
+  steps.forEach((step, index) => {
+    if (getLearningPathStepKind(step) !== 'module') {
+      return
+    }
+
+    const parallelGroup = step.parallel_group?.trim()
+
+    if (!parallelGroup) {
+      return
+    }
+
+    const stepOrder = getStepOrder(step, index)
+    const currentOrder = parallelGroupOrderMap.get(parallelGroup)
+
+    if (currentOrder === undefined || stepOrder < currentOrder) {
+      parallelGroupOrderMap.set(parallelGroup, stepOrder)
+    }
+  })
+
+  return parallelGroupOrderMap
+}
+
+function getMountainNodeOrder(
+  step: LearningPathStepResponse | undefined,
+  fallbackOrder: number,
+  parallelGroupOrderMap: Map<string, number>,
+) {
+  if (!step) {
+    return fallbackOrder
+  }
+
+  const parallelGroup = step.parallel_group?.trim()
+
+  if (parallelGroup) {
+    return parallelGroupOrderMap.get(parallelGroup) ?? step.order ?? fallbackOrder
+  }
+
+  return step.order ?? fallbackOrder
 }
 
 function getModuleAssessmentStatus(
@@ -70,53 +138,155 @@ function getModuleAssessmentStatus(
   return null
 }
 
+function isAssessmentPositionModule(
+  moduleId: string,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult) {
+    return false
+  }
+
+  if (assessmentResult.start_module_id) {
+    return assessmentResult.start_module_id === moduleId
+  }
+
+  return assessmentResult.recommended_next_modules[0] === moduleId
+}
+
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,
   assessmentResult: AssessmentResultResponse | null = null,
 ): LearningPathMountainNode[] {
-  const moduleDetails = learningPath.module_details ?? []
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+
+  const steps = Array.isArray(learningPath.steps) ? learningPath.steps : []
+  const parallelGroupOrderMap = createParallelGroupOrderMap(steps)
+
+  const moduleById = new Map(
+    moduleDetails
+      .map((module) => {
+        const moduleId = getBackendEntityId(module as BackendEntity)
+
+        if (!moduleId) {
+          return null
+        }
+
+        return [moduleId, module] as const
+      })
+      .filter(
+        (entry): entry is readonly [string, ModuleDetailResponse] =>
+          entry !== null,
+      ),
+  )
+
+  const usedModuleIds = new Set<string>()
   const nodes: LearningPathMountainNode[] = []
 
-  moduleDetails.forEach((module: ModuleResponse, index) => {
-    const moduleId = getBackendEntityId(module as BackendEntity)
+  steps.forEach((step, stepIndex) => {
+    if (getLearningPathStepKind(step) !== 'module') {
+      return
+    }
+
+    const moduleId = getLearningPathStepModuleId(step)
 
     if (!moduleId) {
       return
     }
 
-    const moduleReference = getModuleReferenceById(
-      moduleId,
-      learningPath.modules ?? [],
-    )
+    const module = moduleById.get(moduleId)
+
+    if (!module) {
+      return
+    }
+
+    usedModuleIds.add(moduleId)
+
+    const parallelGroup = step.parallel_group?.trim() || null
 
     nodes.push({
       id: moduleId,
-      order: moduleReference?.order ?? index + 1,
-      title: module.title,
-      description: module.short_description,
+      order: getMountainNodeOrder(step, stepIndex + 1, parallelGroupOrderMap),
+      title: getTextOrFallback(module.title, 'Neimenovan modul'),
+      description: getTextOrFallback(
+        module.short_description,
+        'Opis modula trenutno ni na voljo.',
+      ),
       moduleId,
       durationHours: module.duration_hours,
-      isRequired: moduleReference?.is_required ?? false,
-      parallelGroup: moduleReference?.parallel_group ?? null,
+      isRequired: step.is_required ?? false,
+      parallelGroup,
       assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
+      isAssessmentPosition: isAssessmentPositionModule(
+        moduleId,
+        assessmentResult,
+      ),
+    })
+  })
+
+  moduleDetails.forEach((module, index) => {
+    const moduleId = getBackendEntityId(module as BackendEntity)
+
+    if (!moduleId || usedModuleIds.has(moduleId)) {
+      return
+    }
+
+    nodes.push({
+      id: moduleId,
+      order: steps.length + index + 1,
+      title: getTextOrFallback(module.title, 'Neimenovan modul'),
+      description: getTextOrFallback(
+        module.short_description,
+        'Opis modula trenutno ni na voljo.',
+      ),
+      moduleId,
+      durationHours: module.duration_hours,
+      isRequired: false,
+      parallelGroup: null,
+      assessmentStatus: getModuleAssessmentStatus(moduleId, assessmentResult),
+      isAssessmentPosition: isAssessmentPositionModule(
+        moduleId,
+        assessmentResult,
+      ),
     })
   })
 
   return nodes
-    .sort((firstNode, secondNode) => firstNode.order - secondNode.order)
+    .sort((firstNode, secondNode) => {
+      if (firstNode.order !== secondNode.order) {
+        return firstNode.order - secondNode.order
+      }
+
+      const firstParallelGroup = firstNode.parallelGroup ?? ''
+      const secondParallelGroup = secondNode.parallelGroup ?? ''
+
+      if (firstParallelGroup !== secondParallelGroup) {
+        return firstParallelGroup.localeCompare(secondParallelGroup, 'sl')
+      }
+
+      return firstNode.title.localeCompare(secondNode.title, 'sl')
+    })
     .slice(0, MAX_VISIBLE_NODES)
 }
 
 function getLearningPathModuleIds(learningPath: LearningPathDetailResponse) {
-  const referenceModuleIds = (learningPath.modules ?? [])
-    .map((moduleReference) => moduleReference.module_id)
+  const steps = Array.isArray(learningPath.steps) ? learningPath.steps : []
+
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+
+  const stepModuleIds = steps
+    .filter((step) => getLearningPathStepKind(step) === 'module')
+    .map(getLearningPathStepModuleId)
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 
-  if (referenceModuleIds.length > 0) {
-    return referenceModuleIds
+  if (stepModuleIds.length > 0) {
+    return stepModuleIds
   }
 
-  return (learningPath.module_details ?? [])
+  return moduleDetails
     .map((module) => getBackendEntityId(module as BackendEntity))
     .filter((moduleId): moduleId is string => Boolean(moduleId))
 }
@@ -141,20 +311,13 @@ function isLearningPathCompletedByAssessment(
   )
 }
 
-function formatDuration(
-  durationHours?: number | null,
-  durationMin?: number | null,
-) {
+function formatDuration(durationHours?: number | null) {
   if (durationHours != null) {
     if (durationHours === 1) {
       return '1 h'
     }
 
     return `${durationHours} h`
-  }
-
-  if (durationMin != null) {
-    return `${durationMin} min`
   }
 
   return 'Ni določeno'
@@ -168,7 +331,11 @@ function getLearningPathEntityId(
 }
 
 function getLearningUnitCount(learningPath: LearningPathDetailResponse) {
-  return (learningPath.module_details ?? []).reduce(
+  const moduleDetails = Array.isArray(learningPath.module_details)
+    ? learningPath.module_details
+    : []
+
+  return moduleDetails.reduce(
     (totalCount, module) => totalCount + (module.learning_units?.length ?? 0),
     0,
   )
@@ -182,11 +349,42 @@ function LearningPathDetailPage() {
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isCompleted, setIsCompleted] = useState(false)
-
   const [assessmentResult, setAssessmentResult] =
     useState<AssessmentResultResponse | null>(null)
   const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
+
+  const learningPathContentId = useMemo(() => {
+    if (!learningPath) {
+      return undefined
+    }
+
+    const contentId = getLearningPathEntityId(learningPath, learningPathId)
+    return contentId || undefined
+  }, [learningPath, learningPathId])
+
+  const {
+    isFavorite: initialIsFavorite,
+    isSaved: initialIsSaved,
+    isCompleted: initialIsCompleted,
+  } = useUserProgressState({
+    contentId: learningPathContentId,
+    contentType: 'learning_path',
+  })
+
+  const {
+    isFavorite: progressIsFavorite,
+    isSaved: progressIsSaved,
+    errorMessage: progressErrorMessage,
+    clearError: clearProgressError,
+    toggleAction,
+  } = useUserProgressActions({
+    contentId: learningPathContentId,
+    contentType: 'learning_path',
+    initialIsFavorite,
+    initialIsSaved,
+    initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
+  })
+
 
   useEffect(() => {
     let isActive = true
@@ -208,23 +406,25 @@ function LearningPathDetailPage() {
           return
         }
 
-      const targetId = getLearningPathEntityId(learningPathDetail, learningPathId)
+        const targetId = getLearningPathEntityId(
+          learningPathDetail,
+          learningPathId,
+        )
 
-      const sessionAssessmentResult =
-        getSessionAssessmentResult('learning_path', targetId) ??
-        (targetId !== learningPathId
-          ? getSessionAssessmentResult('learning_path', learningPathId)
-          : null)
+        const sessionAssessmentResult =
+          getSessionAssessmentResult('learning_path', targetId) ??
+          (targetId !== learningPathId
+            ? getSessionAssessmentResult('learning_path', learningPathId)
+            : null)
 
-      const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
-        learningPathDetail,
-        sessionAssessmentResult,
-      )
+        const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
+          learningPathDetail,
+          sessionAssessmentResult,
+        )
 
-      setLearningPath(learningPathDetail)
-      setAssessmentResult(sessionAssessmentResult)
-      setIsCompletedByAssessment(nextIsCompletedByAssessment)
-      setIsCompleted(nextIsCompletedByAssessment)
+        setLearningPath(learningPathDetail)
+        setAssessmentResult(sessionAssessmentResult)
+        setIsCompletedByAssessment(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
           return
@@ -271,6 +471,25 @@ function LearningPathDetailPage() {
     navigate(`/assessment?target_type=learning_path&target_id=${targetId}`)
   }
 
+  async function handleFavoriteClick() {
+    if (!learningPathContentId) {
+      return false
+    }
+
+    const nextState = await toggleAction('favorite')
+    return Boolean(nextState)
+  }
+
+  async function handleSaveClick() {
+    if (!learningPathContentId) {
+      return false
+    }
+
+    const nextState = await toggleAction('save')
+    return Boolean(nextState)
+  }
+
+
   if (isLoading) {
     return (
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
@@ -294,35 +513,34 @@ function LearningPathDetailPage() {
     )
   }
 
-  if (!learningPath || mountainNodes.length === 0) {
+  if (!learningPath) {
     return (
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <EmptyState
-            title="Ni modulov"
-            message="Ta učna pot trenutno nima modulov za prikaz."
+            title="Učna pot ni najdena"
+            message="Učna pot, ki jo iščete, ne obstaja ali pa je bila izbrisana."
           />
         </div>
       </main>
     )
   }
 
+  const learningPathTitle = getTextOrFallback(
+    learningPath.title,
+    'Neimenovana učna pot',
+  )
+  const learningPathDescription = getTextOrFallback(
+    learningPath.short_description,
+    'Opis trenutno ni na voljo.',
+  )
+  const learningPathKeywords = getStringArrayOrEmpty(learningPath.keywords)
   const moduleCount =
-    learningPath.module_details?.length ?? learningPath.modules?.length ?? 0
+  learningPath.module_details?.length ?? learningPath.steps?.length ?? 0
   const learningUnitCount = getLearningUnitCount(learningPath)
   const hiddenNodeCount = Math.max(moduleCount - MAX_VISIBLE_NODES, 0)
-
-  function handleFavoriteClick() {
-    // TODO: priklop na user-progress-service, ko bo na voljo userId
-  }
-
-  function handleSaveClick() {
-    // TODO: priklop na user-progress-service, ko bo na voljo userId
-  }
-
-  function handleCompletedChange(nextIsCompleted: boolean) {
-    setIsCompleted(nextIsCompleted)
-  }
+  const hasMountainNodes = mountainNodes.length > 0
+  const canStartQuestionnaire = moduleCount > 0
 
   return (
     <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
@@ -333,57 +551,60 @@ function LearningPathDetailPage() {
           </p>
 
           <h1 className="mt-5 max-w-5xl font-serif text-[clamp(3.2rem,5.8vw,6.4rem)] leading-[0.92] tracking-[-0.035em] text-[var(--color-brown-900)]">
-            {learningPath.title}
+            {learningPathTitle}
           </h1>
 
           <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--color-brown-600)]">
-            {learningPath.short_description}
+            {learningPathDescription}
           </p>
 
           <div className="mt-7">
             <DetailTags
-              tags={learningPath.keywords || []}
+              tags={learningPathKeywords}
               emptyMessage="Ni dodanih ključnih besed."
             />
           </div>
         </section>
 
-        <section className="mb-4 min-[1500px]:hidden">
+        <section className="mb-6">
           <LearningPathOverviewCard
-            durationLabel={formatDuration(
-              learningPath.duration_hours,
-              learningPath.duration_min,
-            )}
+            durationLabel={formatDuration(learningPath.duration_hours)}
             moduleCount={moduleCount}
             learningUnitCount={learningUnitCount}
             hiddenNodeCount={hiddenNodeCount}
-            isCompleted={isCompleted}
+            isFavorite={progressIsFavorite}
+            isSaved={progressIsSaved}
             onFavoriteClick={handleFavoriteClick}
             onSaveClick={handleSaveClick}
-            onCompletedChange={handleCompletedChange}
           />
         </section>
 
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">
-            <LearningPathMountain
-              nodes={mountainNodes}
-              durationLabel={formatDuration(
-                learningPath.duration_hours,
-                learningPath.duration_min,
-              )}
-              moduleCount={moduleCount}
-              learningUnitCount={learningUnitCount}
-              isCompleted={isCompleted}
-              celebrateCompletedOnMount={isCompletedByAssessment}
-              onFavoriteClick={handleFavoriteClick}
-              onSaveClick={handleSaveClick}
-              onCompletedChange={handleCompletedChange}
-              className="h-full"
-            />
+            {hasMountainNodes ? (
+              <LearningPathMountain
+                nodes={mountainNodes}
+                durationLabel={formatDuration(learningPath.duration_hours)}
+                moduleCount={moduleCount}
+                learningUnitCount={learningUnitCount}
+                isFavorite={progressIsFavorite}
+                isSaved={progressIsSaved}
+                celebrateCompletedOnMount={isCompletedByAssessment}
+                onFavoriteClick={handleFavoriteClick}
+                onSaveClick={handleSaveClick}
+                className="h-full"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
+                <EmptyState
+                  title="Ni modulov"
+                  message="Ta učna pot trenutno nima modulov za prikaz."
+                />
+              </div>
+            )}
           </div>
 
-          <div className="pointer-events-none absolute inset-y-6 right-6 z-50 hidden w-[420px] min-[1500px]:block">
+          <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
             <CollapsibleChatPanel
               title="Chat pride kasneje"
               description="Ta prostor je rezerviran za pogovor z asistentom. Za zdaj je fokus na prikazu učne poti in povezavah do modulov."
@@ -416,19 +637,27 @@ function LearningPathDetailPage() {
                 </h2>
               </div>
 
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
-                Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj minut
-                in preverite svoje znanje.
-              </p>
+              {canStartQuestionnaire ? (
+                <>
+                  <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
+                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
+                    nekaj minut in preverite svoje znanje.
+                  </p>
 
-              <button
-                type="button"
-                onClick={handleStartQuestionnaire}
-                className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
-              >
-                Odpri vprašalnik
-                <ExternalLink className="h-4 w-4" />
-              </button>
+                  <button
+                    type="button"
+                    onClick={handleStartQuestionnaire}
+                    className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
+                  >
+                    Odpri vprašalnik
+                    <ExternalLink className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
+                  Vprašalnik za to učno pot še ni pripravljen.
+                </p>
+              )}
             </div>
 
             <img
@@ -440,6 +669,11 @@ function LearningPathDetailPage() {
           </div>
         </section>
       </div>
+
+      <AuthRequiredDialog
+        isOpen={progressErrorMessage === 'AUTH_REQUIRED'}
+        onClose={clearProgressError}
+      />
     </main>
   )
 }

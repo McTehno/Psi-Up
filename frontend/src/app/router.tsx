@@ -12,7 +12,7 @@ import LearningUnitDetailPage from '../pages/LearningUnitDetailPage'
 import LoginPage from '../pages/LoginPage'
 import HomePageBackup from '../pages/HomePageBackup'
 import DashboardPage from '../pages/DashboardPage'
-
+import AboutPage from '../pages/AboutPage'
 
 function RootLayout() {
   return (
@@ -37,6 +37,10 @@ export const router = createBrowserRouter([
         path: 'home-backup',
         element: <HomePageBackup />,
       },
+      {
+  path: 'about',
+  element: <AboutPage />,
+},
       {
         path: 'search',
         element: <SearchPage />,

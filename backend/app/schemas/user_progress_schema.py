@@ -1,45 +1,114 @@
-from typing import List, Optional
+from datetime import datetime
+from typing import List, Literal, Optional, Union
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+
+ContentType = Literal["learning_path", "module", "learning_unit"]
+QuestionnaireTargetType = Literal["learning_path", "module", "learning_unit"]
+
+
+class ContentProgressResponse(BaseModel):
+    """
+    Shema za shranjene, priljubljene ali dokončane vsebine.
+
+    V novi strukturi so ID-ji organizirani po tipu vsebine.
+    """
+
+    learning_path_ids: List[str] = Field(default_factory=list)
+    module_ids: List[str] = Field(default_factory=list)
+    learning_unit_ids: List[str] = Field(default_factory=list)
 
 
 class CurrentPositionResponse(BaseModel):
     """
     Shema za trenutno pozicijo uporabnika.
 
-    Hrani informacijo, kje se uporabnik trenutno nahaja
-    znotraj določene učne poti, modula ali učne enote.
+    Hrani informacijo, kje uporabnik nadaljuje učenje
+    znotraj določene učne poti.
     """
 
-    learning_path_id: Optional[str] = None
+    learning_path_id: str
     current_module_id: Optional[str] = None
     current_learning_unit_id: Optional[str] = None
+    updated_at: Optional[datetime] = None
+
+
+class QuestionnaireAnswerResponse(BaseModel):
+    """
+    Shema za posamezen shranjen odgovor uporabnika.
+
+    Vprašanja se pri generiranju vprašalnika deduplicirajo po normalizirani
+    vsebini vprašanja. V uporabnikov progress shranimo vprašanje, odgovor
+    in povezave na učno pot, modul, učno enoto, topic in kompetence.
+    
+    """
+
+    question_id: str
+    question: str
+    type: str = "yes_no"
+    answer: Union[bool, str, int, float, List[str], None] = None
+    was_answered: bool = True
+
+    learning_path_id: Optional[str] = None
+    module_id: Optional[str] = None
+    learning_unit_id: Optional[str] = None
+
+    topic_id: Optional[str] = None
+    competency_codes: List[str] = Field(default_factory=list)
+
+    answered_at: Optional[datetime] = None
+
+
+class QuestionnaireAnswersResponse(BaseModel):
+    """
+    Shema za zadnje veljavno stanje odgovorov za določen vprašalnik.
+
+    Za en target_type + target_id hranimo samo en zapis.
+    Ne hranimo zgodovine vseh poskusov.
+    """
+
+    target_type: QuestionnaireTargetType
+    target_id: str
+    last_submitted_at: Optional[datetime] = None
+    answers: List[QuestionnaireAnswerResponse] = Field(default_factory=list)
+
+class SaveQuestionnaireAnswersRequest(BaseModel):
+    """
+    Shema za shranjevanje odgovorov vprašalnika v users.progress.
+
+    Uporabnik se ne pošilja v request body.
+    Backend ga določi iz JWT tokena.
+
+    Pomembno:
+    - type ni vedno yes_no.
+    - answer ni vedno bool.
+    - Pri implementaciji logike moramo paziti, da se yes/no pravila
+      uporabljajo samo za bool odgovore, ne za druge tipe vprašanj.
+    """
+
+    target_type: QuestionnaireTargetType
+    target_id: str
+    answers: List[QuestionnaireAnswerResponse] = Field(default_factory=list)
 
 
 class UserProgressResponse(BaseModel):
     """
     Shema za napredek uporabnika.
 
-    Hrani shranjene, priljubljene in dokončane vsebine
-    ter trenutno pozicijo uporabnika.
+    Ta response predstavlja progress strukturo, ki je shranjena
+    znotraj users dokumenta.
     """
 
-    id: str = Field(alias="_id")
+    id: Optional[str] = Field(default=None, alias="_id")
     user_id: str
 
-    saved_learning_paths: List[str] = Field(default_factory=list)
-    saved_modules: List[str] = Field(default_factory=list)
-    saved_learning_units: List[str] = Field(default_factory=list)
-
-    favorite_learning_paths: List[str] = Field(default_factory=list)
-    favorite_modules: List[str] = Field(default_factory=list)
-    favorite_learning_units: List[str] = Field(default_factory=list)
-
-    completed_learning_paths: List[str] = Field(default_factory=list)
-    completed_modules: List[str] = Field(default_factory=list)
-    completed_learning_units: List[str] = Field(default_factory=list)
+    saved: ContentProgressResponse = Field(default_factory=ContentProgressResponse)
+    favorites: ContentProgressResponse = Field(default_factory=ContentProgressResponse)
+    completed: ContentProgressResponse = Field(default_factory=ContentProgressResponse)
 
     current_positions: List[CurrentPositionResponse] = Field(default_factory=list)
+    questionnaire_answers: List[QuestionnaireAnswersResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -48,12 +117,8 @@ class UserProgressCreateRequest(BaseModel):
     """
     Shema za ustvarjanje začetnega napredka uporabnika.
 
-    Uporabi se, ko se za novega uporabnika prvič ustvari
-    prazen zapis napredka.
-
-    Opomba:
-    To shemo lahko kasneje odstranimo, če progress vedno ustvarjamo
-    avtomatsko ob ustvarjanju uporabniškega profila.
+    V novi strukturi se progress praviloma ustvari avtomatsko
+    znotraj users dokumenta.
     """
 
     user_id: str
@@ -68,7 +133,7 @@ class SaveContentRequest(BaseModel):
     """
 
     content_id: str
-    content_type: str
+    content_type: ContentType
 
 
 class FavoriteContentRequest(BaseModel):
@@ -80,7 +145,7 @@ class FavoriteContentRequest(BaseModel):
     """
 
     content_id: str
-    content_type: str
+    content_type: ContentType
 
 
 class CompleteContentRequest(BaseModel):
@@ -92,7 +157,7 @@ class CompleteContentRequest(BaseModel):
     """
 
     content_id: str
-    content_type: str
+    content_type: ContentType
 
 
 class UpdateCurrentPositionRequest(BaseModel):
@@ -103,19 +168,6 @@ class UpdateCurrentPositionRequest(BaseModel):
     Backend ga določi iz JWT tokena.
     """
 
-    learning_path_id: Optional[str] = None
+    learning_path_id: str
     current_module_id: Optional[str] = None
     current_learning_unit_id: Optional[str] = None
-
-
-"""
-Opomba:
-content_type uporabljamo z vrednostmi:
-
-learning_path
-module
-learning_unit
-
-Kasneje lahko to izboljšamo z Enum, ampak za trenutno verzijo
-je string dovolj pregleden.
-"""

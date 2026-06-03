@@ -32,7 +32,7 @@ class LearningPathRepository:
 
     async def get_learning_path_by_id(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> Optional[Dict[str, Any]]:
         """
         Vrne eno učno pot glede na njen _id.
@@ -44,6 +44,38 @@ class LearningPathRepository:
         collection = self.database[self.collection_name]
 
         return collection.find_one({"_id": learning_path_id})
+
+    async def get_learning_paths_by_module_id(
+        self,
+        module_id: str,
+        limit: int = 6,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vrne učne poti, ki vsebujejo izbrani modul.
+
+        V novi strukturi učna pot vsebuje steps.
+        Modul je step z:
+        - type = "module"
+        - ref_id = module_id
+        """
+
+        if not module_id:
+            return []
+
+        collection = self.database[self.collection_name]
+
+        return list(
+            collection.find(
+                {
+                    "steps": {
+                        "$elemMatch": {
+                            "type": "module",
+                            "ref_id": module_id,
+                        }
+                    }
+                }
+            ).limit(limit)
+        )
 
     async def search_learning_paths(self, query: str) -> List[Dict[str, Any]]:
         """
@@ -73,15 +105,16 @@ class LearningPathRepository:
 
         return list(collection.find(search_filter))
 
-    async def get_module_references_for_learning_path(
+    async def get_step_references_for_learning_path(
         self,
-        learning_path_id: str
+        learning_path_id: str,
     ) -> List[Dict[str, Any]]:
         """
-        Vrne reference modulov znotraj učne poti.
+        Vrne vse korake znotraj učne poti.
 
-        TODO:
-        - Kasneje po potrebi urediti prikaz glede na order.
+        Korak je lahko:
+        - module
+        - learning_unit
         """
 
         learning_path = await self.get_learning_path_by_id(learning_path_id)
@@ -89,37 +122,68 @@ class LearningPathRepository:
         if not learning_path:
             return []
 
-        return learning_path.get("modules", [])
+        return learning_path.get("steps", [])
+
+    async def get_module_references_for_learning_path(
+        self,
+        learning_path_id: str,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vrne samo module znotraj učne poti.
+
+        Compatibility metoda za starejšo service logiko.
+        Nova struktura uporablja steps, zato tukaj filtriramo samo korake tipa module.
+        """
+
+        steps = await self.get_step_references_for_learning_path(learning_path_id)
+
+        module_steps = []
+
+        for step in steps:
+            if step.get("type") != "module":
+                continue
+
+            module_steps.append(
+                {
+                    "module_id": step.get("ref_id"),
+                    "order": step.get("order"),
+                    "parallel_group": step.get("parallel_group"),
+                    "is_required": step.get("is_required", True),
+                    "prerequisites": step.get("prerequisites", []),
+                }
+            )
+
+        return module_steps
 
     async def get_learning_path_prerequisites_for_module(
         self,
         learning_path_id: str,
-        module_id: str
+        module_id: str,
     ) -> List[str]:
         """
         Vrne predpogoje za določen modul znotraj učne poti.
 
-        TODO:
-        - Kasneje dodati obravnavo, če module_id ni del učne poti.
+        Modul je v novi strukturi step z type="module" in ref_id=module_id.
         """
 
-        modules = await self.get_module_references_for_learning_path(learning_path_id)
+        steps = await self.get_step_references_for_learning_path(learning_path_id)
 
-        for module in modules:
-            if module.get("module_id") == module_id:
-                return module.get("prerequisites", [])
+        for step in steps:
+            if step.get("type") == "module" and step.get("ref_id") == module_id:
+                return step.get("prerequisites", [])
 
         return []
 
     async def get_available_modules_for_learning_path(
         self,
         learning_path_id: str,
-        completed_module_ids: List[str]
+        completed_module_ids: List[str],
     ) -> List[Dict[str, Any]]:
         """
         Vrne module, ki jih uporabnik lahko začne znotraj učne poti.
 
-        Modul je dostopen, če so vsi njegovi prerequisites že dokončani.
+        Zaenkrat metoda vrača samo module, čeprav learning_path podpira tudi
+        learning_unit korake. Splošno logiko za available steps bomo dodali posebej.
         """
 
         modules = await self.get_module_references_for_learning_path(learning_path_id)

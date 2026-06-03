@@ -12,6 +12,26 @@ import {
 import { appStyles } from '../../../design'
 import type { LearningUnitResponse } from '../../../types/learning-unit'
 import type { AssessmentResultResponse } from '../../../types/assessment'
+import { getArrayOrEmpty, getTextOrFallback } from '../../../utils/display'
+
+/**
+ * LearningUnitDetailContent prikazuje vsebinski pregled učne enote.
+ *
+ * Namen komponente:
+ * - prikaz vsebinskih sklopov
+ * - prikaz pridobljenih kompetenc
+ * - prikaz DigComp kompetenc
+ * - prikaz predznanja
+ * - označevanje vsebinskih sklopov glede na rezultat samoocene
+ *
+ * Zakaj uporabljamo varne helperje:
+ * Backend lahko vrne manjkajoče, null ali delno nepopolne podatke.
+ * Zato sezname najprej pretvorimo v varne array-e, preden uporabimo .map().
+ *
+ * S tem preprečimo napake, kot so:
+ * Cannot read properties of undefined
+ * Cannot read properties of null
+ */
 
 type LearningUnitDetailContentProps = {
 	learningUnit: LearningUnitResponse
@@ -32,6 +52,16 @@ type MenuItem = {
 
 type TopicAssessmentStatus = 'known' | 'focus' | 'missing' | 'default'
 
+type SafeDigCompCompetency = {
+	code: string
+	title: string
+	description: string
+}
+type SafeContentTopic = {
+	id: string
+	title: string
+	relatedCompetencyCodes: string[]
+}
 
 const menuItems: MenuItem[] = [
 	{
@@ -56,6 +86,95 @@ const menuItems: MenuItem[] = [
 	},
 ]
 
+/**
+ * Vrne samo veljavne string vrednosti.
+ *
+ * Uporaba:
+ * - content_topics
+ * - acquired_competencies
+ * - prerequisites
+ * - known_topics
+ * - missing_topics
+ *
+ * Če backend pošlje null, undefined ali ne-string vrednosti,
+ * jih ne prikažemo.
+ */
+function getStringArrayOrEmpty(value: unknown): string[] {
+	return getArrayOrEmpty(value as string[])
+		.filter((item): item is string => typeof item === 'string')
+		.map((item) => item.trim())
+		.filter(Boolean)
+}
+
+/**
+ * Normalizira DigComp kompetence.
+ *
+ * Namen:
+ * - preprečiti crash, če digcomp_competencies manjka
+ * - zagotoviti fallback za code, title ali description
+ * - preskočiti elemente, ki niso objekti
+ */
+function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
+	return getArrayOrEmpty(value as Record<string, unknown>[])
+		.filter(
+			(item): item is Record<string, unknown> =>
+				Boolean(item) && typeof item === 'object' && !Array.isArray(item),
+		)
+		.map((item) => ({
+			code: getTextOrFallback(
+				typeof item.code === 'string' ? item.code : undefined,
+				'–',
+			),
+			title: getTextOrFallback(
+				typeof item.title === 'string' ? item.title : undefined,
+				'Neimenovana kompetenca',
+			),
+			description: getTextOrFallback(
+				typeof item.description === 'string' ? item.description : undefined,
+				'Opis kompetence trenutno ni na voljo.',
+			),
+		}))
+}
+/**
+ * Vrne varne vsebinske sklope.
+ * 	
+ * 	
+ * 	
+ *Namen:
+ * - preprečiti crash, če content_topics manjka
+ * - zagotoviti fallback za id in title
+ * - preskočiti elemente, ki niso objekti
+ */
+
+function getSafeContentTopics(value: unknown): SafeContentTopic[] {
+	return getArrayOrEmpty(value as Record<string, unknown>[])
+		.filter(
+			(item): item is Record<string, unknown> =>
+				Boolean(item) && typeof item === 'object' && !Array.isArray(item),
+		)
+		.map((item) => ({
+			id: getTextOrFallback(
+				typeof item.id === 'string' ? item.id : undefined,
+				'',
+			),
+			title: getTextOrFallback(
+				typeof item.title === 'string' ? item.title : undefined,
+				'Neimenovan vsebinski sklop',
+			),
+			relatedCompetencyCodes: getStringArrayOrEmpty(
+				item.related_competency_codes,
+			),
+		}))
+		.filter((topic) => topic.id || topic.title)
+}
+
+
+/**
+ * Vrne mehke barve za DigComp področje glede na prvo številko kode.
+ *
+ * Primer:
+ * 3.2 → področje 3
+ */
 function getDigCompSoftColor(code: string) {
 	const area = code.trim().match(/^(\d)\./)?.[1]
 
@@ -99,6 +218,10 @@ function getDigCompSoftColor(code: string) {
 		title: 'text-[#2f3328]',
 	}
 }
+
+/**
+ * Določi status vsebinskega sklopa glede na rezultat samoocene.
+ */
 function getTopicAssessmentStatus(
 	topic: string,
 	knownTopics: string[],
@@ -119,7 +242,9 @@ function getTopicAssessmentStatus(
 	return 'default'
 }
 
-
+/**
+ * Vrne stile in opis za prikaz statusa vsebinskega sklopa.
+ */
 function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 	if (status === 'known') {
 		return {
@@ -166,10 +291,32 @@ function LearningUnitDetailContent({
 		DetailContentSection[]
 	>(['topics'])
 
+	/**
+	 * Varni podatki za prikaz.
+	 *
+	 * Ti array-i se uporabljajo namesto direktnega dostopa do backend polj.
+	 * Tako komponenta ne pade, če backend vrne null ali manjkajoče polje.
+	 */
+	const contentTopics = getSafeContentTopics(learningUnit.content_topics)
+	const acquiredCompetencies = getStringArrayOrEmpty(
+		learningUnit.acquired_competencies,
+	)
+	const prerequisites = getStringArrayOrEmpty(learningUnit.prerequisites)
+	const digCompCompetencies = getSafeDigCompCompetencies(
+		learningUnit.digcomp_competencies,
+	)
+
 	const learningUnitAssessmentResult =
 		assessmentResult?.learning_unit_results.find(
 			(result) => result.learning_unit_id === learningUnit._id,
 		) ?? null
+
+	const knownTopics = getStringArrayOrEmpty(
+		learningUnitAssessmentResult?.known_topic_ids,
+	)
+	const missingTopics = getStringArrayOrEmpty(
+		learningUnitAssessmentResult?.missing_topic_ids,
+	)
 
 	const showAssessmentResult = Boolean(learningUnitAssessmentResult)
 
@@ -210,64 +357,70 @@ function LearningUnitDetailContent({
 					})}
 
 				<div className="max-w-[820px]">
-					{learningUnit.content_topics.map((topic, index) => {
-						const status = learningUnitAssessmentResult
-							? getTopicAssessmentStatus(
-								topic,
-								learningUnitAssessmentResult.known_topics,
-								learningUnitAssessmentResult.missing_topics,
-							)
-							: 'default'
+					{contentTopics.length > 0 ? (
+						contentTopics.map((topic, index) => {
+							const status = learningUnitAssessmentResult
+								? getTopicAssessmentStatus(
+									topic.id,
+									knownTopics,
+									missingTopics,
+								)
+								: 'default'
 
-						const style = getTopicAssessmentStyle(status)
+							const style = getTopicAssessmentStyle(status)
 
-						return (
-							<div
-								key={topic}
-								className={[
-									'flex items-start gap-3 px-3 py-4 sm:gap-5 sm:px-4 sm:py-5',
-									style.row,
-									showAssessmentResult ? 'rounded-[12px]' : '',
-									index !== learningUnit.content_topics.length - 1
-										? 'mb-2 border-b border-[#eadfce]'
-										: '',
-								].join(' ')}
-							>
-								<span
+							return (
+								<div
+									key={topic.id || topic.title}
 									className={[
-										'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold sm:h-10 sm:w-10',
-										style.circle,
+										'flex items-start gap-3 px-3 py-4 sm:gap-5 sm:px-4 sm:py-5',
+										style.row,
+										showAssessmentResult ? 'rounded-[12px]' : '',
+										index !== contentTopics.length - 1
+											? 'mb-2 border-b border-[#eadfce]'
+											: '',
 									].join(' ')}
 								>
-									{showAssessmentResult && status === 'known' ? (
-										<CheckCircle2 className="h-5 w-5" />
-									) : showAssessmentResult &&
-										(status === 'focus' || status === 'missing') ? (
-										'!'
-									) : (
-										index + 1
-									)}
-								</span>
-
-								<div className="min-w-0 pt-0.5 sm:pt-1">
-									<h4
+									<span
 										className={[
-											'break-words text-[16px] font-semibold leading-7 sm:text-[17px]',
-											style.text,
+											'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold sm:h-10 sm:w-10',
+											style.circle,
 										].join(' ')}
 									>
-										{topic}
-									</h4>
+										{showAssessmentResult && status === 'known' ? (
+											<CheckCircle2 className="h-5 w-5" />
+										) : showAssessmentResult &&
+											(status === 'focus' || status === 'missing') ? (
+											'!'
+										) : (
+											index + 1
+										)}
+									</span>
 
-									{showAssessmentResult && status !== 'default' && (
-										<p className="mt-1 text-[15px] leading-6 text-[#706b60]">
-											{style.description}
-										</p>
-									)}
+									<div className="min-w-0 pt-0.5 sm:pt-1">
+										<h4
+											className={[
+												'break-words text-[16px] font-semibold leading-7 sm:text-[17px]',
+												style.text,
+											].join(' ')}
+										>
+											{topic.title}
+										</h4>
+
+										{showAssessmentResult && status !== 'default' && (
+											<p className="mt-1 text-[15px] leading-6 text-[#706b60]">
+												{style.description}
+											</p>
+										)}
+									</div>
 								</div>
-							</div>
-						)
-					})}
+							)
+						})
+					) : (
+						<p className={appStyles.text.body}>
+							Vsebinski sklopi za to učno enoto trenutno niso določeni.
+						</p>
+					)}
 				</div>
 			</div>
 		)
@@ -276,25 +429,32 @@ function LearningUnitDetailContent({
 	function renderCompetencies(showHeader = true) {
 		return (
 			<div>
-				{showHeader && renderSectionHeader({
-					icon: Star,
-					title: 'Pridobljene kompetence',
-					description: 'Kaj bo uporabnik znal po zaključku učne enote.',
-				})}
+				{showHeader &&
+					renderSectionHeader({
+						icon: Star,
+						title: 'Pridobljene kompetence',
+						description: 'Kaj bo uporabnik znal po zaključku učne enote.',
+					})}
 
-				<ul className="grid gap-3">
-					{learningUnit.acquired_competencies.map((competency) => (
-						<li
-							key={competency}
-							className="flex min-w-0 gap-3 rounded-[12px] border border-[#eadfce] bg-[#fff6eb] px-4 py-4 text-[#5d5a55] shadow-[0_6px_16px_rgba(57,47,35,0.04)]"
-						>
-							<CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#31583b]" />
-							<span className="min-w-0 break-words text-[15px] leading-7 sm:text-[16px]">
-								{competency}
-							</span>
-						</li>
-					))}
-				</ul>
+				{acquiredCompetencies.length > 0 ? (
+					<ul className="grid gap-3">
+						{acquiredCompetencies.map((competency) => (
+							<li
+								key={competency}
+								className="flex min-w-0 gap-3 rounded-[12px] border border-[#eadfce] bg-[#fff6eb] px-4 py-4 text-[#5d5a55] shadow-[0_6px_16px_rgba(57,47,35,0.04)]"
+							>
+								<CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#31583b]" />
+								<span className="min-w-0 break-words text-[15px] leading-7 sm:text-[16px]">
+									{competency}
+								</span>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p className={appStyles.text.body}>
+						Pridobljene kompetence za to učno enoto trenutno niso določene.
+					</p>
+				)}
 			</div>
 		)
 	}
@@ -302,43 +462,50 @@ function LearningUnitDetailContent({
 	function renderDigComp(showHeader = true) {
 		return (
 			<div>
-				{showHeader && renderSectionHeader({
-					icon: Monitor,
-					title: 'DigComp kompetence',
-					description:
-						'Ta učna enota prispeva k razvoju izbranih digitalnih kompetenc.',
-				})}
-
-				<div className="grid gap-4">
-					{learningUnit.digcomp_competencies.map((competency) => {
-						const color = getDigCompSoftColor(competency.code)
-
-						return (
-							<article
-								key={`${competency.code}-${competency.title}`}
-								className={`overflow-hidden rounded-[14px] border shadow-[0_6px_16px_rgba(57,47,35,0.04)] sm:grid sm:grid-cols-[100px_minmax(0,1fr)] ${color.code}`}
-							>
-								<div className="flex items-center justify-start border-b border-inherit px-4 py-3 sm:justify-center sm:border-b-0 sm:border-r sm:p-5">
-									<span className="text-2xl font-bold sm:text-3xl">
-										{competency.code}
-									</span>
-								</div>
-
-								<div className="min-w-0 bg-white/35 p-4 sm:bg-transparent sm:p-5">
-									<h4
-										className={`break-words text-[16px] font-bold leading-snug sm:text-[17px] ${color.title}`}
-									>
-										{competency.title}
-									</h4>
-
-									<p className="mt-2 break-words text-[15px] leading-7 text-[#5d5a55]">
-										{competency.description}
-									</p>
-								</div>
-							</article>
-						)
+				{showHeader &&
+					renderSectionHeader({
+						icon: Monitor,
+						title: 'DigComp kompetence',
+						description:
+							'Ta učna enota prispeva k razvoju izbranih digitalnih kompetenc.',
 					})}
-				</div>
+
+				{digCompCompetencies.length > 0 ? (
+					<div className="grid gap-4">
+						{digCompCompetencies.map((competency) => {
+							const color = getDigCompSoftColor(competency.code)
+
+							return (
+								<article
+									key={`${competency.code}-${competency.title}`}
+									className={`overflow-hidden rounded-[14px] border shadow-[0_6px_16px_rgba(57,47,35,0.04)] sm:grid sm:grid-cols-[100px_minmax(0,1fr)] ${color.code}`}
+								>
+									<div className="flex items-center justify-start border-b border-inherit px-4 py-3 sm:justify-center sm:border-b-0 sm:border-r sm:p-5">
+										<span className="text-2xl font-bold sm:text-3xl">
+											{competency.code}
+										</span>
+									</div>
+
+									<div className="min-w-0 bg-white/35 p-4 sm:bg-transparent sm:p-5">
+										<h4
+											className={`break-words text-[16px] font-bold leading-snug sm:text-[17px] ${color.title}`}
+										>
+											{competency.title}
+										</h4>
+
+										<p className="mt-2 break-words text-[15px] leading-7 text-[#5d5a55]">
+											{competency.description}
+										</p>
+									</div>
+								</article>
+							)
+						})}
+					</div>
+				) : (
+					<p className={appStyles.text.body}>
+						DigComp kompetence za to učno enoto trenutno niso določene.
+					</p>
+				)}
 			</div>
 		)
 	}
@@ -346,15 +513,16 @@ function LearningUnitDetailContent({
 	function renderPrerequisites(showHeader = true) {
 		return (
 			<div>
-				{showHeader && renderSectionHeader({
-					icon: GraduationCap,
-					title: 'Predznanje',
-					description: 'Priporočeni pogoji za vključitev.',
-				})}
+				{showHeader &&
+					renderSectionHeader({
+						icon: GraduationCap,
+						title: 'Predznanje',
+						description: 'Priporočeni pogoji za vključitev.',
+					})}
 
-				{learningUnit.prerequisites.length > 0 ? (
+				{prerequisites.length > 0 ? (
 					<ul className="grid gap-3">
-						{learningUnit.prerequisites.map((prerequisite) => (
+						{prerequisites.map((prerequisite) => (
 							<li
 								key={prerequisite}
 								className="min-w-0 break-words rounded-[12px] border border-[#eadfce] bg-[#fff6eb] px-4 py-4 text-[15px] leading-7 text-[#5d5a55] shadow-[0_6px_16px_rgba(57,47,35,0.04)] sm:text-[16px]"
@@ -365,12 +533,13 @@ function LearningUnitDetailContent({
 					</ul>
 				) : (
 					<p className={appStyles.text.body}>
-						Za to učno enoto ni navedenih posebnih pogojev.
+						Za to učno enoto ni predpogojev.
 					</p>
 				)}
 			</div>
 		)
 	}
+
 	function renderSectionContent(
 		section: DetailContentSection,
 		showHeader = true,
@@ -389,6 +558,7 @@ function LearningUnitDetailContent({
 
 		return renderPrerequisites(showHeader)
 	}
+
 	function toggleMobileSection(section: DetailContentSection) {
 		setOpenMobileSections((currentSections) =>
 			currentSections.includes(section)
@@ -457,6 +627,7 @@ function LearningUnitDetailContent({
 			</article>
 		)
 	}
+
 	function renderActiveSection() {
 		return renderSectionContent(activeSection)
 	}

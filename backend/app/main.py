@@ -19,6 +19,9 @@ from app.core.error_handlers import (
     validation_exception_handler,
 )
 
+from app.api.voice_help import router as voice_help_router
+from app.api.assessment_assistant import router as assessment_assistant_router
+
 app = FastAPI(
     title="Psi-Up API",
     description="Backend API for the Psi-Up learning path recommendation system.",
@@ -35,6 +38,7 @@ app.add_middleware(
         "http://localhost:5174",
         "http://localhost:5176",
         "http://localhost:3000",
+        "http://46.225.17.135",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -49,7 +53,8 @@ app.include_router(modules_router, prefix="/api")
 app.include_router(learning_units_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(user_progress_router, prefix="/api")
-
+app.include_router(voice_help_router, prefix="/api")
+app.include_router(assessment_assistant_router, prefix="/api")
 
 @app.get("/")
 def read_root():

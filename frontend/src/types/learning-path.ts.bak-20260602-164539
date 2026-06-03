@@ -1,0 +1,42 @@
+import type { ModuleDetailResponse, ModuleReferenceResponse } from './module'
+import type { LearningUnitResponse } from './learning-unit'
+
+export type LearningPathStepType = 'module' | 'learning_unit'
+
+export type LearningPathStepReference = {
+  type?: LearningPathStepType | string | null
+  step_type?: LearningPathStepType | string | null
+  ref_id?: string | null
+  module_id?: string | null
+  learning_unit_id?: string | null
+  order?: number | null
+  parallel_group?: string | null
+  is_required?: boolean | null
+  prerequisites?: string[] | null
+}
+
+/**
+ * Compatibility alias za strani, ki se vedno uporabljajo staro ime.
+ */
+export type LearningPathStepResponse = LearningPathStepReference
+
+export type LearningPathResponse = {
+  id?: string
+  _id?: string
+  title: string
+  short_description: string
+  duration_hours?: number | null
+  keywords: string[]
+  steps: LearningPathStepReference[]
+
+  /**
+   * Compatibility fallback za star frontend.
+   * Runtime naj uporablja steps, to je samo zato, da stari kosi kode ne padejo med refactorjem.
+   */
+  modules?: ModuleReferenceResponse[]
+}
+
+export type LearningPathDetailResponse = LearningPathResponse & {
+  module_details?: ModuleDetailResponse[]
+  learning_unit_details?: LearningUnitResponse[]
+}

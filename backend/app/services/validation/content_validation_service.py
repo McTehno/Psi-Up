@@ -7,7 +7,7 @@ class ContentValidationService:
     """
     Service za validacijo uporabnika, napredka in učnih vsebin.
 
-    Ta service se uporablja pred pisanjem v user_progress,
+    Ta service se uporablja pred pisanjem v users.progress,
     da ne dovolimo shranjevanja neobstoječih učnih poti,
     modulov ali učnih enot.
     """
@@ -37,8 +37,9 @@ class ContentValidationService:
 
     async def validate_user_progress_exists(self, user_id: str) -> None:
         """
-        Preveri, ali obstaja user_progress za uporabnika.
+        Preveri, ali obstaja progress struktura za uporabnika.
 
+        Progress je shranjen znotraj users dokumenta.
         Če zapis ne obstaja, vrne 404.
         """
 
@@ -86,12 +87,12 @@ class ContentValidationService:
                 content_id
             )
 
-        if content_type == "module":
+        elif content_type == "module":
             content = await self.module_repository.get_module_by_id(
                 content_id
             )
 
-        if content_type == "learning_unit":
+        elif content_type == "learning_unit":
             content = await self.learning_unit_repository.get_learning_unit_by_id(
                 content_id
             )
@@ -178,7 +179,7 @@ class ContentValidationService:
         Validira podatke za trenutno pozicijo uporabnika.
 
         Preveri:
-        - ali user_progress obstaja,
+        - ali users.progress obstaja,
         - ali učna pot obstaja,
         - ali modul obstaja,
         - ali učna enota obstaja.

@@ -1,29 +1,19 @@
-import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, Fragment } from 'react'
 import Lenis from 'lenis'
 import { useScroll } from 'framer-motion'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
+import SectionSpacer from '../../components/layout/SectionSpacer'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
 import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
 import HomeStorySection from './components/HomeStorySection'
 import HomeFinalCtaSection from './components/HomeFinalCtaSection'
+import { STORY_SECTIONS_DATA } from './constants'
 
 function HomePage() {
-	const navigate = useNavigate()
 
-	const {
-		isSearchActive,
-		setIsSearchActive,
-		activeFilters,
-		toggleFilter,
-		searchQuery,
-		setSearchQuery,
-		searchResults,
-		setSearchResults,
-		isSearching,
-	} = useGlobalSearch()
+	const { isSearchActive, setIsSearchActive } = useGlobalSearch()
 
 	const parallaxContainerRef = useRef<HTMLDivElement | null>(null)
 	const { scrollYProgress } = useScroll({
@@ -88,113 +78,24 @@ function HomePage() {
 			<HomeScrollJourney />
 
 			<div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
-				<HomeHeroSection
-					isSearchActive={isSearchActive}
-					setIsSearchActive={setIsSearchActive}
-					activeFilters={activeFilters}
-					toggleFilter={toggleFilter}
-					searchQuery={searchQuery}
-					setSearchQuery={setSearchQuery}
-					setSearchResults={setSearchResults}
-					searchResults={searchResults}
-					isSearching={isSearching}
-					navigate={navigate}
-				/>
+				<HomeHeroSection />
 
-				{/* ── Spacer: Hero → Učne poti ── */}
-				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
-
-				<HomeStorySection
-					id="learning-paths"
-					eyebrow="Učne poti"
-					title="Začni z večjo sliko."
-					description="Učna pot ti pokaže celotno smer učenja. Namesto posameznih nepovezanih vsebin vidiš zaporedje korakov, ki te vodijo proti jasnemu cilju."
-					align="left"
-					cards={[
-						{
-							title: 'Pregled',
-							front: 'Vidiš celotno pot',
-							back: 'Učna pot združi module in učne enote v logično zaporedje.',
-						},
-						{
-							title: 'Usmeritev',
-							front: 'Lažje izbereš začetek',
-							back: 'Pomaga ti razumeti, katero področje je zate najbolj smiselno.',
-						},
-					]}
-				/>
-
-				{/* ── Spacer: Učne poti → Moduli ── */}
-				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
-
-				<HomeStorySection
-					id="modules"
-					eyebrow="Moduli"
-					title="Večjo pot razdeli na razumljive korake."
-					description="Modul predstavlja zaokrožen del učne poti. Vsak modul ima svoj namen, zato lažje slediš napredku in razumeš, kaj posamezen korak prinese."
-					align="left"
-					cards={[
-						{
-							title: 'Korak',
-							front: 'Manjši del večje poti',
-							back: 'Modul razdeli širše področje na bolj obvladljive vsebinske sklope.',
-						},
-						{
-							title: 'Napredek',
-							front: 'Slediš svojemu tempu',
-							back: 'Vsak modul ti pomaga videti, kaj si že pregledal in kaj še sledi.',
-						},
-					]}
-				/>
-
-				{/* ── Spacer: Moduli → Učne enote ── */}
-				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
-
-				<HomeStorySection
-					id="learning-units"
-					eyebrow="Učne enote"
-					title="Uči se skozi kratke in konkretne vsebine."
-					description="Učna enota je najmanjši del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula."
-					align="left"
-					cards={[
-						{
-							title: 'Fokus',
-							front: 'Ena vsebina naenkrat',
-							back: 'Vsaka učna enota predstavi jasen in omejen del znanja.',
-						},
-						{
-							title: 'Samostojnost',
-							front: 'Pregledaš jo lahko posebej',
-							back: 'Enote lahko raziskuješ znotraj modula ali kot samostojen vir.',
-						},
-					]}
-				/>
-
-				{/* ── Spacer: Učne enote → Vprašalnik ── */}
-				<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />
-
-				<HomeStorySection
-					id="questionnaire"
-					eyebrow="Vprašalnik"
-					title="Preveri, kje si trenutno."
-					description="Vprašalnik ti pomaga oceniti trenutno znanje in prepoznati področja, kjer imaš največ prostora za napredek."
-					align="left"
-					cards={[
-						{
-							title: 'Samoocena',
-							front: 'Razumeš svoje izhodišče',
-							back: 'Odgovori pokažejo, katera področja že poznaš in katera potrebujejo več pozornosti.',
-						},
-						{
-							title: 'Priporočilo',
-							front: 'Dobiš bolj jasno smer',
-							back: 'Rezultat ti pomaga izbrati primernejšo pot, modul ali naslednjo vsebino.',
-						},
-					]}
-				/>
+				{STORY_SECTIONS_DATA.map((section, index) => (
+					<Fragment key={section.id}>
+						<SectionSpacer size="large" />
+						<HomeStorySection
+							id={section.id}
+							eyebrow={section.eyebrow}
+							title={section.title}
+							description={section.description}
+							align="left"
+							cards={section.cards}
+						/>
+					</Fragment>
+				))}
 
 				{/* ── Spacer: Vprašalnik → CTA ── */}
-				<div className="h-[40vh] lg:h-[56vh]" aria-hidden="true" />
+				<SectionSpacer size="normal" />
 
 				<HomeFinalCtaSection />
 			</div>

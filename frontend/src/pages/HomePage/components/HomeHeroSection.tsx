@@ -1,36 +1,25 @@
 import { ArrowRight, Search } from 'lucide-react'
-import type { NavigateFunction } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-import type { SearchResult } from '../../../types/search'
+import { useGlobalSearch } from '../../../contexts/SearchContext'
 import HeroSearch from '../../HomePageBackup/components/HeroSearch'
 import HeroSearchResults from '../../HomePageBackup/components/HeroSearchResults'
 import MobileHeroSearchResults from './MobileHeroSearchResults'
 
-type HomeHeroSectionProps = {
-	isSearchActive: boolean
-	setIsSearchActive: (isActive: boolean) => void
-	activeFilters: string[]
-	toggleFilter: (filter: string) => void
-	searchQuery: string
-	setSearchQuery: (query: string) => void
-	setSearchResults: (results: SearchResult[]) => void
-	searchResults: SearchResult[]
-	isSearching: boolean
-	navigate: NavigateFunction
-}
+function HomeHeroSection() {
+	const navigate = useNavigate()
+	const {
+		isSearchActive,
+		setIsSearchActive,
+		activeFilters,
+		toggleFilter,
+		searchQuery,
+		setSearchQuery,
+		searchResults,
+		setSearchResults,
+		isSearching,
+	} = useGlobalSearch()
 
-function HomeHeroSection({
-	isSearchActive,
-	setIsSearchActive,
-	activeFilters,
-	toggleFilter,
-	searchQuery,
-	setSearchQuery,
-	setSearchResults,
-	searchResults,
-	isSearching,
-	navigate,
-}: HomeHeroSectionProps) {
 	return (
 		<section
 			id="top"

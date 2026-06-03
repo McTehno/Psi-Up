@@ -36,6 +36,8 @@ import { getArrayOrEmpty, getTextOrFallback } from '../../../utils/display'
 type LearningUnitDetailContentProps = {
 	learningUnit: LearningUnitResponse
 	assessmentResult?: AssessmentResultResponse | null
+	isCompleted?: boolean
+	manualCompletionOverride?: boolean | null
 }
 
 type DetailContentSection =
@@ -284,6 +286,8 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 function LearningUnitDetailContent({
 	learningUnit,
 	assessmentResult,
+	isCompleted = false,
+	manualCompletionOverride = null,
 }: LearningUnitDetailContentProps) {
 	const [activeSection, setActiveSection] =
 		useState<DetailContentSection>('topics')
@@ -311,14 +315,23 @@ function LearningUnitDetailContent({
 			(result) => result.learning_unit_id === learningUnit._id,
 		) ?? null
 
-	const knownTopics = getStringArrayOrEmpty(
-		learningUnitAssessmentResult?.known_topic_ids,
-	)
-	const missingTopics = getStringArrayOrEmpty(
-		learningUnitAssessmentResult?.missing_topic_ids,
-	)
+	const shouldHideAssessmentResult = manualCompletionOverride === false
+	const shouldShowStoredAssessmentResult =
+		!shouldHideAssessmentResult && Boolean(learningUnitAssessmentResult)
 
-	const showAssessmentResult = Boolean(learningUnitAssessmentResult)
+	const knownTopics = isCompleted
+		? contentTopics.map((topic) => topic.id).filter(Boolean)
+		: shouldShowStoredAssessmentResult
+			? getStringArrayOrEmpty(learningUnitAssessmentResult?.known_topic_ids)
+			: []
+
+	const missingTopics = isCompleted
+		? []
+		: shouldShowStoredAssessmentResult
+			? getStringArrayOrEmpty(learningUnitAssessmentResult?.missing_topic_ids)
+			: []
+
+	const showAssessmentResult = isCompleted || shouldShowStoredAssessmentResult
 
 	function renderSectionHeader({
 		icon: Icon,
@@ -359,7 +372,7 @@ function LearningUnitDetailContent({
 				<div className="max-w-[820px]">
 					{contentTopics.length > 0 ? (
 						contentTopics.map((topic, index) => {
-							const status = learningUnitAssessmentResult
+							const status = showAssessmentResult
 								? getTopicAssessmentStatus(
 									topic.id,
 									knownTopics,

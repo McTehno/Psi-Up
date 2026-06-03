@@ -625,7 +625,9 @@ function QuestionnairePage() {
   }, [questionnaireTitle, targetId, targetType])
 
   const shouldFinishAfterCurrentAnswer =
-    Boolean(selectedAnswer) && selectedAnswer?.weight === false
+    targetType !== 'learning_unit' &&
+    Boolean(selectedAnswer) &&
+    selectedAnswer?.weight === false
 
   const nextQuestion =
     currentQuestion && selectedAnswer && !shouldFinishAfterCurrentAnswer
@@ -1236,7 +1238,8 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
-    const shouldFinishAfterNoAnswer = !selectedAnswer.weight
+    const shouldFinishAfterNoAnswer =
+      targetType !== 'learning_unit' && !selectedAnswer.weight
 
     if (shouldFinishAfterNoAnswer) {
       await submitAssessment(questionIdsUntilCurrent, true)

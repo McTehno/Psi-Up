@@ -128,6 +128,47 @@ function hasQuestionnaireContent(
   return learningUnitReferences.length > 0 || learningUnitDetails.length > 0
 }
 
+function getLearningUnitIdsFromModule(
+  learningUnitReferences: unknown[],
+  learningUnitDetails: unknown[],
+) {
+  const ids = new Set<string>()
+
+  learningUnitReferences.forEach((reference) => {
+    if (
+      reference &&
+      typeof reference === 'object' &&
+      '_id' in reference &&
+      typeof reference._id === 'string'
+    ) {
+      ids.add(reference._id)
+    }
+
+    if (
+      reference &&
+      typeof reference === 'object' &&
+      'learning_unit_id' in reference &&
+      typeof reference.learning_unit_id === 'string'
+    ) {
+      ids.add(reference.learning_unit_id)
+    }
+  })
+
+  learningUnitDetails.forEach((learningUnit) => {
+    if (
+      learningUnit &&
+      typeof learningUnit === 'object' &&
+      '_id' in learningUnit &&
+      typeof learningUnit._id === 'string'
+    ) {
+      ids.add(learningUnit._id)
+    }
+  })
+
+  return Array.from(ids)
+}
+
+
 function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
   const navigate = useNavigate()
@@ -141,13 +182,11 @@ function ModuleDetailPage() {
   const [localIsCompleted, setLocalIsCompleted] = useState(false)
   const [manualCompletionOverride, setManualCompletionOverride] =
     useState<boolean | null>(null)
-  const [localCompletedUnitIds, setLocalCompletedUnitIds] = useState<string[]>([])
 
   const {
     isFavorite,
     isSaved,
     isCompleted,
-    userProgress,
   } = useUserProgressState({
     contentId: moduleData?._id,
     contentType: 'module',
@@ -156,11 +195,6 @@ function ModuleDetailPage() {
   useEffect(() => {
     setLocalIsCompleted(isCompleted)
   }, [isCompleted])
-
-  useEffect(() => {
-    setLocalCompletedUnitIds(userProgress?.completed.learning_unit_ids ?? [])
-  }, [userProgress])
-
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -217,78 +251,55 @@ function ModuleDetailPage() {
   const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
+  const moduleLearningUnitIds = useMemo(
+    () => getLearningUnitIdsFromModule(learningUnitReferences, learningUnitDetails),
+    [learningUnitReferences, learningUnitDetails],
+  )
+
   const completedUnitIds = useMemo(() => {
     const completed = new Set<string>()
 
+    const moduleResult = assessmentResult?.module_results?.find(
+      (moduleResult) => moduleResult.module_id === moduleId,
+    )
+
     if (manualCompletionOverride === true) {
-      learningUnitReferences.forEach((reference) => {
-        if (
-          reference &&
-          typeof reference === 'object' &&
-          '_id' in reference &&
-          typeof reference._id === 'string'
-        ) {
-          completed.add(reference._id)
-        }
+      moduleLearningUnitIds.forEach((id) => completed.add(id))
+      return Array.from(completed)
+    }
 
-        if (
-          reference &&
-          typeof reference === 'object' &&
-          'learning_unit_id' in reference &&
-          typeof reference.learning_unit_id === 'string'
-        ) {
-          completed.add(reference.learning_unit_id)
-        }
-      })
+    if (assessmentResult) {
+      if (moduleResult?.completed_learning_units) {
+        moduleResult.completed_learning_units.forEach((id) => completed.add(id))
+      }
 
-      learningUnitDetails.forEach((learningUnit) => {
-        if (
-          learningUnit &&
-          typeof learningUnit === 'object' &&
-          '_id' in learningUnit &&
-          typeof learningUnit._id === 'string'
-        ) {
-          completed.add(learningUnit._id)
-        }
-      })
+      if (assessmentResult.skipped_learning_units) {
+        assessmentResult.skipped_learning_units.forEach((id) => completed.add(id))
+      }
 
-      localCompletedUnitIds.forEach((id) => completed.add(id))
+      if (assessmentResult.learning_unit_results) {
+        assessmentResult.learning_unit_results.forEach((learningUnitResult) => {
+          if (learningUnitResult.is_completed_by_assessment) {
+            completed.add(learningUnitResult.learning_unit_id)
+          }
+        })
+      }
 
       return Array.from(completed)
     }
 
-    if (!assessmentResult) {
-      return []
+    if (localIsCompleted) {
+      moduleLearningUnitIds.forEach((id) => completed.add(id))
+      return Array.from(completed)
     }
 
-    const moduleResult = assessmentResult.module_results?.find(
-      (moduleResult) => moduleResult.module_id === moduleId,
-    )
-
-    if (moduleResult?.completed_learning_units) {
-      moduleResult.completed_learning_units.forEach((id) => completed.add(id))
-    }
-
-    if (assessmentResult.skipped_learning_units) {
-      assessmentResult.skipped_learning_units.forEach((id) => completed.add(id))
-    }
-
-    if (assessmentResult.learning_unit_results) {
-      assessmentResult.learning_unit_results.forEach((learningUnitResult) => {
-        if (learningUnitResult.is_completed_by_assessment) {
-          completed.add(learningUnitResult.learning_unit_id)
-        }
-      })
-    }
-
-    return Array.from(completed)
+    return []
   }, [
     assessmentResult,
-    learningUnitDetails,
-    learningUnitReferences,
-    localCompletedUnitIds,
+    localIsCompleted,
     manualCompletionOverride,
     moduleId,
+    moduleLearningUnitIds,
   ])
 
   function handleStartQuestionnaire() {
@@ -357,6 +368,8 @@ function ModuleDetailPage() {
       assessmentPositionUnitId = assessmentResult.recommended_next_learning_units[0]
     }
   }
+
+
   return (
     <DetailPageShell>
       <div className="relative">
@@ -375,7 +388,7 @@ function ModuleDetailPage() {
               initialIsFavorite={isFavorite}
               initialIsSaved={isSaved}
               initialIsCompleted={localIsCompleted}
-              onCompletedChange={(nextIsCompleted, nextProgress) => {
+              onCompletedChange={(nextIsCompleted) => {
                 setLocalIsCompleted(nextIsCompleted)
 
                 if (nextIsCompleted) {
@@ -384,9 +397,6 @@ function ModuleDetailPage() {
                   setManualCompletionOverride(null)
                 }
 
-                setLocalCompletedUnitIds(
-                  nextProgress?.completed.learning_unit_ids ?? [],
-                )
               }}
             />
           )}

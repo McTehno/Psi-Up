@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import type { UserProgressResponse } from '../types/user-progress'
+
 import { useAuth } from '../features/auth/contexts/AuthContext'
 import {
     isContentCompleted,
@@ -13,6 +15,10 @@ type UserProgressActionState = {
     isFavorite: boolean
     isSaved: boolean
     isCompleted: boolean
+}
+
+type UserProgressActionResult = UserProgressActionState & {
+    progress: UserProgressResponse
 }
 
 type UseUserProgressActionsParams = {
@@ -114,8 +120,11 @@ export function useUserProgressActions({
             }
 
             setState(nextState)
-
-            return nextState
+            const result: UserProgressActionResult = {
+                ...nextState,
+                progress,
+            }
+            return result
         } catch (error) {
             const message =
                 error instanceof Error

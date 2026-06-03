@@ -8,6 +8,7 @@ import {
 	isContentSaved,
 	type UserProgressContentType,
 } from '../services/user-progress-service'
+import type { UserProgressResponse } from '../types/user-progress'
 
 type UseUserProgressStateParams = {
 	contentId?: string
@@ -24,6 +25,8 @@ export function useUserProgressState({
 	const [isSaved, setIsSaved] = useState(false)
 	const [isCompleted, setIsCompleted] = useState(false)
 	const [isLoadingProgress, setIsLoadingProgress] = useState(false)
+	const [userProgress, setUserProgress] =
+		useState<UserProgressResponse | null>(null)
 
 	useEffect(() => {
 		async function loadProgress() {
@@ -31,6 +34,7 @@ export function useUserProgressState({
 				setIsFavorite(false)
 				setIsSaved(false)
 				setIsCompleted(false)
+				setUserProgress(null)
 				return
 			}
 
@@ -38,7 +42,8 @@ export function useUserProgressState({
 				setIsLoadingProgress(true)
 
 				const progress = await getUserProgress(localUser._id, session.access_token)
-                
+
+				setUserProgress(progress)
 				setIsFavorite(isContentFavorite(progress, contentId, contentType))
 				setIsSaved(isContentSaved(progress, contentId, contentType))
 				setIsCompleted(isContentCompleted(progress, contentId, contentType))
@@ -47,18 +52,20 @@ export function useUserProgressState({
 				setIsFavorite(false)
 				setIsSaved(false)
 				setIsCompleted(false)
+				setUserProgress(null)
 			} finally {
 				setIsLoadingProgress(false)
 			}
 		}
 
 		loadProgress()
- }, [contentId, contentType, session?.access_token, localUser?._id])
+	}, [contentId, contentType, session?.access_token, localUser?._id])
 
 	return {
 		isFavorite,
 		isSaved,
 		isCompleted,
 		isLoadingProgress,
+		userProgress,
 	}
 }

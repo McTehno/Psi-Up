@@ -5,6 +5,8 @@ import { Bookmark, CheckCircle2, Heart } from 'lucide-react'
 import { useUserProgressActions } from '../../../hooks/useUserProgressActions'
 import type { UserProgressContentType } from '../../../services/user-progress-service'
 
+import type { UserProgressResponse } from '../../../types/user-progress'
+
 type DetailAction = 'favorite' | 'save' | 'completed' | null
 type DetailActionsPlacement = 'overlay' | 'inline'
 
@@ -18,7 +20,10 @@ type DetailActionsProps = {
 	initialIsCompleted?: boolean
 	onFavoriteClick?: () => void
 	onSaveClick?: () => void
-	onCompletedChange?: (isCompleted: boolean) => void
+	onCompletedChange?: (
+		isCompleted: boolean,
+		progress?: UserProgressResponse,
+	) => void
 	placement?: DetailActionsPlacement
 	className?: string
 }
@@ -69,7 +74,7 @@ function DetailActions({
 		}
 
 		if (action === 'completed' && nextState) {
-			onCompletedChange?.(nextState.isCompleted)
+			onCompletedChange?.(nextState.isCompleted, nextState.progress)
 		}
 
 		window.setTimeout(() => {
@@ -165,8 +170,8 @@ function DetailActions({
 			</div>
 
 			<AuthRequiredDialog
-			isOpen={errorMessage === 'AUTH_REQUIRED'}
-			onClose={clearError}
+				isOpen={errorMessage === 'AUTH_REQUIRED'}
+				onClose={clearError}
 			/>
 
 			{errorMessage && errorMessage !== 'AUTH_REQUIRED' && (

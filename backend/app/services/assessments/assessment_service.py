@@ -702,7 +702,7 @@ class AssessmentService:
 
         all_topic_ids = self._get_all_topic_ids(content_topics)
         all_competency_codes = self._get_all_topic_competency_codes(content_topics)
-
+        '''
         if use_progressive_logic and questions:
             primary_question = questions[0]
             primary_answer = self._get_answer_for_question(
@@ -739,7 +739,7 @@ class AssessmentService:
                     "module_results": [],
                     "summary": f"Uporabniku priporočamo učno enoto {learning_unit_id}.",
                 }
-
+        '''
         for question in questions:
             topic_id = self._get_string_value(
                 question.get("related_topic_id")

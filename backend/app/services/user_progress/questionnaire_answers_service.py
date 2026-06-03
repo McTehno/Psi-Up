@@ -172,12 +172,17 @@ class QuestionnaireAnswersService:
         """
         Združi en obstoječ odgovor z novim odgovorom.
 
-        Pomembno:
-        - Če sta obe vrednosti bool, uporabimo yes/no pravilo.
-        - Če odgovor ni bool, ga ne obravnavamo kot yes/no odgovor.
-        - To je pomembno za prihodnje tipe vprašanj, na primer:
-          single_choice, multiple_choice, scale, text, rating.
+        Pravilo:
+        - če je novi odgovor ekspliciten, prepiše starega;
+        - če je novi odgovor samo backend fallback, ne sme prepisati
+        že obstoječega eksplicitnega odgovora.
         """
+
+        if (
+            new_answer.get("was_answered") is False
+            and existing_answer.get("was_answered") is True
+        ):
+            return existing_answer
 
         merged_answer = {
             **existing_answer,
@@ -192,7 +197,8 @@ class QuestionnaireAnswersService:
             new_answer=new_value,
         )
 
-        merged_answer["answered_at"] = datetime.now(timezone.utc)
+        if new_answer.get("was_answered") is True:
+            merged_answer["answered_at"] = datetime.now(timezone.utc)
 
         if "was_answered" not in merged_answer:
             merged_answer["was_answered"] = True
@@ -223,19 +229,13 @@ class QuestionnaireAnswersService:
 
     def _merge_answer_value(self, old_answer: Any, new_answer: Any) -> Any:
         """
-        Združi staro in novo vrednost odgovora.
+        Vrne novo vrednost odgovora.
 
-        Pomembno:
-        - yes/no vprašanja trenutno uporabljajo bool vrednosti.
-        - Pri bool odgovorih ne dovolimo prehoda iz True v False,
-          ker True pomeni, da je uporabnik znanje že potrdil.
-        - Pri drugih tipih vprašanj ne uporabljamo yes/no logike.
-          Zadnji oddani odgovor zamenja prejšnjega.
+        Novo poslovno pravilo:
+        - DA -> NE je dovoljeno, če uporabnik eksplicitno odgovori NE.
+        - Completed status se zaradi tega ne briše.
+        - Ta service skrbi samo za zadnje shranjene odgovore.
         """
-
-        if isinstance(old_answer, bool) and isinstance(new_answer, bool):
-            if old_answer is True and new_answer is False:
-                return True
 
         return new_answer
 

@@ -77,10 +77,13 @@ class AssessmentProgressService:
 
         existing_completed = await self._get_existing_completed(user_id)
 
+        latest_explicit_answers = await self._get_latest_explicit_answer_maps(user_id)
+
         prepared_answers = self._build_complete_answers(
             all_questions=all_questions,
             submitted_answers=submitted_answers,
             existing_completed=existing_completed,
+            latest_explicit_answers=latest_explicit_answers,
         )
 
         await self.questionnaire_answers_service.save_questionnaire_answers(
@@ -142,6 +145,7 @@ class AssessmentProgressService:
             target_id=target_id,
             completed_module_ids=completed_module_ids,
             completed_learning_unit_ids=completed_learning_unit_ids,
+            result=result,
         )
 
         result["completed_learning_unit_ids"] = completed_learning_unit_ids
@@ -271,25 +275,27 @@ class AssessmentProgressService:
             normalized_questions.append(normalized_question)
 
         return normalized_questions
-
+    
     def _build_complete_answers(
         self,
         all_questions: List[Dict[str, Any]],
         submitted_answers: List[Dict[str, Any]],
         existing_completed: Dict[str, List[str]],
+        latest_explicit_answers: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Združi vsa relevantna vprašanja s poslanimi odgovori.
 
-        Če vprašanje ni odgovorjeno:
-        - yes_no dobi answer = False,
-        - drugi tipi dobijo answer = None,
-        - was_answered = False.
-
-        Če je vprašanje odgovorjeno:
-        - ohranimo odgovor uporabnika,
-        - was_answered = True, če ni že podan.
+        Novo pravilo prioritete:
+        1. Če je uporabnik vprašanje oddal v trenutnem submitu, uporabimo ta odgovor.
+        2. Če vprašanje ni oddano, ampak obstaja zadnji eksplicitni odgovor,
+        uporabimo zadnji eksplicitni odgovor.
+        3. Če ni zadnjega eksplicitnega odgovora in vprašanje pripada completed vsebini,
+        uporabimo completed fallback answer=True.
+        4. Če ni ničesar od zgoraj, vprašanje ostane neodgovorjeno.
         """
+
+        latest_explicit_answers = latest_explicit_answers or {}
 
         submitted_answers_by_key: Dict[str, Dict[str, Any]] = {}
 
@@ -320,6 +326,21 @@ class AssessmentProgressService:
                 )
                 continue
 
+            if key and key in latest_explicit_answers:
+                latest_answer = dict(latest_explicit_answers[key])
+
+                latest_answer["was_answered"] = True
+                latest_answer["is_prefilled"] = True
+                latest_answer["prefill_source"] = "last_answer"
+
+                complete_answers.append(
+                    self._merge_question_metadata_with_answer(
+                        question=question,
+                        answer=latest_answer,
+                    )
+                )
+                continue
+
             if self._is_question_from_completed_content(
                 question=question,
                 existing_completed=existing_completed,
@@ -334,7 +355,6 @@ class AssessmentProgressService:
             )
 
         return complete_answers
-
     def _merge_question_metadata_with_answer(
         self,
         question: Dict[str, Any],
@@ -542,6 +562,36 @@ class AssessmentProgressService:
             ),
         }
 
+    async def _get_latest_explicit_answer_maps(
+        self,
+        user_id: str,
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Zgradi mapo zadnjih eksplicitnih odgovorov uporabnika.
+
+        Upoštevamo samo odgovore z was_answered=True.
+        Backend fallback odgovori z was_answered=False ne smejo postati
+        zadnji eksplicitni odgovor.
+        """
+
+        progress = await self.user_progress_service.get_or_create_progress(user_id)
+
+        latest_answers_by_key: Dict[str, Dict[str, Any]] = {}
+
+        for entry in self._get_dict_list_value(progress.get("questionnaire_answers")):
+            for answer in self._get_dict_list_value(entry.get("answers")):
+                if answer.get("was_answered") is not True:
+                    continue
+
+                key = self._get_answer_key(answer)
+
+                if not key:
+                    continue
+
+                latest_answers_by_key[key] = dict(answer)
+
+        return latest_answers_by_key
+
     def _extract_completed_learning_unit_ids(
         self,
         result: Dict[str, Any],
@@ -718,16 +768,45 @@ class AssessmentProgressService:
         target_id: str,
         completed_module_ids: List[str],
         completed_learning_unit_ids: List[str],
+        result: Dict[str, Any],
     ) -> Optional[Dict[str, Any]]:
         """
         Posodobi trenutno pozicijo po assessmentu.
 
-        Za zdaj current position avtomatsko posodabljamo samo za learning_path,
-        ker ima learning_path jasen learning_path_id.
+        Za learning path najprej upoštevamo assessment rezultat.
+        Če assessment zaradi eksplicitnega NE določi start_module_id ali
+        start_learning_unit_id, to uporabimo kot trenutno pozicijo.
         """
 
         if target_type != QuestionnaireTargetType.LEARNING_PATH:
             return None
+
+        start_module_id = result.get("start_module_id")
+        start_learning_unit_id = result.get("start_learning_unit_id")
+
+        if isinstance(start_module_id, str) or isinstance(start_learning_unit_id, str):
+            current_position = {
+                "learning_path_id": target_id,
+                "current_module_id": (
+                    start_module_id
+                    if isinstance(start_module_id, str)
+                    else None
+                ),
+                "current_learning_unit_id": (
+                    start_learning_unit_id
+                    if isinstance(start_learning_unit_id, str)
+                    else None
+                ),
+            }
+
+            await self.current_position_service.update_current_position(
+                user_id=user_id,
+                learning_path_id=target_id,
+                current_module_id=current_position.get("current_module_id"),
+                current_learning_unit_id=current_position.get("current_learning_unit_id"),
+            )
+
+            return current_position
 
         current_position = await self._determine_learning_path_current_position(
             learning_path_id=target_id,
@@ -856,178 +935,37 @@ class AssessmentProgressService:
         completed_module_ids: List[str],
     ) -> Dict[str, Any]:
         """
-        Uskladi assessment response z že shranjenim completed progressom.
+        Uskladi osnovno strukturo assessment response-a s completed progressom.
 
-        AssessmentService oceni trenutno poslane odgovore. Pri partial submitu lahko zato
-        vrne, da so stare enote/moduli not_started, čeprav so že completed v users.progress.
-
-        Ta metoda poskrbi, da končni response vedno upošteva realno stanje progressa.
+        Novo pravilo:
+        - completed vsebine ostanejo completed v progressu;
+        - assessment rezultat pa mora še vedno pokazati eksplicitni NE;
+        - zato completed vsebin ne silimo več avtomatsko v known stanje.
         """
 
-        completed_learning_unit_set = set(completed_learning_unit_ids)
-        completed_module_set = set(completed_module_ids)
-
-        synced_learning_unit_results: List[Dict[str, Any]] = []
-
-        for unit_result in self._get_dict_list_value(
+        result["learning_unit_results"] = self._get_dict_list_value(
             result.get("learning_unit_results")
-        ):
-            synced_unit_result = dict(unit_result)
-            learning_unit_id = synced_unit_result.get("learning_unit_id")
+        )
 
-            if (
-                isinstance(learning_unit_id, str)
-                and learning_unit_id in completed_learning_unit_set
-            ):
-                synced_unit_result["is_completed_by_assessment"] = True
-
-                known_topic_ids = self._get_string_list_value(
-                    synced_unit_result.get("known_topic_ids")
-                )
-                missing_topic_ids = self._get_string_list_value(
-                    synced_unit_result.get("missing_topic_ids")
-                )
-
-                synced_unit_result["known_topic_ids"] = self._merge_unique_strings(
-                    known_topic_ids,
-                    missing_topic_ids,
-                )
-                synced_unit_result["missing_topic_ids"] = []
-
-                known_competency_codes = self._get_string_list_value(
-                    synced_unit_result.get("known_competency_codes")
-                )
-                missing_competency_codes = self._get_string_list_value(
-                    synced_unit_result.get("missing_competency_codes")
-                )
-
-                synced_unit_result["known_competency_codes"] = self._merge_unique_strings(
-                    known_competency_codes,
-                    missing_competency_codes,
-                )
-                synced_unit_result["missing_competency_codes"] = []
-
-            synced_learning_unit_results.append(synced_unit_result)
-
-        result["learning_unit_results"] = synced_learning_unit_results
-
-        synced_module_results: List[Dict[str, Any]] = []
-
-        for module_result in self._get_dict_list_value(
+        result["module_results"] = self._get_dict_list_value(
             result.get("module_results")
-        ):
-            synced_module_result = dict(module_result)
-            module_id = synced_module_result.get("module_id")
-
-            completed_learning_units = self._get_string_list_value(
-                synced_module_result.get("completed_learning_units")
-            )
-            missing_learning_units = self._get_string_list_value(
-                synced_module_result.get("missing_learning_units")
-            )
-
-            newly_completed_learning_units = [
-                learning_unit_id
-                for learning_unit_id in missing_learning_units
-                if learning_unit_id in completed_learning_unit_set
-            ]
-
-            synced_completed_learning_units = self._merge_unique_strings(
-                completed_learning_units,
-                newly_completed_learning_units,
-            )
-
-            synced_missing_learning_units = [
-                learning_unit_id
-                for learning_unit_id in missing_learning_units
-                if learning_unit_id not in completed_learning_unit_set
-            ]
-
-            synced_module_result["completed_learning_units"] = synced_completed_learning_units
-            synced_module_result["missing_learning_units"] = synced_missing_learning_units
-
-            if (
-                isinstance(module_id, str)
-                and module_id in completed_module_set
-            ):
-                synced_module_result["status"] = AssessmentStatus.COMPLETED.value
-                synced_module_result["completed_learning_units"] = self._merge_unique_strings(
-                    synced_completed_learning_units,
-                    synced_missing_learning_units,
-                )
-                synced_module_result["missing_learning_units"] = []
-            elif synced_completed_learning_units and not synced_missing_learning_units:
-                synced_module_result["status"] = AssessmentStatus.COMPLETED.value
-            elif synced_completed_learning_units:
-                synced_module_result["status"] = AssessmentStatus.PARTIALLY_COMPLETED.value
-            else:
-                synced_module_result["status"] = AssessmentStatus.NOT_STARTED.value
-
-            synced_module_results.append(synced_module_result)
-
-        result["module_results"] = synced_module_results
-
-        result["skipped_learning_units"] = self._merge_unique_strings(
-            self._get_string_list_value(result.get("skipped_learning_units")),
-            completed_learning_unit_ids,
         )
 
-        result["skipped_modules"] = self._merge_unique_strings(
-            self._get_string_list_value(result.get("skipped_modules")),
-            completed_module_ids,
+        result["skipped_learning_units"] = self._get_string_list_value(
+            result.get("skipped_learning_units")
         )
 
-        result["recommended_next_learning_units"] = [
-            learning_unit_id
-            for learning_unit_id in self._get_string_list_value(
-                result.get("recommended_next_learning_units")
-            )
-            if learning_unit_id not in completed_learning_unit_set
-        ]
+        result["skipped_modules"] = self._get_string_list_value(
+            result.get("skipped_modules")
+        )
 
-        result["recommended_next_modules"] = [
-            module_id
-            for module_id in self._get_string_list_value(
-                result.get("recommended_next_modules")
-            )
-            if module_id not in completed_module_set
-        ]
+        result["recommended_next_learning_units"] = self._get_string_list_value(
+            result.get("recommended_next_learning_units")
+        )
 
-        start_learning_unit_id = result.get("start_learning_unit_id")
-
-        if (
-            isinstance(start_learning_unit_id, str)
-            and start_learning_unit_id in completed_learning_unit_set
-        ):
-            current_position = result.get("current_position")
-
-            if isinstance(current_position, dict):
-                result["start_learning_unit_id"] = current_position.get(
-                    "current_learning_unit_id"
-                )
-                result["start_module_id"] = current_position.get(
-                    "current_module_id"
-                )
-            else:
-                result["start_learning_unit_id"] = None
-
-        start_module_id = result.get("start_module_id")
-
-        if (
-            isinstance(start_module_id, str)
-            and start_module_id in completed_module_set
-        ):
-            current_position = result.get("current_position")
-
-            if isinstance(current_position, dict):
-                result["start_module_id"] = current_position.get(
-                    "current_module_id"
-                )
-                result["start_learning_unit_id"] = current_position.get(
-                    "current_learning_unit_id"
-                )
-            else:
-                result["start_module_id"] = None
+        result["recommended_next_modules"] = self._get_string_list_value(
+            result.get("recommended_next_modules")
+        )
 
         current_position = result.get("current_position")
 
@@ -1037,14 +975,14 @@ class AssessmentProgressService:
 
             if (
                 isinstance(current_module_id, str)
-                and current_module_id not in completed_module_set
+                and current_module_id
                 and current_module_id not in result["recommended_next_modules"]
             ):
                 result["recommended_next_modules"].append(current_module_id)
 
             if (
                 isinstance(current_learning_unit_id, str)
-                and current_learning_unit_id not in completed_learning_unit_set
+                and current_learning_unit_id
                 and current_learning_unit_id not in result["recommended_next_learning_units"]
             ):
                 result["recommended_next_learning_units"].append(current_learning_unit_id)
@@ -1061,15 +999,25 @@ class AssessmentProgressService:
         """
         Počisti next recommendation podatke, če je learning path že completed.
 
-        AssessmentService lahko še vedno zazna optional module kot naslednji možni korak.
-        To je koristno za interno analizo, ampak v končnem response-u ne želimo prikazati
-        optional modula kot obveznega naslednjega koraka, če je učna pot že zaključena.
+        Novo pravilo:
+        - če je learning path completed in ni aktivnega priporočila, počistimo next step;
+        - če obstaja aktivno priporočilo zaradi eksplicitnega NE, ga ohranimo.
         """
 
         if target_type != QuestionnaireTargetType.LEARNING_PATH:
             return result
 
         if target_id not in completed_learning_path_ids:
+            return result
+
+        has_active_recommendation = (
+            bool(self._get_string_list_value(result.get("recommended_next_modules")))
+            or bool(self._get_string_list_value(result.get("recommended_next_learning_units")))
+            or isinstance(result.get("start_module_id"), str)
+            or isinstance(result.get("start_learning_unit_id"), str)
+        )
+
+        if has_active_recommendation:
             return result
 
         result["start_module_id"] = None

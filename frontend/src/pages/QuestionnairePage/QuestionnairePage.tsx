@@ -79,14 +79,18 @@ const yesNoAnswers: AnswerOption[] = [
   { answer: 'Ne', weight: false },
 ]
 
-function getAnswerOptionFromBackendValue(
-  value: QuestionnaireQuestionResponse['answer'],
+function getAnswerOptionFromBackendQuestion(
+  question: QuestionnaireQuestionResponse,
 ): AnswerOption | null {
-  if (value === true) {
+  if (!question.is_prefilled) {
+    return null
+  }
+
+  if (question.answer === true) {
     return yesNoAnswers[0]
   }
 
-  if (value === false) {
+  if (question.answer === false) {
     return yesNoAnswers[1]
   }
 
@@ -99,7 +103,7 @@ function createInitialSelectedAnswers(
   const initialAnswers: Record<string, AnswerOption> = {}
 
   for (const question of questions) {
-    const prefilledAnswer = getAnswerOptionFromBackendValue(question.answer)
+    const prefilledAnswer = getAnswerOptionFromBackendQuestion(question)
 
     if (!prefilledAnswer) {
       continue
@@ -1242,7 +1246,7 @@ function QuestionnairePage() {
       targetType !== 'learning_unit' && !selectedAnswer.weight
 
     if (shouldFinishAfterNoAnswer) {
-      await submitAssessment(questionIdsUntilCurrent, true)
+      await submitAssessment(questionIdsUntilCurrent)
       return
     }
 

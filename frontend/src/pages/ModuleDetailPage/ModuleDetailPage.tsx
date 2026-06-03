@@ -21,13 +21,13 @@ import {
 import LoadingState from '../../components/common/LoadingState'
 import ErrorState from '../../components/common/ErrorState'
 import EmptyState from '../../components/common/EmptyState'
-
 import { getModuleDetail } from '../../services/module-service'
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import type { ModuleDetailResponse } from '../../types/module'
 import type { AssessmentResultResponse } from '../../types/assessment'
 import { appStyles } from '../../design'
 import { LearningUnitVisualizer } from '../../features/modules/components/LearningUnitVisualizer'
+import ModuleAssistantBox from '../../features/modules/components/ModuleAssistantBox'
 import { useUserProgressState } from '../../hooks/useUserProgressState'
 import { getArrayOrEmpty } from '../../utils/display'
 import { normalizeDetailContent } from '../../utils/normalizers/detail-normalizers'
@@ -155,6 +155,7 @@ function ModuleDetailPage() {
         setError(null)
 
         const data = await getModuleDetail(moduleId)
+
         setModuleData(data)
       } catch (err) {
         console.error(err)
@@ -239,10 +240,7 @@ function ModuleDetailPage() {
   if (error) {
     return (
       <DetailPageShell>
-        <ErrorState
-          title="Napaka"
-          message={error}
-        />
+        <ErrorState title="Napaka" message={error} />
       </DetailPageShell>
     )
   }
@@ -259,6 +257,7 @@ function ModuleDetailPage() {
   }
 
   const detail = normalizeDetailContent(moduleData, 'Neimenovan modul')
+  const moduleContentId = moduleData._id ?? detail.id ?? moduleId ?? ''
   const learningUnitReferences = getArrayOrEmpty(moduleData.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData.learning_unit_details)
 
@@ -277,12 +276,14 @@ function ModuleDetailPage() {
   )
 
   const canUseContentActions = Boolean(detail.id)
+
   const canStartQuestionnaire = hasQuestionnaireContent(
     learningUnitReferences,
     learningUnitDetails,
   )
 
   let assessmentPositionUnitId: string | null = null
+
   if (assessmentResult) {
     if (assessmentResult.start_learning_unit_id) {
       assessmentPositionUnitId = assessmentResult.start_learning_unit_id
@@ -293,165 +294,185 @@ function ModuleDetailPage() {
 
   return (
     <DetailPageShell>
-      <div className="relative mb-8">
-        <div className={appStyles.header.step}>
-          <div className={appStyles.header.stepIcon}>
-            <Circle className="h-5 w-5" />
+      <div className="relative">
+        <div className="relative mb-8">
+          <div className={appStyles.header.step}>
+            <div className={appStyles.header.stepIcon}>
+              <Circle className="h-5 w-5" />
+            </div>
+            Modul
           </div>
-          Modul
+
+          {canUseContentActions && (
+            <DetailActions
+              contentId={detail.id}
+              contentType="module"
+              initialIsFavorite={isFavorite}
+              initialIsSaved={isSaved}
+              initialIsCompleted={isCompleted}
+            />
+          )}
         </div>
 
-        {canUseContentActions && (
-          <DetailActions
-            contentId={detail.id}
-            contentType="module"
-            initialIsFavorite={isFavorite}
-            initialIsSaved={isSaved}
-            initialIsCompleted={isCompleted}
-          />
-        )}
-      </div>
-
-      <DetailHero
-        eyebrow="Podrobnosti modula"
-        title={detail.title}
-        description={detail.description}
-      >
-        <DetailMeta
-          variant="compact"
-          items={[
-            {
-              label: 'Trajanje',
-              value: formatDuration(detail.durationHours),
-              icon: <Clock className="h-5 w-5" />,
-            },
-            {
-              label: 'Domene',
-              value: formatDomains(moduleData.domains),
-              icon: <Info className="h-5 w-5" />,
-            },
-          ]}
-        />
-
-        <div className="mt-6">
-          <DetailTags
-            tags={detail.keywords}
-            emptyMessage="Ni dodanih ključnih besed."
-          />
-        </div>
-      </DetailHero>
-
-      <DetailSection
-        title="Osnovni podatki"
-        description="Ključne informacije o strukturi modula."
-      >
-        <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
-          <div className="grid md:grid-cols-2">
-            {[
+        <DetailHero
+          eyebrow="Podrobnosti modula"
+          title={detail.title}
+          description={detail.description}
+        >
+          <DetailMeta
+            variant="compact"
+            items={[
               {
-                label: 'Število učnih enot',
-                value: String(learningUnitReferences.length),
-                icon: <BookOpen className="h-5 w-5" />,
-              },
-              {
-                label: 'Predviden čas',
+                label: 'Trajanje',
                 value: formatDuration(detail.durationHours),
                 icon: <Clock className="h-5 w-5" />,
               },
-            ].map((item, index) => (
-              <div
-                key={`${item.label}-${index}`}
-                className={[
-                  'flex min-w-0 items-start gap-4 px-5 py-5',
-                  index !== 0
-                    ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
-                    : '',
-                ].join(' ')}
-              >
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                  {item.icon}
-                </div>
+              {
+                label: 'Domene',
+                value: formatDomains(moduleData.domains),
+                icon: <Info className="h-5 w-5" />,
+              },
+            ]}
+          />
 
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                    {item.label}
-                  </p>
-
-                  <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
-                    {item.value}
-                  </strong>
-                </div>
-              </div>
-            ))}
+          <div className="mt-6">
+            <DetailTags
+              tags={detail.keywords}
+              emptyMessage="Ni dodanih ključnih besed."
+            />
           </div>
-        </div>
-      </DetailSection>
+        </DetailHero>
 
-      <DetailSection
-        title="Učne enote"
-        description="Vizualizacija poteka učnih enot znotraj modula."
-      >
-        <LearningUnitVisualizer
-          references={learningUnitReferences}
-          details={learningUnitDetails}
-          completedUnitIds={completedUnitIds}
-          moduleId={moduleId}
-          assessmentPositionUnitId={assessmentPositionUnitId}
-        />
-      </DetailSection>
-      <DetailRecommendationCarousel
-        eyebrow="Povezane učne poti"
-        title="Učne poti, ki vključujejo ta modul"
-        description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če želiš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
-        items={recommendedLearningPathItems}
-      />
-      <section className="mt-12 overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
-        <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
-          <div>
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#d7a56b] bg-[#fffdf8] text-[#d07a12]">
-                <CircleHelp className="h-6 w-6" />
-              </div>
-
-              <h2 className="font-serif text-3xl text-[#111111]">
-                Samoocena
-              </h2>
-            </div>
-
-            {canStartQuestionnaire ? (
-              <>
-                <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                  Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
-                  minut in preverite svoje znanje.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={handleStartQuestionnaire}
-                  className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
+        <DetailSection
+          title="Osnovni podatki"
+          description="Ključne informacije o strukturi modula."
+        >
+          <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
+            <div className="grid md:grid-cols-2">
+              {[
+                {
+                  label: 'Število učnih enot',
+                  value: String(learningUnitReferences.length),
+                  icon: <BookOpen className="h-5 w-5" />,
+                },
+                {
+                  label: 'Predviden čas',
+                  value: formatDuration(detail.durationHours),
+                  icon: <Clock className="h-5 w-5" />,
+                },
+              ].map((item, index) => (
+                <div
+                  key={`${item.label}-${index}`}
+                  className={[
+                    'flex min-w-0 items-start gap-4 px-5 py-5',
+                    index !== 0
+                      ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
+                      : '',
+                  ].join(' ')}
                 >
-                  Odpri vprašalnik
-                  <ExternalLink className="h-4 w-4" />
-                </button>
-              </>
-            ) : (
-              <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                Vprašalnik za ta modul še ni pripravljen.
-              </p>
-            )}
-          </div>
+                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
+                    {item.icon}
+                  </div>
 
-          <div className="hidden items-center justify-center md:flex">
-            <div className="flex h-[190px] w-[240px] items-center justify-center">
-              <img
-                src={questionnaireIllustration}
-                alt="Ilustracija vprašalnika"
-                className="max-h-full max-w-full object-contain"
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
+                      {item.label}
+                    </p>
+                    <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
+                      {item.value}
+                    </strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DetailSection>
+
+        <DetailSection
+          title="Učne enote"
+          description="Vizualizacija poteka učnih enot znotraj modula."
+        >
+          <div className="relative">
+            <LearningUnitVisualizer
+              references={learningUnitReferences}
+              details={learningUnitDetails}
+              completedUnitIds={completedUnitIds}
+              moduleId={moduleId}
+              assessmentPositionUnitId={assessmentPositionUnitId}
+            />
+
+            <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
+              <ModuleAssistantBox
+                moduleId={moduleContentId}
+                variant="desktop"
+                className="pointer-events-auto"
               />
             </div>
+
+            <section className="mt-8 min-[1500px]:hidden">
+              <ModuleAssistantBox
+                moduleId={moduleContentId}
+                variant="mobile"
+              />
+            </section>
           </div>
-        </div>
-      </section>
+        </DetailSection>
+
+        <DetailRecommendationCarousel
+          eyebrow="Povezane učne poti"
+          title="Učne poti, ki vključujejo ta modul"
+          description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če želiš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
+          items={recommendedLearningPathItems}
+        />
+
+        <section className="mt-12 overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
+          <div className="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#d7a56b] bg-[#fffdf8] text-[#d07a12]">
+                  <CircleHelp className="h-6 w-6" />
+                </div>
+
+                <h2 className="font-serif text-3xl text-[#111111]">
+                  Samoocena
+                </h2>
+              </div>
+
+              {canStartQuestionnaire ? (
+                <>
+                  <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
+                    nekaj minut in preverite svoje znanje.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={handleStartQuestionnaire}
+                    className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
+                  >
+                    Odpri vprašalnik
+                    <ExternalLink className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
+                  Vprašalnik za ta modul še ni pripravljen.
+                </p>
+              )}
+            </div>
+
+            <div className="hidden items-center justify-center md:flex">
+              <div className="flex h-[190px] w-[240px] items-center justify-center">
+                <img
+                  src={questionnaireIllustration}
+                  alt="Ilustracija vprašalnika"
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </DetailPageShell>
   )
 }

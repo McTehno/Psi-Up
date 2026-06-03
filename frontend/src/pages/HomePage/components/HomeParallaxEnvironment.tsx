@@ -34,6 +34,9 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	)
 	const cloudScale = useTransform(scrollYProgress, [0, 0.762], [1, 1.1])
 
+	// Performance optimization: Completely remove video from render tree when invisible
+	const cloudDisplay = useTransform(scrollYProgress, (v) => v > 0.15 ? 'none' : 'block')
+
 	/* ── Mountain layer transforms ───────────────────────────────── */
 	const mountainY = useTransform(scrollYProgress, [0, 0.762, 1], ['0%', '-20%', '-28%'])
 
@@ -150,6 +153,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 			<motion.div
 				className="absolute inset-x-0 top-0 h-[130%] w-full"
 				style={{
+					display: cloudDisplay,
 					y: cloudY,
 					scale: cloudScale,
 					opacity: cloudOpacity,

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import womanImage from '../../assets/woman.png'
+
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
 import AssessmentContextBox, {
   type AssessmentAssistantDisplayExchange,
@@ -15,10 +16,13 @@ import AssessmentProgress, {
 } from '../../features/questionnaire/components/AssessmentProgress'
 import QuestionnaireQuestion from '../../features/questionnaire/components/QuestionnaireQuestion'
 import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
+
+import { useAuth } from '../../features/auth/contexts/AuthContext'
 import { evaluateAssessment } from '../../services/assessment-service'
 import { getLearningPathDetail } from '../../services/learning-path-service'
 import { getModuleDetail } from '../../services/module-service'
 import { getQuestionnaire } from '../../services/questionnaire-service'
+
 import type { AssessmentResultResponse } from '../../types/assessment'
 import type {
   LearningPathDetailResponse,
@@ -35,16 +39,29 @@ import type {
 } from '../../types/questionnaire'
 
 import './QuestionnairePage.css'
-import { useAuth } from '../../features/auth/contexts/AuthContext'
 
 type AnswerOption = {
   answer: string
   weight: boolean
 }
 
+type QuestionnaireQuestionSource = {
+  learning_path_id?: string | null
+  module_id?: string | null
+  learning_unit_id?: string | null
+  topic_id?: string | null
+  related_topic?: string | null
+  competency_codes?: string[]
+  order?: number | null
+  parallel_group?: string | null
+  is_required?: boolean
+  prerequisites?: string[]
+}
+
 type QuestionnaireItem = QuestionnaireQuestionResponse & {
   answers: AnswerOption[]
   runtimeId: string
+  sources?: QuestionnaireQuestionSource[]
 }
 
 type CompetencyGroup = {
@@ -71,8 +88,7 @@ type BackendEntity = {
   _id?: string
 }
 
-// Nina: izbrisujem demo user
-// const ASSESSMENT_USER_ID = 'demo_user'
+const GUEST_ASSESSMENT_USER_ID_KEY = 'assessment_guest_user_id'
 
 const yesNoAnswers: AnswerOption[] = [
   { answer: 'Da', weight: true },
@@ -129,11 +145,11 @@ function normalizeTargetType(value: string | null): QuestionnaireTargetType | nu
 
 function getTargetTypeLabel(targetType: QuestionnaireTargetType) {
   if (targetType === 'learning_path') {
-    return 'ucna pot'
+    return 'učna pot'
   }
 
   if (targetType === 'learning_unit') {
-    return 'ucna enota'
+    return 'učna enota'
   }
 
   return 'modul'
@@ -158,7 +174,7 @@ function createFallbackTitle(
   targetType: QuestionnaireTargetType,
   targetId: string,
 ) {
-  return `Vprasalnik za ${getTargetTypeLabel(targetType)} ${targetId}`
+  return `Vprašalnik za ${getTargetTypeLabel(targetType)} ${targetId}`
 }
 
 function normalizeQuestionnaireResponse(
@@ -253,66 +269,6 @@ function getFirstQuestionOfNextGroup(
   return groups[groupIndex + 1]?.questions[0] ?? null
 }
 
-
-function getParallelContentKey(
-  question: QuestionnaireItem,
-  targetType: QuestionnaireTargetType,
-) {
-  if (targetType === 'module') {
-    return question.learning_unit_id ?? null
-  }
-
-  if (targetType === 'learning_path') {
-    return question.module_id ?? question.learning_unit_id ?? null
-  }
-
-  return null
-}
-
-function getNextParallelContentQuestion(params: {
-  questions: QuestionnaireItem[]
-  currentQuestion: QuestionnaireItem
-  targetType: QuestionnaireTargetType
-}) {
-  const { questions, currentQuestion, targetType } = params
-
-  if (targetType === 'learning_unit') {
-    return null
-  }
-
-  if (!currentQuestion.parallel_group) {
-    return null
-  }
-
-  const currentQuestionIndex = questions.findIndex(
-    (question) => question.runtimeId === currentQuestion.runtimeId,
-  )
-
-  if (currentQuestionIndex === -1) {
-    return null
-  }
-
-  const currentContentKey = getParallelContentKey(currentQuestion, targetType)
-
-  if (!currentContentKey) {
-    return null
-  }
-
-  return (
-    questions
-      .slice(currentQuestionIndex + 1)
-      .find((question) => {
-        const questionContentKey = getParallelContentKey(question, targetType)
-
-        return (
-          question.parallel_group === currentQuestion.parallel_group &&
-          questionContentKey !== currentContentKey
-        )
-      }) ?? null
-  )
-}
-
-
 function getNextQuestion(params: {
   currentQuestion: QuestionnaireItem
   groups: QuestionGroup[]
@@ -335,12 +291,282 @@ function getNextQuestion(params: {
   return getFirstQuestionOfNextGroup(groups, position.groupIndex)
 }
 
-
 function getCompetencyCodes(question: QuestionnaireItem) {
   const competencyCodes =
     question.competency_codes ?? question.related_competency_codes ?? []
 
   return Array.isArray(competencyCodes) ? competencyCodes : []
+}
+
+function normalizeQuestionText(value: unknown) {
+  if (typeof value !== 'string') {
+    return ''
+  }
+
+  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+function getQuestionFallbackSource(
+  question: QuestionnaireItem,
+): QuestionnaireQuestionSource {
+  return {
+    learning_path_id: question.learning_path_id ?? null,
+    module_id: question.module_id ?? null,
+    learning_unit_id: question.learning_unit_id ?? null,
+    topic_id: question.topic_id ?? question.related_topic_id ?? null,
+    competency_codes: getCompetencyCodes(question),
+    order: question.order ?? null,
+    parallel_group: question.parallel_group ?? null,
+    is_required: question.is_required ?? true,
+    prerequisites: question.prerequisites ?? [],
+  }
+}
+
+function getQuestionSources(question: QuestionnaireItem) {
+  if (Array.isArray(question.sources) && question.sources.length > 0) {
+    return question.sources
+  }
+
+  return [getQuestionFallbackSource(question)]
+}
+
+function getQuestionSourceParallelGroup(
+  question: QuestionnaireItem,
+  source: QuestionnaireQuestionSource,
+) {
+  return source.parallel_group ?? question.parallel_group ?? null
+}
+
+function getQuestionParallelGroups(question: QuestionnaireItem) {
+  return new Set(
+    getQuestionSources(question)
+      .map((source) => getQuestionSourceParallelGroup(question, source))
+      .filter((group): group is string => Boolean(group)),
+  )
+}
+
+function questionHasAnyParallelGroup(question: QuestionnaireItem) {
+  return getQuestionParallelGroups(question).size > 0
+}
+
+function getQuestionSourceContentKey(params: {
+  question: QuestionnaireItem
+  source: QuestionnaireQuestionSource
+  targetType: QuestionnaireTargetType
+  targetId: string
+}) {
+  const { question, source, targetType, targetId } = params
+
+  const fallbackKey =
+    normalizeQuestionText(question.question) || question.id || question.runtimeId
+
+  if (source.module_id || question.module_id) {
+    return source.module_id ?? question.module_id ?? fallbackKey
+  }
+
+  if (targetType === 'module') {
+    return targetId
+  }
+
+  if (source.learning_unit_id || question.learning_unit_id) {
+    return source.learning_unit_id ?? question.learning_unit_id ?? fallbackKey
+  }
+
+  if (targetType === 'learning_unit') {
+    return targetId
+  }
+
+  return fallbackKey
+}
+
+function getQuestionContentKeys(params: {
+  question: QuestionnaireItem
+  targetType: QuestionnaireTargetType
+  targetId: string
+  parallelGroups?: Set<string> | null
+}) {
+  const { question, targetType, targetId, parallelGroups } = params
+  const keys = new Set<string>()
+
+  for (const source of getQuestionSources(question)) {
+    const sourceParallelGroup = getQuestionSourceParallelGroup(question, source)
+
+    if (
+      parallelGroups &&
+      parallelGroups.size > 0 &&
+      (!sourceParallelGroup || !parallelGroups.has(sourceParallelGroup))
+    ) {
+      continue
+    }
+
+    const contentKey = getQuestionSourceContentKey({
+      question,
+      source,
+      targetType,
+      targetId,
+    })
+
+    if (contentKey) {
+      keys.add(contentKey)
+    }
+  }
+
+  return [...keys]
+}
+
+function getRejectedContentKeys(params: {
+  questions: QuestionnaireItem[]
+  selectedAnswers: Record<string, AnswerOption>
+  targetType: QuestionnaireTargetType
+  targetId: string
+  confirmedQuestionIds: string[]
+}) {
+  const {
+    questions,
+    selectedAnswers,
+    targetType,
+    targetId,
+    confirmedQuestionIds,
+  } = params
+
+  const confirmedQuestionIdSet = new Set(confirmedQuestionIds)
+  const rejectedContentKeys = new Set<string>()
+
+  for (const question of questions) {
+    if (!confirmedQuestionIdSet.has(question.runtimeId)) {
+      continue
+    }
+
+    if (selectedAnswers[question.runtimeId]?.weight !== false) {
+      continue
+    }
+
+    for (const contentKey of getQuestionContentKeys({
+      question,
+      targetType,
+      targetId,
+    })) {
+      rejectedContentKeys.add(contentKey)
+    }
+  }
+
+  return rejectedContentKeys
+}
+
+function questionHasUnrejectedContent(params: {
+  question: QuestionnaireItem
+  targetType: QuestionnaireTargetType
+  targetId: string
+  rejectedContentKeys: Set<string>
+}) {
+  const { question, targetType, targetId, rejectedContentKeys } = params
+
+  const contentKeys = getQuestionContentKeys({
+    question,
+    targetType,
+    targetId,
+  })
+
+  if (contentKeys.length === 0) {
+    return true
+  }
+
+  return contentKeys.some((contentKey) => !rejectedContentKeys.has(contentKey))
+}
+
+function getNextEligibleQuestion(params: {
+  questions: QuestionnaireItem[]
+  currentQuestion: QuestionnaireItem
+  groups: QuestionGroup[]
+  selectedAnswers: Record<string, AnswerOption>
+  targetType: QuestionnaireTargetType
+  targetId: string
+  confirmedQuestionIds: string[]
+  onlyParallelQuestions?: boolean
+}) {
+  const {
+    questions,
+    currentQuestion,
+    groups,
+    selectedAnswers,
+    targetType,
+    targetId,
+    confirmedQuestionIds,
+    onlyParallelQuestions = false,
+  } = params
+
+  const rejectedContentKeys = getRejectedContentKeys({
+    questions,
+    selectedAnswers,
+    targetType,
+    targetId,
+    confirmedQuestionIds,
+  })
+
+  let candidate = getNextQuestion({
+    currentQuestion,
+    groups,
+  })
+
+  while (candidate) {
+    if (
+      (!onlyParallelQuestions || questionHasAnyParallelGroup(candidate)) &&
+      questionHasUnrejectedContent({
+        question: candidate,
+        targetType,
+        targetId,
+        rejectedContentKeys,
+      })
+    ) {
+      return candidate
+    }
+
+    candidate = getNextQuestion({
+      currentQuestion: candidate,
+      groups,
+    })
+  }
+
+  return null
+}
+
+function getNextQuestionAfterNegativeAnswer(params: {
+  questions: QuestionnaireItem[]
+  currentQuestion: QuestionnaireItem
+  groups: QuestionGroup[]
+  selectedAnswers: Record<string, AnswerOption>
+  targetType: QuestionnaireTargetType
+  targetId: string
+  confirmedQuestionIds: string[]
+}) {
+  const {
+    questions,
+    currentQuestion,
+    groups,
+    selectedAnswers,
+    targetType,
+    targetId,
+    confirmedQuestionIds,
+  } = params
+
+  if (targetType === 'learning_unit') {
+    return null
+  }
+
+  if (!questionHasAnyParallelGroup(currentQuestion)) {
+    return null
+  }
+
+  return getNextEligibleQuestion({
+    questions,
+    currentQuestion,
+    groups,
+    selectedAnswers,
+    targetType,
+    targetId,
+    confirmedQuestionIds,
+    onlyParallelQuestions: true,
+  })
 }
 
 function createQuestionnaireAnswerRequest(
@@ -397,32 +623,6 @@ function createAnswerPayload(
     .filter(isQuestionnaireAnswerRequest)
 }
 
-function createAutoFalsePayload(
-  questions: QuestionnaireItem[],
-  alreadyAnsweredQuestionIds: string[],
-  selectedAnswers: Record<string, AnswerOption>,
-  targetType: QuestionnaireTargetType,
-  targetId: string,
-): QuestionnaireAnswerRequest[] {
-  const alreadyAnsweredQuestionIdSet = new Set(alreadyAnsweredQuestionIds)
-
-  const answeredPayload = createAnswerPayload(
-    alreadyAnsweredQuestionIds,
-    new Map(questions.map((question) => [question.runtimeId, question] as const)),
-    selectedAnswers,
-    targetType,
-    targetId,
-  )
-
-  const autoFalsePayload = questions
-    .filter((question) => !alreadyAnsweredQuestionIdSet.has(question.runtimeId))
-    .map((question) =>
-      createQuestionnaireAnswerRequest(question, false, targetType, targetId),
-    )
-
-  return [...answeredPayload, ...autoFalsePayload]
-}
-
 function getSessionStorage() {
   if (typeof window === 'undefined') {
     return null
@@ -433,6 +633,40 @@ function getSessionStorage() {
   } catch {
     return null
   }
+}
+
+function createGuestAssessmentUserId() {
+  if (
+    typeof globalThis.crypto !== 'undefined' &&
+    typeof globalThis.crypto.randomUUID === 'function'
+  ) {
+    return `guest_${globalThis.crypto.randomUUID()}`
+  }
+
+  return `guest_${Date.now()}_${Math.random().toString(36).slice(2)}`
+}
+
+function getAssessmentUserId(authenticatedUserId?: string | null) {
+  if (authenticatedUserId) {
+    return authenticatedUserId
+  }
+
+  const storage = getSessionStorage()
+
+  if (!storage) {
+    return createGuestAssessmentUserId()
+  }
+
+  const existingUserId = storage.getItem(GUEST_ASSESSMENT_USER_ID_KEY)
+
+  if (existingUserId) {
+    return existingUserId
+  }
+
+  const nextUserId = createGuestAssessmentUserId()
+  storage.setItem(GUEST_ASSESSMENT_USER_ID_KEY, nextUserId)
+
+  return nextUserId
 }
 
 function saveAssessmentResult(
@@ -516,7 +750,7 @@ function getLeafStatus(
     )
 
   if (hasNoAnswer) {
-    return 'missing'
+    return 'upcoming'
   }
 
   if (isActive) {
@@ -601,8 +835,8 @@ function createFallbackProgressSteps(params: {
       id: group.learningUnitId,
       label: String(groupIndex + 1),
       title: group.learningUnitId.startsWith('question_')
-        ? `Vprasanje ${groupIndex + 1}`
-        : `Ucna enota ${groupIndex + 1}`,
+        ? `Vprašanje ${groupIndex + 1}`
+        : `Učna enota ${groupIndex + 1}`,
       status: getLeafStatus(
         questionIds,
         selectedAnswers,
@@ -620,9 +854,10 @@ function createFallbackProgressSteps(params: {
 function QuestionnairePage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { session, localUser } = useAuth()
-  const userId = localUser?._id
+  const { localUser } = useAuth()
 
+  const userId = localUser?._id
+  const assessmentUserId = useMemo(() => getAssessmentUserId(userId), [userId])
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
 
@@ -634,9 +869,8 @@ function QuestionnairePage() {
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, AnswerOption>
   >({})
-  const [moduleDetail, setModuleDetail] = useState<ModuleDetailResponse | null>(
-    null,
-  )
+  const [moduleDetail, setModuleDetail] =
+    useState<ModuleDetailResponse | null>(null)
   const [learningPathDetail, setLearningPathDetail] =
     useState<LearningPathDetailResponse | null>(null)
   const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(true)
@@ -684,40 +918,46 @@ function QuestionnairePage() {
     return {
       _id: targetId,
       title: questionnaireTitle,
-      description: `Vprasalnik za ${getTargetTypeLabel(targetType)}`,
+      description: `Vprašalnik za ${getTargetTypeLabel(targetType)}`,
       competencies: [],
     }
   }, [questionnaireTitle, targetId, targetType])
 
+const confirmedQuestionIdsForPreview = visibleQuestionIds.slice(
+  0,
+  activeQuestionIndex + 1,
+)
 
-  const nextParallelQuestionAfterNo =
-    currentQuestion && targetType && selectedAnswer?.weight === false
-      ? getNextParallelContentQuestion({
-        questions: questionnaire,
-        currentQuestion,
-        targetType,
-      })
-      : null
+const nextQuestion =
+  currentQuestion && selectedAnswer && targetType && targetId
+    ? selectedAnswer.weight === false
+      ? getNextQuestionAfterNegativeAnswer({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: confirmedQuestionIdsForPreview,
+        })
+      : getNextEligibleQuestion({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: confirmedQuestionIdsForPreview,
+        })
+    : null
 
-  const shouldFinishAfterCurrentAnswer =
-    Boolean(
-      currentQuestion &&
-      targetType &&
-      selectedAnswer?.weight === false &&
-      targetType !== 'learning_unit' &&
-      !nextParallelQuestionAfterNo,
-    )
-
-  const nextQuestion =
-    currentQuestion && selectedAnswer
-      ? selectedAnswer.weight === false && nextParallelQuestionAfterNo
-        ? nextParallelQuestionAfterNo
-        : !shouldFinishAfterCurrentAnswer
-          ? getNextQuestion({
-            currentQuestion,
-            groups: questionGroups,
-          })
-          : null
+  const skipNotice =
+    phase === 'questionnaire' &&
+    currentQuestion &&
+    selectedAnswer?.weight === false
+      ? nextQuestion
+        ? 'Odgovor Ne bo preskočil preostala vprašanja tega modula in nadaljeval pri drugem vzporednem modulu. Z gumbom Nazaj lahko odgovor spremeniš.'
+        : 'Odgovor Ne bo zaključil vprašalnik, ker ni več neodgovorjenega vzporednega modula. Z gumbom Nazaj lahko odgovor spremeniš.'
       : null
 
   const confirmedQuestionCount =
@@ -745,7 +985,7 @@ function QuestionnairePage() {
           return {
             id: question.runtimeId,
             label: String(index + 1),
-            title: `Vprasanje ${index + 1}`,
+            title: `Vprašanje ${index + 1}`,
             status: getLeafStatus(
               [question.runtimeId],
               selectedAnswers,
@@ -776,6 +1016,7 @@ function QuestionnairePage() {
       )
         .map((learningUnitReference, unitIndex) => {
           const learningUnitId = getLearningUnitReferenceId(learningUnitReference)
+
           const questionIds = getQuestionIdsByLearningUnit(
             questionnaire,
             learningUnitId,
@@ -791,7 +1032,7 @@ function QuestionnairePage() {
             moduleDetail.learning_unit_details?.find(
               (learningUnit) =>
                 getBackendEntityId(learningUnit) === learningUnitId,
-            )?.title ?? `Ucna enota ${unitIndex + 1}`
+            )?.title ?? `Učna enota ${unitIndex + 1}`
 
           return {
             id: learningUnitId,
@@ -824,7 +1065,7 @@ function QuestionnairePage() {
         steps.push({
           id: 'module_additional_questions',
           label: String(steps.length + 1),
-          title: 'Dodatna vprasanja',
+          title: 'Dodatna vprašanja',
           status: getLeafStatus(
             questionIds,
             selectedAnswers,
@@ -902,7 +1143,7 @@ function QuestionnairePage() {
                   moduleItem?.learning_unit_details?.find(
                     (learningUnit) =>
                       getBackendEntityId(learningUnit) === learningUnitId,
-                  )?.title ?? `Ucna enota ${unitIndex + 1}`
+                  )?.title ?? `Učna enota ${unitIndex + 1}`
 
                 return {
                   id: learningUnitId,
@@ -948,7 +1189,7 @@ function QuestionnairePage() {
           const learningUnitTitle =
             learningPathDetail.learning_unit_details?.find(
               (learningUnit) => getBackendEntityId(learningUnit) === refId,
-            )?.title ?? `Ucna enota ${stepIndex + 1}`
+            )?.title ?? `Učna enota ${stepIndex + 1}`
 
           return {
             id: refId || `learning_unit_${stepIndex}`,
@@ -981,7 +1222,7 @@ function QuestionnairePage() {
         steps.push({
           id: 'learning_path_additional_questions',
           label: String(steps.length + 1),
-          title: 'Dodatna vprasanja',
+          title: 'Dodatna vprašanja',
           status: getLeafStatus(
             questionIds,
             selectedAnswers,
@@ -1062,8 +1303,8 @@ function QuestionnairePage() {
   const currentLabel = assessmentCopy.questionnaire.label
   const currentTitle =
     phase === 'completed'
-      ? 'Cilj ucne poti je dosezen'
-      : currentQuestion?.question ?? 'Vprasalnik se nalaga ...'
+      ? 'Cilj učne poti je dosežen'
+      : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
   const currentDescription =
     phase === 'completed'
@@ -1081,10 +1322,10 @@ function QuestionnairePage() {
     !isSubmittingAssessment
 
   const nextButtonLabel = isSubmittingAssessment
-    ? 'Posiljanje ...'
+    ? 'Pošiljanje ...'
     : nextQuestion
-      ? 'Naslednjo ->'
-      : 'Zakljuci ->'
+      ? 'Naslednjo →'
+      : 'Zaključi →'
 
   useEffect(() => {
     setAssistantExchange(null)
@@ -1111,7 +1352,6 @@ function QuestionnairePage() {
         setLearningPathDetail(null)
         setAssistantExchange(null)
 
-
         const data = await getQuestionnaire(targetType, targetId, userId)
 
         let nextModuleDetail: ModuleDetailResponse | null = null
@@ -1121,7 +1361,7 @@ function QuestionnairePage() {
           try {
             nextModuleDetail = await getModuleDetail(targetId)
           } catch (detailError) {
-            console.warn('Module detail ni bil nalozen.', detailError)
+            console.warn('Module detail ni bil naložen.', detailError)
           }
         }
 
@@ -1129,7 +1369,7 @@ function QuestionnairePage() {
           try {
             nextLearningPathDetail = await getLearningPathDetail(targetId)
           } catch (detailError) {
-            console.warn('Learning path detail ni bil nalozen.', detailError)
+            console.warn('Learning path detail ni bil naložen.', detailError)
           }
         }
 
@@ -1143,7 +1383,7 @@ function QuestionnairePage() {
           ...question,
           runtimeId: `${question.id}_${index}`,
           answers: yesNoAnswers,
-        }))
+        })) as QuestionnaireItem[]
 
         if (!isActive) {
           return
@@ -1169,7 +1409,7 @@ function QuestionnairePage() {
         setError(
           error instanceof Error
             ? error.message
-            : 'Vprasalnika ni bilo mogoce naloziti. Preverite, ce backend deluje.',
+            : 'Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.',
         )
       } finally {
         if (isActive) {
@@ -1214,7 +1454,6 @@ function QuestionnairePage() {
       }
 
       nextAnswers[currentQuestion.runtimeId] = answer
-
       return nextAnswers
     })
 
@@ -1223,13 +1462,9 @@ function QuestionnairePage() {
     )
   }
 
-  function shouldShowLearningPathCompletion(
-    questionIdsToSubmit: string[],
-    shouldAutoMarkRemainingAsFalse: boolean,
-  ) {
+  function shouldShowLearningPathCompletion(questionIdsToSubmit: string[]) {
     return (
       targetType === 'learning_path' &&
-      !shouldAutoMarkRemainingAsFalse &&
       questionIdsToSubmit.length === questionnaire.length &&
       questionIdsToSubmit.every(
         (questionId) => selectedAnswers[questionId]?.weight === true,
@@ -1237,12 +1472,9 @@ function QuestionnairePage() {
     )
   }
 
-  async function submitAssessment(
-    questionIdsToSubmit: string[],
-    shouldAutoMarkRemainingAsFalse = false,
-  ) {
-    if (!targetType || !targetId || !userId) {
-      setError('Za oddajo vprašalnika se morate prijaviti.')
+  async function submitAssessment(questionIdsToSubmit: string[]) {
+    if (!targetType || !targetId) {
+      setError('Manjka cilj vprašalnika.')
       return
     }
 
@@ -1250,28 +1482,16 @@ function QuestionnairePage() {
     setError(null)
 
     try {
-      const answers = shouldAutoMarkRemainingAsFalse
-        ? createAutoFalsePayload(
-          questionnaire,
-          questionIdsToSubmit,
-          selectedAnswers,
-          targetType,
-          targetId,
-        )
-        : createAnswerPayload(
-          questionIdsToSubmit,
-          questionById,
-          selectedAnswers,
-          targetType,
-          targetId,
-        )
-      if (!session?.access_token) {
-        setError('Za oddajo vprašalnika se morate prijaviti.')
-        return
-      }
+      const answers = createAnswerPayload(
+        questionIdsToSubmit,
+        questionById,
+        selectedAnswers,
+        targetType,
+        targetId,
+      )
 
       const payload: AssessmentEvaluateRequest = {
-        user_id: userId,
+        user_id: assessmentUserId,
         target_type: targetType,
         target_id: targetId,
         answers,
@@ -1281,12 +1501,7 @@ function QuestionnairePage() {
 
       saveAssessmentResult(targetType, targetId, result)
 
-      if (
-        shouldShowLearningPathCompletion(
-          questionIdsToSubmit,
-          shouldAutoMarkRemainingAsFalse,
-        )
-      ) {
+      if (shouldShowLearningPathCompletion(questionIdsToSubmit)) {
         setVisibleQuestionIds(questionnaire.map((question) => question.runtimeId))
         setActiveQuestionIndex(Math.max(questionnaire.length - 1, 0))
         setPhase('completed')
@@ -1296,67 +1511,65 @@ function QuestionnairePage() {
       navigate(getTargetDetailPath(targetType, targetId))
     } catch (error) {
       console.error(error)
+
       setError(
         error instanceof Error
           ? error.message
-          : 'Napaka pri posiljanju vprasalnika. Preverite, ce backend deluje.',
+          : 'Napaka pri pošiljanju vprašalnika. Preverite, če backend deluje.',
       )
     } finally {
       setIsSubmittingAssessment(false)
     }
   }
 
-  async function goToNextStep() {
-    if (
-      phase !== 'questionnaire' ||
-      !currentQuestion ||
-      !selectedAnswer ||
-      !targetType
-    ) {
-      return
-    }
-
-    const questionIdsUntilCurrent = visibleQuestionIds.slice(
-      0,
-      activeQuestionIndex + 1,
-    )
-
-    if (selectedAnswer.weight === false && targetType !== 'learning_unit') {
-      const nextParallelQuestion = getNextParallelContentQuestion({
-        questions: questionnaire,
-        currentQuestion,
-        targetType,
-      })
-
-      if (nextParallelQuestion) {
-        setVisibleQuestionIds([
-          ...questionIdsUntilCurrent,
-          nextParallelQuestion.runtimeId,
-        ])
-        setActiveQuestionIndex(questionIdsUntilCurrent.length)
-        return
-      }
-
-      await submitAssessment(questionIdsUntilCurrent)
-      return
-    }
-
-    const followingQuestion = getNextQuestion({
-      currentQuestion,
-      groups: questionGroups,
-    })
-
-    if (!followingQuestion) {
-      await submitAssessment(questionIdsUntilCurrent)
-      return
-    }
-
-    setVisibleQuestionIds([
-      ...questionIdsUntilCurrent,
-      followingQuestion.runtimeId,
-    ])
-    setActiveQuestionIndex(questionIdsUntilCurrent.length)
+async function goToNextStep() {
+  if (
+    phase !== 'questionnaire' ||
+    !currentQuestion ||
+    !selectedAnswer ||
+    !targetType ||
+    !targetId
+  ) {
+    return
   }
+
+  const questionIdsUntilCurrent = visibleQuestionIds.slice(
+    0,
+    activeQuestionIndex + 1,
+  )
+
+  const followingQuestion =
+    selectedAnswer.weight === false
+      ? getNextQuestionAfterNegativeAnswer({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: questionIdsUntilCurrent,
+        })
+      : getNextEligibleQuestion({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: questionIdsUntilCurrent,
+        })
+
+  if (!followingQuestion) {
+    await submitAssessment(questionIdsUntilCurrent)
+    return
+  }
+
+  setVisibleQuestionIds([
+    ...questionIdsUntilCurrent,
+    followingQuestion.runtimeId,
+  ])
+  setActiveQuestionIndex(questionIdsUntilCurrent.length)
+}
 
   function goToPreviousStep() {
     if (phase === 'completed') {
@@ -1372,10 +1585,10 @@ function QuestionnairePage() {
 
   if (error) {
     return (
-      <main className="questionnaire-page">
-        <section className="questionnaire-page__state">
-          <h1>Napaka</h1>
-          <p>{error}</p>
+      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-12">
+        <section className="rounded-3xl bg-white p-8 text-center shadow-sm">
+          <h1 className="text-2xl font-bold text-red-700">Napaka</h1>
+          <p className="mt-4 text-slate-700">{error}</p>
         </section>
       </main>
     )
@@ -1383,9 +1596,9 @@ function QuestionnairePage() {
 
   if (isLoadingQuestionnaire) {
     return (
-      <main className="questionnaire-page">
-        <section className="questionnaire-page__state">
-          <p>Nalaganje vprasalnika ...</p>
+      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-12">
+        <section className="rounded-3xl bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-700">Nalaganje vprašalnika ...</p>
         </section>
       </main>
     )
@@ -1393,9 +1606,9 @@ function QuestionnairePage() {
 
   if (questionnaire.length === 0) {
     return (
-      <main className="questionnaire-page">
-        <section className="questionnaire-page__state">
-          <p>Ta cilj trenutno nima vprasanj.</p>
+      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-12">
+        <section className="rounded-3xl bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-700">Ta cilj trenutno nima vprašanj.</p>
         </section>
       </main>
     )
@@ -1404,30 +1617,32 @@ function QuestionnairePage() {
   return (
     <AssessmentLayout
       imageSrc={womanImage}
-      defaultNote={assessmentCopy.groupSelection.note}
+      defaultNote="Odgovorite na kratka vprašanja, da lahko pripravimo priporočilo."
       phase={phase}
       selectedGroup={selectedGroup}
       currentQuestion={currentQuestion}
       selectedAnswer={selectedAnswer}
-      assistantExchange={assistantExchange}
     >
       <AssessmentHeader
         label={currentLabel}
         currentQuestion={currentQuestion ?? null}
-      />
-
-      <AssessmentProgress
-        targetLabel={questionnaireTitle}
-        steps={assessmentProgress.steps}
-        completedLeafCount={assessmentProgress.completedLeafCount}
-        totalLeafCount={assessmentProgress.totalLeafCount}
-        questionCount={questionnaire.length}
-        confirmedQuestionCount={confirmedQuestionCount}
-        showGoalFlag={targetType === 'learning_path'}
-        isGoalReached={isLearningPathGoalReached}
+        isVoiceSupportDisabled={phase !== 'questionnaire'}
       />
 
       <AssessmentIntro title={currentTitle} description={currentDescription} />
+
+      {targetType && (
+        <AssessmentProgress
+          targetLabel={questionnaireTitle || getTargetTypeLabel(targetType)}
+          steps={assessmentProgress.steps}
+          completedLeafCount={assessmentProgress.completedLeafCount}
+          totalLeafCount={assessmentProgress.totalLeafCount}
+          isGoalReached={isLearningPathGoalReached}
+          questionCount={questionnaire.length}
+          confirmedQuestionCount={confirmedQuestionCount}
+          showGoalFlag={targetType === 'learning_path'}
+        />
+      )}
 
       {phase === 'questionnaire' && currentQuestion && (
         <>
@@ -1436,6 +1651,12 @@ function QuestionnairePage() {
             selectedAnswer={selectedAnswer}
             onSelectAnswer={handleSelectAnswer}
           />
+
+          {skipNotice && (
+            <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {skipNotice}
+            </p>
+          )}
 
           <AssessmentActions
             canGoPrevious={canGoPrevious}
@@ -1448,21 +1669,25 @@ function QuestionnairePage() {
       )}
 
       {phase === 'completed' && (
-        <section className="questionnaire-page__completed">
-          <h2>Odlicno, cilj je dosezen.</h2>
-          <p>
-            Vprasalnik kaze, da trenutno ze obvladate celotno ucno pot.
-            Preusmeritev na podrobnosti se bo izvedla samodejno.
-          </p>
+        <>
+          <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-[#31583b]">
+              Odlično, cilj je dosežen.
+            </h2>
+            <p className="mt-3 text-slate-700">
+              Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
+              Preusmeritev na podrobnosti se bo izvedla samodejno.
+            </p>
+          </section>
 
           <AssessmentActions
             canGoPrevious={canGoPrevious}
             canGoNext={false}
             onPrevious={goToPreviousStep}
-            onNext={() => undefined}
-            nextLabel="Zakljuceno"
+            onNext={goToNextStep}
+            nextLabel="Zaključeno"
           />
-        </section>
+        </>
       )}
 
       {targetType && targetId && userId && currentQuestion && (
@@ -1482,8 +1707,19 @@ function QuestionnairePage() {
             }}
             className="mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
           >
-            {isChatOpen ? 'Skrij pomocnika' : 'Vprasaj pomocnika'}
+            {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
           </button>
+
+          {assistantExchange && (
+            <section className="mt-4 rounded-3xl bg-white/90 p-5 shadow-sm">
+              <p className="text-sm font-semibold text-[#31583b]">
+                Asistentka je odgovorila:
+              </p>
+              <p className="mt-2 whitespace-pre-line text-sm text-slate-700">
+                {assistantExchange.answer}
+              </p>
+            </section>
+          )}
 
           {isChatOpen && (
             <AssessmentContextBox
@@ -1491,22 +1727,23 @@ function QuestionnairePage() {
               targetType={targetType}
               targetId={targetId}
               learningPathId={
-                currentQuestion.learning_path_id ??
-                (targetType === 'learning_path' ? targetId : '')
+                targetType === 'learning_path'
+                  ? targetId
+                  : currentQuestion.learning_path_id ?? ''
               }
               moduleId={
-                currentQuestion.module_id ??
-                (targetType === 'module' ? targetId : undefined)
+                targetType === 'module'
+                  ? targetId
+                  : currentQuestion.module_id ?? undefined
               }
               learningUnitId={
-                currentQuestion.learning_unit_id ??
-                (targetType === 'learning_unit' ? targetId : undefined)
+                targetType === 'learning_unit'
+                  ? targetId
+                  : currentQuestion.learning_unit_id ?? undefined
               }
               questionId={currentQuestion.id}
               questionText={currentQuestion.question}
-              answerOptions={currentQuestion.answers.map(
-                (answer) => answer.answer,
-              )}
+              answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
               onActiveExchangeChange={setAssistantExchange}
             />
           )}

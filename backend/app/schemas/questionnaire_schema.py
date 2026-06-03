@@ -51,6 +51,11 @@ class QuestionnaireQuestionSourceResponse(BaseModel):
     related_topic: Optional[str] = None
     competency_codes: List[str] = Field(default_factory=list)
 
+    order: Optional[int] = None
+    parallel_group: Optional[str] = None
+    is_required: bool = True
+    prerequisites: List[str] = Field(default_factory=list)
+
 
 class QuestionnaireQuestionResponse(BaseModel):
     """
@@ -81,6 +86,11 @@ class QuestionnaireQuestionResponse(BaseModel):
     related_competency_codes: List[str] = Field(default_factory=list)
 
     sources: List[QuestionnaireQuestionSourceResponse] = Field(default_factory=list)
+    
+    order: Optional[int] = None
+    parallel_group: Optional[str] = None
+    is_required: bool = True
+    prerequisites: List[str] = Field(default_factory=list)
 
 
 class QuestionnaireResponse(BaseModel):

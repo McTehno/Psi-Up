@@ -75,6 +75,31 @@ def test_get_optional_string_value_returns_none_for_empty_or_invalid_value(servi
     assert service._get_optional_string_value(123) is None
 
 
+def test_get_optional_int_value_returns_int(service):
+    # Optional int se ohrani, če je vrednost integer.
+    result = service._get_optional_int_value(3)
+
+    assert result == 3
+
+
+def test_get_optional_int_value_returns_none_for_invalid_value(service):
+    # Neveljavna optional int vrednost postane None.
+    assert service._get_optional_int_value("3") is None
+    assert service._get_optional_int_value(None) is None
+
+
+def test_get_bool_value_returns_bool(service):
+    # Boolean vrednost se ohrani.
+    assert service._get_bool_value(False) is False
+    assert service._get_bool_value(True) is True
+
+
+def test_get_bool_value_returns_fallback_for_invalid_value(service):
+    # Če vrednost ni boolean, service vrne fallback.
+    assert service._get_bool_value("yes") is True
+    assert service._get_bool_value(None, fallback=False) is False
+
+
 def test_get_string_list_value_returns_only_non_empty_strings(service):
     # Seznam kompetenc se očisti in neveljavne vrednosti se odstranijo.
     result = service._get_string_list_value([" 1.2 ", "", 123, "5.2", None])
@@ -90,7 +115,7 @@ def test_get_string_list_value_returns_empty_list_for_invalid_value(service):
 
 
 def test_build_question_source_returns_source_structure(service):
-    # Source hrani povezave na path/module/unit/topic/competencies.
+    # Source hrani povezave na path/module/unit/topic/competencies in navigacijske metapodatke.
     question = {
         "learning_path_id": " lp_001 ",
         "module_id": " mod_001 ",
@@ -109,7 +134,34 @@ def test_build_question_source_returns_source_structure(service):
         "topic_id": "topic_001",
         "related_topic": "Osnovni pojmi",
         "competency_codes": ["1.2", "5.2"],
+        "order": None,
+        "parallel_group": None,
+        "is_required": True,
+        "prerequisites": [],
     }
+
+
+def test_build_question_source_keeps_navigation_metadata(service):
+    # Source ohrani order, parallel_group, is_required in prerequisites.
+    question = {
+        "learning_path_id": "up_004",
+        "module_id": "mod_005",
+        "learning_unit_id": "ue_010",
+        "related_topic_id": "topic_001",
+        "related_topic": "Tema",
+        "related_competency_codes": ["1.3"],
+        "order": 3,
+        "parallel_group": "mixed_parallel_group",
+        "is_required": False,
+        "prerequisites": ["ue_001", "mod_003"],
+    }
+
+    result = service._build_question_source(question)
+
+    assert result["order"] == 3
+    assert result["parallel_group"] == "mixed_parallel_group"
+    assert result["is_required"] is False
+    assert result["prerequisites"] == ["ue_001", "mod_003"]
 
 
 def test_normalize_question_returns_valid_question_with_source(service):
@@ -135,6 +187,10 @@ def test_normalize_question_returns_valid_question_with_source(service):
         "learning_path_id": "lp_001",
         "module_id": "mod_001",
         "learning_unit_id": "ue_001",
+        "order": None,
+        "parallel_group": None,
+        "is_required": True,
+        "prerequisites": [],
         "related_topic": "Osnovni pojmi",
         "related_topic_id": "topic_001",
         "related_competency_codes": ["1.2"],
@@ -146,9 +202,70 @@ def test_normalize_question_returns_valid_question_with_source(service):
                 "topic_id": "topic_001",
                 "related_topic": "Osnovni pojmi",
                 "competency_codes": ["1.2"],
+                "order": None,
+                "parallel_group": None,
+                "is_required": True,
+                "prerequisites": [],
             }
         ],
     }
+
+
+def test_normalize_question_keeps_navigation_metadata(service):
+    # _normalize_question ohrani parallel_group in ostale navigacijske metapodatke.
+    question = {
+        "id": "q_001",
+        "question": "Razumem vsebino.",
+        "type": "yes_no",
+        "learning_path_id": "up_004",
+        "module_id": "mod_005",
+        "learning_unit_id": "ue_010",
+        "order": 3,
+        "parallel_group": "mixed_parallel_group",
+        "is_required": False,
+        "prerequisites": ["ue_001", "mod_003"],
+        "related_topic": "Tema",
+        "related_topic_id": "topic_001",
+        "related_competency_codes": ["1.3"],
+    }
+
+    result = service._normalize_question(question)
+
+    assert result is not None
+    assert result["order"] == 3
+    assert result["parallel_group"] == "mixed_parallel_group"
+    assert result["is_required"] is False
+    assert result["prerequisites"] == ["ue_001", "mod_003"]
+
+    assert result["sources"][0]["order"] == 3
+    assert result["sources"][0]["parallel_group"] == "mixed_parallel_group"
+    assert result["sources"][0]["is_required"] is False
+    assert result["sources"][0]["prerequisites"] == ["ue_001", "mod_003"]
+
+
+def test_normalize_question_uses_default_navigation_metadata(service):
+    # Neveljavne navigacijske vrednosti dobijo varne default vrednosti.
+    question = {
+        "id": "q_001",
+        "question": "Razumem vsebino.",
+        "order": "not-number",
+        "parallel_group": "",
+        "is_required": "yes",
+        "prerequisites": "ue_001",
+    }
+
+    result = service._normalize_question(question)
+
+    assert result is not None
+    assert result["order"] is None
+    assert result["parallel_group"] is None
+    assert result["is_required"] is True
+    assert result["prerequisites"] == []
+
+    assert result["sources"][0]["order"] is None
+    assert result["sources"][0]["parallel_group"] is None
+    assert result["sources"][0]["is_required"] is True
+    assert result["sources"][0]["prerequisites"] == []
 
 
 def test_normalize_question_uses_default_type(service):
@@ -315,6 +432,10 @@ async def test_generate_questionnaire_for_learning_path_returns_questionnaire(
             "related_topic": "Osnovni pojmi",
             "related_topic_id": "topic_001",
             "related_competency_codes": ["1.2"],
+            "order": 2,
+            "parallel_group": "group_A",
+            "is_required": True,
+            "prerequisites": ["ue_000"],
         }
     ]
 
@@ -329,6 +450,10 @@ async def test_generate_questionnaire_for_learning_path_returns_questionnaire(
     assert result["title"] == "Učna pot UI"
     assert len(result["questions"]) == 1
     assert result["questions"][0]["id"] == "q_001"
+    assert result["questions"][0]["order"] == 2
+    assert result["questions"][0]["parallel_group"] == "group_A"
+    assert result["questions"][0]["is_required"] is True
+    assert result["questions"][0]["prerequisites"] == ["ue_000"]
 
     learning_path_service.get_learning_path_by_id.assert_awaited_once_with("lp_001")
     learning_path_service.get_self_assessment_questions_for_learning_path.assert_awaited_once_with(
@@ -372,6 +497,10 @@ async def test_generate_questionnaire_for_module_returns_questionnaire(
             "related_topic": "Tema",
             "related_topic_id": "topic_001",
             "related_competency_codes": ["1.2"],
+            "order": 3,
+            "parallel_group": "skupina_A",
+            "is_required": False,
+            "prerequisites": ["ue_000"],
         }
     ]
 
@@ -385,6 +514,10 @@ async def test_generate_questionnaire_for_module_returns_questionnaire(
     assert result["target_id"] == "mod_001"
     assert result["title"] == "Razumevanje umetne inteligence"
     assert len(result["questions"]) == 1
+    assert result["questions"][0]["order"] == 3
+    assert result["questions"][0]["parallel_group"] == "skupina_A"
+    assert result["questions"][0]["is_required"] is False
+    assert result["questions"][0]["prerequisites"] == ["ue_000"]
 
     module_service.get_module_by_id.assert_awaited_once_with("mod_001")
     module_service.get_self_assessment_questions_for_module.assert_awaited_once_with(
@@ -440,6 +573,10 @@ async def test_generate_questionnaire_for_learning_unit_returns_questionnaire(
     assert result["target_id"] == "ue_001"
     assert result["title"] == "Osnovni pojmi umetne inteligence"
     assert len(result["questions"]) == 1
+    assert result["questions"][0]["order"] is None
+    assert result["questions"][0]["parallel_group"] is None
+    assert result["questions"][0]["is_required"] is True
+    assert result["questions"][0]["prerequisites"] == []
 
     learning_unit_service.get_learning_unit_by_id.assert_awaited_once_with("ue_001")
     learning_unit_service.get_self_assessment_questions.assert_awaited_once_with(

@@ -300,9 +300,9 @@ class AssessmentProgressService:
         submitted_answers_by_key: Dict[str, Dict[str, Any]] = {}
 
         for answer in self._get_dict_list_value(submitted_answers):
-            key = self._get_answer_key(answer)
+            keys = self._get_answer_keys(answer)
 
-            if not key:
+            if not keys:
                 continue
 
             prepared_answer = dict(answer)
@@ -310,25 +310,38 @@ class AssessmentProgressService:
             if "was_answered" not in prepared_answer:
                 prepared_answer["was_answered"] = True
 
-            submitted_answers_by_key[key] = prepared_answer
+            for key in keys:
+                submitted_answers_by_key[key] = prepared_answer
 
         complete_answers: List[Dict[str, Any]] = []
 
         for question in self._get_dict_list_value(all_questions):
-            key = self._get_answer_key(question)
+            keys = self._get_answer_keys(question)
 
-            if key and key in submitted_answers_by_key:
+            submitted_answer = None
+
+            for key in keys:
+                if key in submitted_answers_by_key:
+                    submitted_answer = submitted_answers_by_key[key]
+                    break
+
+            if submitted_answer:
                 complete_answers.append(
                     self._merge_question_metadata_with_answer(
                         question=question,
-                        answer=submitted_answers_by_key[key],
+                        answer=submitted_answer,
                     )
                 )
                 continue
 
-            if key and key in latest_explicit_answers:
-                latest_answer = dict(latest_explicit_answers[key])
+            latest_answer = None
 
+            for key in keys:
+                if key in latest_explicit_answers:
+                    latest_answer = dict(latest_explicit_answers[key])
+                    break
+
+            if latest_answer:
                 latest_answer["was_answered"] = True
                 latest_answer["is_prefilled"] = True
                 latest_answer["prefill_source"] = "last_answer"
@@ -340,6 +353,7 @@ class AssessmentProgressService:
                     )
                 )
                 continue
+
 
             if self._is_question_from_completed_content(
                 question=question,
@@ -583,12 +597,13 @@ class AssessmentProgressService:
                 if answer.get("was_answered") is not True:
                     continue
 
-                key = self._get_answer_key(answer)
+                keys = self._get_answer_keys(answer)
 
-                if not key:
+                if not keys:
                     continue
 
-                latest_answers_by_key[key] = dict(answer)
+                for key in keys:
+                    latest_answers_by_key[key] = dict(answer)
 
         return latest_answers_by_key
 
@@ -1029,7 +1044,21 @@ class AssessmentProgressService:
         )
 
         return result
+    def _get_answer_keys(self, value: Dict[str, Any]) -> List[str]:
+        keys = []
 
+        question_id = value.get("question_id") or value.get("id")
+
+        if isinstance(question_id, str) and question_id.strip():
+            keys.append(f"id:{question_id.strip()}")
+
+        question_text = value.get("question")
+
+        if isinstance(question_text, str) and question_text.strip():
+            keys.append(f"question:{self._normalize_question_text(question_text)}")
+
+        return keys
+    
     def _get_answer_key(
         self,
         value: Dict[str, Any],

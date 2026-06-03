@@ -257,3 +257,74 @@ async def test_get_latest_explicit_answer_maps_maps_explicit_answer_by_id_and_te
         result["question:razumem osnovni koncept umetne inteligence."]["answer"]
         is False
     )
+
+def test_module_stop_after_first_no_does_not_mark_remaining_questions_as_explicit_answers():
+    service = build_service()
+
+    all_questions = [
+        {
+            "id": "q_001",
+            "question": "Razumem prvo temo.",
+            "type": "yes_no",
+            "learning_unit_id": "ue_001",
+            "related_topic_id": "topic_001",
+            "related_competency_codes": ["1.1"],
+        },
+        {
+            "id": "q_002",
+            "question": "Razumem drugo temo.",
+            "type": "yes_no",
+            "learning_unit_id": "ue_001",
+            "related_topic_id": "topic_002",
+            "related_competency_codes": ["1.2"],
+        },
+        {
+            "id": "q_003",
+            "question": "Razumem tretjo temo.",
+            "type": "yes_no",
+            "learning_unit_id": "ue_001",
+            "related_topic_id": "topic_003",
+            "related_competency_codes": ["1.3"],
+        },
+    ]
+
+    submitted_answers = [
+        {
+            "question_id": "q_001",
+            "question": "Razumem prvo temo.",
+            "type": "yes_no",
+            "answer": True,
+            "learning_unit_id": "ue_001",
+            "topic_id": "topic_001",
+            "competency_codes": ["1.1"],
+        },
+        {
+            "question_id": "q_002",
+            "question": "Razumem drugo temo.",
+            "type": "yes_no",
+            "answer": False,
+            "learning_unit_id": "ue_001",
+            "topic_id": "topic_002",
+            "competency_codes": ["1.2"],
+        },
+    ]
+
+    result = service._build_complete_answers(
+        all_questions=all_questions,
+        submitted_answers=submitted_answers,
+        existing_completed={
+            "learning_path_ids": [],
+            "module_ids": [],
+            "learning_unit_ids": [],
+        },
+        latest_explicit_answers={},
+    )
+
+    assert result[0]["answer"] is True
+    assert result[0]["was_answered"] is True
+
+    assert result[1]["answer"] is False
+    assert result[1]["was_answered"] is True
+
+    assert result[2]["answer"] is False
+    assert result[2]["was_answered"] is False

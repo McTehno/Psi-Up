@@ -456,6 +456,35 @@ class LearningPathService:
                 available_steps.append(step)
 
         return available_steps
+    
+    def _add_learning_path_step_metadata_to_questions(
+        self,
+        questions: List[Dict[str, Any]],
+        learning_path_id: str,
+        step: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+        """
+        Vsakemu vprašanju doda learning_path_id in metapodatke koraka učne poti.
+        """
+
+        prepared_questions: List[Dict[str, Any]] = []
+
+        for question in self._get_list_value(questions):
+            if not isinstance(question, dict):
+                continue
+
+            prepared_questions.append(
+                {
+                    **question,
+                    "learning_path_id": learning_path_id,
+                    "order": step.get("order"),
+                    "parallel_group": step.get("parallel_group"),
+                    "is_required": step.get("is_required", True),
+                    "prerequisites": step.get("prerequisites", []),
+                }
+            )
+
+        return prepared_questions
 
     async def get_self_assessment_questions_for_learning_path(
         self,
@@ -494,9 +523,10 @@ class LearningPathService:
                 )
 
                 questions.extend(
-                    self._add_learning_path_id_to_questions(
+                    self._add_learning_path_step_metadata_to_questions(
                         questions=module_questions,
                         learning_path_id=learning_path_id,
+                        step=step,
                     )
                 )
 
@@ -506,9 +536,10 @@ class LearningPathService:
                 )
 
                 questions.extend(
-                    self._add_learning_path_id_to_questions(
+                    self._add_learning_path_step_metadata_to_questions(
                         questions=learning_unit_questions,
                         learning_path_id=learning_path_id,
+                        step=step,
                     )
                 )
 

@@ -12,6 +12,7 @@ class FakeQuestionnaireService:
         self,
         target_type: QuestionnaireTargetType,
         target_id: str,
+        latest_explicit_answers=None,
     ):
         if target_id == "missing_id":
             return None
@@ -25,6 +26,9 @@ class FakeQuestionnaireService:
                     "id": "q_001",
                     "question": "Razumem vsebino.",
                     "type": "yes_no",
+                    "answer": None,
+                    "is_prefilled": False,
+                    "prefill_source": None,
                     "learning_path_id": (
                         target_id
                         if target_type == QuestionnaireTargetType.LEARNING_PATH
@@ -107,6 +111,9 @@ def test_get_questionnaire_for_learning_path_returns_questionnaire():
     assert len(data["questions"]) == 1
     assert data["questions"][0]["id"] == "q_001"
     assert data["questions"][0]["learning_path_id"] == "lp_001"
+    assert data["questions"][0]["answer"] is None
+    assert data["questions"][0]["is_prefilled"] is False
+    assert data["questions"][0]["prefill_source"] is None
 
 
 def test_get_questionnaire_for_module_returns_questionnaire():
@@ -128,6 +135,9 @@ def test_get_questionnaire_for_module_returns_questionnaire():
     assert data["title"] == "Testni vprašalnik"
     assert len(data["questions"]) == 1
     assert data["questions"][0]["module_id"] == "mod_001"
+    assert data["questions"][0]["answer"] is None
+    assert data["questions"][0]["is_prefilled"] is False
+    assert data["questions"][0]["prefill_source"] is None
 
 
 def test_get_questionnaire_for_learning_unit_returns_questionnaire():
@@ -149,6 +159,9 @@ def test_get_questionnaire_for_learning_unit_returns_questionnaire():
     assert data["title"] == "Testni vprašalnik"
     assert len(data["questions"]) == 1
     assert data["questions"][0]["learning_unit_id"] == "ue_001"
+    assert data["questions"][0]["answer"] is None
+    assert data["questions"][0]["is_prefilled"] is False
+    assert data["questions"][0]["prefill_source"] is None
 
 
 def test_get_questionnaire_returns_sources():

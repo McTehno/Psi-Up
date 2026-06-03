@@ -52,7 +52,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30, 1.40]
 	)
 
-	// Blur effect fades in strictly after Vprašalnik (0.90) until CTA (0.98)
+	// Blur effect fades in strictly after Vprašalnik (0.92) until CTA (0.97)
 	const mountainBlur = useTransform(scrollYProgress, [0, 0.92, 0.97, 1], [0, 0, 8, 8])
 	const mountainFilter = useMotionTemplate`blur(${mountainBlur}px)`
 

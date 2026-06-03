@@ -412,6 +412,10 @@ class ModuleService:
                     "module_id": module_id,
                     "learning_unit_id": question.get("learning_unit_id")
                     or learning_unit_id,
+                    "order": reference.get("order"),
+                    "parallel_group": reference.get("parallel_group"),
+                    "is_required": reference.get("is_required", True),
+                    "prerequisites": reference.get("prerequisites", []),
                 }
 
                 questions.append(prepared_question)

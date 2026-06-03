@@ -629,12 +629,20 @@ async def test_get_self_assessment_questions_for_module_collects_questions_from_
             "question": "Razumem prvo učno enoto.",
             "learning_unit_id": "ue_001",
             "module_id": "mod_001",
+            "order": 1,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
         },
         {
             "id": "q_ue_002_001",
             "question": "Razumem drugo učno enoto.",
             "module_id": "mod_001",
             "learning_unit_id": "ue_002",
+            "order": 2,
+            "parallel_group": None,
+            "is_required": True,
+            "prerequisites": [],
         },
     ]
 

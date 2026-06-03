@@ -22,6 +22,11 @@ export type QuestionnaireQuestionResponse = {
   related_topic_id?: string | null
   competency_codes?: string[]
   related_competency_codes?: string[]
+
+  order?: number | null
+  parallel_group?: string | null
+  is_required?: boolean
+  prerequisites?: string[]
 }
 
 export type QuestionnaireResponse = {

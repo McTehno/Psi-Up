@@ -253,6 +253,66 @@ function getFirstQuestionOfNextGroup(
   return groups[groupIndex + 1]?.questions[0] ?? null
 }
 
+
+function getParallelContentKey(
+  question: QuestionnaireItem,
+  targetType: QuestionnaireTargetType,
+) {
+  if (targetType === 'module') {
+    return question.learning_unit_id ?? null
+  }
+
+  if (targetType === 'learning_path') {
+    return question.module_id ?? question.learning_unit_id ?? null
+  }
+
+  return null
+}
+
+function getNextParallelContentQuestion(params: {
+  questions: QuestionnaireItem[]
+  currentQuestion: QuestionnaireItem
+  targetType: QuestionnaireTargetType
+}) {
+  const { questions, currentQuestion, targetType } = params
+
+  if (targetType === 'learning_unit') {
+    return null
+  }
+
+  if (!currentQuestion.parallel_group) {
+    return null
+  }
+
+  const currentQuestionIndex = questions.findIndex(
+    (question) => question.runtimeId === currentQuestion.runtimeId,
+  )
+
+  if (currentQuestionIndex === -1) {
+    return null
+  }
+
+  const currentContentKey = getParallelContentKey(currentQuestion, targetType)
+
+  if (!currentContentKey) {
+    return null
+  }
+
+  return (
+    questions
+      .slice(currentQuestionIndex + 1)
+      .find((question) => {
+        const questionContentKey = getParallelContentKey(question, targetType)
+
+        return (
+          question.parallel_group === currentQuestion.parallel_group &&
+          questionContentKey !== currentContentKey
+        )
+      }) ?? null
+  )
+}
+
+
 function getNextQuestion(params: {
   currentQuestion: QuestionnaireItem
   groups: QuestionGroup[]
@@ -274,6 +334,7 @@ function getNextQuestion(params: {
 
   return getFirstQuestionOfNextGroup(groups, position.groupIndex)
 }
+
 
 function getCompetencyCodes(question: QuestionnaireItem) {
   const competencyCodes =
@@ -628,17 +689,35 @@ function QuestionnairePage() {
     }
   }, [questionnaireTitle, targetId, targetType])
 
+
+  const nextParallelQuestionAfterNo =
+    currentQuestion && targetType && selectedAnswer?.weight === false
+      ? getNextParallelContentQuestion({
+        questions: questionnaire,
+        currentQuestion,
+        targetType,
+      })
+      : null
+
   const shouldFinishAfterCurrentAnswer =
-    targetType !== 'learning_unit' &&
-    Boolean(selectedAnswer) &&
-    selectedAnswer?.weight === false
+    Boolean(
+      currentQuestion &&
+      targetType &&
+      selectedAnswer?.weight === false &&
+      targetType !== 'learning_unit' &&
+      !nextParallelQuestionAfterNo,
+    )
 
   const nextQuestion =
-    currentQuestion && selectedAnswer && !shouldFinishAfterCurrentAnswer
-      ? getNextQuestion({
-        currentQuestion,
-        groups: questionGroups,
-      })
+    currentQuestion && selectedAnswer
+      ? selectedAnswer.weight === false && nextParallelQuestionAfterNo
+        ? nextParallelQuestionAfterNo
+        : !shouldFinishAfterCurrentAnswer
+          ? getNextQuestion({
+            currentQuestion,
+            groups: questionGroups,
+          })
+          : null
       : null
 
   const confirmedQuestionCount =
@@ -1242,10 +1321,22 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
-    const shouldFinishAfterNoAnswer =
-      targetType !== 'learning_unit' && !selectedAnswer.weight
+    if (selectedAnswer.weight === false && targetType !== 'learning_unit') {
+      const nextParallelQuestion = getNextParallelContentQuestion({
+        questions: questionnaire,
+        currentQuestion,
+        targetType,
+      })
 
-    if (shouldFinishAfterNoAnswer) {
+      if (nextParallelQuestion) {
+        setVisibleQuestionIds([
+          ...questionIdsUntilCurrent,
+          nextParallelQuestion.runtimeId,
+        ])
+        setActiveQuestionIndex(questionIdsUntilCurrent.length)
+        return
+      }
+
       await submitAssessment(questionIdsUntilCurrent)
       return
     }

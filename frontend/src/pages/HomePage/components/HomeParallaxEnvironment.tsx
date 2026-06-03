@@ -1,11 +1,9 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion'
+import { motion, MotionValue, useTransform, useMotionTemplate } from 'framer-motion'
 
 import fogVideo from '../../../assets/parallax/fog-background.mp4'
 import pathMountainImage from '../../../assets/parallax/path-mountain.webp'
 import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
 import unitMountainImage from '../../../assets/parallax/unit-mountain.webp'
-import GlowingOrbs from './GlowingOrbs'
 
 /**
  * HomeParallaxEnvironment
@@ -16,14 +14,11 @@ import GlowingOrbs from './GlowingOrbs'
  * The container spans 800vh, covering the Hero down to Učne enote,
  * unpinning gracefully before Vprašalnik.
  */
-function HomeParallaxEnvironment() {
-	const containerRef = useRef<HTMLDivElement | null>(null)
+type HomeParallaxEnvironmentProps = {
+	scrollYProgress: MotionValue<number>
+}
 
-	const { scrollYProgress } = useScroll({
-		target: containerRef,
-		offset: ['start start', 'end start'],
-	})
-
+function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentProps) {
 	/* ── Cloud layer transforms ──────────────────────────────────── */
 	// Clouds clear the screen fully by the time Učne poti starts (~0.18)
 	const cloudY = useTransform(
@@ -66,14 +61,8 @@ function HomeParallaxEnvironment() {
 
 
 	return (
-		<div
-			ref={containerRef}
-			className="pointer-events-none absolute inset-x-0 top-0 -z-30"
-			style={{ height: '800vh' }}
-			aria-hidden="true"
-		>
-			<div className="sticky top-0 h-screen w-full overflow-hidden">
-				{/* ── Layer 1 · Warm gradient base + ambient orbs ──────── */}
+		<div className="sticky top-0 h-screen w-full overflow-hidden -z-30 pointer-events-none">
+			{/* ── Layer 1 · Warm gradient base + ambient orbs ──────── */}
 				<div
 					className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(208,122,18,0.10),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(49,88,59,0.10),_transparent_24%),radial-gradient(circle_at_90%_80%,_rgba(234,223,206,0.45),_transparent_32%),linear-gradient(180deg,_#fffdf8,_#fff6eb)]"
 				/>
@@ -135,16 +124,6 @@ function HomeParallaxEnvironment() {
 							/>
 						</motion.div>
 
-						{/* Glowing Orbs: uses the same mask as unit-mountain so they wipe-reveal together from bottom to top */}
-						<motion.div 
-							className="absolute inset-0 h-full w-full z-[100] pointer-events-none"
-							style={{ 
-								WebkitMaskImage: unitGlowMask,
-								maskImage: unitGlowMask
-							}}
-						>
-							<GlowingOrbs />
-						</motion.div>
 					</div>
 
 					{/* Soft vignette blending the mountain top into the base */}
@@ -181,7 +160,6 @@ function HomeParallaxEnvironment() {
 						<source src={fogVideo} type="video/mp4" />
 					</video>
 				</motion.div>
-			</div>
 		</div>
 	)
 }

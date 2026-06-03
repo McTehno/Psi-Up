@@ -1,6 +1,6 @@
 # NIDiKo Parallax Landing Page: Architecture & Implementation Guide
 
-This document serves as a comprehensive master-guide for the frontend architecture, parallax animation mechanics, and storytelling structure of the NIDiKo landing page. It is written to bring any developer or AI agent fully up to speed on the technical and creative decisions made during the "Vibe Coding" phase of the project.
+This document serves as a comprehensive master-guide for the frontend architecture, parallax animation mechanics, and storytelling structure of the NIDiKo landing page. It is written to bring any developer or AI agent fully up to speed on the technical and creative decisions made during the "Vibe Coding" phase of the project, detailing exactly how the current state operates.
 
 ---
 
@@ -22,10 +22,10 @@ To make scroll-based animations work, the background environments and the foregr
 
 ### The Runway (Spacers)
 A premium scrolling experience requires "runway"—time for the user to scroll where the background animates *before* the next piece of text arrives. 
-Instead of stacking `HomeStorySection` cards right on top of each other, we use massive empty `div` spacers (e.g., `<div className="h-[56vh] lg:h-[70vh]" aria-hidden="true" />`).
+Instead of stacking `HomeStorySection` cards right on top of each other, we use massive empty spacer height. `HomeStorySection` explicitly enforces this with a `min-h-[150vh]` wrapper with massive top/bottom padding (`py-52 lg:py-80`).
 
-### The Z-Index Sandwich
-To prevent layers from crashing into each other, the page follows strict Z-indexing:
+### The Z-Index Sandwich (Crucial!)
+To prevent layers from crashing into each other, the page follows strict Z-indexing. **Failure to respect this will break the illusion (e.g. elements hiding behind the background).**
 *   **-z-30**: `HomeParallaxEnvironment` (The absolute bottom/back: clouds, mountains).
 *   **-z-20**: `HomeScrollJourney` (The SVG bezier curve line that draws itself down the page. Stays *over* the background, but *under* the text).
 *   **z-10 / default**: The `HomeStorySection` cards (glassmorphic UI).
@@ -36,55 +36,60 @@ To prevent layers from crashing into each other, the page follows strict Z-index
 ## 3. The `HomeParallaxEnvironment` Engine
 
 The core of the "Wow Factor" lives in `HomeParallaxEnvironment.tsx`. 
-It is a `500vh` tall absolute container with a `100vh` sticky inner viewport. As the user scrubs the `500vh` height, the sticky viewport stays pinned to the screen while Framer Motion mathematically updates the `y`, `scale`, and `maskImage` properties of the layers inside it.
+It is an `800vh` tall absolute container with a `100vh` sticky inner viewport. As the user scrubs the `800vh` height, the sticky viewport stays pinned to the screen while Framer Motion mathematically updates the `y`, `scale`, and `maskImage` properties of the layers inside it based on the `scrollYProgress` (0 to 1).
 
-### Phase 1: The Clouds & Hero Section
+### Phase 1: The Clouds & Hero Section (0.00 to 0.20)
 *   **The Visual:** On load, the user sees a looping cloud/fog video (`fogVideo.mp4`). The `HomeHeroSection` UI (Search bar, Top cards) is fully visible *immediately* taking priority over the clouds.
-*   **The Hard-Edge Video Fix:** To prevent the bottom literal edge of the MP4 from rendering, we apply a CSS `mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%)` to the video wrapper. The video smoothly fades into transparency at the bottom.
-*   **The Scroll Action:** As the user scrolls, Framer Motion yanks the cloud video UP and scales it gently, fading its opacity to `0`. 
+*   **The Hard-Edge Video Fix:** To prevent the bottom literal edge of the MP4 from rendering, we apply a CSS mask to the video wrapper: `linear-gradient(to bottom, black 0%, black 70%, transparent 100%)`.
+*   **The Scroll Action:** As the user scrolls, Framer Motion yanks the cloud video UP and scales it gently, fading its opacity to `0` completely by `0.18`. 
 
-### Phase 2: Učne Poti (The Mountain Reveal)
-*   **The Visual:** Nestled *behind* the clouds is `pathMountainImage`. Because the clouds fade and move upward faster than the mountain moves upward, a beautiful parallax reveal occurs.
+### Phase 2: Učne Poti - The Mountain Reveal (Base Image)
+*   **The Visual:** Nestled *behind* the clouds is `pathMountainImage` (`z-0`). Because the clouds fade and move upward faster than the mountain moves, a beautiful parallax reveal occurs.
 *   **The Scroll Action:** By the time the user hits the first story card ("Začni z večjo sliko"), the clouds are entirely gone. The mountain image is scaling up slowly (`1.05` to `1.15`), giving the impression that we are diving toward it.
 
-### Phase 3: Moduli (The Glowing Sub-Peaks)
-*   **The Problem:** How do we transition to showing specific "Modules" on the mountain without jarringly loading a new image or pixelating a digital zoom?
-*   **The Solution:** We place a second, mathematically identical image (`moduleMountainImage`) directly on top of the first. This image has glowing/illuminated ridges painted onto it (representing the modules).
-*   **The Scroll Action (The Masterpiece):** We don't just fade the opacity in. We use `useMotionTemplate` to generate a dynamic CSS gradient mask that sweeps *upward*. As the user scrolls into the "Moduli" section, the glowing ridges appear to be physically drawn or illuminated from bottom to top out of the rock.
+### Phase 3: Moduli - The Glowing Sub-Peaks (0.40 to 0.50)
+*   **The Visual:** We place a second, mathematically identical image (`moduleMountainImage` at `z-10`) directly on top of the first. This image has glowing/illuminated ridges painted onto it (representing the modules).
+*   **The Reveal Mechanics:** We do *not* just fade opacity. We use `useMotionTemplate` to generate a dynamic CSS gradient mask (`moduleGlowMask`) that sweeps *upward* as scroll progress goes from `0.40` to `0.50`.
+*   **Result:** The glowing ridges appear to be physically drawn or illuminated from bottom to top out of the rock.
 
 ---
 
-## 4. Phase 4: Učne Enote (The Micro-Level / Latest Concept)
+## 4. Phase 4: Učne Enote & Glowing Orbs (0.62 to 0.72)
 
-This is the most crucial part of the latest prompts. The user scrolls past "Moduli" into the smallest component ("Učne enote"). We need to visually represent zooming into single nodes of knowledge.
+This is the most technically delicate part of the implementation. The user scrolls past "Moduli" into the smallest component ("Učne enote"). We visually represent zooming into single nodes of knowledge.
 
-*   **The Flawed Ideas Rejected:** 
-    *   Infinite zoom into a WebP (rejected: pixelation and bad framing).
-    *   Transition to a dark constellation (rejected: violates the light/cream color theme `#fffdf8`).
-    *   Snipping/cutting out a single mountain peak (rejected: harsh Photoshop edges ruin the organic vibe).
-    *   Trying to mathematically attach HTML nodes to the `HomeScrollJourney` SVG line (rejected: parallax math and fixed SVG coordinates will detach and break on responsive screens).
+### The Assets
+Instead of baking nodes directly into Photoshop (which ruins responsiveness), we use a dynamic React component (`GlowingOrbs.tsx`) placed *over* a third mountain layer (`unitMountainImage` at `z-20`).
 
-*   **The Final Approved Solution: "Fade to Fog" with Baked Nodes**
-    1.  **The Asset (`unit-mountain-isolate.webp`):** We take the mountain image and apply heavy cream/white fog to the sides, base, and background peaks using Photoshop. Only the single, central glowing peak (the "Module") is left visible.
-    2.  **Baking the Nodes:** In Photoshop, we look at where the `HomeScrollJourney` SVG line crosses this central peak on the screen. We paint/bake 3 to 4 elegant glowing dots (nodes) directly into the mountain asset exactly along that trajectory.
-    3.  **The Framer Motion Logic:** As the user scrolls from `0.70` to `0.90` (entering the Učne enote section), the fully realized mountain phases out, and the `unit-mountain-isolate` (The Foggy Peak) fades to `1` opacity.
-    4.  **The Result:** The background smoothly minimalizes. The excess nature melts into cream-colored fog, leaving focus on a single peak. The painted nodes on the peak perfectly intersect with the scrolling SVG bezier curve overhead. The purely decorative scrolling line suddenly becomes the literal "learning path" connecting the "learning units".
+### The Reveal Mechanics (WARNING: Common Pitfalls)
+As the user scrolls from `0.62` to `0.72`, a new `unitGlowMask` sweeps upward.
+*   **The Z-Index Trap:** The `GlowingOrbs` component wrapper **MUST** have a higher Z-index (`z-[100]`) than the `unitMountainImage` (`z-20`). If you forget this, the orbs will render behind the mountain and vanish completely.
+*   **The Masking Trap:** The `GlowingOrbs` component wrapper **MUST** use the exact same `unitGlowMask` as the `unitMountainImage`. 
+    *   *If you do not mask the orbs:* The orbs will be fully visible floating in the sky *before* the mountain underneath them even reveals itself!
+    *   *By sharing the mask:* The mountain layer and the floating React orbs wipe into existence perfectly simultaneously, from bottom to top, creating a flawless illusion that they are part of the landscape.
+
+### GlowingOrbs.tsx Architecture
+*   **Positioning:** The orbs are mapped via percentages (`top: '72%', left: '59%'`) grouped into four modules. The coordinates feature decreasing steepness to perfectly hug the right-side downward slopes of the underlying mountain image. 
+*   **Styling:** They use heavy `box-shadow` to create an organic, ambient glow (mimicking light bleeding onto the mountain rock) rather than flat dots.
+*   **Animation:** They use a subtle framer-motion float (`y: [0, -10, 0]`) and pulse (`scale`, `opacity`) on infinite repeat, utilizing staggered delays so they feel organic and asynchronous rather than robotic.
 
 ---
 
-## 5. Required Assets to Generate (To-Do List)
+## 5. Required Assets Summary
 
-To execute this architecture fully, the following localized assets must be finalized:
+To execute this architecture fully, the following localized assets are utilized in the stack:
 
 1.  **`fog-background.mp4`**: A very light, ambient, slow-moving fog/cloud loop.
 2.  **`path-mountain.webp`**: The base organic mountain image (light sky, earthy rocks).
-3.  **`module-mountain.webp`**: EXACT same image as #2, but with 2 or 3 distinct ridges highlighted/glowing in a sleek green tone.
-4.  **`unit-mountain-isolate.webp`**: EXACT same image as #3, but the outer 80% of the image is shrouded in a heavy cream radial gradient (fog), leaving only one glowing ridge. 3 or 4 distinct glowing dots are painted onto this ridge, mapped to align with where the SVG journey line falls in the browser.
+3.  **`module-mountain.webp`**: EXACT same image as #2, but with distinct ridges highlighted/glowing in a sleek green tone.
+4.  **`unit-mountain.webp`**: EXACT same image as #3, but with additional detailing or fog isolation to focus purely on the Učne enote layout.
 
 ---
 
 ## 6. Summary for AI Context Extension
 
 If you are an AI picking up this context:
-Do NOT suggest adding `pt-[120vh]` to the `HomeHeroSection`. The Hero UI must be visible immediately on load over the clouds. The spacing is done purely via spacer `div`s between the Story Sections. 
-Focus strictly on tweaking the `scrollYProgress` thresholds inside `HomeParallaxEnvironment` to map perfectly to the physical heights of the `min-[150vh]` story sections. Leverage the `-z-30` stack and `mask-image` masking for all background reveals.
+1. Do NOT suggest adding `pt-[120vh]` to the `HomeHeroSection`. The Hero UI must be visible immediately on load over the clouds. The spacing is done purely via spacer `div`s and the `min-h-[150vh]` wrappers on the Story Sections. 
+2. When tweaking animations, focus strictly on the `scrollYProgress` thresholds inside `HomeParallaxEnvironment`. The `[0.40, 0.50]` and `[0.62, 0.72]` arrays must map perfectly to the physical heights of the story sections.
+3. If adjusting the `GlowingOrbs`, remember they are absolutely positioned using percentages. If the underlying `unitMountainImage` aspect ratio changes, the orb percentages will need to be meticulously recalibrated.
+4. Leverage the strict Z-index hierarchy and `mask-image` masking for all background reveals. Always apply the shared `useMotionTemplate` mask to BOTH the background layer and its decorative foreground elements to prevent sequence breaking.

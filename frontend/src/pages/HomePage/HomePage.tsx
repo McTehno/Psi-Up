@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Lenis from 'lenis'
+import { useScroll } from 'framer-motion'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
+import HomeOrbsLayer from './components/HomeOrbsLayer'
 import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
 import HomeStorySection from './components/HomeStorySection'
@@ -23,6 +25,12 @@ function HomePage() {
 		setSearchResults,
 		isSearching,
 	} = useGlobalSearch()
+
+	const parallaxContainerRef = useRef<HTMLDivElement | null>(null)
+	const { scrollYProgress } = useScroll({
+		target: parallaxContainerRef,
+		offset: ['start start', 'end start'],
+	})
 
 	useEffect(() => {
 		document.body.style.overflow = isSearchActive ? 'hidden' : 'unset'
@@ -60,7 +68,15 @@ function HomePage() {
 
 	return (
 		<main className="relative isolate min-h-screen text-[#2f3328]">
-			<HomeParallaxEnvironment />
+			<div
+				ref={parallaxContainerRef}
+				className="absolute inset-x-0 top-0 pointer-events-none"
+				style={{ height: '800vh' }}
+				aria-hidden="true"
+			>
+				<HomeParallaxEnvironment scrollYProgress={scrollYProgress} />
+				<HomeOrbsLayer scrollYProgress={scrollYProgress} />
+			</div>
 
 			<div
 				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive

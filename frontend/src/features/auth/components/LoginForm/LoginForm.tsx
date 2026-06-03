@@ -25,11 +25,7 @@ export default function LoginForm({ onSubmit, onForgotPassword, error, isLoading
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
-          {error}
-        </div>
-      )}
+
       <div className="space-y-1.5">
         <label htmlFor="login-email" className="block text-sm font-semibold text-[#2C2417]">
           E-poštni naslov

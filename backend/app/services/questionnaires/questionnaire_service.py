@@ -413,6 +413,27 @@ class QuestionnaireService:
             "title": learning_unit.get("title"),
             "questions": normalized_questions,
         }
+    def _get_answer_keys(
+        self,
+        value: Dict[str, Any],
+    ) -> List[str]:
+        """
+        Vrne vse možne ključe za vprašanje.
+        """
+
+        keys: List[str] = []
+
+        question_id = value.get("question_id") or value.get("id")
+
+        if isinstance(question_id, str) and question_id.strip():
+            keys.append(f"id:{question_id.strip()}")
+
+        question_text = value.get("question")
+
+        if isinstance(question_text, str) and question_text.strip():
+            keys.append(f"question:{self._normalize_question_text(question_text)}")
+
+        return keys
     
     def _get_answer_key(
         self,
@@ -452,15 +473,21 @@ class QuestionnaireService:
 
         for question in questions:
             prepared_question = dict(question)
-            key = self._get_answer_key(prepared_question)
+            keys = self._get_answer_keys(prepared_question)
 
-            if key and key in latest_explicit_answers:
-                latest_answer = latest_explicit_answers[key]
+            latest_answer = None
 
+            for key in keys:
+                if key in latest_explicit_answers:
+                    latest_answer = latest_explicit_answers[key]
+                    break
+
+            if latest_answer:
                 prepared_question["answer"] = latest_answer.get("answer")
                 prepared_question["is_prefilled"] = True
                 prepared_question["prefill_source"] = "last_answer"
             else:
+                prepared_question["answer"] = None
                 prepared_question["is_prefilled"] = False
                 prepared_question["prefill_source"] = None
 

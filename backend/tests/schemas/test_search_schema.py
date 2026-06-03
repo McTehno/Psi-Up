@@ -88,8 +88,8 @@ def test_search_result_response_uses_default_values():
     assert result.keywords == []
 
 
-def test_search_result_response_requires_id_type_and_title():
-    # id, type in title so obvezni.
+def test_search_result_response_requires_id_and_type():
+    # id in type sta obvezna, title pa ima privzeto vrednost.
     with pytest.raises(ValidationError):
         SearchResultResponse(
             type=SearchContentType.MODULE,
@@ -102,12 +102,14 @@ def test_search_result_response_requires_id_type_and_title():
             title="Osnove Excela",
         )
 
-    with pytest.raises(ValidationError):
-        SearchResultResponse(
-            id="mod_001",
-            type=SearchContentType.MODULE,
-        )
+def test_search_result_response_uses_default_title_when_missing():
+    # Če title ni podan, se uporabi privzeta vrednost.
+    result = SearchResultResponse(
+        id="mod_001",
+        type=SearchContentType.MODULE,
+    )
 
+    assert result.title == ""
 
 def test_search_result_accepts_valid_data():
     # SearchResult je trenutna shema, ki jo uporablja zadnji SearchResponse.

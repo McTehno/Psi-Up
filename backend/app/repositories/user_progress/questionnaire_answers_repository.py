@@ -117,6 +117,32 @@ class QuestionnaireAnswersRepository:
             progress=progress,
         )
 
+    async def get_all_questionnaire_answers(
+        self,
+        user_id: str,
+    ) -> List[Dict[str, Any]]:
+        """
+        Vrne vse shranjene odgovore vprašalnikov za uporabnika.
+
+        Uporablja se za prefill vprašalnika z zadnjimi eksplicitnimi odgovori.
+        """
+
+        progress = await self._ensure_progress_exists(user_id)
+
+        if progress is None:
+            return []
+
+        questionnaire_answers = progress.get("questionnaire_answers", [])
+
+        if not isinstance(questionnaire_answers, list):
+            return []
+
+        return [
+            entry
+            for entry in questionnaire_answers
+            if isinstance(entry, dict)
+        ]
+
     async def get_questionnaire_answers(
         self,
         user_id: str,

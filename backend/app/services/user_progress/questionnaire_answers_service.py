@@ -239,6 +239,54 @@ class QuestionnaireAnswersService:
 
         return new_answer
 
+    async def get_latest_explicit_answer_maps(
+        self,
+        user_id: str,
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Vrne mapo zadnjih eksplicitnih odgovorov uporabnika.
+
+        Upoštevamo samo odgovore z was_answered=True.
+        Backend fallback odgovori z was_answered=False niso zadnji eksplicitni odgovor.
+        """
+
+        if not user_id:
+            return {}
+
+        questionnaire_answers = (
+            await self.questionnaire_answers_repository.get_all_questionnaire_answers(
+                user_id=user_id
+            )
+        )
+
+        latest_answers_by_key: Dict[str, Dict[str, Any]] = {}
+
+        for entry in questionnaire_answers:
+            if not isinstance(entry, dict):
+                continue
+
+            answers = entry.get("answers", [])
+
+            if not isinstance(answers, list):
+                continue
+
+            for answer in answers:
+                if not isinstance(answer, dict):
+                    continue
+
+                if answer.get("was_answered") is not True:
+                    continue
+
+                key = self._get_answer_key(answer)
+
+                if not key:
+                    continue
+
+                latest_answers_by_key[key] = dict(answer)
+
+        return latest_answers_by_key
+
+
     def _get_answer_key(self, answer: Dict[str, Any]) -> Optional[str]:
         """
         Vrne ključ za primerjavo odgovorov.

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -68,6 +68,10 @@ class QuestionnaireQuestionResponse(BaseModel):
     question: str
     type: str = "yes_no"
 
+    answer: Optional[Any] = None
+    is_prefilled: bool = False
+    prefill_source: Optional[str] = None
+    
     learning_path_id: Optional[str] = None
     module_id: Optional[str] = None
     learning_unit_id: Optional[str] = None

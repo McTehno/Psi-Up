@@ -16,6 +16,14 @@ from app.services.learning_units.learning_unit_service import LearningUnitServic
 from app.services.modules.module_service import ModuleService
 from app.services.questionnaires.questionnaire_service import QuestionnaireService
 
+from app.repositories.user_progress.questionnaire_answers_repository import (
+    QuestionnaireAnswersRepository,
+)
+from app.services.user_progress.questionnaire_answers_service import (
+    QuestionnaireAnswersService,
+)
+
+from typing import Optional
 
 router = APIRouter(prefix="/questionnaires", tags=["Questionnaires"])
 
@@ -54,6 +62,18 @@ def get_questionnaire_service() -> QuestionnaireService:
         learning_unit_service=learning_unit_service,
     )
 
+def get_questionnaire_answers_service() -> QuestionnaireAnswersService:
+    """
+    Vrne QuestionnaireAnswersService instanco.
+    """
+
+    database = get_database()
+
+    questionnaire_answers_repository = QuestionnaireAnswersRepository(database)
+
+    return QuestionnaireAnswersService(
+        questionnaire_answers_repository=questionnaire_answers_repository,
+    )
 
 @router.get("", response_model=QuestionnaireResponse)
 async def get_questionnaire(
@@ -65,18 +85,35 @@ async def get_questionnaire(
         ...,
         description="ID učne poti, modula ali učne enote.",
     ),
+    user_id: Optional[str] = Query(
+        None,
+        description="ID uporabnika za predizpolnitev zadnjih odgovorov.",
+    ),
     questionnaire_service: QuestionnaireService = Depends(get_questionnaire_service),
+    questionnaire_answers_service: QuestionnaireAnswersService = Depends(
+        get_questionnaire_answers_service
+    ),
 ) -> QuestionnaireResponse:
     """
     Vrne vprašalnik za izbrano učno pot, modul ali učno enoto.
 
-    TODO:
-    - Kasneje dodati preverjanje, ali target_id res pripada izbranemu target_type.
+    Če je user_id podan, se vprašanja predizpolnijo z zadnjimi
+    eksplicitnimi odgovori uporabnika.
     """
+
+    latest_explicit_answers = {}
+
+    if user_id:
+        latest_explicit_answers = (
+            await questionnaire_answers_service.get_latest_explicit_answer_maps(
+                user_id=user_id
+            )
+        )
 
     questionnaire = await questionnaire_service.generate_questionnaire(
         target_type=target_type,
         target_id=target_id,
+        latest_explicit_answers=latest_explicit_answers,
     )
 
     if not questionnaire:

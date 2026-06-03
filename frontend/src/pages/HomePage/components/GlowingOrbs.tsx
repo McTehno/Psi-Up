@@ -122,8 +122,8 @@ type GlowingOrbsProps = {
 
 export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
   // Location Pin animations
-  const pinScale = useTransform(scrollYProgress, [0.83, 0.86], [0, 1])
-  const pinOpacity = useTransform(scrollYProgress, [0.83, 0.85], [0, 1])
+  const pinScale = useTransform(scrollYProgress, [0.82, 0.85], [0, 1])
+  const pinOpacity = useTransform(scrollYProgress, [0.82, 0.84], [0, 1])
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
@@ -146,7 +146,7 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
 
       {/* Standalone Location Pin */}
       <div
-        className="absolute pointer-events-none top-[58%] left-[90%] md:left-[calc(65%+5px)] -mt-[40px] -translate-x-1/2"
+        className="absolute pointer-events-none top-[58%] left-[90%] md:left-[65%] md:ml-[5px] -mt-[40px] -translate-x-1/2 z-50"
       >
         <motion.div
           animate={{ y: [0, -10, 0] }}

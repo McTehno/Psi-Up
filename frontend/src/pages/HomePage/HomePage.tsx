@@ -5,7 +5,6 @@ import { useScroll } from 'framer-motion'
 
 import { useGlobalSearch } from '../../contexts/SearchContext'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
-import HomeOrbsLayer from './components/HomeOrbsLayer'
 import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
 import HomeStorySection from './components/HomeStorySection'
@@ -75,7 +74,6 @@ function HomePage() {
 				aria-hidden="true"
 			>
 				<HomeParallaxEnvironment scrollYProgress={scrollYProgress} />
-				<HomeOrbsLayer scrollYProgress={scrollYProgress} />
 			</div>
 
 			<div

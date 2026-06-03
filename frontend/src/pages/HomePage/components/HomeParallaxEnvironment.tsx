@@ -4,6 +4,7 @@ import fogVideo from '../../../assets/parallax/fog-background.mp4'
 import pathMountainImage from '../../../assets/parallax/path-mountain.webp'
 import moduleMountainImage from '../../../assets/parallax/module-mountain.webp'
 import unitMountainImage from '../../../assets/parallax/unit-mountain.webp'
+import GlowingOrbs from './GlowingOrbs'
 
 /**
  * HomeParallaxEnvironment
@@ -122,6 +123,10 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 								loading="eager"
 								draggable={false}
 							/>
+							{/* Glowing Orbs and Pin: share the exact same mask as the unit mountain so they wipe-reveal perfectly together */}
+							<div className="absolute inset-0 z-[100]">
+								<GlowingOrbs scrollYProgress={scrollYProgress} />
+							</div>
 						</motion.div>
 
 					</div>

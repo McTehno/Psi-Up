@@ -62,16 +62,16 @@ This is the most technically delicate part of the implementation. The user scrol
 Instead of baking nodes directly into Photoshop (which ruins responsiveness), we use a dynamic React component (`GlowingOrbs.tsx`) placed *over* a third mountain layer (`unitMountainImage` at `z-20`).
 
 ### The Reveal Mechanics (WARNING: Common Pitfalls)
-As the user scrolls from `0.62` to `0.72`, a new `unitGlowMask` sweeps upward.
-*   **The Z-Index Trap:** The `GlowingOrbs` component wrapper **MUST** have a higher Z-index (`z-[100]`) than the `unitMountainImage` (`z-20`). If you forget this, the orbs will render behind the mountain and vanish completely.
-*   **The Masking Trap:** The `GlowingOrbs` component wrapper **MUST** use the exact same `unitGlowMask` as the `unitMountainImage`. 
-    *   *If you do not mask the orbs:* The orbs will be fully visible floating in the sky *before* the mountain underneath them even reveals itself!
-    *   *By sharing the mask:* The mountain layer and the floating React orbs wipe into existence perfectly simultaneously, from bottom to top, creating a flawless illusion that they are part of the landscape.
+As the user scrolls from `0.47` to `0.55`, a new `unitGlowMask` sweeps upward.
+*   **The Consolidation Solution:** To guarantee flawless mathematical synchronization and Z-index layering, `GlowingOrbs` is rendered directly inside `HomeParallaxEnvironment.tsx`, perfectly sharing the EXACT same wrapper and `unitGlowMask` as `unitMountainImage`.
+*   **The Z-Index Trap:** The `GlowingOrbs` wrapper MUST have a higher Z-index (`z-[100]`) than the `unitMountainImage` (`z-20`), but they now live securely inside the main `-z-30` parallax theater.
+*   **The Masking Trap:** Because they are inside the same `<motion.div>` wrapper, the mountain layer and the floating React orbs wipe into existence perfectly simultaneously, from bottom to top, creating a flawless illusion that they are part of the landscape.
 
 ### GlowingOrbs.tsx Architecture
 *   **Positioning:** The orbs are mapped via percentages (`top: '72%', left: '59%'`) grouped into four modules. The coordinates feature decreasing steepness to perfectly hug the right-side downward slopes of the underlying mountain image. 
 *   **Styling:** They use heavy `box-shadow` to create an organic, ambient glow (mimicking light bleeding onto the mountain rock) rather than flat dots.
 *   **Animation:** They use a subtle framer-motion float (`y: [0, -10, 0]`) and pulse (`scale`, `opacity`) on infinite repeat, utilizing staggered delays so they feel organic and asynchronous rather than robotic.
+*   **Location Pin:** A dynamic, scroll-triggered location pin appears directly over the central node during the "Vprašalnik" section (progress ~`0.77 - 0.80`) to signify reaching the destination.
 
 ---
 

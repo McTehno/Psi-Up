@@ -123,45 +123,46 @@ export const searchFilters = [
 	{ label: 'Uƒçne poti', value: 'learning_path' },
 	{ label: 'Uƒçne enote', value: 'learning_unit' },
 ] as const
+
 export const STORY_SECTIONS_DATA = [
 	{
 		id: 'learning-paths',
-		eyebrow: 'Ucne poti',
-		title: 'Zacni z vecjo sliko.',
-		description: 'Ucna pot ti pokaûe celotno smer ucenja. Namesto posameznih nepovezanih vsebin vidiö zaporedje korakov, ki te vodijo proti jasnemu cilju.',
+		eyebrow: 'Uƒçne poti',
+		title: 'Zaƒçni z veƒçjo sliko.',
+		description: 'Uƒçna pot ti poka≈æe celotno smer uƒçenja. Namesto posameznih nepovezanih vsebin vidi≈° zaporedje korakov, ki te vodijo proti jasnemu cilju.',
 		cards: [
-			{ title: 'Pregled', front: 'Vidiö celotno pot', back: 'Ucna pot zdruûi module in ucne enote v logicno zaporedje.' },
-			{ title: 'Usmeritev', front: 'Laûje izbereö zacetek', back: 'Pomaga ti razumeti, katero podrocje je zate najbolj smiselno.' },
+			{ title: 'Pregled', front: 'Vidi≈° celotno pot', back: 'Uƒçna pot zdru≈æi module in uƒçne enote v logiƒçno zaporedje.' },
+			{ title: 'Usmeritev', front: 'La≈æje izbere≈° zaƒçetek', back: 'Pomaga ti razumeti, katero podroƒçje je zate najbolj smiselno.' },
 		],
 	},
 	{
 		id: 'modules',
 		eyebrow: 'Moduli',
-		title: 'Vecjo pot razdeli na razumljive korake.',
-		description: 'Modul predstavlja zaokroûen del ucne poti. Vsak modul ima svoj namen, zato laûje slediö napredku in razumeö, kaj posamezen korak prinese.',
+		title: 'Veƒçjo pot razdeli na razumljive korake.',
+		description: 'Modul predstavlja zaokro≈æen del uƒçne poti. Vsak modul ima svoj namen, zato la≈æje sledi≈° napredku in razume≈°, kaj posamezen korak prinese.',
 		cards: [
-			{ title: 'Korak', front: 'Manjöi del vecje poti', back: 'Modul razdeli öiröe podrocje na bolj obvladljive vsebinske sklope.' },
-			{ title: 'Napredek', front: 'Slediö svojemu tempu', back: 'Vsak modul ti pomaga videti, kaj si ûe pregledal in kaj öe sledi.' },
+			{ title: 'Korak', front: 'Manj≈°i del veƒçje poti', back: 'Modul razdeli ≈°ir≈°e podroƒçje na bolj obvladljive vsebinske sklope.' },
+			{ title: 'Napredek', front: 'Sledi≈° svojemu tempu', back: 'Vsak modul ti pomaga videti, kaj si ≈æe pregledal in kaj ≈°e sledi.' },
 		],
 	},
 	{
 		id: 'learning-units',
-		eyebrow: 'Ucne enote',
-		title: 'Uci se skozi kratke in konkretne vsebine.',
-		description: 'Ucna enota je najmanjöi del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula.',
+		eyebrow: 'Uƒçne enote',
+		title: 'Uƒçi se skozi kratke in konkretne vsebine.',
+		description: 'Uƒçna enota je najmanj≈°i del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula.',
 		cards: [
-			{ title: 'Fokus', front: 'Ena vsebina naenkrat', back: 'Vsaka ucna enota predstavi jasen in omejen del znanja.' },
-			{ title: 'Samostojnost', front: 'Pregledaö jo lahko posebej', back: 'Enote lahko raziskujeö znotraj modula ali kot samostojen vir.' },
+			{ title: 'Fokus', front: 'Ena vsebina naenkrat', back: 'Vsaka uƒçna enota predstavi jasen in omejen del znanja.' },
+			{ title: 'Samostojnost', front: 'Pregleda≈° jo lahko posebej', back: 'Enote lahko raziskuje≈° znotraj modula ali kot samostojen vir.' },
 		],
 	},
 	{
 		id: 'questionnaire',
-		eyebrow: 'Vpraöalnik',
+		eyebrow: 'Vpra≈°alnik',
 		title: 'Preveri, kje si trenutno.',
-		description: 'Vpraöalnik ti pomaga oceniti trenutno znanje in prepoznati podrocja, kjer imaö najvec prostora za napredek.',
+		description: 'Vpra≈°alnik ti pomaga oceniti trenutno znanje in prepoznati podroƒçja, kjer ima≈° najveƒç prostora za napredek.',
 		cards: [
-			{ title: 'Samoocena', front: 'Razumeö svoje izhodiöce', back: 'Odgovori pokaûejo, katera podrocja ûe poznaö in katera potrebujejo vec pozornosti.' },
-			{ title: 'Priporocilo', front: 'Dobiö bolj jasno smer', back: 'Rezultat ti pomaga izbrati primernejöo pot, modul ali naslednjo vsebino.' },
+			{ title: 'Samoocena', front: 'Razume≈° svoje izhodi≈°ƒçe', back: 'Odgovori poka≈æejo, katera podroƒçja ≈æe pozna≈° in katera potrebujejo veƒç pozornosti.' },
+			{ title: 'Priporoƒçilo', front: 'Dobi≈° bolj jasno smer', back: 'Rezultat ti pomaga izbrati primernej≈°o pot, modul ali naslednjo vsebino.' },
 		],
 	},
 ]

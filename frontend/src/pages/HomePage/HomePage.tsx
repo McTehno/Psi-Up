@@ -9,7 +9,7 @@ import HomeScrollJourney from './components/HomeScrollJourney'
 import HomeHeroSection from './components/HomeHeroSection'
 import HomeStorySection from './components/HomeStorySection'
 import HomeFinalCtaSection from './components/HomeFinalCtaSection'
-import { STORY_SECTIONS_DATA } from './constants'
+import { STORY_SECTIONS_DATA } from './constants.ts'
 
 function HomePage() {
 
@@ -80,7 +80,7 @@ function HomePage() {
 			<div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
 				<HomeHeroSection />
 
-				{STORY_SECTIONS_DATA.map((section, index) => (
+				{STORY_SECTIONS_DATA.map((section) => (
 					<Fragment key={section.id}>
 						<SectionSpacer size="large" />
 						<HomeStorySection

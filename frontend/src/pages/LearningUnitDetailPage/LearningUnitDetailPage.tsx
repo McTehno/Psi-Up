@@ -36,6 +36,7 @@ import {
   normalizeDetailContent,
   type DetailExtraField,
 } from '../../utils/normalizers/detail-normalizers'
+import LearningUnitAssistantBox from '../../features/learning-units/components/LearningUnitAssistantBox'
 
 /**
  * LearningUnitDetailPage prikazuje podrobnosti ene učne enote.
@@ -338,6 +339,8 @@ function LearningUnitDetailPage() {
     'Neimenovana učna enota',
   )
 
+  const learningUnitContentId = learningUnit._id ?? detail.id ?? learningUnitId ?? ''
+
   const basicInfoFields = getBasicInfoFields(detail.extraFields)
   const canUseContentActions = Boolean(detail.id)
   const canStartQuestionnaire = hasSelfAssessmentQuestions(learningUnit)
@@ -453,12 +456,21 @@ function LearningUnitDetailPage() {
         </div>
       </DetailSection>
 
-      <LearningUnitDetailContent
-        learningUnit={learningUnit}
-        assessmentResult={assessmentResult}
-        isCompleted={localIsCompleted}
-        manualCompletionOverride={manualCompletionOverride}
-      />
+      <div>
+        <LearningUnitDetailContent
+          learningUnit={learningUnit}
+          assessmentResult={assessmentResult}
+          isCompleted={localIsCompleted}
+          manualCompletionOverride={manualCompletionOverride}
+        />
+
+        <section className="mt-8">
+          <LearningUnitAssistantBox
+            learningUnitId={learningUnitContentId}
+            variant="mobile"
+          />
+        </section>
+      </div>
       <DetailRecommendationCarousel
         title="Priporočeni moduli"
         description="Moduli, ki vključujejo to učno enoto in ti lahko pomagajo razumeti širši kontekst vsebine."

@@ -79,6 +79,38 @@ const yesNoAnswers: AnswerOption[] = [
   { answer: 'Ne', weight: false },
 ]
 
+function getAnswerOptionFromBackendValue(
+  value: QuestionnaireQuestionResponse['answer'],
+): AnswerOption | null {
+  if (value === true) {
+    return yesNoAnswers[0]
+  }
+
+  if (value === false) {
+    return yesNoAnswers[1]
+  }
+
+  return null
+}
+
+function createInitialSelectedAnswers(
+  questions: QuestionnaireItem[],
+): Record<string, AnswerOption> {
+  const initialAnswers: Record<string, AnswerOption> = {}
+
+  for (const question of questions) {
+    const prefilledAnswer = getAnswerOptionFromBackendValue(question.answer)
+
+    if (!prefilledAnswer) {
+      continue
+    }
+
+    initialAnswers[question.runtimeId] = prefilledAnswer
+  }
+
+  return initialAnswers
+}
+
 function normalizeTargetType(value: string | null): QuestionnaireTargetType | null {
   if (
     value === 'learning_unit' ||
@@ -523,8 +555,8 @@ function createFallbackProgressSteps(params: {
 function QuestionnairePage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  //Nina: dodano
   const { session, localUser } = useAuth()
+  const userId = localUser?._id
 
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
@@ -994,7 +1026,8 @@ function QuestionnairePage() {
         setLearningPathDetail(null)
         setAssistantExchange(null)
 
-        const data = await getQuestionnaire(targetType, targetId)
+
+        const data = await getQuestionnaire(targetType, targetId, userId)
 
         let nextModuleDetail: ModuleDetailResponse | null = null
         let nextLearningPathDetail: LearningPathDetailResponse | null = null
@@ -1037,7 +1070,7 @@ function QuestionnairePage() {
         setQuestionnaire(questions)
         setVisibleQuestionIds(questions[0] ? [questions[0].runtimeId] : [])
         setActiveQuestionIndex(0)
-        setSelectedAnswers({})
+        setSelectedAnswers(createInitialSelectedAnswers(questions))
         setModuleDetail(nextModuleDetail)
         setLearningPathDetail(nextLearningPathDetail)
         setPhase('questionnaire')
@@ -1065,7 +1098,7 @@ function QuestionnairePage() {
     return () => {
       isActive = false
     }
-  }, [targetType, targetId])
+  }, [targetType, targetId, userId])
 
   useEffect(() => {
     if (!isLearningPathGoalReached || !targetType || !targetId) {
@@ -1123,7 +1156,8 @@ function QuestionnairePage() {
     questionIdsToSubmit: string[],
     shouldAutoMarkRemainingAsFalse = false,
   ) {
-    if (!targetType || !targetId) {
+    if (!targetType || !targetId || !userId) {
+      setError('Za oddajo vprašalnika se morate prijaviti.')
       return
     }
 
@@ -1146,12 +1180,13 @@ function QuestionnairePage() {
           targetType,
           targetId,
         )
-      if (!session?.access_token || !localUser?._id) {
-        alert('Za oddajo vprašalnika se moraš prijaviti.')
+      if (!session?.access_token) {
+        setError('Za oddajo vprašalnika se morate prijaviti.')
         return
       }
+
       const payload: AssessmentEvaluateRequest = {
-        user_id: localUser._id,
+        user_id: userId,
         target_type: targetType,
         target_id: targetId,
         answers,
@@ -1332,7 +1367,7 @@ function QuestionnairePage() {
         </section>
       )}
 
-      {targetType && targetId && currentQuestion && (
+      {targetType && targetId && userId && currentQuestion && (
         <>
           <button
             type="button"
@@ -1354,7 +1389,7 @@ function QuestionnairePage() {
 
           {isChatOpen && (
             <AssessmentContextBox
-              userId={localUser?._id ?? ''}
+              userId={userId}
               targetType={targetType}
               targetId={targetId}
               learningPathId={

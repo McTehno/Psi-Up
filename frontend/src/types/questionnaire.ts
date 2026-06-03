@@ -9,6 +9,11 @@ export type QuestionnaireQuestionResponse = {
   id: string
   question: string
   type: QuestionnaireQuestionType
+
+  answer?: boolean | string | number | string[] | null
+  is_prefilled?: boolean
+  prefill_source?: 'last_answer' | 'completed_content' | null
+
   learning_path_id?: string | null
   module_id?: string | null
   learning_unit_id?: string | null

@@ -144,7 +144,7 @@ export default function LoginPage() {
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
       <Toast
         message={toastMessage}
-        variant="error"
+        variant={toastMessage === 'Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.' ? 'success' : 'error'}
         duration={5000}
         onDismiss={() => setToastMessage(null)}
       />

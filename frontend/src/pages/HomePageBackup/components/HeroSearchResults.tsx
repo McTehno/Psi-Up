@@ -26,8 +26,8 @@ function HeroSearchResults({
 	return (
 		<div
 			className={`absolute inset-x-0 bottom-0 top-[96px] z-50 flex flex-col gap-4 pb-10 pr-2 transition-all duration-500 ease-in-out ${isSearchActive
-					? 'visible translate-y-0 opacity-100'
-					: 'invisible translate-y-8 opacity-0'
+				? 'visible translate-y-0 opacity-100'
+				: 'invisible translate-y-8 opacity-0'
 				}`}
 		>
 			{isSearchActive && (
@@ -59,15 +59,15 @@ function HeroSearchResults({
 									>
 										<div className="shrink-0">
 											{result.type === 'learning_path' ? (
-												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#f2f8f1] text-[#31583b]">
+												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-forest-100 text-forest-700">
 													<PathIcon className="h-6 w-6" />
 												</span>
 											) : result.type === 'module' ? (
-												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eef7fb] text-[#31576b]">
+												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
 													<CircleIcon className="h-6 w-6" />
 												</span>
 											) : (
-												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#fff4e6] text-[#d07a12]">
+												<span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
 													<DotIcon className="h-6 w-6" />
 												</span>
 											)}

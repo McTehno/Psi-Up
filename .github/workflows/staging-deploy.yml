@@ -98,4 +98,4 @@ jobs:
           ssh -i ~/.ssh/staging_key \
               -p "$STAGING_PORT" \
               "$STAGING_USER@$STAGING_HOST" \
-              "/opt/psi-up/deploy-staging.sh"
+              "/var/www/psi-up/deploy-staging.sh"

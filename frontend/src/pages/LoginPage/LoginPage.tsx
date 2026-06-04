@@ -82,16 +82,22 @@ export default function LoginPage() {
 
   async function handleGoogleLogin() {
     try {
+      setIsLoading(true); // Optional: if you want to show a loading state
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
+          // This tells Supabase where to redirect AFTER Google validates the user
           redirectTo: `${window.location.origin}${from === '/' ? '/dashboard' : from}`,
         }
       })
       if (error) throw error
+      // Note: You don't need to navigate() here. 
+      // OAuth will physically redirect the user away from your app to Google, and then back.
     } catch (err: any) {
       const translated = translateAuthError(err.message || '')
       setToastMessage(translated)
+    } finally {
+      setIsLoading(false);
     }
   }
 

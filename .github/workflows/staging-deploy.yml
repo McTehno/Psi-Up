@@ -64,15 +64,38 @@ jobs:
 
     steps:
       - name: Configure SSH
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_PORT: ${{ secrets.STAGING_PORT }}
+          STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
         run: |
+          set -euo pipefail
+
+          : "${STAGING_HOST:?Missing STAGING_HOST secret}"
+          : "${STAGING_SSH_KEY:?Missing STAGING_SSH_KEY secret}"
+
+          STAGING_PORT="${STAGING_PORT:-22}"
+
           mkdir -p ~/.ssh
-          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
+          printf '%s\n' "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/staging_key
           chmod 600 ~/.ssh/staging_key
-          ssh-keyscan -p "${{ secrets.STAGING_PORT }}" "${{ secrets.STAGING_HOST }}" >> ~/.ssh/known_hosts
+
+          ssh-keyscan -T 10 -p "$STAGING_PORT" "$STAGING_HOST" >> ~/.ssh/known_hosts
 
       - name: Deploy on VPS
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_PORT: ${{ secrets.STAGING_PORT }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
         run: |
+          set -euo pipefail
+
+          : "${STAGING_HOST:?Missing STAGING_HOST secret}"
+          : "${STAGING_USER:?Missing STAGING_USER secret}"
+
+          STAGING_PORT="${STAGING_PORT:-22}"
+
           ssh -i ~/.ssh/staging_key \
-              -p "${{ secrets.STAGING_PORT }}" \
-              "${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}" \
+              -p "$STAGING_PORT" \
+              "$STAGING_USER@$STAGING_HOST" \
               "/opt/psi-up/deploy-staging.sh"

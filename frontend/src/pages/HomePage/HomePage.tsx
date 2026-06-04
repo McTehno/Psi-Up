@@ -30,6 +30,18 @@ function HomePage() {
 	}, [isSearchActive])
 
 	useEffect(() => {
+		// Safari/iOS has native momentum scrolling that conflicts badly with Lenis
+		// causing rubber-banding, scroll-freezing, and double-scroll artifacts.
+		// Detect Safari and skip Lenis entirely on those platforms.
+		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+		const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+			(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
+		if (isSafari || isIOS) {
+			// Let Safari use its native smooth scrolling
+			return
+		}
+
 		const lenis = new Lenis({
 			duration: 1.2,
 			easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -37,7 +49,7 @@ function HomePage() {
 			gestureOrientation: 'vertical',
 			smoothWheel: true,
 			wheelMultiplier: 1,
-			touchMultiplier: 2,
+			touchMultiplier: 1.5,
 		})
 
 		let animationFrameId: number
@@ -67,10 +79,14 @@ function HomePage() {
 			</div>
 
 			<div
-				className={`fixed inset-0 z-40 transition-all duration-500 ease-in-out ${isSearchActive
-					? 'bg-[#fffdf8]/60 backdrop-blur-md'
-					: 'pointer-events-none bg-transparent backdrop-blur-none'
+				className={`fixed inset-0 z-40 transition-[opacity,backdrop-filter] duration-500 ease-in-out ${isSearchActive
+					? 'bg-[#fffdf8]/60 backdrop-blur-md opacity-100'
+					: 'pointer-events-none bg-transparent backdrop-blur-none opacity-0'
 					}`}
+				style={{
+					transform: 'translateZ(0)',
+					WebkitTransform: 'translateZ(0)',
+				}}
 				onClick={() => setIsSearchActive(false)}
 				aria-hidden="true"
 			/>

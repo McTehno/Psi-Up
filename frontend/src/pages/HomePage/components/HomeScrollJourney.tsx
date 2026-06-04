@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useCallback } from 'react'
 
 type JourneyMode = 'mobile' | 'desktop'
 
@@ -56,56 +56,102 @@ function HomeScrollJourney() {
 
 	const targetProgressRef = useRef(0)
 	const currentProgressRef = useRef(0)
+	const pathLengthRef = useRef(0)
 
-	const [mode, setMode] = useState<JourneyMode>(() => getJourneyMode())
-	const [svgHeight, setSvgHeight] = useState(5600)
-	const [pathLength, setPathLength] = useState(0)
-	const [drawProgress, setDrawProgress] = useState(0)
+	// Use refs to store layout values to avoid re-renders
+	const modeRef = useRef<JourneyMode>(getJourneyMode())
+	const svgHeightRef = useRef(5600)
 
-	const viewBoxWidth = mode === 'mobile' ? 420 : 1200
-	const pathD = useMemo(() => getPathD(mode, svgHeight), [mode, svgHeight])
+	// We need a single initial render, then update via DOM directly
+	const svgRef = useRef<SVGSVGElement | null>(null)
+	const trailPathRef = useRef<SVGPathElement | null>(null)
+	const containerRef = useRef<HTMLDivElement | null>(null)
 
-	useEffect(() => {
-		function updateLayout() {
-			const nextMode = getJourneyMode()
-			const measuredHeight = getDocumentHeight()
+	// Compute initial values for first render
+	const initialMode = useMemo(() => getJourneyMode(), [])
+	const initialHeight = useMemo(() => {
+		const measured = getDocumentHeight()
+		return Math.max(measured, initialMode === 'mobile' ? 7200 : 5600)
+	}, [initialMode])
+	const viewBoxWidth = initialMode === 'mobile' ? 420 : 1200
+	const pathD = useMemo(() => getPathD(initialMode, initialHeight), [initialMode, initialHeight])
 
-			setMode(nextMode)
-			setSvgHeight(Math.max(measuredHeight, nextMode === 'mobile' ? 7200 : 5600))
+	// Update layout measurements
+	const updateLayout = useCallback(() => {
+		const nextMode = getJourneyMode()
+		const measuredHeight = getDocumentHeight()
+		const newHeight = Math.max(measuredHeight, nextMode === 'mobile' ? 7200 : 5600)
+
+		modeRef.current = nextMode
+		svgHeightRef.current = newHeight
+
+		// Update SVG dimensions and path via DOM (no React re-render)
+		const newPathD = getPathD(nextMode, newHeight)
+		const newViewBoxWidth = nextMode === 'mobile' ? 420 : 1200
+
+		if (svgRef.current) {
+			svgRef.current.style.height = `${newHeight}px`
+			svgRef.current.setAttribute('viewBox', `0 0 ${newViewBoxWidth} ${newHeight}`)
 		}
 
+		if (trailPathRef.current) {
+			trailPathRef.current.setAttribute('d', newPathD)
+			trailPathRef.current.setAttribute('stroke-width', nextMode === 'mobile' ? '8' : '10')
+		}
+
+		if (pathRef.current) {
+			pathRef.current.setAttribute('d', newPathD)
+			pathRef.current.setAttribute('stroke-width', nextMode === 'mobile' ? '5' : '7')
+
+			const totalLength = pathRef.current.getTotalLength()
+			pathLengthRef.current = totalLength
+			currentProgressRef.current = 0
+			targetProgressRef.current = 0
+
+			// Update strokeDasharray
+			pathRef.current.setAttribute('stroke-dasharray', String(totalLength))
+			pathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
+		}
+
+		// Update the gradient y2 attribute
+		const gradientEl = svgRef.current?.querySelector('#home-journey-gradient')
+		if (gradientEl) {
+			gradientEl.setAttribute('y2', String(newHeight))
+		}
+	}, [])
+
+	// Initial layout + resize listener
+	useEffect(() => {
 		updateLayout()
-
 		const timeoutId = window.setTimeout(updateLayout, 150)
-
 		window.addEventListener('resize', updateLayout)
-
 		return () => {
 			window.clearTimeout(timeoutId)
 			window.removeEventListener('resize', updateLayout)
 		}
-	}, [])
+	}, [updateLayout])
 
+	// Measure path length on mount
 	useEffect(() => {
 		if (!pathRef.current) return
-
 		const totalLength = pathRef.current.getTotalLength()
-
-		setPathLength(totalLength)
-		currentProgressRef.current = 0
-		targetProgressRef.current = 0
-		setDrawProgress(0)
+		pathLengthRef.current = totalLength
+		pathRef.current.setAttribute('stroke-dasharray', String(totalLength))
+		pathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
 	}, [pathD])
 
+	// Main scroll-driven animation loop
+	// Key optimization: No React state updates — all DOM manipulation via refs
 	useEffect(() => {
 		function getProgressForViewportBottom() {
-			if (!pathRef.current || pathLength === 0) return 0
+			const pl = pathLengthRef.current
+			if (!pathRef.current || pl === 0) return 0
 
 			const viewportBottom = window.scrollY + window.innerHeight
-			const targetY = Math.min(Math.max(viewportBottom, 0), svgHeight)
+			const targetY = Math.min(Math.max(viewportBottom, 0), svgHeightRef.current)
 
 			let start = 0
-			let end = pathLength
+			let end = pl
 
 			for (let i = 0; i < 24; i += 1) {
 				const middle = (start + end) / 2
@@ -118,7 +164,7 @@ function HomeScrollJourney() {
 				}
 			}
 
-			return Math.min(Math.max(end / pathLength, 0), 1)
+			return Math.min(Math.max(end / pl, 0), 1)
 		}
 
 		function updateTargetProgress() {
@@ -128,12 +174,18 @@ function HomeScrollJourney() {
 		function animate() {
 			const current = currentProgressRef.current
 			const target = targetProgressRef.current
+			const mode = modeRef.current
 
 			const followSpeed = mode === 'mobile' ? 0.03 : 0.055
 			const next = current + (target - current) * followSpeed
 
 			currentProgressRef.current = next
-			setDrawProgress(next)
+
+			// Direct DOM update — bypasses React render entirely
+			const pl = pathLengthRef.current
+			if (pathRef.current && pl > 0) {
+				pathRef.current.setAttribute('stroke-dashoffset', String(pl * (1 - next)))
+			}
 
 			animationFrameRef.current = window.requestAnimationFrame(animate)
 		}
@@ -152,19 +204,19 @@ function HomeScrollJourney() {
 				window.cancelAnimationFrame(animationFrameRef.current)
 			}
 		}
-	}, [pathLength, pathD, mode, svgHeight])
-
-	const drawOffset = pathLength * (1 - drawProgress)
+	}, [pathD])
 
 	return (
 		<div
+			ref={containerRef}
 			className="pointer-events-none absolute inset-0 -z-20 overflow-hidden"
 			aria-hidden="true"
 		>
 			<svg
+				ref={svgRef}
 				className="absolute left-1/2 top-0 w-full -translate-x-1/2 opacity-80"
-				style={{ height: `${svgHeight}px` }}
-				viewBox={`0 0 ${viewBoxWidth} ${svgHeight}`}
+				style={{ height: `${initialHeight}px` }}
+				viewBox={`0 0 ${viewBoxWidth} ${initialHeight}`}
 				fill="none"
 				preserveAspectRatio="none"
 			>
@@ -174,7 +226,7 @@ function HomeScrollJourney() {
 						x1="0"
 						y1="0"
 						x2="0"
-						y2={svgHeight}
+						y2={initialHeight}
 					>
 						<stop offset="0%" stopColor="#31583b" stopOpacity="0.18" />
 						<stop offset="35%" stopColor="#31583b" stopOpacity="0.42" />
@@ -209,9 +261,10 @@ function HomeScrollJourney() {
 				</defs>
 
 				<path
+					ref={trailPathRef}
 					d={pathD}
 					stroke="#ded5c6"
-					strokeWidth={mode === 'mobile' ? '8' : '10'}
+					strokeWidth={initialMode === 'mobile' ? '8' : '10'}
 					strokeLinecap="round"
 					opacity="0.34"
 				/>
@@ -220,10 +273,8 @@ function HomeScrollJourney() {
 					ref={pathRef}
 					d={pathD}
 					stroke="url(#home-journey-gradient)"
-					strokeWidth={mode === 'mobile' ? '5' : '7'}
+					strokeWidth={initialMode === 'mobile' ? '5' : '7'}
 					strokeLinecap="round"
-					strokeDasharray={pathLength}
-					strokeDashoffset={drawOffset}
 					filter="url(#home-journey-glow)"
 				/>
 			</svg>

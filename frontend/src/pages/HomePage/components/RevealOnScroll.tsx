@@ -41,13 +41,16 @@ function RevealOnScroll({
 		<div
 			ref={elementRef}
 			className={[
-				'transition-all duration-700 ease-out',
+				'transition-[transform,opacity] duration-700 ease-out',
 				isVisible
-					? 'translate-y-0 opacity-100 blur-0'
-					: 'translate-y-8 opacity-0 blur-[2px]',
+					? 'translate-y-0 opacity-100'
+					: 'translate-y-8 opacity-0',
 				className,
 			].join(' ')}
-			style={{ transitionDelay: `${delay}ms` }}
+			style={{
+				transitionDelay: `${delay}ms`,
+				willChange: 'transform, opacity',
+			}}
 		>
 			{children}
 		</div>

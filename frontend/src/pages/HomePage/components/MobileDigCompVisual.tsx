@@ -22,6 +22,7 @@ function MobileDigCompVisual({
 						transformOrigin: 'center center',
 						willChange: 'transform',
 						backfaceVisibility: 'hidden',
+						WebkitBackfaceVisibility: 'hidden',
 					}}
 				>
 					{digcompAreas.map((area, index) => {

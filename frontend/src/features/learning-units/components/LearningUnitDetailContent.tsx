@@ -315,23 +315,32 @@ function LearningUnitDetailContent({
 			(result) => result.learning_unit_id === learningUnit._id,
 		) ?? null
 
-	const shouldHideAssessmentResult = manualCompletionOverride === false
+	const shouldShowManualCompletion = manualCompletionOverride === true
+
 	const shouldShowStoredAssessmentResult =
-		!shouldHideAssessmentResult && Boolean(learningUnitAssessmentResult)
+		manualCompletionOverride !== true && Boolean(learningUnitAssessmentResult)
 
-	const knownTopics = isCompleted
-		? contentTopics.map((topic) => topic.id).filter(Boolean)
-		: shouldShowStoredAssessmentResult
-			? getStringArrayOrEmpty(learningUnitAssessmentResult?.known_topic_ids)
-			: []
+	const shouldShowCompletedState =
+		!learningUnitAssessmentResult && isCompleted
 
-	const missingTopics = isCompleted
-		? []
-		: shouldShowStoredAssessmentResult
-			? getStringArrayOrEmpty(learningUnitAssessmentResult?.missing_topic_ids)
-			: []
+	const knownTopics =
+		shouldShowManualCompletion || shouldShowCompletedState
+			? contentTopics.map((topic) => topic.id).filter(Boolean)
+			: shouldShowStoredAssessmentResult
+				? getStringArrayOrEmpty(learningUnitAssessmentResult?.known_topic_ids)
+				: []
 
-	const showAssessmentResult = isCompleted || shouldShowStoredAssessmentResult
+	const missingTopics =
+		shouldShowManualCompletion || shouldShowCompletedState
+			? []
+			: shouldShowStoredAssessmentResult
+				? getStringArrayOrEmpty(learningUnitAssessmentResult?.missing_topic_ids)
+				: []
+
+	const showAssessmentResult =
+		shouldShowManualCompletion ||
+		shouldShowStoredAssessmentResult ||
+		shouldShowCompletedState
 
 	function renderSectionHeader({
 		icon: Icon,

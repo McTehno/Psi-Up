@@ -373,7 +373,12 @@ function LearningUnitDetailPage() {
             initialIsCompleted={localIsCompleted}
             onCompletedChange={(nextIsCompleted) => {
               setLocalIsCompleted(nextIsCompleted)
-              setManualCompletionOverride(nextIsCompleted)
+
+              if (nextIsCompleted) {
+                setManualCompletionOverride(true)
+              } else {
+                setManualCompletionOverride(null)
+              }
             }}
           />
         )}

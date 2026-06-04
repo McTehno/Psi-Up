@@ -286,13 +286,25 @@ async function findLearningUnitContext(
     : null
 
   const parentLearningPath = parentModuleId
-    ? learningPaths.find((learningPath) =>
-      learningPath.steps.some(
-        (reference) =>
-          (reference.type === 'module' || reference.step_type === 'module') &&
-          reference.module_id === parentModuleId
-      )
-    ) ?? null
+    ? learningPaths.find((learningPath) => {
+        const steps = learningPath.steps ?? []
+        const modules = learningPath.modules ?? []
+
+        const hasModuleInSteps = steps.some((reference) => {
+          const referenceType = reference.step_type ?? reference.type
+          const referenceModuleId = reference.module_id ?? reference.ref_id
+
+          return referenceType === 'module' && referenceModuleId === parentModuleId
+        })
+
+        const hasModuleInLegacyModules = modules.some((reference) => {
+          const referenceModuleId = reference.module_id ?? reference.ref_id
+
+          return referenceModuleId === parentModuleId
+        })
+
+        return hasModuleInSteps || hasModuleInLegacyModules
+      }) ?? null
     : null
 
   const parentLearningUnits = parentModule?.learning_unit_details ?? []

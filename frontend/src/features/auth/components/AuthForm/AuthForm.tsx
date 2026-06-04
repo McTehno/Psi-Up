@@ -5,11 +5,10 @@ type AuthFormProps = {
   isRegister: boolean
   onSubmit: (email: string, password: string, name?: string, rememberMe?: boolean) => void
   onForgotPassword?: () => void
-  error?: string | null
   isLoading?: boolean
 }
 
-export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error, isLoading }: AuthFormProps) {
+export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoading }: AuthFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 

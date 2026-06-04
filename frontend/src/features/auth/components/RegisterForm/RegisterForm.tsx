@@ -3,13 +3,11 @@ import { Mail, Lock, User } from 'lucide-react'
 type RegisterFormProps = {
   /** Called when form is submitted. */
   onSubmit?: (name: string, email: string, password: string) => void
-  /** Error message to display */
-  error?: string | null
   /** Is the form currently submitting? */
   isLoading?: boolean
 }
 
-export default function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) {
+export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)

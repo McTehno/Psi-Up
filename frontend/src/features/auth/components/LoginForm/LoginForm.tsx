@@ -6,13 +6,11 @@ type LoginFormProps = {
   onSubmit?: (email: string, password: string, rememberMe: boolean) => void
   /** Called when "Forgot password?" is clicked */
   onForgotPassword?: () => void
-  /** Error message to display */
-  error?: string | null
   /** Is the form currently submitting? */
   isLoading?: boolean
 }
 
-export default function LoginForm({ onSubmit, onForgotPassword, error, isLoading }: LoginFormProps) {
+export default function LoginForm({ onSubmit, onForgotPassword, isLoading }: LoginFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

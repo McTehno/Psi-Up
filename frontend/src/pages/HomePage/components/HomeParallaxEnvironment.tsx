@@ -71,7 +71,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 		}
 		const filterVal = `blur(${blur}px)`
 		mountainContainerRef.current.style.filter = filterVal
-			; (mountainContainerRef.current.style as Record<string, string>)['webkitFilter'] = filterVal
+		;(mountainContainerRef.current.style as any).webkitFilter = filterVal
 	})
 
 	// The highlighted module mountain reveals from bottom to top
@@ -154,8 +154,8 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 							decoding="async"
 							draggable={false}
 						/>
-						{/* Glowing Orbs: hidden on tablets, share mask with unit mountain on desktop */}
-						<div className="absolute inset-0 z-[100] hidden lg:block">
+						{/* Glowing Orbs: internal components handle mobile hiding (e.g. orbs are hidden, pin stays visible) */}
+						<div className="absolute inset-0 z-[100]">
 							<GlowingOrbs scrollYProgress={scrollYProgress} />
 						</div>
 					</motion.div>

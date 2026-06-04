@@ -2,6 +2,19 @@ import { useState } from 'react'
 import { motion, MotionValue, useTransform, useMotionTemplate, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import LocationPinIcon from '../../../components/icons/LocationPinIcon'
 
+// Safari-safe: Define CSS keyframes for orb floating to avoid 16 separate framer-motion animation instances
+const orbFloatStyle = document.createElement('style')
+orbFloatStyle.textContent = `
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+    50% { transform: translateY(-10px) scale(1.2); opacity: 1; }
+  }
+`
+if (!document.head.querySelector('[data-orb-float]')) {
+  orbFloatStyle.setAttribute('data-orb-float', '')
+  document.head.appendChild(orbFloatStyle)
+}
+
 // Theme Colors
 const GREEN_COLOR = 'rgba(47, 74, 49, 1)' // #2f4a31
 const GREEN_GLOW = 'rgba(47, 74, 49, 0.6)'
@@ -99,17 +112,11 @@ function OrbNode({ orb, baseColor, baseGlowColor, scrollYProgress }: OrbNodeProp
         height: '10px',
         backgroundColor,
         boxShadow,
-      }}
-      animate={{
-        y: [0, -10, 0],
-        opacity: [0.7, 1, 0.7],
-        scale: [1, 1.2, 1],
-      }}
-      transition={{
-        duration: 3 + orb.delay,
-        repeat: Infinity,
-        ease: 'easeInOut',
-        delay: orb.delay,
+        // Use CSS animation instead of framer-motion animate to reduce JS overhead
+        animation: `orbFloat ${3 + orb.delay}s ease-in-out ${orb.delay}s infinite`,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
       }}
     >
       {/* Inner core glow */}
@@ -137,8 +144,8 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
-      {/* The Orbs (Hidden on Mobile) */}
-      <div className="hidden md:block">
+      {/* The Orbs (Hidden on Mobile and Tablets — only desktop) */}
+      <div className="hidden lg:block">
         {modules.map((mod) => (
           <div key={mod.id}>
             {mod.orbs.map((orb) => (

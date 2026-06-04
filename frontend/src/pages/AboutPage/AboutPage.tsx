@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-
 import aboutMountains from '../../assets/AboutUsPage/about-mountains.png'
 
 const workPackages = [
@@ -15,7 +13,18 @@ const AboutPage = () => {
 	const [scrollY, setScrollY] = useState(0)
 	const [isTimelineVisible, setIsTimelineVisible] = useState(false)
 	const [activeTimelineStep, setActiveTimelineStep] = useState(0)
+
+	const heroRef = useRef<HTMLElement | null>(null)
+	const goalRef = useRef<HTMLElement | null>(null)
+	const reasonRef = useRef<HTMLElement | null>(null)
 	const timelineRef = useRef<HTMLElement | null>(null)
+
+	const [visibleSections, setVisibleSections] = useState({
+		hero: false,
+		goal: false,
+		reason: false,
+		timeline: false,
+	})
 
 	useEffect(() => {
 		let animationFrameId = 0
@@ -36,24 +45,53 @@ const AboutPage = () => {
 	}, [])
 
 	useEffect(() => {
-		const timelineElement = timelineRef.current
-
-		if (!timelineElement) {
-			return
-		}
+		const observedSections = [
+			{ key: 'hero', element: heroRef.current },
+			{ key: 'goal', element: goalRef.current },
+			{ key: 'reason', element: reasonRef.current },
+			{ key: 'timeline', element: timelineRef.current },
+		] as const
 
 		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.isIntersecting) {
-					setIsTimelineVisible(true)
-				}
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) {
+						return
+					}
+
+					const sectionKey = entry.target.getAttribute('data-section')
+
+					if (
+						sectionKey === 'hero' ||
+						sectionKey === 'goal' ||
+						sectionKey === 'reason' ||
+						sectionKey === 'timeline'
+					) {
+						setVisibleSections((currentSections) => ({
+							...currentSections,
+							[sectionKey]: true,
+						}))
+					}
+
+					if (sectionKey === 'timeline') {
+						setIsTimelineVisible(true)
+					}
+				})
 			},
 			{
-				threshold: 0.35,
+				threshold: 0.2,
+				rootMargin: '0px 0px -80px 0px',
 			},
 		)
 
-		observer.observe(timelineElement)
+		observedSections.forEach(({ key, element }) => {
+			if (!element) {
+				return
+			}
+
+			element.setAttribute('data-section', key)
+			observer.observe(element)
+		})
 
 		return () => {
 			observer.disconnect()
@@ -70,13 +108,22 @@ const AboutPage = () => {
 		const timers = workPackages.slice(1).map((_, index) =>
 			window.setTimeout(() => {
 				setActiveTimelineStep(index + 1)
-			}, 900 + index * 950),
+			}, (index + 1) * 320),
 		)
 
 		return () => {
 			timers.forEach((timer) => window.clearTimeout(timer))
 		}
 	}, [isTimelineVisible])
+
+	const getRevealClassName = (isVisible: boolean, delay = '') =>
+		[
+			'transition-all duration-1000 ease-out',
+			delay,
+			isVisible
+				? 'translate-y-0 scale-100 opacity-100 blur-0'
+				: 'translate-y-10 scale-[0.98] opacity-0 blur-[3px]',
+		].join(' ')
 
 	return (
 		<main className="relative min-h-screen overflow-hidden bg-[#fffdf8] text-[#111111]">
@@ -96,122 +143,141 @@ const AboutPage = () => {
 				<div className="absolute inset-0 bg-[#fffdf8]/10" />
 			</div>
 
-			<section className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col items-center px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+			<section className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col items-center px-4 pb-32 pt-36 sm:px-6 lg:px-8">
 				<div className="pointer-events-none absolute left-10 top-28 h-80 w-80 rounded-full bg-[#31583b]/10 blur-3xl" />
 				<div className="pointer-events-none absolute bottom-28 right-8 h-80 w-80 rounded-full bg-[#d07a12]/10 blur-3xl" />
 
-				<section className="flex min-h-[78vh] w-full items-center justify-center">
-					<div className="mx-auto max-w-4xl rounded-[38px] border border-white/40 bg-white/14 px-6 py-10 text-center shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:px-10 lg:px-14">
-						<p className="text-xs font-bold uppercase tracking-[0.3em] text-[#706b60]">
+				<section ref={heroRef} className="flex min-h-[70vh] w-full items-center">
+					<div
+						className={[
+							'mx-auto w-full max-w-5xl text-center',
+							getRevealClassName(visibleSections.hero),
+						].join(' ')}
+					>
+						<p className="text-xs font-bold uppercase tracking-[0.34em] text-[#706b60]">
 							O projektu NIDiKo
 						</p>
 
-						<h1 className="mx-auto mt-6 max-w-3xl font-serif text-[clamp(40px,5.4vw,72px)] leading-[1.02] text-[#33442f]">
+						<h1 className="mx-auto mt-7 max-w-4xl font-serif text-[clamp(44px,6.4vw,82px)] leading-[1.01] text-[#33442f]">
 							Prilagodljiv razvoj digitalnih kompetenc.
 						</h1>
 
-						<p className="mx-auto mt-7 max-w-2xl text-[18px] leading-8 text-[#5f5a52]">
+						<p className="mx-auto mt-8 max-w-2xl text-[18px] leading-8 text-[#5f5a52]">
 							NIDiKo razvija modularno zasnovan in prilagodljiv kurikulum za
 							neformalna izobraževanja na področju digitalnih kompetenc.
 						</p>
+					</div>
+				</section>
 
-						<div className="mt-10 grid gap-4 sm:grid-cols-3">
-							<div className="rounded-[24px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl">
-								<p className="text-3xl font-semibold text-[#31583b]">24</p>
-								<p className="mt-2 text-sm font-medium text-[#706b60]">
-									mesecev trajanja
-								</p>
-							</div>
+				<section ref={goalRef} className="w-full py-24">
+					<div
+						className={[
+							'mx-auto max-w-5xl',
+							getRevealClassName(visibleSections.goal),
+						].join(' ')}
+					>
+						<div className="rounded-[38px] border border-white/40 bg-white/14 px-6 py-10 text-center shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:px-10 lg:px-14">
+							<p className="inline-flex rounded-full bg-[#f2f8f1]/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#31583b]">
+								Cilj projekta
+							</p>
 
-							<div className="rounded-[24px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl">
-								<p className="text-3xl font-semibold text-[#d07a12]">5</p>
-								<p className="mt-2 text-sm font-medium text-[#706b60]">
-									delovnih paketov
-								</p>
-							</div>
+							<p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-[#706b60]">
+								Usmeritev projekta je razvoj učne strukture, ki se lahko
+								prilagaja različnim uporabnikom in njihovemu začetnemu znanju.
+							</p>
 
-							<div className="rounded-[24px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl">
-								<p className="text-3xl font-semibold text-[#31583b]">1</p>
-								<p className="mt-2 text-sm font-medium text-[#706b60]">
-									sistematičen pristop
-								</p>
-							</div>
+							<div className="mx-auto my-8 h-px max-w-xl bg-[#ded5c6]/70" />
+
+							<h2 className="mx-auto max-w-3xl font-serif text-[clamp(30px,4vw,52px)] leading-[1.05] text-[#33442f]">
+								Prilagodljiv kurikulum glede na izhodišče uporabnika.
+							</h2>
+
+							<p className="mx-auto mt-5 max-w-3xl text-[16px] leading-7 text-[#5f5a52]">
+								Namen je razviti kurikulum, ki se prilagaja uporabnikom,
+								izvajalcem in različnim ravnem znanja. Sistem lahko podpira
+								različne cilje uporabnikov ter jim pomaga razumeti, kje začeti
+								in kako napredovati.
+							</p>
 						</div>
 					</div>
 				</section>
 
-				<section className="w-full py-16">
-					<div className="mx-auto max-w-5xl rounded-[40px] border border-white/40 bg-white/14 p-6 shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:p-10">
-						<div className="mx-auto max-w-3xl text-center">
+				<section ref={reasonRef} className="w-full py-24">
+					<div className="mx-auto max-w-5xl">
+						<div
+							className={[
+								'mx-auto max-w-3xl text-center',
+								getRevealClassName(visibleSections.reason),
+							].join(' ')}
+						>
 							<p className="text-xs font-bold uppercase tracking-[0.3em] text-[#706b60]">
 								Zakaj projekt obstaja
 							</p>
 
-							<h2 className="mt-5 font-serif text-[clamp(34px,4vw,58px)] leading-[1.04] text-[#33442f]">
+							<h2 className="mt-5 font-serif text-[clamp(32px,4vw,54px)] leading-[1.04] text-[#33442f]">
 								Digitalne kompetence so ključne za sodelovanje v sodobni
 								družbi.
 							</h2>
 
-							<p className="mt-6 text-[17px] leading-8 text-[#5f5a52]">
-								Čeprav se digitalne kompetence razvijajo tudi v formalnem
-								izobraževanju, med različnimi ciljnimi skupinami še vedno
-								nastajajo razlike med pričakovanimi in dejansko doseženimi
-								znanji.
+							<p className="mt-5 text-[16px] leading-7 text-[#5f5a52]">
+								Med različnimi ciljnimi skupinami še vedno nastajajo razlike med
+								pričakovanimi in dejansko doseženimi digitalnimi znanji.
 							</p>
 						</div>
 
-						<div className="mt-10 grid gap-5 md:grid-cols-3">
-							<article className="rounded-[28px] border border-white/40 bg-white/16 p-6 backdrop-blur-2xl">
+						<div className="mt-12 grid gap-5 lg:grid-cols-2">
+							<article
+								className={[
+									'rounded-[28px] border border-white/40 bg-white/16 p-6 shadow-[0_16px_42px_rgba(57,47,35,0.07)] backdrop-blur-2xl sm:p-7',
+									getRevealClassName(visibleSections.reason, 'delay-150'),
+								].join(' ')}
+							>
 								<p className="inline-flex rounded-full bg-[#f2f8f1]/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#31583b]">
 									Izziv
 								</p>
 
-								<h3 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-[#33442f]">
-									Neenak razvoj znanja
+								<h3 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-[#33442f]">
+									Neenak razvoj znanja in različne potrebe uporabnikov.
 								</h3>
 
 								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
-									Mlajši, starejši, zaposleni posamezniki in ljudje z različnimi
-									oviranostmi imajo različne potrebe pri razvoju digitalnih
-									kompetenc.
+									Uporabniki imajo različne ravni predznanja. Mlajši, starejši,
+									zaposleni in ljudje z različnimi oviranostmi potrebujejo
+									različne načine učenja ter jasnejšo učno strukturo.
 								</p>
 							</article>
 
-							<article className="rounded-[28px] border border-white/40 bg-white/16 p-6 backdrop-blur-2xl md:translate-y-8">
+							<article
+								className={[
+									'rounded-[28px] border border-white/40 bg-white/16 p-6 shadow-[0_16px_42px_rgba(57,47,35,0.07)] backdrop-blur-2xl sm:p-7',
+									getRevealClassName(visibleSections.reason, 'delay-300'),
+								].join(' ')}
+							>
 								<p className="inline-flex rounded-full bg-[#fff6eb]/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#d07a12]">
 									Pristop
 								</p>
 
-								<h3 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-[#33442f]">
-									Neformalno izobraževanje
+								<h3 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-[#33442f]">
+									Neformalno izobraževanje z jasno strukturo vsebin.
 								</h3>
 
 								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
-									Projekt naslavlja področje neformalnih izobraževanj, kjer je
-									potrebno več sistematičnosti, preglednosti in povezljivosti.
-								</p>
-							</article>
-
-							<article className="rounded-[28px] border border-white/40 bg-white/16 p-6 backdrop-blur-2xl">
-								<p className="inline-flex rounded-full bg-[#f2f8f1]/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#31583b]">
-									Cilj
-								</p>
-
-								<h3 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-[#33442f]">
-									Prilagodljiv kurikulum
-								</h3>
-
-								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
-									Namen je razviti modularen kurikulum, ki se lahko prilagaja
-									potrebam uporabnikov, izvajalcev in različnim ravnem znanja.
+									Projekt naslavlja področje, kjer so pomembni preglednost,
+									povezljivost in prilagodljivost. Učne poti, moduli in učne
+									enote pomagajo uporabniku razumeti večjo sliko učenja.
 								</p>
 							</article>
 						</div>
 					</div>
 				</section>
 
-				<section ref={timelineRef} className="w-full py-20">
-					<div className="mx-auto max-w-5xl rounded-[40px] border border-white/40 bg-white/14 p-6 shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:p-10">
+				<section ref={timelineRef} className="w-full py-24">
+					<div
+						className={[
+							'mx-auto max-w-5xl rounded-[40px] border border-white/40 bg-white/14 p-6 shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:p-10',
+							getRevealClassName(visibleSections.timeline),
+						].join(' ')}
+					>
 						<div className="mx-auto max-w-3xl text-center">
 							<p className="text-xs font-bold uppercase tracking-[0.3em] text-[#706b60]">
 								Struktura projekta
@@ -222,16 +288,16 @@ const AboutPage = () => {
 							</h2>
 
 							<p className="mt-6 text-[17px] leading-8 text-[#5f5a52]">
-								Projekt je razdeljen na delovne pakete, ki pokrivajo analizo
-								potreb, razvoj kurikuluma, certificiranje, kakovost ter
-								vključevanje zunanjih partnerjev.
+								Projekt je razdeljen na delovne pakete, ki vodijo od analize
+								potreb do razvoja kurikuluma, certificiranja, spremljanja
+								kakovosti in vključevanja partnerjev.
 							</p>
 						</div>
 
 						<div className="relative mt-12 hidden md:block">
-							<div className="absolute left-[10%] right-[10%] top-5 h-[2px] rounded-full bg-white/35">
+							<div className="absolute left-0 right-0 top-[22px] h-[2px] rounded-full bg-white/35">
 								<div
-									className="h-full origin-left rounded-full bg-[#31583b] transition-all duration-[850ms] ease-out"
+									className="h-full rounded-full bg-[#31583b] transition-all duration-[850ms] ease-out"
 									style={{
 										width: `${
 											(activeTimelineStep / (workPackages.length - 1)) * 100
@@ -317,85 +383,6 @@ const AboutPage = () => {
 								})}
 							</div>
 						</div>
-					</div>
-				</section>
-
-				<section className="w-full py-16">
-					<div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-						<div className="rounded-[36px] border border-white/40 bg-white/14 p-7 shadow-[0_18px_55px_rgba(57,47,35,0.08)] backdrop-blur-2xl sm:p-8">
-							<p className="text-xs font-bold uppercase tracking-[0.28em] text-[#706b60]">
-								Kaj projekt razvija
-							</p>
-
-							<h2 className="mt-5 font-serif text-[clamp(32px,4vw,52px)] leading-[1.05] text-[#33442f]">
-								Več kot samo seznam učnih vsebin.
-							</h2>
-
-							<p className="mt-5 text-[16px] leading-7 text-[#5f5a52]">
-								NIDiKo povezuje vsebinsko zasnovo izobraževanj z učnimi izidi,
-								načini preverjanja znanja, certificiranjem dosežkov in
-								mehanizmi za izboljševanje kakovosti.
-							</p>
-						</div>
-
-						<div className="grid gap-4 sm:grid-cols-2">
-							<div className="rounded-[26px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl">
-								<h3 className="text-lg font-semibold text-[#33442f]">
-									Mikrodokazila
-								</h3>
-
-								<p className="mt-3 text-sm leading-6 text-[#5f5a52]">
-									Projekt vključuje strategijo za izdajo, beleženje in
-									upravljanje dokazil o doseženih digitalnih kompetencah.
-								</p>
-							</div>
-
-							<div className="rounded-[26px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl">
-								<h3 className="text-lg font-semibold text-[#33442f]">
-									Certificiranje
-								</h3>
-
-								<p className="mt-3 text-sm leading-6 text-[#5f5a52]">
-									Pomemben del projekta je vzpostavitev sistema za priznavanje
-									in potrjevanje pridobljenih znanj.
-								</p>
-							</div>
-
-							<div className="rounded-[26px] border border-white/40 bg-white/16 p-5 backdrop-blur-2xl sm:col-span-2">
-								<h3 className="text-lg font-semibold text-[#33442f]">
-									Spremljanje kakovosti
-								</h3>
-
-								<p className="mt-3 text-sm leading-6 text-[#5f5a52]">
-									Metodologija spremljanja kakovosti omogoča zbiranje povratnih
-									informacij ter postopno izboljševanje izvedenih izobraževanj.
-								</p>
-							</div>
-						</div>
-					</div>
-				</section>
-
-				<section className="w-full pb-10 pt-8">
-					<div className="mx-auto max-w-3xl rounded-[36px] border border-white/40 bg-white/14 p-7 text-center shadow-[0_24px_70px_rgba(57,47,35,0.10)] backdrop-blur-2xl sm:p-10">
-						<p className="text-xs font-bold uppercase tracking-[0.3em] text-[#706b60]">
-							Nadaljuj raziskovanje
-						</p>
-
-						<h2 className="mt-5 font-serif text-[clamp(32px,4vw,52px)] leading-[1.05] text-[#33442f]">
-							Razišči vsebine, povezane z digitalnimi kompetencami.
-						</h2>
-
-						<p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-[#5f5a52]">
-							Na strani za iskanje lahko pregledaš učne poti, module in učne
-							enote ter izbereš vsebino, ki te zanima.
-						</p>
-
-						<Link
-							to="/search"
-							className="mt-8 inline-flex items-center justify-center rounded-full bg-[#31583b] px-7 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(49,88,59,0.22)] transition hover:bg-[#26472f]"
-						>
-							Pojdi na iskanje
-						</Link>
 					</div>
 				</section>
 			</section>

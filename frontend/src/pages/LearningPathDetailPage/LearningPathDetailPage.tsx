@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { CircleHelp, ExternalLink } from 'lucide-react'
+import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
 import questionnaireIllustration from '../../assets/questionnaire-illustration.png'
 import EmptyState from '../../components/common/EmptyState'
@@ -236,9 +236,9 @@ function applyAssessmentPositionFallback(
   return nodes.map((node) =>
     node.id === firstUnfinishedNode.id
       ? {
-          ...node,
-          isAssessmentPosition: true,
-        }
+        ...node,
+        isAssessmentPosition: true,
+      }
       : node,
   )
 }
@@ -313,7 +313,7 @@ function getLearningUnitAssessmentStatus(
     ) ||
     assessmentResult.start_learning_unit_id === learningUnitId ||
     assessmentResult.current_position?.current_learning_unit_id ===
-      learningUnitId
+    learningUnitId
   ) {
     return 'not_started'
   }
@@ -431,9 +431,9 @@ function createMountainNode(params: {
     nodeAssessmentStatus !== 'completed' &&
     (kind === 'learning_unit'
       ? isAssessmentPositionLearningUnit(nodeId, assessmentResult) ||
-        isAssessmentPositionLearningUnit(nodeId, nodeSpecificAssessmentResult)
+      isAssessmentPositionLearningUnit(nodeId, nodeSpecificAssessmentResult)
       : isAssessmentPositionModule(nodeId, assessmentResult) ||
-        isAssessmentPositionModule(nodeId, nodeSpecificAssessmentResult))
+      isAssessmentPositionModule(nodeId, nodeSpecificAssessmentResult))
 
   return {
     id: getNodeKey(kind, nodeId),
@@ -770,7 +770,7 @@ function LearningPathDetailPage() {
     initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
   })
 
-const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
+  const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
 
   useEffect(() => {
     let isActive = true
@@ -934,9 +934,12 @@ const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
     <main className="min-h-screen px-4 pb-14 pt-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1800px]">
         <section className="ml-0 max-w-[1280px] pb-8 pt-10 sm:ml-6 lg:ml-10 xl:ml-12">
-          <p className="text-sm font-bold uppercase tracking-[0.24em] text-[var(--color-brown-600)]">
+          <div className="mb-4 flex items-center gap-3 text-sm font-bold uppercase tracking-[0.24em] text-[var(--color-brown-600)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest-100 text-forest-700">
+              <PathIcon className="h-5 w-5" />
+            </span>
             Učna pot
-          </p>
+          </div>
 
           <h1 className="mt-5 max-w-5xl font-serif text-[clamp(3.2rem,5.8vw,6.4rem)] leading-[0.92] tracking-[-0.035em] text-[var(--color-brown-900)]">
             {learningPathTitle}
@@ -970,19 +973,19 @@ const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">
             {hasMountainNodes ? (
-            <LearningPathMountain
-              nodes={mountainNodes}
-              durationLabel={formatDuration(learningPath.duration_hours)}
-              moduleCount={moduleCount}
-              learningUnitCount={learningUnitCount}
-              isFavorite={progressIsFavorite}
-              isSaved={progressIsSaved}
-              isCompleted={learningPathIsCompleted}
-              celebrateCompletedOnMount={learningPathIsCompleted}
-              onFavoriteClick={handleFavoriteClick}
-              onSaveClick={handleSaveClick}
-              className="h-full"
-            />
+              <LearningPathMountain
+                nodes={mountainNodes}
+                durationLabel={formatDuration(learningPath.duration_hours)}
+                moduleCount={moduleCount}
+                learningUnitCount={learningUnitCount}
+                isFavorite={progressIsFavorite}
+                isSaved={progressIsSaved}
+                isCompleted={learningPathIsCompleted}
+                celebrateCompletedOnMount={learningPathIsCompleted}
+                onFavoriteClick={handleFavoriteClick}
+                onSaveClick={handleSaveClick}
+                className="h-full"
+              />
             ) : (
               <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
                 <EmptyState

@@ -44,7 +44,7 @@ function MobileHeroSearchResults({
     function renderIcon(result: SearchResult) {
         if (result.type === 'learning_path') {
             return (
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f2f8f1] text-[#31583b]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-forest-100 text-forest-700">
                     <PathIcon className="h-4.5 w-4.5" />
                 </span>
             )
@@ -52,14 +52,14 @@ function MobileHeroSearchResults({
 
         if (result.type === 'module') {
             return (
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#eef7fb] text-[#31576b]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
                     <CircleIcon className="h-4.5 w-4.5" />
                 </span>
             )
         }
 
         return (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#fff4e6] text-[#d07a12]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
                 <DotIcon className="h-4.5 w-4.5" />
             </span>
         )
@@ -73,13 +73,14 @@ function MobileHeroSearchResults({
                 </div>
             ) : (
                 <>
-                    <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">                        {searchResults.length > 0 ? (
+                    <div className="min-h-0 flex-1 space-y-3.5 overflow-y-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">                       
+                        {searchResults.length > 0 ? (
                         searchResults.slice(0, 3).map((result) => (
                             <button
                                 type="button"
                                 key={result.id}
                                 onClick={() => navigateToResult(result)}
-                                className="flex w-full items-start gap-3 rounded-2xl border border-[#eadfce] bg-white/90 p-3 text-left shadow-sm backdrop-blur-xl transition active:scale-[0.99]"
+                                className="flex w-full items-start gap-3.5 rounded-2xl border border-[#eadfce] bg-white/90 p-3.5 text-left shadow-sm backdrop-blur-xl transition active:scale-[0.99]"
                             >
                                 {renderIcon(result)}
 

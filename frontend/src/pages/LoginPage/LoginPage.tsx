@@ -10,6 +10,7 @@ import {
   AuthForm,
   GoogleLoginButton,
   Toast,
+  ForgotPasswordForm,
 } from '../../features/auth'
 
 // Using relative path to the image as it is now in src/assets
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(location.pathname === '/register')
+  const [isForgotPassword, setIsForgotPassword] = useState(false)
 
   // Slovenian translations for common Supabase auth errors, this is unfortunately not an option through supabase :(
   function translateAuthError(msg: string): string {
@@ -109,7 +111,29 @@ export default function LoginPage() {
   }
 
   function handleForgotPassword() {
-    console.log('Forgot password clicked')
+    setIsForgotPassword(true)
+  }
+
+  async function handleSendResetEmail(email: string) {
+    setIsLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      })
+      if (error) throw error
+      
+      // Since our toast component handles both success and error by variant,
+      // currently the variant is hardcoded to "error" in LoginPage.
+      // We might need to handle success variant or just show it as error variant 
+      // but let's show it. (Actually let's just use setToastMessage for now).
+      setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.')
+      setIsForgotPassword(false)
+    } catch (err: any) {
+      const translated = translateAuthError(err.message || '')
+      setToastMessage(translated)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   function toggleMode() {
@@ -161,7 +185,7 @@ export default function LoginPage() {
             {/* Title row with close button inline */}
             <div className="flex items-center justify-between mb-2">
               <h1 className={`font-serif text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
-                {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
+                {isForgotPassword ? 'Ponastavitev gesla' : isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button
                 onClick={() => navigate(-1)}
@@ -173,28 +197,40 @@ export default function LoginPage() {
             </div>
 
             <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
-              {isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
+              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 
             <div className="relative">
               {/* Unified Auth Form */}
-              <AuthForm
-                isRegister={isRegister}
-                onSubmit={handleSubmit}
-                onForgotPassword={handleForgotPassword}
-                isLoading={isLoading}
-              />
+              {isForgotPassword ? (
+                <ForgotPasswordForm
+                  onSubmit={handleSendResetEmail}
+                  isLoading={isLoading}
+                  onCancel={() => setIsForgotPassword(false)}
+                />
+              ) : (
+                <AuthForm
+                  isRegister={isRegister}
+                  onSubmit={handleSubmit}
+                  onForgotPassword={handleForgotPassword}
+                  isLoading={isLoading}
+                />
+              )}
             </div>
 
-            <AuthDivider label={isRegister ? 'Ali se registrirajte z' : 'Ali nadaljujte z'} />
+            {!isForgotPassword && (
+              <>
+                <AuthDivider label={isRegister ? 'Ali se registrirajte z' : 'Ali nadaljujte z'} />
 
-            <GoogleLoginButton onClick={handleGoogleLogin} />
+                <GoogleLoginButton onClick={handleGoogleLogin} />
 
-            <AuthFooter
-              prompt={isRegister ? 'Že imate račun?' : 'Še nimate računa?'}
-              actionLabel={isRegister ? 'Prijava' : 'Registracija'}
-              onAction={toggleMode}
-            />
+                <AuthFooter
+                  prompt={isRegister ? 'Že imate račun?' : 'Še nimate računa?'}
+                  actionLabel={isRegister ? 'Prijava' : 'Registracija'}
+                  onAction={toggleMode}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

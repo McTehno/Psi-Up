@@ -13,6 +13,7 @@ import LoginPage from '../pages/LoginPage'
 import HomePageBackup from '../pages/HomePageBackup'
 import DashboardPage from '../pages/DashboardPage'
 import AboutPage from '../pages/AboutPage'
+import UpdatePasswordPage from '../pages/UpdatePasswordPage'
 
 function RootLayout() {
   return (
@@ -82,5 +83,9 @@ export const router = createBrowserRouter([
   {
     path: '/register',
     element: <LoginPage />,
+  },
+  {
+    path: '/update-password',
+    element: <UpdatePasswordPage />,
   },
 ]);

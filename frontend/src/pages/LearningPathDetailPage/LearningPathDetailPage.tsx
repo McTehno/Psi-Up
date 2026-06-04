@@ -758,6 +758,7 @@ function LearningPathDetailPage() {
   const {
     isFavorite: progressIsFavorite,
     isSaved: progressIsSaved,
+    isCompleted: progressIsCompleted,
     errorMessage: progressErrorMessage,
     clearError: clearProgressError,
     toggleAction,
@@ -768,6 +769,8 @@ function LearningPathDetailPage() {
     initialIsSaved,
     initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
   })
+
+const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
 
   useEffect(() => {
     let isActive = true
@@ -967,18 +970,19 @@ function LearningPathDetailPage() {
         <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
           <div className="h-full">
             {hasMountainNodes ? (
-              <LearningPathMountain
-                nodes={mountainNodes}
-                durationLabel={formatDuration(learningPath.duration_hours)}
-                moduleCount={moduleCount}
-                learningUnitCount={learningUnitCount}
-                isFavorite={progressIsFavorite}
-                isSaved={progressIsSaved}
-                celebrateCompletedOnMount={isCompletedByAssessment}
-                onFavoriteClick={handleFavoriteClick}
-                onSaveClick={handleSaveClick}
-                className="h-full"
-              />
+            <LearningPathMountain
+              nodes={mountainNodes}
+              durationLabel={formatDuration(learningPath.duration_hours)}
+              moduleCount={moduleCount}
+              learningUnitCount={learningUnitCount}
+              isFavorite={progressIsFavorite}
+              isSaved={progressIsSaved}
+              isCompleted={learningPathIsCompleted}
+              celebrateCompletedOnMount={learningPathIsCompleted}
+              onFavoriteClick={handleFavoriteClick}
+              onSaveClick={handleSaveClick}
+              className="h-full"
+            />
             ) : (
               <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
                 <EmptyState

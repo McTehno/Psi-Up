@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader2, Search as SearchIcon } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { SearchFilters } from '../../features/search/components/SearchFilters';
 import { SearchResultCard } from '../../features/search/components/SearchResultCard';
 import type { AdvancedSearchFilters, PaginatedSearchResults, SearchContentType } from '../../types/search';
@@ -26,6 +27,7 @@ export default function SearchPage() {
     const [results, setResults] = useState<PaginatedSearchResults | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [visibleCount, setVisibleCount] = useState(10);
 
     // Sinhronizacija debounced inputa v filter state
     useEffect(() => {
@@ -42,6 +44,7 @@ export default function SearchPage() {
                 setError(null);
                 const data = await performSearch(filters);
                 setResults(data);
+                setVisibleCount(10);
                 
                 // Posodobimo URL parametre (push state)
                 const newParams = new URLSearchParams();
@@ -137,15 +140,37 @@ export default function SearchPage() {
                         {!error && results && results.results.length > 0 && (
                             <div className="flex flex-col gap-4">
                                 <div className="text-sm font-medium text-brown-500 mb-2">
-                                    Prikazujem {results.results.length} od {results.total} rezultatov
+                                    Prikazujem {Math.min(visibleCount, results.results.length)} od {results.total} rezultatov
                                 </div>
-                                {results.results.map((result: any) => (
-                                    <SearchResultCard 
-                                        key={result.id} 
-                                        result={result as any} // temporary fix zaradi "dummy" properties
-                                        onClick={handleResultClick}
-                                    />
-                                ))}
+                                <AnimatePresence mode="popLayout">
+                                    {results.results.slice(0, visibleCount).map((result: any, index: number) => (
+                                        <motion.div
+                                            key={result.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95 }}
+                                            transition={{ duration: 0.3, delay: index >= visibleCount - 10 ? (index % 10) * 0.05 : 0 }}
+                                            layout
+                                        >
+                                            <SearchResultCard 
+                                                result={result as any} // temporary fix zaradi "dummy" properties
+                                                onClick={handleResultClick}
+                                            />
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                                
+                                {visibleCount < results.results.length && (
+                                    <motion.button
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        onClick={() => setVisibleCount(prev => prev + 10)}
+                                        className="mt-4 w-full py-3 rounded-2xl border-2 border-dashed border-sand-200 text-brown-600 font-medium hover:border-forest-400 hover:text-forest-600 hover:bg-forest-50 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        <SearchIcon className="w-4 h-4" />
+                                        Naloži več rezultatov
+                                    </motion.button>
+                                )}
                             </div>
                         )}
                     </div>

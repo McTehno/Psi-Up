@@ -163,17 +163,36 @@ export function buildLearningPathRouteMapItems({
 }: BuildLearningPathRouteMapParams): DetailRouteItem[] {
   const currentPosition = findCurrentPosition(
     getResponseId(learningPath),
-    userProgress
+    userProgress,
   )
 
-  const moduleReferences = sortByOrder(
-    learningPath.steps
-      .map(toModuleReference)
-      .filter(
-        (reference): reference is ModuleReferenceResponse =>
-          reference !== null,
-      ),
-  )
+  const stepModuleReferences = (learningPath.steps ?? [])
+    .map(toModuleReference)
+    .filter(
+      (reference): reference is ModuleReferenceResponse =>
+        reference !== null,
+    )
+
+  const fallbackModuleReferences = (learningPath.modules ?? [])
+    .map((reference) => {
+      if (!reference.module_id) {
+        return null
+      }
+
+      return {
+        ...reference,
+        module_id: reference.module_id,
+      }
+    })
+    .filter(
+      (reference): reference is ModuleReferenceResponse =>
+        reference !== null,
+    )
+
+  const moduleReferences =
+    stepModuleReferences.length > 0
+      ? stepModuleReferences
+      : fallbackModuleReferences
 
   return sortByOrder(moduleReferences)
     .map((reference) => {

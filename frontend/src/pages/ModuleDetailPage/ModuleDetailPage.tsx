@@ -4,7 +4,6 @@ import {
   Circle,
   Clock,
   Info,
-  BookOpen,
   CircleHelp,
   ExternalLink,
 } from 'lucide-react'
@@ -251,6 +250,13 @@ function ModuleDetailPage() {
   const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
+  const learningUnitCount = Math.max(
+  learningUnitReferences.length,
+  learningUnitDetails.length,
+)
+
+  const shouldUseInlineAssistant = learningUnitCount === 1
+
   const moduleLearningUnitIds = useMemo(
     () => getLearningUnitIdsFromModule(learningUnitReferences, learningUnitDetails),
     [learningUnitReferences, learningUnitDetails],
@@ -432,51 +438,6 @@ function ModuleDetailPage() {
         </DetailHero>
 
         <DetailSection
-          title="Osnovni podatki"
-          description="Ključne informacije o strukturi modula."
-        >
-          <div className="overflow-hidden rounded-[16px] border border-[var(--color-sand-200)] bg-[var(--color-sand-50)]">
-            <div className="grid md:grid-cols-2">
-              {[
-                {
-                  label: 'Število učnih enot',
-                  value: String(learningUnitReferences.length),
-                  icon: <BookOpen className="h-5 w-5" />,
-                },
-                {
-                  label: 'Predviden čas',
-                  value: formatDuration(detail.durationHours),
-                  icon: <Clock className="h-5 w-5" />,
-                },
-              ].map((item, index) => (
-                <div
-                  key={`${item.label}-${index}`}
-                  className={[
-                    'flex min-w-0 items-start gap-4 px-5 py-5',
-                    index !== 0
-                      ? 'border-t border-[var(--color-sand-200)] md:border-l md:border-t-0'
-                      : '',
-                  ].join(' ')}
-                >
-                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest-100)] text-[var(--color-forest-700)]">
-                    {item.icon}
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-bold uppercase tracking-wide text-[var(--color-brown-500)]">
-                      {item.label}
-                    </p>
-                    <strong className="mt-1.5 block text-[17px] font-bold leading-snug text-[var(--color-brown-900)]">
-                      {item.value}
-                    </strong>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </DetailSection>
-
-        <DetailSection
           title="Učne enote"
           description="Vizualizacija poteka učnih enot znotraj modula."
         >
@@ -489,20 +450,31 @@ function ModuleDetailPage() {
               assessmentPositionUnitId={assessmentPositionUnitId}
             />
 
-            <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
-              <ModuleAssistantBox
-                moduleId={moduleContentId}
-                variant="desktop"
-                className="pointer-events-auto"
-              />
-            </div>
+            {!shouldUseInlineAssistant ? (
+              <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
+                <ModuleAssistantBox
+                  moduleId={moduleContentId}
+                  variant="desktop"
+                  className="pointer-events-auto"
+                />
+              </div>
+            ) : null}
 
-            <section className="mt-8 min-[1500px]:hidden">
-              <ModuleAssistantBox
-                moduleId={moduleContentId}
-                variant="mobile"
-              />
-            </section>
+            {shouldUseInlineAssistant ? (
+              <section className="mt-8">
+                <ModuleAssistantBox
+                  moduleId={moduleContentId}
+                  variant="mobile"
+                />
+              </section>
+            ) : (
+              <section className="mt-8 min-[1500px]:hidden">
+                <ModuleAssistantBox
+                  moduleId={moduleContentId}
+                  variant="mobile"
+                />
+              </section>
+            )}
           </div>
         </DetailSection>
 

@@ -20,7 +20,6 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from || '/'
-  const [error, setError] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(location.pathname === '/register')
@@ -51,8 +50,6 @@ export default function LoginPage() {
   // -- Handlers --
   async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {
     setIsLoading(true)
-    setError(null)
-
     try {
       if (isRegister) {
         const { error } = await supabase.auth.signUp({
@@ -77,15 +74,31 @@ export default function LoginPage() {
       navigate(from, { replace: true })
     } catch (err: any) {
       const translated = translateAuthError(err.message || '')
-      setError(translated)
       setToastMessage(translated)
     } finally {
       setIsLoading(false)
     }
   }
 
-  function handleGoogleLogin() {
-    console.log('Google login clicked')
+  async function handleGoogleLogin() {
+    try {
+      setIsLoading(true); // Optional: if you want to show a loading state
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // This tells Supabase where to redirect AFTER Google validates the user
+          redirectTo: `${window.location.origin}${from === '/' ? '/dashboard' : from}`,
+        }
+      })
+      if (error) throw error
+      // Note: You don't need to navigate() here. 
+      // OAuth will physically redirect the user away from your app to Google, and then back.
+    } catch (err: any) {
+      const translated = translateAuthError(err.message || '')
+      setToastMessage(translated)
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleForgotPassword() {
@@ -94,7 +107,6 @@ export default function LoginPage() {
 
   function toggleMode() {
     setIsRegister(!isRegister)
-    setError(null)
   }
 
   return (
@@ -163,7 +175,6 @@ export default function LoginPage() {
                 isRegister={isRegister}
                 onSubmit={handleSubmit}
                 onForgotPassword={handleForgotPassword}
-                error={error}
                 isLoading={isLoading}
               />
             </div>

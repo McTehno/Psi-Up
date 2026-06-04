@@ -56,3 +56,17 @@ export type QuestionnaireSubmitRequest = {
 }
 
 export type AssessmentEvaluateRequest = QuestionnaireSubmitRequest
+
+export type QuestionnaireQuestionSourceResponse = {
+  learning_path_id?: string | null
+  module_id?: string | null
+  learning_unit_id?: string | null
+  topic_id?: string | null
+  related_topic?: string | null
+  competency_codes?: string[]
+
+  order?: number | null
+  parallel_group?: string | null
+  is_required?: boolean
+  prerequisites?: string[]
+}

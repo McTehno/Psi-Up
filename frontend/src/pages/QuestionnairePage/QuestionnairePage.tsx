@@ -74,7 +74,8 @@ type CompetencyGroup = {
 type AssessmentPhase = 'group-selection' | 'questionnaire' | 'completed'
 
 type QuestionGroup = {
-  learningUnitId: string
+  id: string
+  contentType: 'learning_path' | 'module' | 'learning_unit' | 'question'
   questions: QuestionnaireItem[]
 }
 
@@ -205,9 +206,6 @@ function getBackendEntityId(entity?: BackendEntity | null) {
   return entity?.id ?? entity?._id ?? null
 }
 
-function getQuestionLearningUnitKey(question: QuestionnaireItem) {
-  return question.learning_unit_id ?? `question_${question.runtimeId}`
-}
 
 function getLearningUnitReferenceId(reference: LearningUnitReferenceResponse) {
   return reference.learning_unit_id
@@ -217,24 +215,83 @@ function getLearningPathStepRefId(step: LearningPathStepReference) {
   return step.ref_id ?? step.module_id ?? step.learning_unit_id ?? ''
 }
 
-function groupQuestionsByLearningUnit(
+function getQuestionGroupInfo(
+  question: QuestionnaireItem,
+  targetType: QuestionnaireTargetType | null,
+): QuestionGroup {
+  const source = getQuestionSources(question)[0]
+
+  if (targetType === 'learning_path') {
+    const moduleId = source?.module_id ?? question.module_id ?? null
+
+    if (moduleId) {
+      return {
+        id: moduleId,
+        contentType: 'module',
+        questions: [],
+      }
+    }
+
+    const learningUnitId =
+      source?.learning_unit_id ?? question.learning_unit_id ?? null
+
+    if (learningUnitId) {
+      return {
+        id: learningUnitId,
+        contentType: 'learning_unit',
+        questions: [],
+      }
+    }
+
+    const learningPathId =
+      source?.learning_path_id ?? question.learning_path_id ?? null
+
+    if (learningPathId) {
+      return {
+        id: learningPathId,
+        contentType: 'learning_path',
+        questions: [],
+      }
+    }
+  }
+
+  const learningUnitId =
+    source?.learning_unit_id ?? question.learning_unit_id ?? null
+
+  if (learningUnitId) {
+    return {
+      id: learningUnitId,
+      contentType: 'learning_unit',
+      questions: [],
+    }
+  }
+
+  return {
+    id: `question_${question.runtimeId}`,
+    contentType: 'question',
+    questions: [],
+  }
+}
+
+function groupQuestionsByQuestionnaireTarget(
   questions: QuestionnaireItem[],
+  targetType: QuestionnaireTargetType | null,
 ): QuestionGroup[] {
   const groups: QuestionGroup[] = []
-  const groupIndexesByLearningUnitId = new Map<string, number>()
+  const groupIndexesById = new Map<string, number>()
 
   for (const question of questions) {
-    const learningUnitKey = getQuestionLearningUnitKey(question)
-    const existingGroupIndex = groupIndexesByLearningUnitId.get(learningUnitKey)
+    const groupInfo = getQuestionGroupInfo(question, targetType)
+    const existingGroupIndex = groupIndexesById.get(groupInfo.id)
 
     if (existingGroupIndex !== undefined) {
       groups[existingGroupIndex].questions.push(question)
       continue
     }
 
-    groupIndexesByLearningUnitId.set(learningUnitKey, groups.length)
+    groupIndexesById.set(groupInfo.id, groups.length)
     groups.push({
-      learningUnitId: learningUnitKey,
+      ...groupInfo,
       questions: [question],
     })
   }
@@ -269,6 +326,87 @@ function getFirstQuestionOfNextGroup(
   return groups[groupIndex + 1]?.questions[0] ?? null
 }
 
+function getQuestionParallelGroupKey(question: QuestionnaireItem) {
+  const source = getQuestionSources(question)[0]
+
+  const parallelGroup =
+    source?.parallel_group ?? question.parallel_group ?? null
+
+  if (!parallelGroup) {
+    return null
+  }
+
+  const learningPathId =
+    source?.learning_path_id ?? question.learning_path_id ?? 'no_learning_path'
+
+  const order = source?.order ?? question.order ?? 'no_order'
+
+  return `${learningPathId}::${order}::${parallelGroup}`
+}
+
+function getGroupParallelGroupKey(group: QuestionGroup) {
+  const firstQuestion = group.questions[0]
+
+  if (!firstQuestion) {
+    return null
+  }
+
+  return getQuestionParallelGroupKey(firstQuestion)
+}
+
+function getFirstQuestionOfNextParallelGroupMember(params: {
+  groups: QuestionGroup[]
+  currentGroupIndex: number
+  parallelGroupKey: string
+}) {
+  const { groups, currentGroupIndex, parallelGroupKey } = params
+
+  for (
+    let groupIndex = currentGroupIndex + 1;
+    groupIndex < groups.length;
+    groupIndex += 1
+  ) {
+    const group = groups[groupIndex]
+    const groupParallelGroupKey = getGroupParallelGroupKey(group)
+
+    if (groupParallelGroupKey === parallelGroupKey) {
+      return group.questions[0] ?? null
+    }
+
+    return null
+  }
+
+  return null
+}
+
+function hasConfirmedNegativeAnswerInParallelGroup(params: {
+  groups: QuestionGroup[]
+  selectedAnswers: Record<string, AnswerOption>
+  confirmedQuestionIds: string[]
+  parallelGroupKey: string
+}) {
+  const {
+    groups,
+    selectedAnswers,
+    confirmedQuestionIds,
+    parallelGroupKey,
+  } = params
+
+  const confirmedQuestionIdSet = new Set(confirmedQuestionIds)
+
+  return groups.some((group) => {
+    if (getGroupParallelGroupKey(group) !== parallelGroupKey) {
+      return false
+    }
+
+    return group.questions.some(
+      (question) =>
+        confirmedQuestionIdSet.has(question.runtimeId) &&
+        selectedAnswers[question.runtimeId]?.weight === false,
+    )
+  })
+}
+
 function getNextQuestion(params: {
   currentQuestion: QuestionnaireItem
   groups: QuestionGroup[]
@@ -298,13 +436,6 @@ function getCompetencyCodes(question: QuestionnaireItem) {
   return Array.isArray(competencyCodes) ? competencyCodes : []
 }
 
-function normalizeQuestionText(value: unknown) {
-  if (typeof value !== 'string') {
-    return ''
-  }
-
-  return value.trim().toLowerCase().replace(/\s+/g, ' ')
-}
 
 function getQuestionFallbackSource(
   question: QuestionnaireItem,
@@ -330,149 +461,7 @@ function getQuestionSources(question: QuestionnaireItem) {
   return [getQuestionFallbackSource(question)]
 }
 
-function getQuestionSourceParallelGroup(
-  question: QuestionnaireItem,
-  source: QuestionnaireQuestionSource,
-) {
-  return source.parallel_group ?? question.parallel_group ?? null
-}
 
-function getQuestionParallelGroups(question: QuestionnaireItem) {
-  return new Set(
-    getQuestionSources(question)
-      .map((source) => getQuestionSourceParallelGroup(question, source))
-      .filter((group): group is string => Boolean(group)),
-  )
-}
-
-function questionHasAnyParallelGroup(question: QuestionnaireItem) {
-  return getQuestionParallelGroups(question).size > 0
-}
-
-function getQuestionSourceContentKey(params: {
-  question: QuestionnaireItem
-  source: QuestionnaireQuestionSource
-  targetType: QuestionnaireTargetType
-  targetId: string
-}) {
-  const { question, source, targetType, targetId } = params
-
-  const fallbackKey =
-    normalizeQuestionText(question.question) || question.id || question.runtimeId
-
-  if (source.module_id || question.module_id) {
-    return source.module_id ?? question.module_id ?? fallbackKey
-  }
-
-  if (targetType === 'module') {
-    return targetId
-  }
-
-  if (source.learning_unit_id || question.learning_unit_id) {
-    return source.learning_unit_id ?? question.learning_unit_id ?? fallbackKey
-  }
-
-  if (targetType === 'learning_unit') {
-    return targetId
-  }
-
-  return fallbackKey
-}
-
-function getQuestionContentKeys(params: {
-  question: QuestionnaireItem
-  targetType: QuestionnaireTargetType
-  targetId: string
-  parallelGroups?: Set<string> | null
-}) {
-  const { question, targetType, targetId, parallelGroups } = params
-  const keys = new Set<string>()
-
-  for (const source of getQuestionSources(question)) {
-    const sourceParallelGroup = getQuestionSourceParallelGroup(question, source)
-
-    if (
-      parallelGroups &&
-      parallelGroups.size > 0 &&
-      (!sourceParallelGroup || !parallelGroups.has(sourceParallelGroup))
-    ) {
-      continue
-    }
-
-    const contentKey = getQuestionSourceContentKey({
-      question,
-      source,
-      targetType,
-      targetId,
-    })
-
-    if (contentKey) {
-      keys.add(contentKey)
-    }
-  }
-
-  return [...keys]
-}
-
-function getRejectedContentKeys(params: {
-  questions: QuestionnaireItem[]
-  selectedAnswers: Record<string, AnswerOption>
-  targetType: QuestionnaireTargetType
-  targetId: string
-  confirmedQuestionIds: string[]
-}) {
-  const {
-    questions,
-    selectedAnswers,
-    targetType,
-    targetId,
-    confirmedQuestionIds,
-  } = params
-
-  const confirmedQuestionIdSet = new Set(confirmedQuestionIds)
-  const rejectedContentKeys = new Set<string>()
-
-  for (const question of questions) {
-    if (!confirmedQuestionIdSet.has(question.runtimeId)) {
-      continue
-    }
-
-    if (selectedAnswers[question.runtimeId]?.weight !== false) {
-      continue
-    }
-
-    for (const contentKey of getQuestionContentKeys({
-      question,
-      targetType,
-      targetId,
-    })) {
-      rejectedContentKeys.add(contentKey)
-    }
-  }
-
-  return rejectedContentKeys
-}
-
-function questionHasUnrejectedContent(params: {
-  question: QuestionnaireItem
-  targetType: QuestionnaireTargetType
-  targetId: string
-  rejectedContentKeys: Set<string>
-}) {
-  const { question, targetType, targetId, rejectedContentKeys } = params
-
-  const contentKeys = getQuestionContentKeys({
-    question,
-    targetType,
-    targetId,
-  })
-
-  if (contentKeys.length === 0) {
-    return true
-  }
-
-  return contentKeys.some((contentKey) => !rejectedContentKeys.has(contentKey))
-}
 
 function getNextEligibleQuestion(params: {
   questions: QuestionnaireItem[]
@@ -485,50 +474,66 @@ function getNextEligibleQuestion(params: {
   onlyParallelQuestions?: boolean
 }) {
   const {
-    questions,
     currentQuestion,
     groups,
     selectedAnswers,
     targetType,
-    targetId,
     confirmedQuestionIds,
-    onlyParallelQuestions = false,
   } = params
 
-  const rejectedContentKeys = getRejectedContentKeys({
-    questions,
-    selectedAnswers,
-    targetType,
-    targetId,
-    confirmedQuestionIds,
-  })
+  const position = findQuestionPosition(groups, currentQuestion.runtimeId)
 
-  let candidate = getNextQuestion({
-    currentQuestion,
-    groups,
-  })
-
-  while (candidate) {
-    if (
-      (!onlyParallelQuestions || questionHasAnyParallelGroup(candidate)) &&
-      questionHasUnrejectedContent({
-        question: candidate,
-        targetType,
-        targetId,
-        rejectedContentKeys,
-      })
-    ) {
-      return candidate
-    }
-
-    candidate = getNextQuestion({
-      currentQuestion: candidate,
-      groups,
-    })
+  if (!position) {
+    return null
   }
 
-  return null
+  const currentGroup = groups[position.groupIndex]
+  const nextQuestionInSameGroup =
+    currentGroup.questions[position.questionIndex + 1] ?? null
+
+  if (nextQuestionInSameGroup) {
+    return nextQuestionInSameGroup
+  }
+
+  const nextGroupFirstQuestion = getFirstQuestionOfNextGroup(
+    groups,
+    position.groupIndex,
+  )
+
+  if (targetType === 'learning_unit') {
+    return nextGroupFirstQuestion
+  }
+
+  const currentParallelGroupKey = getGroupParallelGroupKey(currentGroup)
+
+  if (!currentParallelGroupKey) {
+    return nextGroupFirstQuestion
+  }
+
+  const nextGroup = groups[position.groupIndex + 1]
+  const nextGroupParallelGroupKey = nextGroup
+    ? getGroupParallelGroupKey(nextGroup)
+    : null
+
+  if (nextGroupParallelGroupKey === currentParallelGroupKey) {
+    return nextGroup?.questions[0] ?? null
+  }
+
+  const hasNegativeAnswerInCurrentParallelGroup =
+    hasConfirmedNegativeAnswerInParallelGroup({
+      groups,
+      selectedAnswers,
+      confirmedQuestionIds,
+      parallelGroupKey: currentParallelGroupKey,
+    })
+
+  if (hasNegativeAnswerInCurrentParallelGroup) {
+    return null
+  }
+
+  return nextGroupFirstQuestion
 }
+
 
 function getNextQuestionAfterNegativeAnswer(params: {
   questions: QuestionnaireItem[]
@@ -539,33 +544,32 @@ function getNextQuestionAfterNegativeAnswer(params: {
   targetId: string
   confirmedQuestionIds: string[]
 }) {
-  const {
-    questions,
-    currentQuestion,
-    groups,
-    selectedAnswers,
-    targetType,
-    targetId,
-    confirmedQuestionIds,
-  } = params
+  const { currentQuestion, groups, targetType } = params
 
   if (targetType === 'learning_unit') {
+    return getNextQuestion({
+      currentQuestion,
+      groups,
+    })
+  }
+
+  const position = findQuestionPosition(groups, currentQuestion.runtimeId)
+
+  if (!position) {
     return null
   }
 
-  if (!questionHasAnyParallelGroup(currentQuestion)) {
+  const currentGroup = groups[position.groupIndex]
+  const currentParallelGroupKey = getGroupParallelGroupKey(currentGroup)
+
+  if (!currentParallelGroupKey) {
     return null
   }
 
-  return getNextEligibleQuestion({
-    questions,
-    currentQuestion,
+  return getFirstQuestionOfNextParallelGroupMember({
     groups,
-    selectedAnswers,
-    targetType,
-    targetId,
-    confirmedQuestionIds,
-    onlyParallelQuestions: true,
+    currentGroupIndex: position.groupIndex,
+    parallelGroupKey: currentParallelGroupKey,
   })
 }
 
@@ -832,11 +836,16 @@ function createFallbackProgressSteps(params: {
     questionCountUntilStep += questionIds.length
 
     return {
-      id: group.learningUnitId,
+      id: group.id,
       label: String(groupIndex + 1),
-      title: group.learningUnitId.startsWith('question_')
-        ? `Vprašanje ${groupIndex + 1}`
-        : `Učna enota ${groupIndex + 1}`,
+      title:
+        group.contentType === 'module'
+          ? `Modul ${groupIndex + 1}`
+          : group.contentType === 'learning_unit'
+            ? `Učna enota ${groupIndex + 1}`
+            : group.contentType === 'learning_path'
+              ? `Učna pot ${groupIndex + 1}`
+              : `Vprašanje ${groupIndex + 1}`,
       status: getLeafStatus(
         questionIds,
         selectedAnswers,
@@ -889,8 +898,8 @@ function QuestionnairePage() {
   }, [])
 
   const questionGroups = useMemo(
-    () => groupQuestionsByLearningUnit(questionnaire),
-    [questionnaire],
+    () => groupQuestionsByQuestionnaireTarget(questionnaire, targetType),
+    [questionnaire, targetType],
   )
 
   const questionById = useMemo(
@@ -923,42 +932,43 @@ function QuestionnairePage() {
     }
   }, [questionnaireTitle, targetId, targetType])
 
-const confirmedQuestionIdsForPreview = visibleQuestionIds.slice(
-  0,
-  activeQuestionIndex + 1,
-)
+  const confirmedQuestionIdsForPreview = visibleQuestionIds.slice(
+    0,
+    activeQuestionIndex + 1,
+  )
 
-const nextQuestion =
+  const nextQuestion =
   currentQuestion && selectedAnswer && targetType && targetId
-    ? selectedAnswer.weight === false
+    ? selectedAnswer.weight === false && targetType !== 'learning_unit'
       ? getNextQuestionAfterNegativeAnswer({
-          questions: questionnaire,
-          currentQuestion,
-          groups: questionGroups,
-          selectedAnswers,
-          targetType,
-          targetId,
-          confirmedQuestionIds: confirmedQuestionIdsForPreview,
-        })
+        questions: questionnaire,
+        currentQuestion,
+        groups: questionGroups,
+        selectedAnswers,
+        targetType,
+        targetId,
+        confirmedQuestionIds: confirmedQuestionIdsForPreview,
+      })
       : getNextEligibleQuestion({
-          questions: questionnaire,
-          currentQuestion,
-          groups: questionGroups,
-          selectedAnswers,
-          targetType,
-          targetId,
-          confirmedQuestionIds: confirmedQuestionIdsForPreview,
-        })
+        questions: questionnaire,
+        currentQuestion,
+        groups: questionGroups,
+        selectedAnswers,
+        targetType,
+        targetId,
+        confirmedQuestionIds: confirmedQuestionIdsForPreview,
+      })
     : null
 
   const skipNotice =
-    phase === 'questionnaire' &&
+  phase === 'questionnaire' &&
     currentQuestion &&
-    selectedAnswer?.weight === false
-      ? nextQuestion
-        ? 'Odgovor Ne bo preskočil preostala vprašanja tega modula in nadaljeval pri drugem vzporednem modulu. Z gumbom Nazaj lahko odgovor spremeniš.'
-        : 'Odgovor Ne bo zaključil vprašalnik, ker ni več neodgovorjenega vzporednega modula. Z gumbom Nazaj lahko odgovor spremeniš.'
-      : null
+    selectedAnswer?.weight === false &&
+    targetType !== 'learning_unit'
+    ? nextQuestion
+      ? 'Odgovor "Ne" bo preskočil preostala vprašanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniš.'
+      : 'Odgovor "Ne" bo zaključil vprašalnik, ker ni več naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniš.'
+    : null
 
   const confirmedQuestionCount =
     phase === 'completed'
@@ -1522,25 +1532,25 @@ const nextQuestion =
     }
   }
 
-async function goToNextStep() {
-  if (
-    phase !== 'questionnaire' ||
-    !currentQuestion ||
-    !selectedAnswer ||
-    !targetType ||
-    !targetId
-  ) {
-    return
-  }
+  async function goToNextStep() {
+    if (
+      phase !== 'questionnaire' ||
+      !currentQuestion ||
+      !selectedAnswer ||
+      !targetType ||
+      !targetId
+    ) {
+      return
+    }
 
-  const questionIdsUntilCurrent = visibleQuestionIds.slice(
-    0,
-    activeQuestionIndex + 1,
-  )
+    const questionIdsUntilCurrent = visibleQuestionIds.slice(
+      0,
+      activeQuestionIndex + 1,
+    )
 
-  const followingQuestion =
-    selectedAnswer.weight === false
-      ? getNextQuestionAfterNegativeAnswer({
+    const followingQuestion =
+      selectedAnswer.weight === false && targetType !== 'learning_unit'
+        ? getNextQuestionAfterNegativeAnswer({
           questions: questionnaire,
           currentQuestion,
           groups: questionGroups,
@@ -1549,7 +1559,7 @@ async function goToNextStep() {
           targetId,
           confirmedQuestionIds: questionIdsUntilCurrent,
         })
-      : getNextEligibleQuestion({
+        : getNextEligibleQuestion({
           questions: questionnaire,
           currentQuestion,
           groups: questionGroups,
@@ -1559,17 +1569,18 @@ async function goToNextStep() {
           confirmedQuestionIds: questionIdsUntilCurrent,
         })
 
-  if (!followingQuestion) {
-    await submitAssessment(questionIdsUntilCurrent)
-    return
-  }
 
-  setVisibleQuestionIds([
-    ...questionIdsUntilCurrent,
-    followingQuestion.runtimeId,
-  ])
-  setActiveQuestionIndex(questionIdsUntilCurrent.length)
-}
+    if (!followingQuestion) {
+      await submitAssessment(questionIdsUntilCurrent)
+      return
+    }
+
+    setVisibleQuestionIds([
+      ...questionIdsUntilCurrent,
+      followingQuestion.runtimeId,
+    ])
+    setActiveQuestionIndex(questionIdsUntilCurrent.length)
+  }
 
   function goToPreviousStep() {
     if (phase === 'completed') {

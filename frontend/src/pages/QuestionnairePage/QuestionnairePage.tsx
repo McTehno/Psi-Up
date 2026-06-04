@@ -11,6 +11,8 @@ import AssessmentHeader from '../../features/questionnaire/components/Assessment
 import AssessmentIntro from '../../features/questionnaire/components/AssessmentIntro'
 import AssessmentLayout from '../../features/questionnaire/components/AssessmentLayout'
 import AssessmentProgress, {
+  type AssessmentProgressQuestion,
+  type AssessmentProgressQuestionStatus,
   type AssessmentProgressStep,
   type AssessmentProgressStepStatus,
 } from '../../features/questionnaire/components/AssessmentProgress'
@@ -573,6 +575,25 @@ function getNextQuestionAfterNegativeAnswer(params: {
   })
 }
 
+function getQuestionIdsRejectedByCurrentNegativeAnswer(params: {
+  currentQuestion: QuestionnaireItem
+  groups: QuestionGroup[]
+}) {
+  const { currentQuestion, groups } = params
+
+  const position = findQuestionPosition(groups, currentQuestion.runtimeId)
+
+  if (!position) {
+    return [currentQuestion.runtimeId]
+  }
+
+  const currentGroup = groups[position.groupIndex]
+
+  return currentGroup.questions
+    .slice(position.questionIndex)
+    .map((question) => question.runtimeId)
+}
+
 function createQuestionnaireAnswerRequest(
   question: QuestionnaireItem,
   answer: boolean,
@@ -601,25 +622,31 @@ function isQuestionnaireAnswerRequest(
   return value !== null
 }
 
-function createAnswerPayload(
+function createAnswerPayloadWithRejectedQuestions(
   questionIds: string[],
   questionById: Map<string, QuestionnaireItem>,
   selectedAnswers: Record<string, AnswerOption>,
+  rejectedQuestionIds: Set<string>,
   targetType: QuestionnaireTargetType,
   targetId: string,
 ): QuestionnaireAnswerRequest[] {
   return questionIds
     .map((questionId) => {
       const question = questionById.get(questionId)
+
+      if (!question) {
+        return null
+      }
+
       const selectedAnswer = selectedAnswers[questionId]
 
-      if (!question || !selectedAnswer) {
+      if (!selectedAnswer && !rejectedQuestionIds.has(questionId)) {
         return null
       }
 
       return createQuestionnaireAnswerRequest(
         question,
-        selectedAnswer.weight,
+        selectedAnswer ? selectedAnswer.weight : false,
         targetType,
         targetId,
       )
@@ -704,18 +731,6 @@ function getQuestionIdsByLearningUnit(
     .map((question) => question.runtimeId)
 }
 
-function getProgressQuestionIds(
-  visibleQuestionIds: string[],
-  activeQuestionIndex: number,
-  phase: AssessmentPhase,
-) {
-  if (phase === 'completed') {
-    return new Set(visibleQuestionIds)
-  }
-
-  return new Set(visibleQuestionIds.slice(0, activeQuestionIndex))
-}
-
 function getQuestionProgressPosition(
   questionCountUntilStep: number,
   totalQuestionCount: number,
@@ -727,39 +742,32 @@ function getQuestionProgressPosition(
   return Math.min(totalQuestionCount, Math.max(0, questionCountUntilStep))
 }
 
+function createRuntimeIdSet(questionIds: string[]) {
+  return new Set(questionIds)
+}
+
+function mergeQuestionIds(...questionIdGroups: string[][]) {
+  return Array.from(new Set(questionIdGroups.flat()))
+}
+
 function getLeafStatus(
   questionIds: string[],
-  selectedAnswers: Record<string, AnswerOption>,
-  progressQuestionIds: Set<string>,
-  activeQuestionId?: string,
+  questionProgressById: Map<string, AssessmentProgressQuestionStatus>,
 ): AssessmentProgressStepStatus {
-  const visibleQuestionIds = questionIds.filter((questionId) =>
-    progressQuestionIds.has(questionId),
+  const statuses = questionIds.map(
+    (questionId) => questionProgressById.get(questionId) ?? 'upcoming',
   )
 
-  const isActive = Boolean(
-    activeQuestionId && questionIds.includes(activeQuestionId),
-  )
-
-  const hasNoAnswer = visibleQuestionIds.some(
-    (questionId) => selectedAnswers[questionId]?.weight === false,
-  )
-
-  const isCompleted =
-    questionIds.length > 0 &&
-    questionIds.every(
-      (questionId) =>
-        progressQuestionIds.has(questionId) &&
-        selectedAnswers[questionId]?.weight === true,
-    )
-
-  if (hasNoAnswer) {
-    return 'upcoming'
+  if (statuses.includes('rejected')) {
+    return 'rejected'
   }
 
-  if (isActive) {
+  if (statuses.includes('active')) {
     return 'active'
   }
+
+  const isCompleted =
+    statuses.length > 0 && statuses.every((status) => status === 'completed')
 
   if (isCompleted) {
     return 'completed'
@@ -778,6 +786,10 @@ function getStepStatusFromChildren(
     return 'completed'
   }
 
+  if (childStatuses.includes('rejected')) {
+    return 'rejected'
+  }
+
   if (childStatuses.includes('missing')) {
     return 'missing'
   }
@@ -794,11 +806,14 @@ function getCompletedLeafCount(steps: AssessmentProgressStep[]) {
     if (step.subSteps && step.subSteps.length > 0) {
       return (
         count +
-        step.subSteps.filter((subStep) => subStep.status === 'completed').length
+        step.subSteps.filter(
+          (subStep) =>
+            subStep.status === 'completed' || subStep.status === 'rejected',
+        ).length
       )
     }
 
-    return count + (step.status === 'completed' ? 1 : 0)
+    return count + (step.status === 'completed' || step.status === 'rejected' ? 1 : 0)
   }, 0)
 }
 
@@ -816,16 +831,12 @@ function getTotalLeafCount(steps: AssessmentProgressStep[]) {
 
 function createFallbackProgressSteps(params: {
   questionGroups: QuestionGroup[]
-  selectedAnswers: Record<string, AnswerOption>
-  progressQuestionIds: Set<string>
-  activeQuestionId?: string
+  questionProgressById: Map<string, AssessmentProgressQuestionStatus>
   totalQuestionCount: number
 }) {
   const {
     questionGroups,
-    selectedAnswers,
-    progressQuestionIds,
-    activeQuestionId,
+    questionProgressById,
     totalQuestionCount,
   } = params
 
@@ -846,12 +857,7 @@ function createFallbackProgressSteps(params: {
             : group.contentType === 'learning_path'
               ? `Učna pot ${groupIndex + 1}`
               : `Vprašanje ${groupIndex + 1}`,
-      status: getLeafStatus(
-        questionIds,
-        selectedAnswers,
-        progressQuestionIds,
-        activeQuestionId,
-      ),
+      status: getLeafStatus(questionIds, questionProgressById),
       questionCountUntilStep: getQuestionProgressPosition(
         questionCountUntilStep,
         totalQuestionCount,
@@ -878,6 +884,9 @@ function QuestionnairePage() {
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, AnswerOption>
   >({})
+  const [rejectedQuestionIds, setRejectedQuestionIds] = useState<Set<string>>(
+  () => new Set(),
+)
   const [moduleDetail, setModuleDetail] =
     useState<ModuleDetailResponse | null>(null)
   const [learningPathDetail, setLearningPathDetail] =
@@ -918,6 +927,118 @@ function QuestionnairePage() {
   const selectedAnswer = currentQuestion
     ? selectedAnswers[currentQuestion.runtimeId]
     : undefined
+
+    const currentRejectedQuestionIdsPreview = useMemo(() => {
+  if (
+    phase !== 'questionnaire' ||
+    !currentQuestion ||
+    selectedAnswer?.weight !== false ||
+    targetType === 'learning_unit'
+  ) {
+    return new Set<string>()
+  }
+
+  return createRuntimeIdSet(
+    getQuestionIdsRejectedByCurrentNegativeAnswer({
+      currentQuestion,
+      groups: questionGroups,
+    }),
+  )
+}, [
+  currentQuestion,
+  phase,
+  questionGroups,
+  selectedAnswer?.weight,
+  targetType,
+])
+
+const questionProgress = useMemo<AssessmentProgressQuestion[]>(() => {
+  const confirmedQuestionIds =
+    phase === 'completed'
+      ? questionnaire.map((question) => question.runtimeId)
+      : visibleQuestionIds.slice(0, activeQuestionIndex)
+
+  const confirmedQuestionIdSet = createRuntimeIdSet(confirmedQuestionIds)
+
+  const rejectedQuestionIdSet = new Set([
+    ...Array.from(rejectedQuestionIds),
+    ...Array.from(currentRejectedQuestionIdsPreview),
+  ])
+
+  return questionnaire.map((question) => {
+    const isActiveQuestion =
+      phase === 'questionnaire' &&
+      currentQuestion?.runtimeId === question.runtimeId
+
+    const selectedAnswerForQuestion = selectedAnswers[question.runtimeId]
+
+    if (rejectedQuestionIdSet.has(question.runtimeId)) {
+      return {
+        id: question.runtimeId,
+        status: 'rejected',
+      }
+    }
+
+    if (isActiveQuestion && selectedAnswerForQuestion?.weight === false) {
+      return {
+        id: question.runtimeId,
+        status: 'rejected',
+      }
+    }
+
+    if (isActiveQuestion && selectedAnswerForQuestion?.weight === true) {
+      return {
+        id: question.runtimeId,
+        status: 'completed',
+      }
+    }
+
+    if (confirmedQuestionIdSet.has(question.runtimeId)) {
+      if (selectedAnswerForQuestion?.weight === false) {
+        return {
+          id: question.runtimeId,
+          status: 'rejected',
+        }
+      }
+
+      if (selectedAnswerForQuestion?.weight === true) {
+        return {
+          id: question.runtimeId,
+          status: 'completed',
+        }
+      }
+    }
+
+    if (isActiveQuestion) {
+      return {
+        id: question.runtimeId,
+        status: 'active',
+      }
+    }
+
+    return {
+      id: question.runtimeId,
+      status: 'upcoming',
+    }
+  })
+}, [
+  activeQuestionIndex,
+  currentQuestion?.runtimeId,
+  currentRejectedQuestionIdsPreview,
+  phase,
+  questionnaire,
+  rejectedQuestionIds,
+  selectedAnswers,
+  visibleQuestionIds,
+])
+
+const questionProgressById = useMemo(
+  () =>
+    new Map(
+      questionProgress.map((question) => [question.id, question.status] as const),
+    ),
+  [questionProgress],
+)
 
   const selectedGroup = useMemo<CompetencyGroup | undefined>(() => {
     if (!targetType || !targetId || !questionnaireTitle) {
@@ -976,15 +1097,6 @@ function QuestionnairePage() {
       : Math.min(Math.max(activeQuestionIndex, 0), questionnaire.length)
 
   const assessmentProgress = useMemo(() => {
-    const progressQuestionIds = getProgressQuestionIds(
-      visibleQuestionIds,
-      activeQuestionIndex,
-      phase,
-    )
-
-    const activeQuestionId =
-      phase === 'questionnaire' ? currentQuestion?.runtimeId : undefined
-
     if (targetType === 'learning_unit') {
       let questionCountUntilStep = 0
 
@@ -996,12 +1108,7 @@ function QuestionnairePage() {
             id: question.runtimeId,
             label: String(index + 1),
             title: `Vprašanje ${index + 1}`,
-            status: getLeafStatus(
-              [question.runtimeId],
-              selectedAnswers,
-              progressQuestionIds,
-              activeQuestionId,
-            ),
+            status: getLeafStatus([question.runtimeId], questionProgressById),
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1048,12 +1155,7 @@ function QuestionnairePage() {
             id: learningUnitId,
             label: String(unitIndex + 1),
             title: unitTitle,
-            status: getLeafStatus(
-              questionIds,
-              selectedAnswers,
-              progressQuestionIds,
-              activeQuestionId,
-            ),
+            status: getLeafStatus(questionIds, questionProgressById),
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1076,12 +1178,7 @@ function QuestionnairePage() {
           id: 'module_additional_questions',
           label: String(steps.length + 1),
           title: 'Dodatna vprašanja',
-          status: getLeafStatus(
-            questionIds,
-            selectedAnswers,
-            progressQuestionIds,
-            activeQuestionId,
-          ),
+          status: getLeafStatus(questionIds, questionProgressById),
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
             questionnaire.length,
@@ -1092,9 +1189,7 @@ function QuestionnairePage() {
       if (steps.length === 0) {
         const fallbackSteps = createFallbackProgressSteps({
           questionGroups,
-          selectedAnswers,
-          progressQuestionIds,
-          activeQuestionId,
+          questionProgressById,
           totalQuestionCount: questionnaire.length,
         })
 
@@ -1158,12 +1253,7 @@ function QuestionnairePage() {
                 return {
                   id: learningUnitId,
                   title: unitTitle,
-                  status: getLeafStatus(
-                    questionIds,
-                    selectedAnswers,
-                    progressQuestionIds,
-                    activeQuestionId,
-                  ),
+                   status: getLeafStatus(questionIds, questionProgressById),
                   questionCount: questionIds.length,
                 }
               })
@@ -1205,12 +1295,7 @@ function QuestionnairePage() {
             id: refId || `learning_unit_${stepIndex}`,
             label: String(stepIndex + 1),
             title: learningUnitTitle,
-            status: getLeafStatus(
-              questionIds,
-              selectedAnswers,
-              progressQuestionIds,
-              activeQuestionId,
-            ),
+             status: getLeafStatus(questionIds, questionProgressById),
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1233,12 +1318,7 @@ function QuestionnairePage() {
           id: 'learning_path_additional_questions',
           label: String(steps.length + 1),
           title: 'Dodatna vprašanja',
-          status: getLeafStatus(
-            questionIds,
-            selectedAnswers,
-            progressQuestionIds,
-            activeQuestionId,
-          ),
+           status: getLeafStatus(questionIds, questionProgressById),
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
             questionnaire.length,
@@ -1249,9 +1329,7 @@ function QuestionnairePage() {
       if (steps.length === 0) {
         const fallbackSteps = createFallbackProgressSteps({
           questionGroups,
-          selectedAnswers,
-          progressQuestionIds,
-          activeQuestionId,
+          questionProgressById,
           totalQuestionCount: questionnaire.length,
         })
 
@@ -1271,9 +1349,7 @@ function QuestionnairePage() {
 
     const fallbackSteps = createFallbackProgressSteps({
       questionGroups,
-      selectedAnswers,
-      progressQuestionIds,
-      activeQuestionId,
+      questionProgressById,
       totalQuestionCount: questionnaire.length,
     })
 
@@ -1406,6 +1482,7 @@ function QuestionnairePage() {
         setVisibleQuestionIds(questions[0] ? [questions[0].runtimeId] : [])
         setActiveQuestionIndex(0)
         setSelectedAnswers(createInitialSelectedAnswers(questions))
+        setRejectedQuestionIds(new Set())
         setModuleDetail(nextModuleDetail)
         setLearningPathDetail(nextLearningPathDetail)
         setPhase('questionnaire')
@@ -1456,6 +1533,17 @@ function QuestionnairePage() {
 
     const questionIdsToClear = visibleQuestionIds.slice(activeQuestionIndex + 1)
 
+    const questionIdsRejectedByCurrentQuestion =
+      getQuestionIdsRejectedByCurrentNegativeAnswer({
+        currentQuestion,
+        groups: questionGroups,
+      })
+
+    const rejectedQuestionIdsToClear = new Set([
+      ...questionIdsToClear,
+      ...questionIdsRejectedByCurrentQuestion,
+    ])
+
     setSelectedAnswers((currentAnswers) => {
       const nextAnswers = { ...currentAnswers }
 
@@ -1464,7 +1552,18 @@ function QuestionnairePage() {
       }
 
       nextAnswers[currentQuestion.runtimeId] = answer
+
       return nextAnswers
+    })
+
+    setRejectedQuestionIds((currentRejectedQuestionIds) => {
+      const nextRejectedQuestionIds = new Set(currentRejectedQuestionIds)
+
+      for (const questionId of rejectedQuestionIdsToClear) {
+        nextRejectedQuestionIds.delete(questionId)
+      }
+
+      return nextRejectedQuestionIds
     })
 
     setVisibleQuestionIds((currentQuestionIds) =>
@@ -1482,7 +1581,10 @@ function QuestionnairePage() {
     )
   }
 
-  async function submitAssessment(questionIdsToSubmit: string[]) {
+  async function submitAssessment(
+    questionIdsToSubmit: string[],
+    rejectedQuestionIdsToSubmit = rejectedQuestionIds,
+  ) {
     if (!targetType || !targetId) {
       setError('Manjka cilj vprašalnika.')
       return
@@ -1492,10 +1594,11 @@ function QuestionnairePage() {
     setError(null)
 
     try {
-      const answers = createAnswerPayload(
+      const answers = createAnswerPayloadWithRejectedQuestions(
         questionIdsToSubmit,
         questionById,
         selectedAnswers,
+        rejectedQuestionIdsToSubmit,
         targetType,
         targetId,
       )
@@ -1548,37 +1651,58 @@ function QuestionnairePage() {
       activeQuestionIndex + 1,
     )
 
+    const questionIdsRejectedByCurrentNo =
+      selectedAnswer.weight === false && targetType !== 'learning_unit'
+        ? getQuestionIdsRejectedByCurrentNegativeAnswer({
+            currentQuestion,
+            groups: questionGroups,
+          })
+        : []
+
+    const nextRejectedQuestionIds = new Set(rejectedQuestionIds)
+
+    for (const questionId of questionIdsRejectedByCurrentNo) {
+      nextRejectedQuestionIds.add(questionId)
+    }
+
     const followingQuestion =
       selectedAnswer.weight === false && targetType !== 'learning_unit'
         ? getNextQuestionAfterNegativeAnswer({
-          questions: questionnaire,
-          currentQuestion,
-          groups: questionGroups,
-          selectedAnswers,
-          targetType,
-          targetId,
-          confirmedQuestionIds: questionIdsUntilCurrent,
-        })
+            questions: questionnaire,
+            currentQuestion,
+            groups: questionGroups,
+            selectedAnswers,
+            targetType,
+            targetId,
+            confirmedQuestionIds: questionIdsUntilCurrent,
+          })
         : getNextEligibleQuestion({
-          questions: questionnaire,
-          currentQuestion,
-          groups: questionGroups,
-          selectedAnswers,
-          targetType,
-          targetId,
-          confirmedQuestionIds: questionIdsUntilCurrent,
-        })
-
+            questions: questionnaire,
+            currentQuestion,
+            groups: questionGroups,
+            selectedAnswers,
+            targetType,
+            targetId,
+            confirmedQuestionIds: questionIdsUntilCurrent,
+          })
 
     if (!followingQuestion) {
-      await submitAssessment(questionIdsUntilCurrent)
+      const questionIdsToSubmit = mergeQuestionIds(
+        questionIdsUntilCurrent,
+        Array.from(nextRejectedQuestionIds),
+      )
+
+      await submitAssessment(questionIdsToSubmit, nextRejectedQuestionIds)
       return
     }
+
+    setRejectedQuestionIds(nextRejectedQuestionIds)
 
     setVisibleQuestionIds([
       ...questionIdsUntilCurrent,
       followingQuestion.runtimeId,
     ])
+
     setActiveQuestionIndex(questionIdsUntilCurrent.length)
   }
 
@@ -1644,13 +1768,14 @@ function QuestionnairePage() {
 
       {targetType && (
         <AssessmentProgress
-          targetLabel={questionnaireTitle || getTargetTypeLabel(targetType)}
+          targetLabel={getTargetTypeLabel(targetType)}
           steps={assessmentProgress.steps}
           completedLeafCount={assessmentProgress.completedLeafCount}
           totalLeafCount={assessmentProgress.totalLeafCount}
           isGoalReached={isLearningPathGoalReached}
           questionCount={questionnaire.length}
           confirmedQuestionCount={confirmedQuestionCount}
+          questions={questionProgress}
           showGoalFlag={targetType === 'learning_path'}
         />
       )}

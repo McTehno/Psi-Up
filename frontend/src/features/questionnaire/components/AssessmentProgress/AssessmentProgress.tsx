@@ -5,7 +5,19 @@ export type AssessmentProgressStepStatus =
   | 'completed'
   | 'active'
   | 'missing'
+  | 'rejected'
   | 'upcoming'
+
+export type AssessmentProgressQuestionStatus =
+  | 'completed'
+  | 'active'
+  | 'rejected'
+  | 'upcoming'
+
+export type AssessmentProgressQuestion = {
+  id: string
+  status: AssessmentProgressQuestionStatus
+}
 
 export type AssessmentProgressSubStep = {
   id: string
@@ -31,6 +43,7 @@ type AssessmentProgressProps = {
   questionCount?: number
   confirmedQuestionCount?: number
   showGoalFlag?: boolean
+  questions?: AssessmentProgressQuestion[]
 }
 
 const confettiPieces = Array.from({ length: 18 }, (_, index) => index)
@@ -74,18 +87,28 @@ function getQuestionProgressPercent(
   )
 }
 
-function getQuestionDotPercent(
+function getQuestionSegmentPercent(
   index: number,
   questionCount: number,
   showGoalFlag: boolean,
 ) {
   if (questionCount <= 0) {
-    return 0
+    return {
+      left: 0,
+      width: 0,
+    }
   }
 
   const questionAreaPercent = getQuestionAreaPercent(showGoalFlag)
 
-  return ((index + 1) / questionCount) * questionAreaPercent
+  return {
+    left: (index / questionCount) * questionAreaPercent,
+    width: questionAreaPercent / questionCount,
+  }
+}
+
+function isResolvedQuestionStatus(status: AssessmentProgressQuestionStatus) {
+  return status === 'completed' || status === 'rejected'
 }
 
 function getStepPositionPercent(
@@ -122,6 +145,10 @@ function getStepMarker(step: AssessmentProgressStep, index: number) {
     return '✓'
   }
 
+  if (step.status === 'rejected') {
+    return '×'
+  }
+
   if (step.status === 'missing') {
     return '!'
   }
@@ -138,15 +165,31 @@ function AssessmentProgress({
   questionCount,
   confirmedQuestionCount = 0,
   showGoalFlag = false,
+  questions = [],
 }: AssessmentProgressProps) {
-  const safeQuestionCount = Math.max(questionCount ?? 0, 0)
+  const safeQuestionCount = Math.max(questionCount ?? questions.length ?? 0, 0)
+
+  const normalizedQuestions =
+    questions.length === safeQuestionCount
+      ? questions
+      : Array.from({ length: safeQuestionCount }, (_, index) => ({
+          id: `question_${index}`,
+          status:
+            index < confirmedQuestionCount
+              ? ('completed' as const)
+              : ('upcoming' as const),
+        }))
+
+  const resolvedQuestionCount = normalizedQuestions.filter((question) =>
+    isResolvedQuestionStatus(question.status),
+  ).length
+
   const safeConfirmedQuestionCount = Math.min(
     safeQuestionCount,
-    Math.max(0, confirmedQuestionCount),
+    Math.max(0, resolvedQuestionCount),
   )
 
   const hasQuestionProgress = safeQuestionCount > 0
-
   const progressPercent = hasQuestionProgress
     ? getQuestionProgressPercent(
         safeConfirmedQuestionCount,
@@ -159,11 +202,6 @@ function AssessmentProgress({
   const progressLabel = hasQuestionProgress
     ? `${safeConfirmedQuestionCount}/${safeQuestionCount}`
     : `${completedLeafCount}/${totalLeafCount}`
-
-  const questionDots = Array.from(
-    { length: safeQuestionCount },
-    (_, index) => index,
-  )
 
   if (steps.length === 0) {
     return null
@@ -187,36 +225,37 @@ function AssessmentProgress({
       </div>
 
       <div className="assessment-progress__track">
-        <div className="assessment-progress__line">
-          <div className="assessment-progress__fill" />
+      <div className="assessment-progress__line">
+        {hasQuestionProgress ? (
+          <div
+            className="assessment-progress__question-segments"
+            aria-hidden="true"
+          >
+            {normalizedQuestions.map((question, index) => {
+              const segmentPosition = getQuestionSegmentPercent(
+                index,
+                safeQuestionCount,
+                showGoalFlag,
+              )
 
-          {hasQuestionProgress && (
-            <div
-              className="assessment-progress__question-dots"
-              aria-hidden="true"
-            >
-              {questionDots.map((dotIndex) => (
+              return (
                 <span
-                  className={`assessment-progress__question-dot ${
-                    dotIndex < safeConfirmedQuestionCount
-                      ? 'assessment-progress__question-dot--completed'
-                      : 'assessment-progress__question-dot--upcoming'
-                  }`}
-                  key={dotIndex}
+                  className={`assessment-progress__question-segment assessment-progress__question-segment--${question.status}`}
+                  key={question.id}
                   style={
                     {
-                      left: `${getQuestionDotPercent(
-                        dotIndex,
-                        safeQuestionCount,
-                        showGoalFlag,
-                      )}%`,
+                      left: `${segmentPosition.left}%`,
+                      width: `${segmentPosition.width}%`,
                     } as CSSProperties
                   }
                 />
-              ))}
-            </div>
-          )}
-        </div>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="assessment-progress__fill" />
+        )}
+      </div>
 
         <div className="assessment-progress__steps">
           {steps.map((step, index) => {

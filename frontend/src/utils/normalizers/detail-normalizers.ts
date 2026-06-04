@@ -3,10 +3,10 @@
  *
  * Namen tega fila:
  * - pretvoriti backend response v stabilno frontend obliko
- * - zaĹˇÄŤititi UI pred manjkajoÄŤimi, null ali nepopolnimi podatki
+ * - zaščititi UI pred manjkajočimi, null ali nepopolnimi podatki
  * - podpreti trenutno MongoDB strukturo projekta NIDiKo
- * - podpreti dodatna znana polja, ÄŤe jih backend vrne
- * - prepreÄŤiti, da bi komponente direktno brale nestabilno backend strukturo
+ * - podpreti dodatna znana polja, če jih backend vrne
+ * - preprečiti, da bi komponente direktno brale nestabilno backend strukturo
  *
  * Kje se uporablja:
  * - LearningPathDetailPage
@@ -51,7 +51,7 @@
  * - self_assessment_questions
  *
  * Glavna ideja:
- * Backend lahko vrne razliÄŤne oblike podatkov.
+ * Backend lahko vrne različne oblike podatkov.
  * UI pa naj vedno dobi stabilno obliko, ki jo zna varno prikazati.
  */
 
@@ -64,14 +64,14 @@ import {
 } from '../display'
 
 /**
- * SploĹˇna surova oblika detail podatkov.
+ * Splošna surova oblika detail podatkov.
  *
  * Namenoma dovolimo dodatna polja z:
  *
  * [key: string]&#58; unknown
  *
  * To pomeni, da frontend sprejme tudi backend polja,
- * ki jih trenutno Ĺˇe ne poznamo.
+ * ki jih trenutno še ne poznamo.
  *
  * Pomembno:
  * Neznanih polj ne prikazujemo avtomatsko.
@@ -137,7 +137,7 @@ export type DetailExtraField = {
  * Dovoljena dodatna polja za prikaz.
  *
  * Zakaj uporabljamo allowlist:
- * Backend lahko vrne tudi tehniÄŤna polja, na primer:
+ * Backend lahko vrne tudi tehnična polja, na primer:
  * - embedding
  * - internal_score
  * - created_at
@@ -149,7 +149,7 @@ export type DetailExtraField = {
  */
 const EXTRA_FIELD_LABELS: Record<string, string> = {
 	provider: 'Izvajalec',
-	delivery_mode: 'NaÄŤin izvedbe',
+	delivery_mode: 'Način izvedbe',
 	target_audience: 'Ciljna skupina',
 	knowledge_assessment: 'Preverjanje znanja',
 	certificate: 'Certifikat',
@@ -159,13 +159,13 @@ const EXTRA_FIELD_LABELS: Record<string, string> = {
 }
 
 /**
- * LepĹˇi prikaz znanih tehniÄŤnih vrednosti.
+ * Lepši prikaz znanih tehničnih vrednosti.
  *
  * ÄŚe backend vrne difficulty: "beginner",
- * uporabniku raje pokaĹľemo "ZaÄŤetna".
+ * uporabniku raje pokaĹľemo "Začetna".
  */
 const DIFFICULTY_LABELS: Record<string, string> = {
-	beginner: 'ZaÄŤetna',
+	beginner: 'Začetna',
 	intermediate: 'Srednja',
 	advanced: 'Napredna',
 }
@@ -241,9 +241,9 @@ export const normalizeContentDescription = (
 }
 
 /**
- * Vrne stabilen seznam kljuÄŤnih besed.
+ * Vrne stabilen seznam ključnih besed.
  *
- * ÄŚe backend vrne null, undefined ali napaÄŤno vrednost,
+ * ÄŚe backend vrne null, undefined ali napačno vrednost,
  * funkcija vrne prazen array.
  */
 export const normalizeKeywords = (content: RawDetailContent): string[] => {
@@ -265,7 +265,7 @@ export const normalizeDurationHours = (
  * Vrne trajanje v minutah.
  *
  * To pustimo zaradi moĹľne prihodnje podpore,
- * ÄŤe backend kasneje doda duration_min.
+ * če backend kasneje doda duration_min.
  */
 export const normalizeDurationMin = (
 	content: RawDetailContent,
@@ -282,14 +282,14 @@ export const normalizeDurationMin = (
  * - boolean
  *
  * Objektov in array-ev za zdaj ne prikazujemo v extraFields,
- * ker bi lahko povzroÄŤili neÄŤitljiv ali preobremenjen UI.
+ * ker bi lahko povzročili nečitljiv ali preobremenjen UI.
  *
  * Za sezname, kot so:
  * - content_topics
  * - acquired_competencies
  * - prerequisites
  *
- * je boljĹˇe narediti loÄŤene DetailSection prikaze.
+ * je boljše narediti ločene DetailSection prikaze.
  */
 const formatExtraFieldValue = (
 	fieldName: string,
@@ -368,15 +368,15 @@ export const normalizeDetailContent = (
 /**
  * Normalizira eno vsebino v RouteNode.
  *
- * RouteNode je generiÄŤna oblika za prikaz povezane vsebine
+ * RouteNode je generična oblika za prikaz povezane vsebine
  * znotraj DetailRouteMap komponente.
  *
  * Primeri:
- * - modul znotraj uÄŤne poti
- * - uÄŤna enota znotraj modula
- * - uÄŤna enota direktno znotraj uÄŤne poti
+ * - modul znotraj učne poti
+ * - učna enota znotraj modula
+ * - učna enota direktno znotraj učne poti
  *
- * Ta funkcija podpira tudi referenÄŤne objekte:
+ * Ta funkcija podpira tudi referenčne objekte:
  *
  * {
  *   module_id: "mod_003",

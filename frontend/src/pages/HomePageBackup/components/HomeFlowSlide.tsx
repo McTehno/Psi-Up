@@ -26,9 +26,9 @@ function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 						</h2>
 
 						<p className="mt-5 text-lg leading-8 text-[#706b60]">
-							Ko vidiĹˇ svojo pozicijo, postane pot bolj pregledna. LaĹľje
-							izbereĹˇ naslednjo vsebino, se osredotoÄŤiĹˇ na pomembno in
-							napredujeĹˇ v svojem ritmu.
+							Ko vidiš svojo pozicijo, postane pot bolj pregledna. LaĹľje
+							izbereš naslednjo vsebino, se osredotočiš na pomembno in
+							napreduješ v svojem ritmu.
 						</p>
 					</div>
 

@@ -518,7 +518,7 @@ function FinishFlag({
         left: `${position.x}%`,
         top: `${position.y}%`,
       }}
-      aria-label="ZakljuÄŤek poti"
+      aria-label="Zaključek poti"
     >
       <div
         className={[
@@ -572,14 +572,14 @@ function ModuleDetailBox({
 }) {
   const isLearningUnit = node.nodeType === 'learning_unit'
 
-  const kindLabel = isLearningUnit ? 'UÄŤna enota' : 'Modul'
+  const kindLabel = isLearningUnit ? 'Učna enota' : 'Modul'
 
   const descriptionFallback = isLearningUnit
-    ? 'Opis uÄŤne enote Ĺˇe ni dodan.'
-    : 'Opis modula Ĺˇe ni dodan.'
+    ? 'Opis učne enote še ni dodan.'
+    : 'Opis modula še ni dodan.'
 
   const detailsLabel = isLearningUnit
-    ? 'Podrobnosti uÄŤne enote'
+    ? 'Podrobnosti učne enote'
     : 'Podrobnosti modula'
 
   const detailPath =
@@ -628,13 +628,13 @@ function ModuleDetailBox({
 
         {node.parallelCount > 1 && (
           <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Vzporedna uÄŤna enota' : 'Vzporedni modul'}
+            {isLearningUnit ? 'Vzporedna učna enota' : 'Vzporedni modul'}
           </span>
         )}
 
         {node.isRequired && (
           <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Obvezna uÄŤna enota' : 'Obvezen modul'}
+            {isLearningUnit ? 'Obvezna učna enota' : 'Obvezen modul'}
           </span>
         )}
 
@@ -674,7 +674,7 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
 
 function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
   if (node.isAssessmentPosition) {
-    return 'Tukaj se nahajaĹˇ'
+    return 'Tukaj se nahajaš'
   }
 
   return null
@@ -812,7 +812,7 @@ export function LearningPathOverviewCard({
             icon: <Layers3 className="h-5 w-5" />,
           },
           {
-            label: 'UÄŤne enote',
+            label: 'Učne enote',
             value: String(learningUnitCount),
             icon: <BookOpen className="h-5 w-5" />,
           },
@@ -1068,7 +1068,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
             ].join(' ')}
             aria-pressed={isSelected}
             aria-label={`Odpri podrobnosti ${
-              node.nodeType === 'learning_unit' ? 'uÄŤne enote' : 'modula'
+              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
             } ${node.title}`}
           >
             {node.displayLabel}
@@ -1166,7 +1166,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
 
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
-        Klikni modul/ uÄŤno enoto
+        Klikni modul/ učno enoto
       </div>
 
       {renderPathSegments(desktopAllPathSegments, 'hidden min-[1500px]:block')}

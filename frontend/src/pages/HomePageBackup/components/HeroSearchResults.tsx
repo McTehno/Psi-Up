@@ -34,7 +34,7 @@ function HeroSearchResults({
 				<div className="flex flex-col gap-3">
 					{isSearching ? (
 						<div className="flex h-32 animate-pulse items-center justify-center rounded-3xl border border-[#eadfce] bg-white/60 text-[#706b60] backdrop-blur-sm">
-							IĹˇÄŤem...
+							Iščem...
 						</div>
 					) : (
 						<>
@@ -81,10 +81,10 @@ function HeroSearchResults({
 
 												<span className="inline-flex shrink-0 items-center rounded-full bg-[#fff6eb] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[#706b60]">
 													{result.type === 'learning_path'
-														? 'UÄŤna pot'
+														? 'Učna pot'
 														: result.type === 'module'
 															? 'Modul'
-															: 'UÄŤna enota'}
+															: 'Učna enota'}
 												</span>
 											</div>
 

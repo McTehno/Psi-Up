@@ -179,7 +179,7 @@ function AssessmentContextBox({
     setError(null)
     setStatusMessage(
       latestItem
-        ? 'Zadnji odgovor za to vpraĹˇanje je prikazan pri asistentki oziroma spodaj na manjĹˇem zaslonu.'
+        ? 'Zadnji odgovor za to vprašanje je prikazan pri asistentki oziroma spodaj na manjšem zaslonu.'
         : null,
     )
     onActiveExchangeChange(latestItem ? toDisplayExchange(latestItem) : null)
@@ -194,7 +194,7 @@ function AssessmentContextBox({
 
     setError(null)
     setStatusMessage(
-      'Izbrani odgovor je prikazan pri asistentki oziroma razprt spodaj na manjĹˇem zaslonu.',
+      'Izbrani odgovor je prikazan pri asistentki oziroma razprt spodaj na manjšem zaslonu.',
     )
     onActiveExchangeChange(toDisplayExchange(item))
   }
@@ -223,7 +223,7 @@ function AssessmentContextBox({
       setTransientItem(pendingItem)
       setActiveExchangeId(pendingItem.id)
       setStatusMessage(
-        'VpraĹˇanje je poslano. Odgovor se bo prikazal pri asistentki oziroma spodaj na manjĹˇem zaslonu.',
+        'Vprašanje je poslano. Odgovor se bo prikazal pri asistentki oziroma spodaj na manjšem zaslonu.',
       )
       onActiveExchangeChange(toDisplayExchange(pendingItem))
 
@@ -260,7 +260,7 @@ function AssessmentContextBox({
       setActiveExchangeId(savedItem.id)
       setUserMessage('')
       setStatusMessage(
-        'Odgovor je prikazan pri asistentki. Na manjĹˇem zaslonu je razprt spodaj v seznamu.',
+        'Odgovor je prikazan pri asistentki. Na manjšem zaslonu je razprt spodaj v seznamu.',
       )
       onActiveExchangeChange(toDisplayExchange(savedItem))
     } catch (error) {
@@ -274,7 +274,7 @@ function AssessmentContextBox({
       const errorItem: AssessmentAssistantHistoryItem = {
         ...pendingItem,
         answer:
-          'Asistentka trenutno ne more odgovoriti. VpraĹˇanje lahko poskusite poslati Ĺˇe enkrat.',
+          'Asistentka trenutno ne more odgovoriti. Vprašanje lahko poskusite poslati še enkrat.',
         isPending: false,
       }
 
@@ -291,12 +291,12 @@ function AssessmentContextBox({
   return (
     <div className="context-box assessment-assistant-box">
       <div className="assessment-assistant-box__header">
-        <span className="assessment-assistant-box__eyebrow">Tekstovna pomoÄŤ</span>
+        <span className="assessment-assistant-box__eyebrow">Tekstovna pomoč</span>
         <label htmlFor="assessment-assistant-message">
-          VpraĹˇajte asistentko za pomoÄŤ pri razumevanju vpraĹˇanja
+          Vprašajte asistentko za pomoč pri razumevanju vprašanja
         </label>
         <p>
-          Odgovor se na veÄŤjem zaslonu prikaĹľe pri asistentki, na manjĹˇem pa
+          Odgovor se na večjem zaslonu prikaĹľe pri asistentki, na manjšem pa
           spodaj v seznamu. Izbira Da/Ne se ob tem ne spremeni.
         </p>
       </div>
@@ -307,7 +307,7 @@ function AssessmentContextBox({
           className="assessment-assistant-textarea"
           value={userMessage}
           onChange={(event) => setUserMessage(event.target.value)}
-          placeholder="Npr. Kaj to vpraĹˇanje pomeni?"
+          placeholder="Npr. Kaj to vprašanje pomeni?"
           rows={3}
           maxLength={1000}
           disabled={isLoading}
@@ -317,10 +317,10 @@ function AssessmentContextBox({
           <span>
             {isLoading
               ? 'Asistentka pripravlja odgovor ...'
-              : 'VpraĹˇajte samo o trenutnem vpraĹˇanju.'}
+              : 'Vprašajte samo o trenutnem vprašanju.'}
           </span>
           <button type="submit" disabled={isLoading || !userMessage.trim()}>
-            {isLoading ? 'PoĹˇiljam ...' : 'VpraĹˇaj'}
+            {isLoading ? 'Pošiljam ...' : 'Vprašaj'}
           </button>
         </div>
       </form>
@@ -334,7 +334,7 @@ function AssessmentContextBox({
       {visibleHistory.length > 0 && (
         <div className="assessment-assistant-history">
           <div className="assessment-assistant-history__header">
-            VaĹˇa vpraĹˇanja v tej seji
+            Vaša vprašanja v tej seji
           </div>
           <ul>
             {visibleHistory.map((item) => {

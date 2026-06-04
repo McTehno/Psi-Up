@@ -26,7 +26,7 @@ export function useDashboardProgress() {
 				const data = await getUserProgress(localUser._id, session.access_token)
 				setProgress(data)
 			} catch (err) {
-				console.error('Napaka pri nalaganju uporabniĹˇkega napredka:', err)
+				console.error('Napaka pri nalaganju uporabniškega napredka:', err)
 				setError(
 					err instanceof Error
 						? err.message

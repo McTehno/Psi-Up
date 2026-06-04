@@ -6,7 +6,7 @@ type ErrorStateProps = {
 }
 
 function ErrorState({
-  title = 'PriĹˇlo je do napake',
+  title = 'Prišlo je do napake',
   message,
 }: ErrorStateProps) {
   return (

@@ -1,16 +1,16 @@
 ﻿/**
- * Utility funkcije za varen prikaz podatkov v uporabniĹˇkem vmesniku.
+ * Utility funkcije za varen prikaz podatkov v uporabniškem vmesniku.
  *
  * Namen tega fila:
- * - poenotiti obravnavo manjkajoÄŤih, praznih ali neveljavnih vrednosti
- * - prepreÄŤiti napake, kadar backend vrne null, undefined ali prazne podatke
- * - zmanjĹˇati podvajanje if stavkov po komponentah
+ * - poenotiti obravnavo manjkajočih, praznih ali neveljavnih vrednosti
+ * - preprečiti napake, kadar backend vrne null, undefined ali prazne podatke
+ * - zmanjšati podvajanje if stavkov po komponentah
  * - pripraviti frontend na bolj prilagodljivo backend JSON strukturo
  *
  * Kje se uporablja:
  * - v normalizerjih, ki backend response pretvorijo v frontend view model
- * - na detail straneh, kjer prikazujemo uÄŤne poti, module in uÄŤne enote
- * - v komponentah, ki morajo varno prikazati tekst, sezname ali Ĺˇtevilke
+ * - na detail straneh, kjer prikazujemo učne poti, module in učne enote
+ * - v komponentah, ki morajo varno prikazati tekst, sezname ali številke
  *
  * Primer:
  * Namesto da v komponenti direktno uporabljamo:
@@ -21,11 +21,11 @@
  *
  * const keywords = getArrayOrEmpty(learningUnit.keywords)
  *
- * Tako se komponenta ne zlomi, ÄŤe backend vrne null ali undefined.
+ * Tako se komponenta ne zlomi, če backend vrne null ali undefined.
  */
 
 /**
- * Vrne tekst, ÄŤe obstaja in ni prazen.
+ * Vrne tekst, če obstaja in ni prazen.
  * ÄŚe je vrednost null, undefined ali prazen string, vrne fallback.
  *
  * Uporaba:
@@ -40,11 +40,11 @@ export const getTextOrFallback = (
 }
 
 /**
- * Vrne tekst, ÄŤe obstaja in ni prazen.
+ * Vrne tekst, če obstaja in ni prazen.
  * ÄŚe vrednost ne obstaja, vrne null.
  *
  * Uporaba:
- * - za opcijska polja, ki jih Ĺľelimo prikazati samo, ÄŤe obstajajo
+ * - za opcijska polja, ki jih Ĺľelimo prikazati samo, če obstajajo
  * - na primer provider, language ali dodatni opis
  */
 export const getOptionalText = (
@@ -54,8 +54,8 @@ export const getOptionalText = (
 }
 
 /**
- * Vrne array, ÄŤe je vrednost res array.
- * ÄŚe je vrednost null, undefined ali napaÄŤnega tipa, vrne prazen array.
+ * Vrne array, če je vrednost res array.
+ * ÄŚe je vrednost null, undefined ali napačnega tipa, vrne prazen array.
  *
  * Uporaba:
  * - za keywords
@@ -74,8 +74,8 @@ export const getArrayOrEmpty = <T>(
  * Preveri, ali array obstaja in ima vsaj en element.
  *
  * Uporaba:
- * - pred prikazom sekcij, ki nimajo smisla, ÄŤe je seznam prazen
- * - na primer DetailTags, seznam modulov ali seznam uÄŤnih enot
+ * - pred prikazom sekcij, ki nimajo smisla, če je seznam prazen
+ * - na primer DetailTags, seznam modulov ali seznam učnih enot
  */
 export const hasItems = <T>(
 	value: T[] | null | undefined,
@@ -84,13 +84,13 @@ export const hasItems = <T>(
 }
 
 /**
- * Vrne Ĺˇtevilko, ÄŤe je vrednost res number.
- * ÄŚe vrednost manjka ali ni Ĺˇtevilka, vrne undefined.
+ * Vrne številko, če je vrednost res number.
+ * ÄŚe vrednost manjka ali ni številka, vrne undefined.
  *
  * Uporaba:
  * - za duration_min
  * - za order
- * - za druge opcijske ĹˇtevilÄŤne vrednosti
+ * - za druge opcijske številčne vrednosti
  */
 export const getNumberOrUndefined = (
 	value: number | null | undefined,

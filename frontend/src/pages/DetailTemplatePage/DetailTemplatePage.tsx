@@ -71,7 +71,7 @@ function DetailTemplatePage() {
 
       <DetailSection
         title="Osnovni podatki"
-        description="Tukaj naj bodo prikazani najpomembnejĹˇi podatki o vsebini."
+        description="Tukaj naj bodo prikazani najpomembnejši podatki o vsebini."
       >
         <div className="overflow-hidden rounded-[16px] border border-[#eadfce] bg-[#fffdf8]">
           <div className="grid md:grid-cols-2 xl:grid-cols-4">
@@ -130,7 +130,7 @@ function DetailTemplatePage() {
 
       <DetailSection
         title="Glavna vsebina"
-        description="Ta del je namenjen vsebinsko specifiÄŤni komponenti posamezne strani."
+        description="Ta del je namenjen vsebinsko specifični komponenti posamezne strani."
       >
         <div className="rounded-[16px] border border-dashed border-[#d7c8b8] bg-[#fffdf8] px-6 py-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-start">
@@ -144,12 +144,12 @@ function DetailTemplatePage() {
               </p>
 
               <h3 className="mt-2 font-serif text-[28px] text-[#111111]">
-                Tukaj pride specifiÄŤna vsebina strani
+                Tukaj pride specifična vsebina strani
               </h3>
 
               <p className="mt-2 max-w-[760px] text-[15px] leading-7 text-[#706b60]">
                 Ta okvir naj sodelavci zamenjajo s svojo komponento, na primer
-                vsebino za modul, uÄŤno pot, kompetenco ali drugo detail stran.
+                vsebino za modul, učno pot, kompetenco ali drugo detail stran.
                 Struktura strani ostane enaka, spreminja se samo ta notranji
                 del.
               </p>
@@ -190,7 +190,7 @@ function DetailTemplatePage() {
             className="inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#eadfce] bg-[#fffdf8] px-5 py-3 text-sm font-bold text-[#111111] transition hover:border-[#d07a12]/45 hover:bg-[#fff4e6]"
           >
             <CheckCircle2 className="h-4 w-4 text-[#31583b]" />
-            ZakljuÄŤi
+            Zaključi
           </button>
         </div>
       </DetailSection>
@@ -207,7 +207,7 @@ function DetailTemplatePage() {
               Pri novih detail straneh naj ostanejo enaki deli: header, hero,
               osnovni podatki, glavna vsebina in upravljanje. Glavna vsebina se
               prilagodi glede na tip strani, zato se tukaj vstavi posebna
-              komponenta za modul, uÄŤno pot, uÄŤno enoto ali drugo vsebino.
+              komponenta za modul, učno pot, učno enoto ali drugo vsebino.
             </p>
           </div>
         </div>

@@ -13,8 +13,8 @@ import GlowingOrbs from './GlowingOrbs'
  * A cinematic parallax background that reveals a mountain landscape
  * from behind a looping cloud video as the user scrolls.
  *
- * The container spans 800vh, covering the Hero down to UÄŤne enote,
- * unpinning gracefully before VpraĹˇalnik.
+ * The container spans 800vh, covering the Hero down to Učne enote,
+ * unpinning gracefully before Vprašalnik.
  */
 type HomeParallaxEnvironmentProps = {
 	scrollYProgress: MotionValue<number>
@@ -25,7 +25,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	const mountainContainerRef = useRef<HTMLDivElement | null>(null)
 
 	/* â”€â”€ Cloud layer transforms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-	// Clouds clear the screen fully by the time UÄŤne poti starts (~0.14)
+	// Clouds clear the screen fully by the time Učne poti starts (~0.14)
 	const cloudY = useTransform(
 		scrollYProgress,
 		[0, 0.061, 0.152, 0.762],
@@ -44,15 +44,15 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	/* â”€â”€ Mountain layer transforms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 	const mountainY = useTransform(scrollYProgress, [0, 0.762, 1], ['0%', '-20%', '-28%'])
 
-	// Pan left for UÄŤne enote
+	// Pan left for Učne enote
 	const mountainX = useTransform(
 		scrollYProgress,
 		[0, 0.472, 0.625],
 		['0%', '0%', '-12%']
 	)
 
-	// Zooms in as we scroll from UÄŤne poti to Moduli (0.30 - 0.38), 
-	// and again from Moduli to UÄŤne enote (0.47 - 0.55), and continues to end of page.
+	// Zooms in as we scroll from Učne poti to Moduli (0.30 - 0.38), 
+	// and again from Moduli to Učne enote (0.47 - 0.55), and continues to end of page.
 	const mountainScale = useTransform(
 		scrollYProgress,
 		[0, 0.305, 0.381, 0.472, 0.549, 0.762, 1],
@@ -108,7 +108,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 				}}
 			>
 				<div className="relative h-full w-full">
-					{/* Base Mountain (UÄŤne poti) */}
+					{/* Base Mountain (Učne poti) */}
 					<div className="absolute inset-0 z-0">
 						<img
 							src={pathMountainImage}
@@ -139,7 +139,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 						/>
 					</motion.div>
 
-					{/* Highlighted Mountain (UÄŤne enote) - Reveals from bottom to top */}
+					{/* Highlighted Mountain (Učne enote) - Reveals from bottom to top */}
 					<motion.div
 						className="absolute inset-0 h-full w-full z-20"
 						style={{

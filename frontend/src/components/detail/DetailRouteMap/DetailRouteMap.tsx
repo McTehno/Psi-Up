@@ -4,7 +4,7 @@
  * Status elementa v prikazu poti.
  *
  * Uporaba:
- * - locked: uporabnik Ĺˇe ne more dostopati do elementa
+ * - locked: uporabnik še ne more dostopati do elementa
  * - available: element je na voljo
  * - completed: element je opravljen
  * - current: element je trenutno izbran ali aktiven
@@ -23,7 +23,7 @@ export type DetailRouteItemStatus =
  * - durationLabel je Ĺľe oblikovan tekst
  * - typeLabel je tekst, ki ga uporabnik vidi
  *
- * Ta tip lahko Ĺˇe naprej uporabljajo obstojeÄŤe detail strani,
+ * Ta tip lahko še naprej uporabljajo obstoječe detail strani,
  * zato s to spremembo ne zlomimo stare kode.
  */
 export type DetailRouteItem = {
@@ -79,17 +79,17 @@ const statusClasses: Record<DetailRouteItemStatus, string> = {
 /**
  * Oznake za tipe vsebin.
  *
- * RouteNode uporablja tehniÄŤne tipe:
+ * RouteNode uporablja tehnične tipe:
  * - learning_path
  * - module
  * - learning_unit
  *
- * Uporabniku pa prikaĹľemo lepĹˇe slovenske oznake.
+ * Uporabniku pa prikaĹľemo lepše slovenske oznake.
  */
 const routeNodeTypeLabels: Record<RouteNode['type'], string> = {
-  learning_path: 'UÄŤna pot',
+  learning_path: 'Učna pot',
   module: 'Modul',
-  learning_unit: 'UÄŤna enota',
+  learning_unit: 'Učna enota',
 }
 
 /**
@@ -125,7 +125,7 @@ const formatDurationLabel = (item: RouteNode): string | null => {
  *
  * Zakaj to potrebujemo:
  * DetailRouteMap interno Ĺľe zna lepo prikazati DetailRouteItem.
- * Namesto da prepiĹˇemo celotno komponento, RouteNode samo pretvorimo
+ * Namesto da prepišemo celotno komponento, RouteNode samo pretvorimo
  * v obliko, ki jo komponenta Ĺľe razume.
  */
 const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
@@ -145,7 +145,7 @@ const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
 /**
  * Pretvori vsak vhodni item v DetailRouteItem.
  *
- * ÄŚe komponenta dobi star DetailRouteItem, ga pusti takĹˇnega, kot je.
+ * ÄŚe komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
  * ÄŚe dobi nov RouteNode, ga pretvori.
  */
 const normalizeDetailRouteItem = (
@@ -162,9 +162,9 @@ const normalizeDetailRouteItem = (
  * DetailRouteMap prikaĹľe zaporedje povezanih vsebin na detail strani.
  *
  * Primeri uporabe:
- * - LearningPathDetailPage: prikaĹľe module znotraj uÄŤne poti
- * - ModuleDetailPage: prikaĹľe uÄŤne enote znotraj modula
- * - prihodnje razĹˇiritve: prikaĹľe tudi uÄŤno enoto direktno znotraj uÄŤne poti
+ * - LearningPathDetailPage: prikaĹľe module znotraj učne poti
+ * - ModuleDetailPage: prikaĹľe učne enote znotraj modula
+ * - prihodnje razširitve: prikaĹľe tudi učno enoto direktno znotraj učne poti
  *
  * Komponenta ne bere direktno backend strukture.
  * Dobi Ĺľe pripravljene oziroma normalizirane podatke.

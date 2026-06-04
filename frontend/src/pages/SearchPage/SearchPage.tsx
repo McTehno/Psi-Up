@@ -34,7 +34,7 @@ export default function SearchPage() {
         setFilters((prev: AdvancedSearchFilters) => ({ ...prev, query: debouncedQuery }));
     }, [debouncedQuery]);
 
-    // Glavni iskalni uÄŤinek
+    // Glavni iskalni učinek
     useEffect(() => {
         const fetchResults = async () => {
 
@@ -53,8 +53,8 @@ export default function SearchPage() {
                 setSearchParams(newParams, { replace: true });
                 
             } catch (err: unknown) {
-                console.error("Iskanje neuspeĹˇno:", err);
-                setError("PriĹˇlo je do napake pri iskanju. Prosimo, poskusite znova.");
+                console.error("Iskanje neuspešno:", err);
+                setError("Prišlo je do napake pri iskanju. Prosimo, poskusite znova.");
             } finally {
                 setIsLoading(false);
             }
@@ -86,7 +86,7 @@ export default function SearchPage() {
                         Napredno iskanje
                     </h1>
                     <p className="text-lg text-brown-600 max-w-2xl">
-                        Uporabite napredne filtre za natanÄŤnejĹˇe iskanje po uÄŤnih poteh, modulih in enotah.
+                        Uporabite napredne filtre za natančnejše iskanje po učnih poteh, modulih in enotah.
                     </p>
                 </div>
 
@@ -106,7 +106,7 @@ export default function SearchPage() {
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="IĹˇÄŤite po kljuÄŤnih besedah, naslovih, opisih..."
+                                placeholder="Iščite po ključnih besedah, naslovih, opisih..."
                                 className="w-full pl-12 pr-4 py-4 rounded-2xl border-none ring-1 ring-sand-200 bg-white text-brown-900 placeholder:text-brown-400 focus:ring-2 focus:ring-forest-500 shadow-sm transition-shadow text-lg"
                                 autoFocus
                             />
@@ -131,7 +131,7 @@ export default function SearchPage() {
                                     Ni zadetkov
                                 </h3>
                                 <p className="text-brown-500 max-w-md">
-                                    Poskusite spremeniti iskalne pogoje ali uporabiti drugaÄŤne filtre za boljĹˇe rezultate.
+                                    Poskusite spremeniti iskalne pogoje ali uporabiti drugačne filtre za boljše rezultate.
                                 </p>
                             </div>
                         )}
@@ -168,7 +168,7 @@ export default function SearchPage() {
                                         className="mt-4 w-full py-3 rounded-2xl border-2 border-dashed border-sand-200 text-brown-600 font-medium hover:border-forest-400 hover:text-forest-600 hover:bg-forest-50 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         <SearchIcon className="w-4 h-4" />
-                                        NaloĹľi veÄŤ rezultatov
+                                        NaloĹľi več rezultatov
                                     </motion.button>
                                 )}
                             </div>

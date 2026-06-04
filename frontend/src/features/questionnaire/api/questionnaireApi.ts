@@ -33,7 +33,7 @@ export async function getQuestionnaire(
 	)
 
 	if (!response.ok) {
-		throw new Error('VpraĹˇalnika ni bilo mogoÄŤe naloĹľiti.')
+		throw new Error('Vprašalnika ni bilo mogoče naloĹľiti.')
 	}
 
 	return response.json()
@@ -54,7 +54,7 @@ export async function evaluateAssessment(payload: {
 	})
 
 	if (!response.ok) {
-		throw new Error('Ocene ni bilo mogoÄŤe poslati.')
+		throw new Error('Ocene ni bilo mogoče poslati.')
 	}
 
 	return response.json()

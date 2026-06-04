@@ -25,7 +25,7 @@ function getErrorMessage(payload: unknown) {
     return payload.detail
   }
 
-  return 'PomoÄŤnika trenutno ni mogoÄŤe doseÄŤi. Poskusite znova ÄŤez trenutek.'
+  return 'Pomočnika trenutno ni mogoče doseči. Poskusite znova čez trenutek.'
 }
 
 export async function sendLearningUnitAssistantMessage(

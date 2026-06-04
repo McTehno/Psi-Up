@@ -26,7 +26,7 @@ export default function LoginForm({ onSubmit, onForgotPassword, isLoading }: Log
 
       <div className="space-y-1.5">
         <label htmlFor="login-email" className="block text-sm font-semibold text-[#2C2417]">
-          E-poĹˇtni naslov
+          E-poštni naslov
         </label>
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#31583b]" />
@@ -34,7 +34,7 @@ export default function LoginForm({ onSubmit, onForgotPassword, isLoading }: Log
             id="login-email"
             name="email"
             type="email"
-            placeholder="Vnesite e-poĹˇtni naslov"
+            placeholder="Vnesite e-poštni naslov"
             className="w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none focus:bg-[#fffdf8]/80 focus:border-[#31583b] transition-all duration-300"
           />
         </div>

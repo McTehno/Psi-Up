@@ -131,7 +131,7 @@ type GlowingOrbsProps = {
 
 export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
   // Instead of useTransform which has notorious WebKit GPU culling bugs on hard refresh,
-  // we trigger a React state when the user reaches the VpraĹˇalnik section.
+  // we trigger a React state when the user reaches the Vprašalnik section.
   const [showPin, setShowPin] = useState(false)
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {

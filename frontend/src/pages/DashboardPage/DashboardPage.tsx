@@ -38,7 +38,7 @@ type DashboardContentItem = {
 const tabs: { key: DashboardTab; label: string; icon: typeof Heart }[] = [
 	{ key: 'favorites', label: 'Priljubljeno', icon: Heart },
 	{ key: 'saved', label: 'Shranjeno', icon: Bookmark },
-	{ key: 'completed', label: 'DokonÄŤano', icon: CheckCircle2 },
+	{ key: 'completed', label: 'Dokončano', icon: CheckCircle2 },
 ]
 
 type ContentItemProps = {
@@ -48,9 +48,9 @@ type ContentItemProps = {
 }
 
 const typeLabels: Record<ContentType, string> = {
-	learning_path: 'UÄŤna pot',
+	learning_path: 'Učna pot',
 	module: 'Modul',
-	learning_unit: 'UÄŤna enota',
+	learning_unit: 'Učna enota',
 }
 
 const typeRoutes: Record<ContentType, string> = {
@@ -388,17 +388,17 @@ export default function DashboardPage() {
 								</h3>
 								<p className="mt-1.5 max-w-xs text-sm text-[#a89880]">
 									{activeTab === 'favorites' &&
-										'Ĺ e nimate priljubljenih vsebin. Raziskujte uÄŤne poti in dodajajte med priljubljene.'}
+										'Ĺ e nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
 									{activeTab === 'saved' &&
-										'Ĺ e nimate shranjenih vsebin. Shranite vsebine za kasnejĹˇi pregled.'}
+										'Ĺ e nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
 									{activeTab === 'completed' &&
-										'Ĺ e niste dokonÄŤali nobene vsebine. ZaÄŤnite z uÄŤno potjo!'}
+										'Ĺ e niste dokončali nobene vsebine. Začnite z učno potjo!'}
 								</p>
 								<Link
 									to="/search"
 									className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#d07a12] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#b3660f] hover:shadow-md"
 								>
-									RaziĹˇÄŤi vsebine
+									Razišči vsebine
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
 			{activeModal === 'edit-profile' && localUser && (
 				<DashboardModal
 					title="Uredi profil"
-					description="Uredi ime in email za svoj raÄŤun."
+					description="Uredi ime in email za svoj račun."
 					onClose={() => setActiveModal(null)}
 				>
 					<ProfileSettingsForm
@@ -441,7 +441,7 @@ export default function DashboardPage() {
 			{activeModal === 'change-password' && (
 				<DashboardModal
 					title="Spremeni geslo"
-					description="Nastavi novo geslo za svoj prijavni raÄŤun."
+					description="Nastavi novo geslo za svoj prijavni račun."
 					onClose={() => setActiveModal(null)}
 				>
 					<ChangePasswordForm

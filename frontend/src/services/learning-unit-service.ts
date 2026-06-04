@@ -6,14 +6,14 @@ import type {
 import type { QuestionnaireResponse } from '../types/questionnaire'
 
 /**
- * Vrne vse uÄŤne enote.
+ * Vrne vse učne enote.
  */
 export async function getLearningUnits(): Promise<LearningUnitResponse[]> {
 	return apiGet<LearningUnitResponse[]>('/learning-units')
 }
 
 /**
- * Vrne osnovne podatke ene uÄŤne enote.
+ * Vrne osnovne podatke ene učne enote.
  */
 export async function getLearningUnitById(
 	learningUnitId: string,
@@ -24,10 +24,10 @@ export async function getLearningUnitById(
 }
 
 /**
- * Vrne detail podatke uÄŤne enote.
+ * Vrne detail podatke učne enote.
  *
- * Detail endpoint poleg osnovnih podatkov vrne tudi priporoÄŤene module,
- * ki vsebujejo izbrano uÄŤno enoto.
+ * Detail endpoint poleg osnovnih podatkov vrne tudi priporočene module,
+ * ki vsebujejo izbrano učno enoto.
  */
 export async function getLearningUnitDetail(
 	learningUnitId: string,
@@ -38,7 +38,7 @@ export async function getLearningUnitDetail(
 }
 
 /**
- * Vrne vpraĹˇalnik za izbrano uÄŤno enoto.
+ * Vrne vprašalnik za izbrano učno enoto.
  */
 export async function getLearningUnitQuestionnaire(
 	learningUnitId: string,

@@ -10,16 +10,16 @@ type AssistantChatProps = {
 }
 
 const contextLabels: Record<AssistantContextType, string> = {
-  learning_path: 'uÄŤna pot',
+  learning_path: 'učna pot',
   module: 'modul',
-  learning_unit: 'uÄŤna enota',
+  learning_unit: 'učna enota',
   general: 'vsebina',
 }
 
 function AssistantChat({
   contextType = 'general',
   contextId,
-  title = 'PomoÄŤnik za uÄŤenje',
+  title = 'Pomočnik za učenje',
 }: AssistantChatProps) {
   const { messages, inputValue, setInputValue, sendMessage } =
     useAssistantChat()

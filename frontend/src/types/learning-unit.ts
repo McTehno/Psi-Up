@@ -1,5 +1,5 @@
 ﻿/**
- * DigComp kompetenca, ki jo uÄŤna enota pokriva.
+ * DigComp kompetenca, ki jo učna enota pokriva.
  */
 export type DigCompCompetencyResponse = {
 	code: string
@@ -8,9 +8,9 @@ export type DigCompCompetencyResponse = {
 }
 
 /**
- * Vsebinska tema znotraj uÄŤne enote.
+ * Vsebinska tema znotraj učne enote.
  *
- * Tema ima stabilen ID, da se lahko odgovori vpraĹˇalnika
+ * Tema ima stabilen ID, da se lahko odgovori vprašalnika
  * poveĹľejo na topic_id namesto na besedilo teme.
  */
 export type ContentTopicResponse = {
@@ -20,7 +20,7 @@ export type ContentTopicResponse = {
 }
 
 /**
- * VpraĹˇanje za samooceno znotraj uÄŤne enote.
+ * Vprašanje za samooceno znotraj učne enote.
  */
 export type SelfAssessmentQuestionResponse = {
 	id: string
@@ -32,10 +32,10 @@ export type SelfAssessmentQuestionResponse = {
 }
 
 /**
- * Kratek prikaz modula, ki vsebuje izbrano uÄŤno enoto.
+ * Kratek prikaz modula, ki vsebuje izbrano učno enoto.
  *
- * Uporablja se na detail strani uÄŤne enote v sekciji
- * priporoÄŤenih oziroma povezanih modulov.
+ * Uporablja se na detail strani učne enote v sekciji
+ * priporočenih oziroma povezanih modulov.
  */
 export type RecommendedModuleResponse = {
 	_id: string
@@ -47,10 +47,10 @@ export type RecommendedModuleResponse = {
 }
 
 /**
- * Osnovni response za uÄŤno enoto.
+ * Osnovni response za učno enoto.
  *
  * Uporablja se pri seznamih, osnovnem detail prikazu in kot osnova
- * za razĹˇirjen detail response.
+ * za razširjen detail response.
  */
 export type LearningUnitResponse = {
 	_id: string
@@ -74,19 +74,19 @@ export type LearningUnitResponse = {
 }
 
 /**
- * RazĹˇirjen response za detail stran uÄŤne enote.
+ * Razširjen response za detail stran učne enote.
  *
  * Backend pri /learning-units/:id/detail doda tudi module,
- * ki vsebujejo to uÄŤno enoto.
+ * ki vsebujejo to učno enoto.
  */
 export type LearningUnitDetailResponse = LearningUnitResponse & {
 	recommended_modules: RecommendedModuleResponse[]
 }
 
 /**
- * Referenca uÄŤne enote znotraj modula.
+ * Referenca učne enote znotraj modula.
  *
- * Uporablja se pri prikazu zaporedja uÄŤnih enot v modulu.
+ * Uporablja se pri prikazu zaporedja učnih enot v modulu.
  */
 export type LearningUnitReferenceResponse = {
 	learning_unit_id: string

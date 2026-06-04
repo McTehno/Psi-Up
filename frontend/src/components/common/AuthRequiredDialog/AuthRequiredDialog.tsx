@@ -29,12 +29,12 @@ function AuthRequiredDialog({ isOpen, onClose }: AuthRequiredDialogProps) {
         </p>
 
         <h3 className="mt-4 font-serif text-2xl font-semibold text-[#344E41]">
-          Za to dejanje se moraĹˇ prijaviti.
+          Za to dejanje se moraš prijaviti.
         </h3>
 
         <p className="mt-4 text-sm leading-6 text-[#6f675f]">
-          Po prijavi lahko shranjujeĹˇ, vĹˇeÄŤkaĹˇ in oznaÄŤujeĹˇ vsebine kot
-          dokonÄŤane.
+          Po prijavi lahko shranjuješ, všečkaš in označuješ vsebine kot
+          dokončane.
         </p>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

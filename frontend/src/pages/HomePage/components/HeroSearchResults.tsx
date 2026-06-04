@@ -52,7 +52,7 @@ function HeroSearchResults({
 										>
 											<CircleIcon className="h-5 w-5 text-[#31583b]" />
 										</motion.div>
-										IĹˇÄŤem...
+										Iščem...
 									</div>
 								</motion.div>
 							) : (
@@ -114,10 +114,10 @@ function HeroSearchResults({
 
 															<span className="inline-flex shrink-0 items-center rounded-full bg-[#fff6eb] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[#706b60]">
 																{result.type === 'learning_path'
-																	? 'UÄŤna pot'
+																	? 'Učna pot'
 																	: result.type === 'module'
 																		? 'Modul'
-																		: 'UÄŤna enota'}
+																		: 'Učna enota'}
 															</span>
 														</div>
 

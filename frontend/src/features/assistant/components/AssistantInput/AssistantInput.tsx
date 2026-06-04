@@ -11,7 +11,7 @@ function AssistantInput({
   value,
   onChange,
   onSubmit,
-  placeholder = 'VpraĹˇaj pomoÄŤnika...',
+  placeholder = 'Vprašaj pomočnika...',
 }: AssistantInputProps) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -31,7 +31,7 @@ function AssistantInput({
       <button
         type="submit"
         className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-forest-600 text-white transition-colors hover:bg-forest-700"
-        aria-label="PoĹˇlji vpraĹˇanje"
+        aria-label="Pošlji vprašanje"
       >
         <Send className="h-4 w-4" />
       </button>

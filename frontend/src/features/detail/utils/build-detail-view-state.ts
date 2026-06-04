@@ -173,7 +173,7 @@ function buildModuleMeta(
 ): DetailMetaItem[] {
   return [
     ...buildDurationMeta(module.duration_hours),
-    { label: 'UÄŤne enote', value: learningUnits.length },
+    { label: 'Učne enote', value: learningUnits.length },
   ]
 }
 
@@ -185,7 +185,7 @@ function buildLearningUnitMeta(
     ...buildDurationMeta(learningUnit.duration_hours),
     { label: 'Teme', value: learningUnit.content_topics.length },
     {
-      label: 'VpraĹˇanja za samooceno',
+      label: 'Vprašanja za samooceno',
       value: learningUnit.self_assessment_questions.length,
     },
     ...(parentModule ? [{ label: 'Modul', value: parentModule.title }] : []),
@@ -206,11 +206,11 @@ async function buildLearningPathView(
     targetType: 'learning_path',
     targetId: learningPathId,
     assistantContextType: 'learning_path',
-    eyebrow: 'UÄŤna pot',
+    eyebrow: 'Učna pot',
     title: learningPath.title,
     description: learningPath.short_description,
     metaItems: buildLearningPathMeta(learningPath, modules),
-    routeMapTitle: 'Struktura uÄŤne poti',
+    routeMapTitle: 'Struktura učne poti',
     routeMapDescription:
       'Moduli so prikazani glede na vrstni red, paralelne skupine, obveznost in predpogoje.',
     routeMapItems: buildLearningPathRouteMapItems({
@@ -240,14 +240,14 @@ async function buildModuleView(moduleId: string): Promise<DetailViewState> {
     description: module.short_description,
     metaItems: buildModuleMeta(module, learningUnits),
     tagsSection: {
-      title: 'PodroÄŤja',
-      description: 'PodroÄŤja, ki jih pokriva ta modul.',
+      title: 'Področja',
+      description: 'Področja, ki jih pokriva ta modul.',
       tags: module.domains,
-      emptyMessage: 'Ta modul nima dodanih podroÄŤij.',
+      emptyMessage: 'Ta modul nima dodanih področij.',
     },
-    routeMapTitle: 'UÄŤne enote v modulu',
+    routeMapTitle: 'Učne enote v modulu',
     routeMapDescription:
-      'UÄŤne enote so prikazane glede na vrstni red, paralelne skupine, obveznost in predpogoje.',
+      'Učne enote so prikazane glede na vrstni red, paralelne skupine, obveznost in predpogoje.',
     routeMapItems: buildModuleRouteMapItems({
       module,
       learningUnits,
@@ -344,24 +344,24 @@ async function buildLearningUnitView(
     : []
 
   const routeMapDescription = parentModule
-    ? `UÄŤna enota je prikazana v kontekstu modula "${parentModule.title}".`
-    : 'Za to uÄŤno enoto ni bilo mogoÄŤe najti pripadajoÄŤega modula.'
+    ? `Učna enota je prikazana v kontekstu modula "${parentModule.title}".`
+    : 'Za to učno enoto ni bilo mogoče najti pripadajočega modula.'
 
   return {
     targetType: 'learning_unit',
     targetId: learningUnitId,
     assistantContextType: 'learning_unit',
-    eyebrow: 'UÄŤna enota',
+    eyebrow: 'Učna enota',
     title: learningUnit.title,
     description: learningUnit.short_description,
     metaItems: buildLearningUnitMeta(learningUnit, parentModule),
     tagsSection: {
       title: 'Teme',
-      description: 'Vsebinske teme, ki jih pokriva ta uÄŤna enota.',
+      description: 'Vsebinske teme, ki jih pokriva ta učna enota.',
       tags: getTopicTitles(learningUnit),
-      emptyMessage: 'Ta uÄŤna enota nima dodanih vsebinskih tem.',
+      emptyMessage: 'Ta učna enota nima dodanih vsebinskih tem.',
     },
-    routeMapTitle: 'Kontekst uÄŤne enote',
+    routeMapTitle: 'Kontekst učne enote',
     routeMapDescription,
     routeMapItems,
     assessmentUrl: buildAssessmentUrl('learning_unit', learningUnitId),

@@ -1,13 +1,13 @@
 ﻿export const assessmentCopy = {
 	groupSelection: {
-		label: 'Pa priÄŤnimo',
+		label: 'Pa pričnimo',
 		title: 'V katero skupino kompetenc bi se podali?',
-		description: 'Izberite ali povpraĹˇajte o doloÄŤeni skupini kompetenc.',
-		note: 'Izberite ustrezno kompetenco ali napiĹˇite vpraĹˇanje, da vam posredujem podrobnejĹˇe informacije.',
+		description: 'Izberite ali povprašajte o določeni skupini kompetenc.',
+		note: 'Izberite ustrezno kompetenco ali napišite vprašanje, da vam posredujem podrobnejše informacije.',
 	},
 	questionnaire: {
-		label: 'VpraĹˇalnik',
-		description: 'Izberite odgovor, ki najbolje opisuje vaĹˇe trenutno stanje.',
+		label: 'Vprašalnik',
+		description: 'Izberite odgovor, ki najbolje opisuje vaše trenutno stanje.',
 	},
 }
 

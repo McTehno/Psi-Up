@@ -41,7 +41,7 @@ export async function getQuestionVoiceHelp(
     const errorBody = await response.json().catch(() => null);
 
     throw new Error(
-      errorBody?.detail ?? "Glasovna pomoÄŤ ni bila uspeĹˇno ustvarjena."
+      errorBody?.detail ?? "Glasovna pomoč ni bila uspešno ustvarjena."
     );
   }
 

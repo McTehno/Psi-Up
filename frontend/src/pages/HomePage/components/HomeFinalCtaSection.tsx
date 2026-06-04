@@ -21,7 +21,7 @@ function HomeFinalCtaSection() {
 					</h2>
 
 					<p className="mx-auto mt-7 max-w-2xl text-[18px] leading-8 text-[#6f6a60]">
-						Raziskuj uÄŤne poti, module in uÄŤne enote ter se vrni na tisti
+						Raziskuj učne poti, module in učne enote ter se vrni na tisti
 						korak, ki je zate v tem trenutku najbolj smiseln.
 					</p>
 
@@ -30,7 +30,7 @@ function HomeFinalCtaSection() {
 							href="#top"
 							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#31583b] bg-[#31583b] px-7 py-3.5 text-sm font-bold text-[#fffdf8] shadow-[0_14px_34px_rgba(49,88,59,0.22)] transition hover:-translate-y-0.5 hover:bg-[#2a4d33]"
 						>
-							Nazaj na zaÄŤetek
+							Nazaj na začetek
 							<ArrowRight className="h-4 w-4" />
 						</a>
 

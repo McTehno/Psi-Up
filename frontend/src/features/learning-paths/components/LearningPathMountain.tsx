@@ -5,7 +5,7 @@ import {
   ArrowRight,
   Bookmark,
   BookOpen,
-  ChevronLeft,
+  ChevronRight,
   Clock,
   Flag,
   Heart,
@@ -613,7 +613,7 @@ function ModuleDetailBox({
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
           aria-label="Zapri podrobnosti"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 

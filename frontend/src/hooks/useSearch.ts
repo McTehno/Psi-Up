@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
-
 import type { SearchResult } from '../types/domain'
-import { searchFilters } from '../pages/HomePage/constants'
-
-type SearchFilterOption = (typeof searchFilters)[number]
+import { performSearch } from '../services/search-service'
+import type { SearchContentType } from '../types/search'
 
 type AdvancedFiltersState = {
   query: string
-  types: string[]
+  types: SearchContentType[]
 }
 
-const defaultActiveFilters = ['Učne poti']
+const defaultActiveFilters: SearchContentType[] = ['learning_path']
 
 export function useSearch() {
   const [isSearchActive, setIsSearchActive] = useState(false)
-  const [activeFilters, setActiveFilters] =
-    useState<string[]>(defaultActiveFilters)
+  const [activeFilters, setActiveFilters] = useState<SearchContentType[]>(defaultActiveFilters)
 
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFiltersState>({
     query: '',
@@ -26,13 +23,12 @@ export function useSearch() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
-  const toggleFilter = useCallback((label: string) => {
+  const toggleFilter = useCallback((value: SearchContentType) => {
     setActiveFilters((previousFilters) => {
-      if (previousFilters.includes(label)) {
-        return previousFilters.filter((filter) => filter !== label)
+      if (previousFilters.includes(value)) {
+        return previousFilters.filter((filter) => filter !== value)
       }
-
-      return [...previousFilters, label]
+      return [...previousFilters, value]
     })
   }, [])
 
@@ -41,44 +37,13 @@ export function useSearch() {
       setIsSearching(true)
 
       try {
-        const types = searchFilters
-          .filter((filter: SearchFilterOption) =>
-            activeFilters.includes(filter.label),
-          )
-          .map((filter: SearchFilterOption) => filter.value)
-
-        const urlParams = new URLSearchParams()
-        urlParams.append("query", searchQuery);
-
-        types.forEach((type) => {
-          if (type !== null) {
-            urlParams.append('types', type)
-          }
+        const data = await performSearch({
+          query: searchQuery,
+          types: activeFilters
         })
 
-        const apiBaseUrl =
-          import.meta.env.VITE_API_URL ||
-          import.meta.env.VITE_BACKEND_HOST ||
-          'http://localhost:8000'
-
-        const response = await fetch(
-          `${apiBaseUrl}/api/search?${urlParams.toString()}`,
-        )
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-
-        const data = await response.json()
-
-        const mappedData: SearchResult[] = (data.results || []).map(
-          (item: SearchResult & { short_description?: string | null }) => ({
-            ...item,
-            shortDescription: item.short_description,
-          }),
-        )
-
-        setSearchResults(mappedData)
+        // Cast SearchUiResult to SearchResult for compatibility with the homepage components
+        setSearchResults(data.results as unknown as SearchResult[])
       } catch (error) {
         console.error('Failed to fetch search results', error)
         setSearchResults([])

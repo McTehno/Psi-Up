@@ -6,8 +6,8 @@ import { searchFilters } from '../constants'
 type HeroSearchProps = {
 	isSearchActive: boolean
 	setIsSearchActive: (isActive: boolean) => void
-	activeFilters: string[]
-	toggleFilter: (filter: string) => void
+	activeFilters: any[]
+	toggleFilter: (filter: any) => void
 	searchQuery: string
 	setSearchQuery: (query: string) => void
 	setSearchResults: (results: SearchResult[]) => void

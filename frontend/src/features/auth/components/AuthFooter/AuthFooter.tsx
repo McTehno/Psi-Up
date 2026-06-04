@@ -1,4 +1,4 @@
-type AuthFooterProps = {
+﻿type AuthFooterProps = {
   /** Text shown before the action link */
   prompt?: string
   /** Label for the action link/button */
@@ -8,7 +8,7 @@ type AuthFooterProps = {
 }
 
 export default function AuthFooter({
-  prompt = 'Še nimate računa?',
+  prompt = 'Ĺ e nimate raÄŤuna?',
   actionLabel = 'Registracija',
   onAction,
 }: AuthFooterProps) {
@@ -25,3 +25,5 @@ export default function AuthFooter({
     </p>
   )
 }
+
+

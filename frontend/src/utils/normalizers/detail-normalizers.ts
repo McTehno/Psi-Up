@@ -1,12 +1,12 @@
-/**
+﻿/**
  * Normalizerji za detail strani.
  *
  * Namen tega fila:
  * - pretvoriti backend response v stabilno frontend obliko
- * - zaščititi UI pred manjkajočimi, null ali nepopolnimi podatki
+ * - zaĹˇÄŤititi UI pred manjkajoÄŤimi, null ali nepopolnimi podatki
  * - podpreti trenutno MongoDB strukturo projekta NIDiKo
- * - podpreti dodatna znana polja, če jih backend vrne
- * - preprečiti, da bi komponente direktno brale nestabilno backend strukturo
+ * - podpreti dodatna znana polja, ÄŤe jih backend vrne
+ * - prepreÄŤiti, da bi komponente direktno brale nestabilno backend strukturo
  *
  * Kje se uporablja:
  * - LearningPathDetailPage
@@ -51,7 +51,7 @@
  * - self_assessment_questions
  *
  * Glavna ideja:
- * Backend lahko vrne različne oblike podatkov.
+ * Backend lahko vrne razliÄŤne oblike podatkov.
  * UI pa naj vedno dobi stabilno obliko, ki jo zna varno prikazati.
  */
 
@@ -64,18 +64,18 @@ import {
 } from '../display'
 
 /**
- * Splošna surova oblika detail podatkov.
+ * SploĹˇna surova oblika detail podatkov.
  *
  * Namenoma dovolimo dodatna polja z:
  *
  * [key: string]&#58; unknown
  *
  * To pomeni, da frontend sprejme tudi backend polja,
- * ki jih trenutno še ne poznamo.
+ * ki jih trenutno Ĺˇe ne poznamo.
  *
  * Pomembno:
  * Neznanih polj ne prikazujemo avtomatsko.
- * Prikažemo samo tista, ki so dovoljena v EXTRA_FIELD_LABELS.
+ * PrikaĹľemo samo tista, ki so dovoljena v EXTRA_FIELD_LABELS.
  */
 export type RawDetailContent = {
 	id?: string | null
@@ -107,7 +107,7 @@ export type RawDetailContent = {
  * Stabilna frontend oblika za detail vsebino.
  *
  * To je oblika, ki jo uporabljajo UI komponente.
- * Komponente zato ne rabijo preverjati vseh možnih backend primerov.
+ * Komponente zato ne rabijo preverjati vseh moĹľnih backend primerov.
  */
 export type DetailContentViewModel = {
 	id: string
@@ -120,12 +120,12 @@ export type DetailContentViewModel = {
 }
 
 /**
- * Oblika dodatnega polja, ki ga lahko prikažemo v UI.
+ * Oblika dodatnega polja, ki ga lahko prikaĹľemo v UI.
  *
  * Primer:
  * {
  *   label: 'Izvajalec',
- *   value: 'Šolski center Kungota'
+ *   value: 'Ĺ olski center Kungota'
  * }
  */
 export type DetailExtraField = {
@@ -137,19 +137,19 @@ export type DetailExtraField = {
  * Dovoljena dodatna polja za prikaz.
  *
  * Zakaj uporabljamo allowlist:
- * Backend lahko vrne tudi tehnična polja, na primer:
+ * Backend lahko vrne tudi tehniÄŤna polja, na primer:
  * - embedding
  * - internal_score
  * - created_at
  * - updated_at
  * - debug
  *
- * Teh polj ne želimo avtomatsko prikazati uporabniku.
- * Zato prikažemo samo polja, ki jih tukaj eksplicitno dovolimo.
+ * Teh polj ne Ĺľelimo avtomatsko prikazati uporabniku.
+ * Zato prikaĹľemo samo polja, ki jih tukaj eksplicitno dovolimo.
  */
 const EXTRA_FIELD_LABELS: Record<string, string> = {
 	provider: 'Izvajalec',
-	delivery_mode: 'Način izvedbe',
+	delivery_mode: 'NaÄŤin izvedbe',
 	target_audience: 'Ciljna skupina',
 	knowledge_assessment: 'Preverjanje znanja',
 	certificate: 'Certifikat',
@@ -159,13 +159,13 @@ const EXTRA_FIELD_LABELS: Record<string, string> = {
 }
 
 /**
- * Lepši prikaz znanih tehničnih vrednosti.
+ * LepĹˇi prikaz znanih tehniÄŤnih vrednosti.
  *
- * Če backend vrne difficulty: "beginner",
- * uporabniku raje pokažemo "Začetna".
+ * ÄŚe backend vrne difficulty: "beginner",
+ * uporabniku raje pokaĹľemo "ZaÄŤetna".
  */
 const DIFFICULTY_LABELS: Record<string, string> = {
-	beginner: 'Začetna',
+	beginner: 'ZaÄŤetna',
 	intermediate: 'Srednja',
 	advanced: 'Napredna',
 }
@@ -202,7 +202,7 @@ export const normalizeContentId = (content: RawDetailContent): string => {
  * - title
  * - name
  *
- * Če naslov manjka, uporabimo fallback.
+ * ÄŚe naslov manjka, uporabimo fallback.
  *
  * Pri referencah, kot je:
  * { module_id: "mod_003", order: 1 }
@@ -223,11 +223,11 @@ export const normalizeContentTitle = (
  * - short_description
  * - description
  *
- * Če opis manjka, vrnemo prazen string.
+ * ÄŚe opis manjka, vrnemo prazen string.
  *
  * Zakaj prazen string?
  * Pri referencah v modules / learning_units pogosto nimamo opisa.
- * Bolje je, da komponenta opisa ne prikaže, kot da za vsako referenco pokaže:
+ * Bolje je, da komponenta opisa ne prikaĹľe, kot da za vsako referenco pokaĹľe:
  * "Opis trenutno ni na voljo."
  */
 export const normalizeContentDescription = (
@@ -241,9 +241,9 @@ export const normalizeContentDescription = (
 }
 
 /**
- * Vrne stabilen seznam ključnih besed.
+ * Vrne stabilen seznam kljuÄŤnih besed.
  *
- * Če backend vrne null, undefined ali napačno vrednost,
+ * ÄŚe backend vrne null, undefined ali napaÄŤno vrednost,
  * funkcija vrne prazen array.
  */
 export const normalizeKeywords = (content: RawDetailContent): string[] => {
@@ -264,8 +264,8 @@ export const normalizeDurationHours = (
 /**
  * Vrne trajanje v minutah.
  *
- * To pustimo zaradi možne prihodnje podpore,
- * če backend kasneje doda duration_min.
+ * To pustimo zaradi moĹľne prihodnje podpore,
+ * ÄŤe backend kasneje doda duration_min.
  */
 export const normalizeDurationMin = (
 	content: RawDetailContent,
@@ -282,14 +282,14 @@ export const normalizeDurationMin = (
  * - boolean
  *
  * Objektov in array-ev za zdaj ne prikazujemo v extraFields,
- * ker bi lahko povzročili nečitljiv ali preobremenjen UI.
+ * ker bi lahko povzroÄŤili neÄŤitljiv ali preobremenjen UI.
  *
  * Za sezname, kot so:
  * - content_topics
  * - acquired_competencies
  * - prerequisites
  *
- * je boljše narediti ločene DetailSection prikaze.
+ * je boljĹˇe narediti loÄŤene DetailSection prikaze.
  */
 const formatExtraFieldValue = (
 	fieldName: string,
@@ -318,7 +318,7 @@ const formatExtraFieldValue = (
  * Normalizira dodatna znana polja.
  *
  * Funkcija pregleda samo polja iz EXTRA_FIELD_LABELS.
- * Če polje obstaja in ima uporabno vrednost, ga doda v extraFields.
+ * ÄŚe polje obstaja in ima uporabno vrednost, ga doda v extraFields.
  *
  * Neznana backend polja se ignorirajo.
  */
@@ -344,7 +344,7 @@ export const normalizeExtraFields = (
 /**
  * Glavni normalizer za detail vsebino.
  *
- * To funkcijo uporabimo, kadar želimo backend objekt pretvoriti
+ * To funkcijo uporabimo, kadar Ĺľelimo backend objekt pretvoriti
  * v stabilno obliko za prikaz na detail strani.
  */
 export const normalizeDetailContent = (
@@ -368,15 +368,15 @@ export const normalizeDetailContent = (
 /**
  * Normalizira eno vsebino v RouteNode.
  *
- * RouteNode je generična oblika za prikaz povezane vsebine
+ * RouteNode je generiÄŤna oblika za prikaz povezane vsebine
  * znotraj DetailRouteMap komponente.
  *
  * Primeri:
- * - modul znotraj učne poti
- * - učna enota znotraj modula
- * - učna enota direktno znotraj učne poti
+ * - modul znotraj uÄŤne poti
+ * - uÄŤna enota znotraj modula
+ * - uÄŤna enota direktno znotraj uÄŤne poti
  *
- * Ta funkcija podpira tudi referenčne objekte:
+ * Ta funkcija podpira tudi referenÄŤne objekte:
  *
  * {
  *   module_id: "mod_003",
@@ -417,7 +417,7 @@ export const normalizeRouteNode = (
 /**
  * Normalizira seznam vsebin v RouteNode[].
  *
- * Če backend vrne null ali undefined,
+ * ÄŚe backend vrne null ali undefined,
  * funkcija vrne prazen array.
  *
  * Elemente brez ID-ja odstranimo,
@@ -438,3 +438,5 @@ export const normalizeRouteNodes = (
 			return firstOrder - secondOrder
 		})
 }
+
+

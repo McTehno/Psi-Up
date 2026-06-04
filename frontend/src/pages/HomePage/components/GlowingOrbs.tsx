@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion, MotionValue, useTransform, useMotionTemplate, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import LocationPinIcon from '../../../components/icons/LocationPinIcon'
 
@@ -131,7 +131,7 @@ type GlowingOrbsProps = {
 
 export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
   // Instead of useTransform which has notorious WebKit GPU culling bugs on hard refresh,
-  // we trigger a React state when the user reaches the Vprašalnik section.
+  // we trigger a React state when the user reaches the VpraĹˇalnik section.
   const [showPin, setShowPin] = useState(false)
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -144,7 +144,7 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
-      {/* The Orbs (Hidden on Mobile and Tablets — only desktop) */}
+      {/* The Orbs (Hidden on Mobile and Tablets â€” only desktop) */}
       <div className="hidden lg:block">
         {modules.map((mod) => (
           <div key={mod.id}>
@@ -189,3 +189,4 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
     </div>
   )
 }
+

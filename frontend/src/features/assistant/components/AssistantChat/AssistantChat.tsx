@@ -1,4 +1,4 @@
-import AssistantInput from '../AssistantInput'
+﻿import AssistantInput from '../AssistantInput'
 import AssistantMessage from '../AssistantMessage'
 import { useAssistantChat } from '../../hooks/useAssistantChat'
 import type { AssistantContextType } from '../../types'
@@ -10,16 +10,16 @@ type AssistantChatProps = {
 }
 
 const contextLabels: Record<AssistantContextType, string> = {
-  learning_path: 'učna pot',
+  learning_path: 'uÄŤna pot',
   module: 'modul',
-  learning_unit: 'učna enota',
+  learning_unit: 'uÄŤna enota',
   general: 'vsebina',
 }
 
 function AssistantChat({
   contextType = 'general',
   contextId,
-  title = 'Pomočnik za učenje',
+  title = 'PomoÄŤnik za uÄŤenje',
 }: AssistantChatProps) {
   const { messages, inputValue, setInputValue, sendMessage } =
     useAssistantChat()
@@ -55,3 +55,4 @@ function AssistantChat({
 }
 
 export default AssistantChat
+

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLocation } from 'react-router-dom';
 import type { LearningPathData } from '../../types/domain';
 import { LearningPathVisualizer } from '../../features/learning-paths/components/LearningPathVisualizer';
@@ -8,14 +8,14 @@ import { Download, Bookmark, Share2 } from 'lucide-react';
 
 const mockData: LearningPathData = {
   pathTitle: "Kibernetska varnost in odgovorno delo",
-  pathDescription: "Učna pot za zagotavljanje varnega sodelovanja in obveščanje o digitalni zasebnosti.",
+  pathDescription: "UÄŤna pot za zagotavljanje varnega sodelovanja in obveĹˇÄŤanje o digitalni zasebnosti.",
   targetCompetency: "Varnost in odgovorna raba (DigComp)",
   modules: [
     {
       id: "mod_11",
       order: 1,
-      title: "Kibernetska varnost za končne uporabnike",
-      description: "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
+      title: "Kibernetska varnost za konÄŤne uporabnike",
+      description: "Zavedanje o tveganjih, socialni inĹľeniring in upravljanje gesel.",
       learningUnitsCount: 6
     },
     {
@@ -29,14 +29,14 @@ const mockData: LearningPathData = {
       id: "mod_14",
       order: 3,
       title: "Prepoznavanje zlonamerne programske opreme",
-      description: "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
+      description: "Identifikacija groĹľenj in pravilno ukrepanje ob incidentih.",
       learningUnitsCount: 6
     },
     {
       id: "mod_12",
       order: 4,
-      title: "Varno deljenje in zaščita podatkov",
-      description: "Enkripcija in varna distribucija občutljivih datotek.",
+      title: "Varno deljenje in zaĹˇÄŤita podatkov",
+      description: "Enkripcija in varna distribucija obÄŤutljivih datotek.",
       learningUnitsCount: 6
     },
     {
@@ -72,8 +72,8 @@ export const PathResultPage: React.FC = () => {
       {/* Sidebar - Left Column */}
       <aside className="w-full md:w-1/4 border-r border-brown-200/60 p-6 lg:p-10 flex flex-col">
         <div className="mb-10">
-          <h1 className="text-2xl font-bold mb-2">Vaša učna pot</h1>
-          <p className="text-slate-600 text-sm">Personalizirano na podlagi vaših rezultatov ocenjevanja.</p>
+          <h1 className="text-2xl font-bold mb-2">VaĹˇa uÄŤna pot</h1>
+          <p className="text-slate-600 text-sm">Personalizirano na podlagi vaĹˇih rezultatov ocenjevanja.</p>
         </div>
 
         <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">Orodja</h2>
@@ -103,3 +103,5 @@ export const PathResultPage: React.FC = () => {
 };
 
 export default PathResultPage;
+
+

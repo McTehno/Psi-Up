@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
-import { useAuth } from '../features/auth/contexts/AuthContext'
+import { useAuth } from '../features/auth/hooks/useAuth'
 import { getUserProgress } from '../services/user-progress-service'
 import type { UserProgressResponse } from '../types/user-progress'
 
@@ -26,7 +26,7 @@ export function useDashboardProgress() {
 				const data = await getUserProgress(localUser._id, session.access_token)
 				setProgress(data)
 			} catch (err) {
-				console.error('Napaka pri nalaganju uporabniškega napredka:', err)
+				console.error('Napaka pri nalaganju uporabniĹˇkega napredka:', err)
 				setError(
 					err instanceof Error
 						? err.message
@@ -47,3 +47,5 @@ export function useDashboardProgress() {
 		error,
 	}
 }
+
+

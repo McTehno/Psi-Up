@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState } from 'react'
+﻿import {useEffect, useMemo, useState } from 'react'
 
 import { sendAssessmentAssistantMessage } from '../../../services/assessment-assistant-service'
 import type { QuestionnaireTargetType } from '../../../types/questionnaire'
@@ -179,7 +179,7 @@ function AssessmentContextBox({
     setError(null)
     setStatusMessage(
       latestItem
-        ? 'Zadnji odgovor za to vprašanje je prikazan pri asistentki oziroma spodaj na manjšem zaslonu.'
+        ? 'Zadnji odgovor za to vpraĹˇanje je prikazan pri asistentki oziroma spodaj na manjĹˇem zaslonu.'
         : null,
     )
     onActiveExchangeChange(latestItem ? toDisplayExchange(latestItem) : null)
@@ -194,7 +194,7 @@ function AssessmentContextBox({
 
     setError(null)
     setStatusMessage(
-      'Izbrani odgovor je prikazan pri asistentki oziroma razprt spodaj na manjšem zaslonu.',
+      'Izbrani odgovor je prikazan pri asistentki oziroma razprt spodaj na manjĹˇem zaslonu.',
     )
     onActiveExchangeChange(toDisplayExchange(item))
   }
@@ -223,7 +223,7 @@ function AssessmentContextBox({
       setTransientItem(pendingItem)
       setActiveExchangeId(pendingItem.id)
       setStatusMessage(
-        'Vprašanje je poslano. Odgovor se bo prikazal pri asistentki oziroma spodaj na manjšem zaslonu.',
+        'VpraĹˇanje je poslano. Odgovor se bo prikazal pri asistentki oziroma spodaj na manjĹˇem zaslonu.',
       )
       onActiveExchangeChange(toDisplayExchange(pendingItem))
 
@@ -260,7 +260,7 @@ function AssessmentContextBox({
       setActiveExchangeId(savedItem.id)
       setUserMessage('')
       setStatusMessage(
-        'Odgovor je prikazan pri asistentki. Na manjšem zaslonu je razprt spodaj v seznamu.',
+        'Odgovor je prikazan pri asistentki. Na manjĹˇem zaslonu je razprt spodaj v seznamu.',
       )
       onActiveExchangeChange(toDisplayExchange(savedItem))
     } catch (error) {
@@ -274,7 +274,7 @@ function AssessmentContextBox({
       const errorItem: AssessmentAssistantHistoryItem = {
         ...pendingItem,
         answer:
-          'Asistentka trenutno ne more odgovoriti. Vprašanje lahko poskusite poslati še enkrat.',
+          'Asistentka trenutno ne more odgovoriti. VpraĹˇanje lahko poskusite poslati Ĺˇe enkrat.',
         isPending: false,
       }
 
@@ -291,12 +291,12 @@ function AssessmentContextBox({
   return (
     <div className="context-box assessment-assistant-box">
       <div className="assessment-assistant-box__header">
-        <span className="assessment-assistant-box__eyebrow">Tekstovna pomoč</span>
+        <span className="assessment-assistant-box__eyebrow">Tekstovna pomoÄŤ</span>
         <label htmlFor="assessment-assistant-message">
-          Vprašajte asistentko za pomoč pri razumevanju vprašanja
+          VpraĹˇajte asistentko za pomoÄŤ pri razumevanju vpraĹˇanja
         </label>
         <p>
-          Odgovor se na večjem zaslonu prikaže pri asistentki, na manjšem pa
+          Odgovor se na veÄŤjem zaslonu prikaĹľe pri asistentki, na manjĹˇem pa
           spodaj v seznamu. Izbira Da/Ne se ob tem ne spremeni.
         </p>
       </div>
@@ -307,7 +307,7 @@ function AssessmentContextBox({
           className="assessment-assistant-textarea"
           value={userMessage}
           onChange={(event) => setUserMessage(event.target.value)}
-          placeholder="Npr. Kaj to vprašanje pomeni?"
+          placeholder="Npr. Kaj to vpraĹˇanje pomeni?"
           rows={3}
           maxLength={1000}
           disabled={isLoading}
@@ -317,10 +317,10 @@ function AssessmentContextBox({
           <span>
             {isLoading
               ? 'Asistentka pripravlja odgovor ...'
-              : 'Vprašajte samo o trenutnem vprašanju.'}
+              : 'VpraĹˇajte samo o trenutnem vpraĹˇanju.'}
           </span>
           <button type="submit" disabled={isLoading || !userMessage.trim()}>
-            {isLoading ? 'Pošiljam ...' : 'Vprašaj'}
+            {isLoading ? 'PoĹˇiljam ...' : 'VpraĹˇaj'}
           </button>
         </div>
       </form>
@@ -334,7 +334,7 @@ function AssessmentContextBox({
       {visibleHistory.length > 0 && (
         <div className="assessment-assistant-history">
           <div className="assessment-assistant-history__header">
-            Vaša vprašanja v tej seji
+            VaĹˇa vpraĹˇanja v tej seji
           </div>
           <ul>
             {visibleHistory.map((item) => {
@@ -360,7 +360,7 @@ function AssessmentContextBox({
                     onClick={() => handleSelectHistoryItem(item)}
                   >
                     <span>{item.userMessage}</span>
-                    <small>{isActive ? 'Prikazano' : 'Prikaži odgovor'}</small>
+                    <small>{isActive ? 'Prikazano' : 'PrikaĹľi odgovor'}</small>
                   </button>
 
                   {isActive && (
@@ -389,3 +389,5 @@ function AssessmentContextBox({
 }
 
 export default AssessmentContextBox
+
+

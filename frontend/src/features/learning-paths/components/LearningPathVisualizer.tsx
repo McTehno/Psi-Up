@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { LearningPathData, Module } from '../../../types/domain';
 import { Shield, BookOpen, Check } from 'lucide-react';
 import { ModuleDetailsModal } from './ModuleDetailsModal';
@@ -10,8 +10,8 @@ interface LearningPathVisualizerProps {
 export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ data }) => {
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const modules = Array.isArray(data?.modules) ? data.modules : []
-  const pathTitle = data?.pathTitle?.trim() || 'Neimenovana učna pot'
-  const targetCompetency = data?.targetCompetency?.trim() || 'Ciljna kompetenca ni določena'
+  const pathTitle = data?.pathTitle?.trim() || 'Neimenovana uÄŤna pot'
+  const targetCompetency = data?.targetCompetency?.trim() || 'Ciljna kompetenca ni doloÄŤena'
   const numNodes = modules.length
 
   // MAP CONSTANTS FOR MATHEMATICAL SINE CURVE
@@ -62,7 +62,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           {pathTitle}
         </h2>
         <p className="text-[#64594c] text-lg max-w-2xl leading-relaxed">
-          Sledite označeni poti za usvojitev osnovnih znanj in razumevanje vplivov analize ter strateškega načrtovanja. ({targetCompetency})
+          Sledite oznaÄŤeni poti za usvojitev osnovnih znanj in razumevanje vplivov analize ter strateĹˇkega naÄŤrtovanja. ({targetCompetency})
         </p>
       </div>
       {numNodes === 0 ? (
@@ -72,11 +72,11 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           </div>
 
           <h3 className="font-serif text-2xl font-bold text-[#5c3724]">
-            Moduli še niso dodani
+            Moduli Ĺˇe niso dodani
           </h3>
 
           <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-[#706b60]">
-            Ta učna pot trenutno še nima povezanih modulov.
+            Ta uÄŤna pot trenutno Ĺˇe nima povezanih modulov.
           </p>
         </div>
       ) : (
@@ -181,7 +181,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
 
             <div className="absolute top-[80px] w-64 text-center">
               <h3 className="font-serif font-bold text-xl text-[#5c3724]">
-                Cilj dosežen
+                Cilj doseĹľen
               </h3>
 
               <p className="text-[#86968B] font-bold text-[10px] uppercase tracking-[0.2em] mt-1.5">
@@ -200,3 +200,4 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
 
   );
 };
+

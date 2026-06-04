@@ -1,4 +1,4 @@
-import {
+﻿import {
   Bot,
   ChevronDown,
   ChevronLeft,
@@ -62,7 +62,7 @@ export function CollapsibleChatPanel({
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#31583b]">
                 <Sparkles className="h-3.5 w-3.5" />
-                LLM pomočnik
+                LLM pomoÄŤnik
               </p>
             </div>
 
@@ -73,7 +73,7 @@ export function CollapsibleChatPanel({
                 setIsLockedOpen((currentValue) => !currentValue)
               }}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/35 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/55"
-              aria-label={isExpanded ? 'Zapri chat pomočnika' : 'Odpri chat pomočnika'}
+              aria-label={isExpanded ? 'Zapri chat pomoÄŤnika' : 'Odpri chat pomoÄŤnika'}
               aria-expanded={isExpanded}
             >
               {isExpanded ? (
@@ -101,7 +101,7 @@ export function CollapsibleChatPanel({
 
                     <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
                       <span className="min-w-0 flex-1 truncate">
-                        Vprašaj pomočnika ...
+                        VpraĹˇaj pomoÄŤnika ...
                       </span>
 
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
@@ -144,14 +144,14 @@ export function CollapsibleChatPanel({
               setIsLockedOpen(true)
             }}
             className="relative z-10 flex h-full w-full flex-col items-center justify-between rounded-[1.75rem] border border-white/45 bg-white/30 px-2 py-4 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_18px_38px_rgba(49,88,59,0.12)] backdrop-blur-2xl transition hover:bg-white/45"
-            aria-label="Odpri chat pomočnika"
+            aria-label="Odpri chat pomoÄŤnika"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/45 shadow-sm backdrop-blur-xl">
               <Bot className="h-5 w-5" />
             </div>
 
             <span className="rotate-180 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.2em] [writing-mode:vertical-rl]">
-              LLM pomočnik
+              LLM pomoÄŤnik
             </span>
 
             <ChevronLeft className="h-5 w-5" />
@@ -173,7 +173,7 @@ export function CollapsibleChatPanel({
                     handleClose()
                   }}
                   className="flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-white/30 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/50"
-                  aria-label="Zapri chat pomočnika"
+                  aria-label="Zapri chat pomoÄŤnika"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
@@ -183,7 +183,7 @@ export function CollapsibleChatPanel({
             <div className="mt-7">
               <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-[#31583b]">
                 <Sparkles className="h-4 w-4" />
-                LLM pomočnik
+                LLM pomoÄŤnik
               </p>
             </div>
 
@@ -191,12 +191,12 @@ export function CollapsibleChatPanel({
               {children ?? (
                 <>
                   <div className="flex-1 text-base leading-8 text-[#6d665d]">
-                    Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
-                    miško.
+                    Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneĹˇ
+                    miĹˇko.
                   </div>
 
                   <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
-                    <span className="flex-1">Vprašaj pomočnika ...</span>
+                    <span className="flex-1">VpraĹˇaj pomoÄŤnika ...</span>
 
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
                       <Send className="h-4 w-4" />
@@ -211,3 +211,4 @@ export function CollapsibleChatPanel({
     </aside>
   )
 }
+

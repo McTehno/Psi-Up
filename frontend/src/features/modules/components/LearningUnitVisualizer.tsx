@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
@@ -123,7 +123,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll(); // Initial position
     return () => {
-      window.removeEventListener('scroll', handleScroll, { capture: true } as any);
+      window.removeEventListener('scroll', handleScroll, { capture: true });
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -209,7 +209,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const finalGoalY = numRows > 0 ? currentY + 40 : OFFSET_TOP + 100;
   const totalHeight = finalGoalY + 160;
 
-  let paths: string[] = [];
+  const paths: string[] = [];
   if (numRows > 0) {
     const firstRow = nodePositions.filter(n => n.order === sortedOrders[0]);
     for (const tgt of firstRow) {
@@ -252,7 +252,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const activeNormalizedDetail = activeRef
     ? normalizeDetailContent(
       activeDetail ?? { learning_unit_id: activeRef.learning_unit_id },
-      'Neimenovana učna enota',
+      'Neimenovana uÄŤna enota',
     )
     : null
 
@@ -334,8 +334,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       {numRows === 0 ? (
         <div className="relative z-10 w-full flex justify-center">
           <EmptyState
-            title="Ni učnih enot"
-            message="Za ta modul trenutno ni učnih enot."
+            title="Ni uÄŤnih enot"
+            message="Za ta modul trenutno ni uÄŤnih enot."
           />
         </div>
       ) : (
@@ -372,7 +372,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
             const normalizedDetail = normalizeDetailContent(
               detail ?? { learning_unit_id: ref.learning_unit_id },
-              'Neimenovana učna enota',
+              'Neimenovana uÄŤna enota',
             )
             const isUnitCompleted = safeCompletedUnitIds.includes(ref.learning_unit_id);
             const isNodeActive = isMobile && activeNodeIdx === idx;
@@ -386,7 +386,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
               >
                 {isAssessmentPosition && (
                   <AssessmentPositionMarker
-                    label="Tukaj se nahajaš"
+                    label="Tukaj se nahajaĹˇ"
                     className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
                   />
                 )}
@@ -427,7 +427,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   </div>
                 )}
 
-                {/* Desktop cards — hidden on mobile */}
+                {/* Desktop cards â€” hidden on mobile */}
                 {!isMobile && pos.isSingle && (
                   <button
                     type="button"
@@ -452,7 +452,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     </div>
                     {normalizedDetail.description && (
                       <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
+                        {normalizedDetail.description || 'Opis uÄŤne enote trenutno ni na voljo.'}
                       </p>
                     )}
                     {!ref.is_required && (
@@ -501,7 +501,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             );
           })}
 
-          {/* Mobile popup card — only rendered on mobile when a node is active */}
+          {/* Mobile popup card â€” only rendered on mobile when a node is active */}
           {isMobile && activeNode && activeRef && (
             <div
               ref={popupRef}
@@ -529,7 +529,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 </div>
 
                 <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 pr-6 ${isActiveCompleted ? 'text-[#31583b]' : 'text-[#5c3724]'}`}>
-                  {activeNormalizedDetail?.title ?? 'Neimenovana učna enota'}
+                  {activeNormalizedDetail?.title ?? 'Neimenovana uÄŤna enota'}
                 </h4>
 
                 {activeNormalizedDetail?.description && (
@@ -565,3 +565,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     </div>
   );
 };
+
+
+
+

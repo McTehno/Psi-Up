@@ -1,4 +1,4 @@
-function HomeBackground() {
+﻿function HomeBackground() {
 	return (
 		<>
 			<div
@@ -20,3 +20,4 @@ function HomeBackground() {
 }
 
 export default HomeBackground
+

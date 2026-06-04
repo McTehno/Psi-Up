@@ -1,4 +1,4 @@
-import { Search as SearchIcon, X as XIcon } from 'lucide-react'
+﻿import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import type { SearchResult, SearchContentType } from '../../../types/search'
@@ -37,7 +37,7 @@ function HeroSearch({
 
 				<input
 					type="text"
-					placeholder="Kaj se hočete naučiti?"
+					placeholder="Kaj se hoÄŤete nauÄŤiti?"
 					className="w-full rounded-2xl border border-[#eadfce] bg-[#fffdf8] py-3 pl-12 pr-12 text-sm text-[#111111] shadow-sm transition-all duration-300 placeholder:text-[#706b60] focus:border-[#31583b] focus:outline-none focus:ring-1 focus:ring-[#31583b]"
 					onFocus={() => {
 						setIsSearchActive(true)
@@ -102,3 +102,5 @@ function HeroSearch({
 }
 
 export default HeroSearch
+
+

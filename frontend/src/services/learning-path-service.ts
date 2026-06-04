@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type {
 	LearningPathDetailResponse,
 	LearningPathResponse,
@@ -51,10 +51,10 @@ export async function getLearningPathSteps(
 }
 
 /**
- * Compatibility endpoint za starejšo logiko.
+ * Compatibility endpoint za starejĹˇo logiko.
  *
- * Nova struktura učne poti uporablja steps, ampak ta endpoint
- * še vedno vrne samo reference modulov znotraj učne poti.
+ * Nova struktura uÄŤne poti uporablja steps, ampak ta endpoint
+ * Ĺˇe vedno vrne samo reference modulov znotraj uÄŤne poti.
  */
 export async function getLearningPathModules(
 	learningPathId: string,
@@ -79,7 +79,7 @@ export async function getLearningPathAvailableSteps(
 }
 
 /**
- * Compatibility endpoint za starejšo logiko.
+ * Compatibility endpoint za starejĹˇo logiko.
  *
  * Nova struktura uporablja available-steps, ta endpoint pa vrne
  * samo dostopne module.
@@ -105,3 +105,4 @@ export async function getLearningPathQuestionnaire(
 		`/learning-paths/${learningPathId}/questionnaire`,
 	)
 }
+

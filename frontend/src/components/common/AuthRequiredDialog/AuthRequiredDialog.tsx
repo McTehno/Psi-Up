@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+﻿import { useLocation, useNavigate } from 'react-router-dom'
 
 type AuthRequiredDialogProps = {
   isOpen: boolean
@@ -29,12 +29,12 @@ function AuthRequiredDialog({ isOpen, onClose }: AuthRequiredDialogProps) {
         </p>
 
         <h3 className="mt-4 font-serif text-2xl font-semibold text-[#344E41]">
-          Za to dejanje se moraš prijaviti.
+          Za to dejanje se moraĹˇ prijaviti.
         </h3>
 
         <p className="mt-4 text-sm leading-6 text-[#6f675f]">
-          Po prijavi lahko shranjuješ, všečkaš in označuješ vsebine kot
-          dokončane.
+          Po prijavi lahko shranjujeĹˇ, vĹˇeÄŤkaĹˇ in oznaÄŤujeĹˇ vsebine kot
+          dokonÄŤane.
         </p>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -60,3 +60,4 @@ function AuthRequiredDialog({ isOpen, onClose }: AuthRequiredDialogProps) {
 }
 
 export default AuthRequiredDialog
+

@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, LogOut, User } from 'lucide-react'
 
 import Logo from '../Logo'
-import { useAuth } from '../../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../../features/auth/hooks/useAuth'
 import { supabase } from '../../../services/supabase-client'
 
 type NavbarLink = {
@@ -102,7 +102,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 							NIDiKo
 						</span>
 						<span className="block text-[10px] font-medium leading-[1.3] text-[#5f5a52]">
-							Razvoj prilagodljivega kurikuluma neformalnih izobraževanj
+							Razvoj prilagodljivega kurikuluma neformalnih izobraĹľevanj
 							<br />
 							za pridobitev in razvoj digitalnih kompetenc
 						</span>
@@ -144,7 +144,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 						<Link
 							to="/dashboard"
 							className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce] bg-gradient-to-br from-[#ede5d8] to-[#d4c4ad] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-105 hover:border-[#d07a12]/40 active:scale-95"
-							aria-label="Uporabniški profil"
+							aria-label="UporabniĹˇki profil"
 						>
 							<User className="h-4.5 w-4.5 text-[#6e614f] transition-colors duration-300 group-hover:text-[#d07a12]" />
 						</Link>
@@ -235,3 +235,4 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 }
 
 export default Navbar
+

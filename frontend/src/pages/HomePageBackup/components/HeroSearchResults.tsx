@@ -1,4 +1,4 @@
-import {
+﻿import {
 	ArrowRight as ArrowRightIcon,
 	Circle as CircleIcon,
 	CircleDot as DotIcon,
@@ -34,7 +34,7 @@ function HeroSearchResults({
 				<div className="flex flex-col gap-3">
 					{isSearching ? (
 						<div className="flex h-32 animate-pulse items-center justify-center rounded-3xl border border-[#eadfce] bg-white/60 text-[#706b60] backdrop-blur-sm">
-							Iščem...
+							IĹˇÄŤem...
 						</div>
 					) : (
 						<>
@@ -81,10 +81,10 @@ function HeroSearchResults({
 
 												<span className="inline-flex shrink-0 items-center rounded-full bg-[#fff6eb] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[#706b60]">
 													{result.type === 'learning_path'
-														? 'Učna pot'
+														? 'UÄŤna pot'
 														: result.type === 'module'
 															? 'Modul'
-															: 'Učna enota'}
+															: 'UÄŤna enota'}
 												</span>
 											</div>
 
@@ -141,7 +141,7 @@ function HeroSearchResults({
 									className="flex items-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#274a31] hover:shadow-lg"
 								>
 									{searchResults.length > 0
-										? 'Prikaži vse zadetke'
+										? 'PrikaĹľi vse zadetke'
 										: 'Napredno iskanje'}
 									<ArrowRightIcon className="h-4 w-4" />
 								</button>
@@ -155,3 +155,4 @@ function HeroSearchResults({
 }
 
 export default HeroSearchResults
+

@@ -1,4 +1,4 @@
-import type { AssistantMessage as AssistantMessageType } from '../../types'
+﻿import type { AssistantMessage as AssistantMessageType } from '../../types'
 
 type AssistantMessageProps = {
   message: AssistantMessageType
@@ -21,3 +21,4 @@ function AssistantMessage({ message }: AssistantMessageProps) {
 }
 
 export default AssistantMessage
+

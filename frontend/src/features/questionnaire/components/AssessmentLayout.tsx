@@ -1,4 +1,4 @@
-import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+﻿import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
 
 type Competency = {
   competency_id: string
@@ -61,7 +61,7 @@ function AssessmentLayout({
 
           <div className="assistant-note">
             <div className="assistant-note__icon" aria-hidden="true">
-              ☘
+              â
             </div>
 
             <div className="assistant-note__content">
@@ -96,7 +96,7 @@ function AssessmentLayout({
                   aria-live="polite"
                 >
                   <span className="assistant-note__section-label">
-                    Vaše vprašanje
+                    VaĹˇe vpraĹˇanje
                   </span>
                   <p className="assistant-note__user-question">
                     {assistantExchange.userMessage}
@@ -119,13 +119,13 @@ function AssessmentLayout({
               {phase === 'questionnaire' && !assistantExchange && (
                 <>
                   <p>
-                    Odgovarjate za področje:{' '}
+                    Odgovarjate za podroÄŤje:{' '}
                     <strong>{selectedGroup?.title}</strong>
                   </p>
 
                   {currentQuestion && (
                     <div className="assistant-competencies">
-                      <h3>Trenutno vprašanje:</h3>
+                      <h3>Trenutno vpraĹˇanje:</h3>
                       <p>{currentQuestion.question}</p>
 
                       {selectedAnswer && (
@@ -141,8 +141,8 @@ function AssessmentLayout({
 
               {phase === 'completed' && (
                 <p>
-                  Vprašalnik je zaključen. Zbrane odgovore lahko uporabimo za
-                  izračun priporočene učne poti.
+                  VpraĹˇalnik je zakljuÄŤen. Zbrane odgovore lahko uporabimo za
+                  izraÄŤun priporoÄŤene uÄŤne poti.
                 </p>
               )}
             </div>
@@ -156,3 +156,5 @@ function AssessmentLayout({
 }
 
 export default AssessmentLayout
+
+

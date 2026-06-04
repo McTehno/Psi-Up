@@ -1,4 +1,4 @@
-export type ModuleAssistantMessageRequest = {
+﻿export type ModuleAssistantMessageRequest = {
   sessionId?: string
   userId?: string
   moduleId: string
@@ -25,7 +25,7 @@ function getErrorMessage(payload: unknown) {
     return payload.detail
   }
 
-  return 'Pomočnika trenutno ni mogoče doseči. Poskusite znova čez trenutek.'
+  return 'PomoÄŤnika trenutno ni mogoÄŤe doseÄŤi. Poskusite znova ÄŤez trenutek.'
 }
 
 export async function sendModuleAssistantMessage(
@@ -53,3 +53,4 @@ export async function sendModuleAssistantMessage(
 
   return payload as ModuleAssistantMessageResponse
 }
+

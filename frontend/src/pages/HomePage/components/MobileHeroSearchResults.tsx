@@ -1,4 +1,4 @@
-import {
+﻿import {
     ArrowRight as ArrowRightIcon,
     Circle as CircleIcon,
     CircleDot as DotIcon,
@@ -35,9 +35,9 @@ function MobileHeroSearchResults({
     }
 
     function getResultLabel(type: SearchResult['type']) {
-        if (type === 'learning_path') return 'Učna pot'
+        if (type === 'learning_path') return 'UÄŤna pot'
         if (type === 'module') return 'Modul'
-        return 'Učna enota'
+        return 'UÄŤna enota'
     }
 
     function renderIcon(result: SearchResult) {
@@ -91,7 +91,7 @@ function MobileHeroSearchResults({
                                     >
                                         <CircleIcon className="h-4 w-4 text-[#31583b]" />
                                     </motion.div>
-                                    Iščem...
+                                    IĹˇÄŤem...
                                 </div>
                             </motion.div>
                         ) : (
@@ -189,7 +189,7 @@ function MobileHeroSearchResults({
                                         className="inline-flex items-center justify-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#274a31]"
                                     >
                                         {searchResults.length > 0
-                                            ? 'Prikaži vse zadetke'
+                                            ? 'PrikaĹľi vse zadetke'
                                             : 'Napredno iskanje'}
                                         <ArrowRightIcon className="h-4 w-4" />
                                     </motion.button>
@@ -205,3 +205,4 @@ function MobileHeroSearchResults({
 }
 
 export default MobileHeroSearchResults
+

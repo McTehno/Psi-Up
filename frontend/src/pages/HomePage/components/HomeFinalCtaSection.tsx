@@ -1,4 +1,4 @@
-import { ArrowRight, Mail } from 'lucide-react'
+﻿import { ArrowRight, Mail } from 'lucide-react'
 
 function HomeFinalCtaSection() {
 	return (
@@ -21,7 +21,7 @@ function HomeFinalCtaSection() {
 					</h2>
 
 					<p className="mx-auto mt-7 max-w-2xl text-[18px] leading-8 text-[#6f6a60]">
-						Raziskuj učne poti, module in učne enote ter se vrni na tisti
+						Raziskuj uÄŤne poti, module in uÄŤne enote ter se vrni na tisti
 						korak, ki je zate v tem trenutku najbolj smiseln.
 					</p>
 
@@ -30,7 +30,7 @@ function HomeFinalCtaSection() {
 							href="#top"
 							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#31583b] bg-[#31583b] px-7 py-3.5 text-sm font-bold text-[#fffdf8] shadow-[0_14px_34px_rgba(49,88,59,0.22)] transition hover:-translate-y-0.5 hover:bg-[#2a4d33]"
 						>
-							Nazaj na začetek
+							Nazaj na zaÄŤetek
 							<ArrowRight className="h-4 w-4" />
 						</a>
 
@@ -44,7 +44,7 @@ function HomeFinalCtaSection() {
 					</div>
 
 					<p className="mt-12 text-xs font-medium text-[#8a8175]">
-						© 2026 NIDiKo. Vse pravice pridržane.
+						Â© 2026 NIDiKo. Vse pravice pridrĹľane.
 					</p>
 				</div>
 			</div>
@@ -53,3 +53,4 @@ function HomeFinalCtaSection() {
 }
 
 export default HomeFinalCtaSection
+

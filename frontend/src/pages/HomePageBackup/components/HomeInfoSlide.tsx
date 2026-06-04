@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+﻿import type { LucideIcon } from 'lucide-react'
 
 type HomeInfoCard = {
 	icon: LucideIcon
@@ -78,3 +78,4 @@ function HomeInfoSlide({
 }
 
 export default HomeInfoSlide
+

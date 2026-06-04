@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+﻿import { Search } from 'lucide-react'
 
 type EmptyStateProps = {
   title?: string
@@ -21,3 +21,4 @@ function EmptyState({
 }
 
 export default EmptyState
+

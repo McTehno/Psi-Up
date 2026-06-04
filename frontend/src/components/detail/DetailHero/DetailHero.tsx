@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 type DetailHeroProps = {
 	eyebrow?: string
@@ -51,3 +51,4 @@ function DetailHero({
 }
 
 export default DetailHero
+

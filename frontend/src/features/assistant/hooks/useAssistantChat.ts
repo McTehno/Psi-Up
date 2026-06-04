@@ -1,11 +1,11 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import type { AssistantMessage } from '../types'
 
 const initialMessage: AssistantMessage = {
   id: 'assistant-welcome',
   role: 'assistant',
   content:
-    'Pozdravljena! Tukaj bom lahko pomagal pri razlagi učne vsebine, modulov in učnih poti.',
+    'Pozdravljena! Tukaj bom lahko pomagal pri razlagi uÄŤne vsebine, modulov in uÄŤnih poti.',
   createdAt: new Date().toISOString(),
 }
 
@@ -51,3 +51,4 @@ export function useAssistantChat() {
     sendMessage,
   }
 }
+

@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type { LearningUnitReferenceResponse } from '../types/learning-unit'
 import type { QuestionnaireResponse } from '../types/questionnaire'
 import type { ModuleDetailResponse, ModuleResponse } from '../types/module'
@@ -39,8 +39,8 @@ export async function getModuleById(
 /**
  * Vrne detail podatke modula.
  *
- * Detail endpoint poleg osnovnih podatkov vrne tudi podrobnosti učnih enot
- * in učne poti, ki vsebujejo izbrani modul.
+ * Detail endpoint poleg osnovnih podatkov vrne tudi podrobnosti uÄŤnih enot
+ * in uÄŤne poti, ki vsebujejo izbrani modul.
  */
 export async function getModuleDetail(
   moduleId: string,
@@ -49,7 +49,7 @@ export async function getModuleDetail(
 }
 
 /**
- * Vrne reference učnih enot znotraj izbranega modula.
+ * Vrne reference uÄŤnih enot znotraj izbranega modula.
  */
 export async function getModuleLearningUnits(
 	moduleId: string,
@@ -60,7 +60,7 @@ export async function getModuleLearningUnits(
 }
 
 /**
- * Vrne učne enote, ki jih uporabnik lahko začne glede na zaključene predpogoje.
+ * Vrne uÄŤne enote, ki jih uporabnik lahko zaÄŤne glede na zakljuÄŤene predpogoje.
  */
 export async function getModuleAvailableLearningUnits(
 	moduleId: string,
@@ -77,7 +77,7 @@ export async function getModuleAvailableLearningUnits(
 }
 
 /**
- * Vrne vprašalnik za izbrani modul.
+ * Vrne vpraĹˇalnik za izbrani modul.
  */
 export async function getModuleQuestionnaire(
 	moduleId: string,
@@ -86,3 +86,4 @@ export async function getModuleQuestionnaire(
 		`/modules/${moduleId}/questionnaire`,
 	)
 }
+

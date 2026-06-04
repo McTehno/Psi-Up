@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 
 type AuthFormProps = {
@@ -48,7 +48,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
                 id="auth-name"
                 name="name"
                 type="text"
-                placeholder="Vaše ime"
+                placeholder="VaĹˇe ime"
                 required={isRegister}
                 disabled={!isRegister}
                 className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
@@ -60,7 +60,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
 
       <div className="space-y-1.5 relative z-10 bg-transparent">
         <label htmlFor="auth-email" className="block text-sm font-semibold text-[#2C2417]">
-          E-poštni naslov
+          E-poĹˇtni naslov
         </label>
         <div className="relative">
           <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-700 ${accentColor}`} />
@@ -68,7 +68,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
             id="auth-email"
             name="email"
             type="email"
-            placeholder="Vnesite e-poštni naslov"
+            placeholder="Vnesite e-poĹˇtni naslov"
             required
             className={`w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none ${ringColor} transition-all duration-300`}
           />
@@ -94,7 +94,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all duration-300 cursor-pointer ${accentColor} opacity-50 hover:opacity-100 hover:bg-black/[0.04]`}
-            aria-label={showPassword ? 'Skrij geslo' : 'Prikaži geslo'}
+            aria-label={showPassword ? 'Skrij geslo' : 'PrikaĹľi geslo'}
             tabIndex={-1}
           >
             {showPassword
@@ -157,8 +157,10 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
       >
         {isLoading 
           ? (isRegister ? 'Registracija...' : 'Prijava...') 
-          : (isRegister ? 'Ustvari račun' : 'Prijava')}
+          : (isRegister ? 'Ustvari raÄŤun' : 'Prijava')}
       </button>
     </form>
   )
 }
+
+

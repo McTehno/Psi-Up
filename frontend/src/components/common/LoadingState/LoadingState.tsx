@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+﻿import { Loader2 } from 'lucide-react'
 
 type LoadingStateProps = {
   message?: string
@@ -14,3 +14,4 @@ function LoadingState({ message = 'Nalaganje...' }: LoadingStateProps) {
 }
 
 export default LoadingState
+

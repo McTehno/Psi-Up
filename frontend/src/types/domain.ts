@@ -1,4 +1,4 @@
-export interface Module {
+﻿export interface Module {
   id: string;
   order: number;
   title: string;
@@ -20,3 +20,5 @@ export type SearchResult = {
 	shortDescription?: string | null
 	keywords: string[]
 }
+
+

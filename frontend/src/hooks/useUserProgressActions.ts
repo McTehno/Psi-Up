@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
 import type { UserProgressResponse } from '../types/user-progress'
 
-import { useAuth } from '../features/auth/contexts/AuthContext'
+import { useAuth } from '../features/auth/hooks/useAuth'
 import {
     isContentCompleted,
     isContentFavorite,
@@ -150,3 +150,4 @@ export function useUserProgressActions({
         toggleAction,
     }
 }
+

@@ -1,4 +1,4 @@
-import { digcompAreas } from '../constants'
+﻿import { digcompAreas } from '../constants'
 
 type MobileDigCompVisualProps = {
 	activeIndex: number
@@ -19,7 +19,7 @@ function MobileDigCompVisual({
 				</p>
 
 				<p className="mt-2 text-sm leading-6 text-[#706b60]">
-					Pet področij digitalnih kompetenc, ki pomagajo določiti tvojo učno
+					Pet podroÄŤij digitalnih kompetenc, ki pomagajo doloÄŤiti tvojo uÄŤno
 					pot.
 				</p>
 			</div>
@@ -99,3 +99,4 @@ function MobileDigCompVisual({
 }
 
 export default MobileDigCompVisual
+

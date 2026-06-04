@@ -251,9 +251,9 @@ function ModuleDetailPage() {
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
   const learningUnitCount = Math.max(
-  learningUnitReferences.length,
-  learningUnitDetails.length,
-)
+    learningUnitReferences.length,
+    learningUnitDetails.length,
+  )
 
   const shouldUseInlineAssistant = learningUnitCount === 1
 
@@ -381,7 +381,7 @@ function ModuleDetailPage() {
       <div className="relative">
         <div className="relative mb-8">
           <div className={appStyles.header.step}>
-            <div className={appStyles.header.stepIcon}>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
               <Circle className="h-5 w-5" />
             </div>
             Modul

@@ -28,6 +28,9 @@ export type LearningPathMountainNode = {
   parallelGroup?: string | null
   assessmentStatus?: AssessmentStatus | null
   isAssessmentPosition?: boolean
+
+  nodeType?: 'module' | 'learning_unit'
+  detailPath?: string
 }
 
 type PositionedMountainNode = LearningPathMountainNode & {
@@ -567,21 +570,39 @@ function ModuleDetailBox({
   className?: string
   style?: CSSProperties
 }) {
+  const isLearningUnit = node.nodeType === 'learning_unit'
+
+  const kindLabel = isLearningUnit ? 'Učna enota' : 'Modul'
+
+  const descriptionFallback = isLearningUnit
+    ? 'Opis učne enote še ni dodan.'
+    : 'Opis modula še ni dodan.'
+
+  const detailsLabel = isLearningUnit
+    ? 'Podrobnosti učne enote'
+    : 'Podrobnosti modula'
+
+  const detailPath =
+    node.detailPath ??
+    (isLearningUnit
+      ? `/learning-units/${node.moduleId}`
+      : `/modules/${node.moduleId}`)
+
   return (
     <article
       className={[
-        'rounded-[1.5rem] border border-[#DED2BC] bg-white/95 p-5 shadow-xl backdrop-blur',
+        'rounded-[28px] border border-[#DED2BC] bg-[#fffdf8] p-6 shadow-[0_18px_45px_rgba(49,88,59,0.13)]',
         className,
       ].join(' ')}
       style={style}
     >
-      <div className="mb-3 flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#6F7F58]">
-            Modul {node.displayLabel}
+          <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--color-brown-500)]">
+            {kindLabel} {node.displayLabel}
           </p>
 
-          <h3 className="mt-2 font-serif text-2xl leading-tight text-[#283618]">
+          <h3 className="mt-3 font-serif text-3xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
             {node.title}
           </h3>
         </div>
@@ -589,46 +610,46 @@ function ModuleDetailBox({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#eadfce] bg-white text-[#283618] transition hover:bg-[#F7F1E6]"
-          aria-label="Zapri podrobnosti modula"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
+          aria-label="Zapri podrobnosti"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
       </div>
 
-      <p className="text-sm leading-6 text-[#6b6258]">
-        {node.description || 'Opis modula še ni dodan.'}
+      <p className="mt-5 text-base leading-7 text-[var(--color-brown-600)]">
+        {node.description || descriptionFallback}
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="rounded-full bg-[#F7F1E6] px-3 py-1.5 text-xs font-bold text-[#344E41]">
+      <div className="mt-6 flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
           {formatModuleDuration(node.durationHours)}
         </span>
 
         {node.parallelCount > 1 && (
-          <span className="rounded-full bg-[#F7F1E6] px-3 py-1.5 text-xs font-bold text-[#344E41]">
-            Vzporedni modul
+          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
+            {isLearningUnit ? 'Vzporedna učna enota' : 'Vzporedni modul'}
           </span>
         )}
 
         {node.isRequired && (
-          <span className="rounded-full bg-[#F7F1E6] px-3 py-1.5 text-xs font-bold text-[#344E41]">
-            Obvezen modul
+          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
+            {isLearningUnit ? 'Obvezna učna enota' : 'Obvezen modul'}
           </span>
         )}
 
         {node.parallelGroup && (
-          <span className="rounded-full bg-[#F7F1E6] px-3 py-1.5 text-xs font-bold text-[#344E41]">
+          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
             Skupina {node.parallelGroup}
           </span>
         )}
       </div>
 
       <Link
-        to={`/modules/${node.moduleId}`}
-        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#344E41] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#283618]"
+        to={detailPath}
+        className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#31583b] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
       >
-        Podrobnosti modula
+        {detailsLabel}
         <ArrowRight className="h-4 w-4" />
       </Link>
     </article>
@@ -1046,7 +1067,9 @@ function renderPathSegments(segments: PathSegment[], className: string) {
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={`Odpri podrobnosti modula ${node.title}`}
+            aria-label={`Odpri podrobnosti ${
+              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+            } ${node.title}`}
           >
             {node.displayLabel}
           </button>
@@ -1143,7 +1166,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
 
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
-        Klikni modul
+        Klikni modul/ učno enoto
       </div>
 
       {renderPathSegments(desktopAllPathSegments, 'hidden min-[1500px]:block')}

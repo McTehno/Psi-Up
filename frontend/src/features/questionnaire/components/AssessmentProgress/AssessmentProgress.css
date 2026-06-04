@@ -52,6 +52,37 @@
   transition: width 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+.assessment-progress__question-segments {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.assessment-progress__question-segment {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: transparent;
+  transition:
+    background-color 220ms ease,
+    width 260ms ease,
+    left 260ms ease;
+}
+
+.assessment-progress__question-segment--completed {
+  background: linear-gradient(90deg, #8fa36f 0%, #6f8b5f 100%);
+}
+
+.assessment-progress__question-segment--rejected {
+  background: linear-gradient(90deg, #c85f5f 0%, #a83f3f 100%);
+}
+
+.assessment-progress__question-segment--active,
+.assessment-progress__question-segment--upcoming {
+  background: transparent;
+}
+
 .assessment-progress__question-dots {
   pointer-events: none;
   position: absolute;
@@ -86,6 +117,17 @@
 
 .assessment-progress__question-dot--upcoming {
   background: #d8cbb8;
+}
+
+.assessment-progress__question-dot--rejected {
+  border-color: #f8f5ef;
+  background: #a83f3f;
+}
+
+.assessment-progress__question-dot--active {
+  border-color: #31583b;
+  background: #f8f5ef;
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
 .assessment-progress__steps {
@@ -162,6 +204,15 @@
     0 0 0 4px rgba(217, 164, 95, 0.12);
 }
 
+.assessment-progress__step--rejected .assessment-progress__marker {
+  border-color: #a83f3f;
+  background: #a83f3f;
+  color: #fffdf8;
+  box-shadow:
+    0 10px 22px rgba(168, 63, 63, 0.18),
+    0 0 0 4px rgba(168, 63, 63, 0.12);
+}
+
 .assessment-progress__label {
   max-width: 132px;
   overflow: hidden;
@@ -203,6 +254,12 @@
   border-color: #d9a45f;
   background: #d9a45f;
   box-shadow: 0 0 0 3px rgba(217, 164, 95, 0.12);
+}
+
+.assessment-progress__substep--rejected {
+  border-color: #a83f3f;
+  background: #a83f3f;
+  box-shadow: 0 0 0 3px rgba(168, 63, 63, 0.12);
 }
 
 .assessment-progress__flag {

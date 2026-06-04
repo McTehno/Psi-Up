@@ -219,41 +219,57 @@ function AssessmentProgress({
         </div>
 
         <div className="assessment-progress__steps">
-          {steps.map((step, index) => (
-            <div
-              className={`assessment-progress__step assessment-progress__step--${step.status}`}
-              key={step.id}
-              style={
-                {
-                  left: `${getStepPositionPercent(
-                    step,
-                    index,
-                    steps.length,
-                    safeQuestionCount,
-                    showGoalFlag,
-                  )}%`,
-                } as CSSProperties
-              }
-            >
-              <span className="assessment-progress__marker">
-                {getStepMarker(step, index)}
-              </span>
+          {steps.map((step, index) => {
+            const isLabelBelow = index % 2 === 0
 
-              <span className="assessment-progress__label">{step.title}</span>
-
-              {step.subSteps && step.subSteps.length > 0 && (
-                <span className="assessment-progress__substeps">
-                  {step.subSteps.map((subStep) => (
-                    <span
-                      className={`assessment-progress__substep assessment-progress__substep--${subStep.status}`}
-                      key={subStep.id}
-                      title={subStep.title}
-                    />
-                  ))}
+            return (
+              <div
+                className={`assessment-progress__step assessment-progress__step--${step.status} ${
+                  isLabelBelow
+                    ? 'assessment-progress__step--label-bottom'
+                    : 'assessment-progress__step--label-top'
+                }`}
+                key={step.id}
+                style={
+                  {
+                    left: `${getStepPositionPercent(
+                      step,
+                      index,
+                      steps.length,
+                      safeQuestionCount,
+                      showGoalFlag,
+                    )}%`,
+                  } as CSSProperties
+                }
+              >
+                <span className="assessment-progress__marker">
+                  {getStepMarker(step, index)}
                 </span>
-              )}
-            </div>
-          ))}
+
+                <span
+                  className={`assessment-progress__label ${
+                    isLabelBelow
+                      ? 'assessment-progress__label--bottom'
+                      : 'assessment-progress__label--top'
+                  }`}
+                >
+                  {step.title}
+                </span>
+
+                {step.subSteps && step.subSteps.length > 0 && (
+                  <span className="assessment-progress__substeps">
+                    {step.subSteps.map((subStep) => (
+                      <span
+                        className={`assessment-progress__substep assessment-progress__substep--${subStep.status}`}
+                        key={subStep.id}
+                        title={subStep.title}
+                      />
+                    ))}
+                  </span>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {showGoalFlag && (

@@ -324,3 +324,71 @@
     font-size: 1rem;
   }
 }
+
+.assessment-progress__track {
+  min-height: 108px;
+  padding-top: 26px;
+}
+
+.assessment-progress__line {
+  top: 46px;
+}
+
+.assessment-progress__steps {
+  top: 26px;
+}
+
+.assessment-progress__step {
+  width: 140px;
+  gap: 0;
+}
+
+.assessment-progress__label {
+  position: absolute;
+  left: 50%;
+  width: max-content;
+  max-width: 132px;
+  transform: translateX(-50%);
+}
+
+.assessment-progress__label--bottom {
+  top: 48px;
+}
+
+.assessment-progress__label--top {
+  bottom: 48px;
+}
+
+.assessment-progress__substeps {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.assessment-progress__step--label-top .assessment-progress__substeps {
+  top: 48px;
+}
+
+.assessment-progress__flag {
+  top: 32px;
+}
+
+@media (max-width: 767px) {
+  .assessment-progress__track {
+    min-height: 62px;
+    padding-top: 0;
+  }
+
+  .assessment-progress__line {
+    top: 20px;
+  }
+
+  .assessment-progress__steps {
+    top: 0;
+  }
+
+  .assessment-progress__flag {
+    top: 6px;
+  }
+}

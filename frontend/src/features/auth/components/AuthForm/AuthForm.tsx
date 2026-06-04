@@ -5,11 +5,10 @@ type AuthFormProps = {
   isRegister: boolean
   onSubmit: (email: string, password: string, name?: string, rememberMe?: boolean) => void
   onForgotPassword?: () => void
-  error?: string | null
   isLoading?: boolean
 }
 
-export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error, isLoading }: AuthFormProps) {
+export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoading }: AuthFormProps) {
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -31,14 +30,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, error
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      {error && (
-        <p
-          role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
-        >
-          {error}
-        </p>
-      )}
+
       {/* Name Field (Slides down and in) */}
       <div 
         className={`grid transition-[grid-template-rows,opacity] duration-700 ease-in-out ${

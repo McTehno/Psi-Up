@@ -252,7 +252,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const activeNormalizedDetail = activeRef
     ? normalizeDetailContent(
       activeDetail ?? { learning_unit_id: activeRef.learning_unit_id },
-      'Neimenovana uÄŤna enota',
+      'Neimenovana učna enota',
     )
     : null
 
@@ -334,8 +334,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       {numRows === 0 ? (
         <div className="relative z-10 w-full flex justify-center">
           <EmptyState
-            title="Ni uÄŤnih enot"
-            message="Za ta modul trenutno ni uÄŤnih enot."
+            title="Ni učnih enot"
+            message="Za ta modul trenutno ni učnih enot."
           />
         </div>
       ) : (
@@ -372,7 +372,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
             const normalizedDetail = normalizeDetailContent(
               detail ?? { learning_unit_id: ref.learning_unit_id },
-              'Neimenovana uÄŤna enota',
+              'Neimenovana učna enota',
             )
             const isUnitCompleted = safeCompletedUnitIds.includes(ref.learning_unit_id);
             const isNodeActive = isMobile && activeNodeIdx === idx;
@@ -386,7 +386,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
               >
                 {isAssessmentPosition && (
                   <AssessmentPositionMarker
-                    label="Tukaj se nahajaĹˇ"
+                    label="Tukaj se nahajaš"
                     className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
                   />
                 )}
@@ -452,7 +452,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     </div>
                     {normalizedDetail.description && (
                       <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {normalizedDetail.description || 'Opis uÄŤne enote trenutno ni na voljo.'}
+                        {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
                       </p>
                     )}
                     {!ref.is_required && (
@@ -529,7 +529,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 </div>
 
                 <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 pr-6 ${isActiveCompleted ? 'text-[#31583b]' : 'text-[#5c3724]'}`}>
-                  {activeNormalizedDetail?.title ?? 'Neimenovana uÄŤna enota'}
+                  {activeNormalizedDetail?.title ?? 'Neimenovana učna enota'}
                 </h4>
 
                 {activeNormalizedDetail?.description && (

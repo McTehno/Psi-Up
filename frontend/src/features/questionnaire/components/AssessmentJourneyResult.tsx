@@ -174,9 +174,9 @@ function getJourneyPath(points: JourneyPoint[]) {
 }
 
 function getStatusLabel(status: JourneyStepStatus) {
-  if (status === 'skipped') return 'PreskoÄŤeno'
-  if (status === 'current') return 'PriporoÄŤeni zaÄŤetek'
-  if (status === 'recommended') return 'PriporoÄŤeno'
+  if (status === 'skipped') return 'Preskočeno'
+  if (status === 'current') return 'Priporočeni začetek'
+  if (status === 'recommended') return 'Priporočeno'
   return 'Naslednji korak'
 }
 
@@ -269,11 +269,11 @@ function AssessmentJourneyResult({
 
   const startPoint = hasAllKnowledge
     ? 'Ni potreben'
-    : result?.start_learning_unit_id ?? result?.start_module_id ?? 'Ni doloÄŤeno'
+    : result?.start_learning_unit_id ?? result?.start_module_id ?? 'Ni določeno'
 
   const skippedLearningUnitCount = result?.skipped_learning_units.length ?? 0
 
-  const resultMetaLabel = hasAllKnowledge ? 'Rezultat' : 'PreskoÄŤeno'
+  const resultMetaLabel = hasAllKnowledge ? 'Rezultat' : 'Preskočeno'
   const resultMetaValue = hasAllKnowledge
     ? 'Vse potrebno znanje Ĺľe imate'
     : `${skippedLearningUnitCount} vsebin`
@@ -281,7 +281,7 @@ function AssessmentJourneyResult({
   if (!moduleDetail || steps.length === 0 || !selectedStep) {
     return (
       <div className="assessment-journey">
-        <p>Podrobnosti priporoÄŤene uÄŤne poti niso na voljo.</p>
+        <p>Podrobnosti priporočene učne poti niso na voljo.</p>
       </div>
     )
   }
@@ -289,17 +289,17 @@ function AssessmentJourneyResult({
   return (
     <div className="assessment-journey">
       <div className="assessment-journey__eyebrow">
-        PriporoÄŤena uÄŤna pot Â· {title}
+        Priporočena učna pot Â· {title}
       </div>
 
       <p className="assessment-journey__description">
-        Na podlagi vaĹˇih odgovorov smo doloÄŤili, katere uÄŤne enote lahko
-        preskoÄŤite in kje je najbolj smiselno nadaljevati.
+        Na podlagi vaših odgovorov smo določili, katere učne enote lahko
+        preskočite in kje je najbolj smiselno nadaljevati.
       </p>
 
       <div className="assessment-journey__stats">
         <div>
-          <span>ZaÄŤetek</span>
+          <span>Začetek</span>
           <strong>{startPoint}</strong>
         </div>
 
@@ -310,7 +310,7 @@ function AssessmentJourneyResult({
 
         <div>
           <span>Trajanje modula</span>
-          <strong>{formatDuration(moduleDetail.duration_hours) ?? 'Ni doloÄŤeno'}</strong>
+          <strong>{formatDuration(moduleDetail.duration_hours) ?? 'Ni določeno'}</strong>
         </div>
       </div>
 

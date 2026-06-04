@@ -41,14 +41,14 @@ export type LearningPathResponse = {
   keywords: string[]
 
   /**
-   * Novi oziroma bolj generiÄŤen naÄŤin prikaza poti.
-   * Tukaj so lahko moduli ali uÄŤne enote.
+   * Novi oziroma bolj generičen način prikaza poti.
+   * Tukaj so lahko moduli ali učne enote.
    */
   steps?: LearningPathStepResponse[]
 
   /**
    * Backward compatibility.
-   * ÄŚe katera druga stran Ĺˇe vedno uporablja modules, je ne zlomimo.
+   * ÄŚe katera druga stran še vedno uporablja modules, je ne zlomimo.
    */
   modules?: LearningPathModuleReference[]
 }

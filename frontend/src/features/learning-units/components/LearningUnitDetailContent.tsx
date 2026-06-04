@@ -15,20 +15,20 @@ import type { AssessmentResultResponse } from '../../../types/assessment'
 import { getArrayOrEmpty, getTextOrFallback } from '../../../utils/display'
 
 /**
- * LearningUnitDetailContent prikazuje vsebinski pregled uÄŤne enote.
+ * LearningUnitDetailContent prikazuje vsebinski pregled učne enote.
  *
  * Namen komponente:
  * - prikaz vsebinskih sklopov
  * - prikaz pridobljenih kompetenc
  * - prikaz DigComp kompetenc
  * - prikaz predznanja
- * - oznaÄŤevanje vsebinskih sklopov glede na rezultat samoocene
+ * - označevanje vsebinskih sklopov glede na rezultat samoocene
  *
  * Zakaj uporabljamo varne helperje:
- * Backend lahko vrne manjkajoÄŤe, null ali delno nepopolne podatke.
+ * Backend lahko vrne manjkajoče, null ali delno nepopolne podatke.
  * Zato sezname najprej pretvorimo v varne array-e, preden uporabimo .map().
  *
- * S tem prepreÄŤimo napake, kot so:
+ * S tem preprečimo napake, kot so:
  * Cannot read properties of undefined
  * Cannot read properties of null
  */
@@ -98,7 +98,7 @@ const menuItems: MenuItem[] = [
  * - known_topics
  * - missing_topics
  *
- * ÄŚe backend poĹˇlje null, undefined ali ne-string vrednosti,
+ * ÄŚe backend pošlje null, undefined ali ne-string vrednosti,
  * jih ne prikaĹľemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
@@ -112,9 +112,9 @@ function getStringArrayOrEmpty(value: unknown): string[] {
  * Normalizira DigComp kompetence.
  *
  * Namen:
- * - prepreÄŤiti crash, ÄŤe digcomp_competencies manjka
+ * - preprečiti crash, če digcomp_competencies manjka
  * - zagotoviti fallback za code, title ali description
- * - preskoÄŤiti elemente, ki niso objekti
+ * - preskočiti elemente, ki niso objekti
  */
 function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
 	return getArrayOrEmpty(value as Record<string, unknown>[])
@@ -143,9 +143,9 @@ function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
  * 	
  * 	
  *Namen:
- * - prepreÄŤiti crash, ÄŤe content_topics manjka
+ * - preprečiti crash, če content_topics manjka
  * - zagotoviti fallback za id in title
- * - preskoÄŤiti elemente, ki niso objekti
+ * - preskočiti elemente, ki niso objekti
  */
 
 function getSafeContentTopics(value: unknown): SafeContentTopic[] {
@@ -172,10 +172,10 @@ function getSafeContentTopics(value: unknown): SafeContentTopic[] {
 
 
 /**
- * Vrne mehke barve za DigComp podroÄŤje glede na prvo Ĺˇtevilko kode.
+ * Vrne mehke barve za DigComp področje glede na prvo številko kode.
  *
  * Primer:
- * 3.2 â†’ podroÄŤje 3
+ * 3.2 â†’ področje 3
  */
 function getDigCompSoftColor(code: string) {
 	const area = code.trim().match(/^(\d)\./)?.[1]
@@ -222,7 +222,7 @@ function getDigCompSoftColor(code: string) {
 }
 
 /**
- * DoloÄŤi status vsebinskega sklopa glede na rezultat samoocene.
+ * Določi status vsebinskega sklopa glede na rezultat samoocene.
  */
 function getTopicAssessmentStatus(
 	topic: string,
@@ -253,7 +253,7 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 			row: 'border border-[#a8d2ad] bg-[#edf7ec]',
 			circle: 'border-[#8fbe96] bg-white text-[#31583b]',
 			text: 'text-[#31583b]',
-			description: 'To podroÄŤje Ĺľe dobro poznate.',
+			description: 'To področje Ĺľe dobro poznate.',
 		}
 	}
 
@@ -262,7 +262,7 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 			row: 'border border-[#e3aaa4] bg-[#fff0ee]',
 			circle: 'border-[#d58e86] bg-white text-[#8a3f36]',
 			text: 'text-[#111111]',
-			description: 'NajveÄŤji fokus za utrditev.',
+			description: 'Največji fokus za utrditev.',
 		}
 	}
 
@@ -271,7 +271,7 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 			row: 'border border-[#e3aaa4] bg-[#fff0ee]',
 			circle: 'border-[#d58e86] bg-white text-[#8a3f36]',
 			text: 'text-[#111111]',
-			description: 'To podroÄŤje je dobro Ĺˇe utrditi.',
+			description: 'To področje je dobro še utrditi.',
 		}
 	}
 
@@ -299,7 +299,7 @@ function LearningUnitDetailContent({
 	 * Varni podatki za prikaz.
 	 *
 	 * Ti array-i se uporabljajo namesto direktnega dostopa do backend polj.
-	 * Tako komponenta ne pade, ÄŤe backend vrne null ali manjkajoÄŤe polje.
+	 * Tako komponenta ne pade, če backend vrne null ali manjkajoče polje.
 	 */
 	const contentTopics = getSafeContentTopics(learningUnit.content_topics)
 	const acquiredCompetencies = getStringArrayOrEmpty(
@@ -375,7 +375,7 @@ function LearningUnitDetailContent({
 						icon: BookOpen,
 						title: 'Vsebinski sklopi',
 						description:
-							'Pregled kljuÄŤnih vsebinskih tem, ki jih boste spoznali v tej uÄŤni enoti.',
+							'Pregled ključnih vsebinskih tem, ki jih boste spoznali v tej učni enoti.',
 					})}
 
 				<div className="max-w-[820px]">
@@ -440,7 +440,7 @@ function LearningUnitDetailContent({
 						})
 					) : (
 						<p className={appStyles.text.body}>
-							Vsebinski sklopi za to uÄŤno enoto trenutno niso doloÄŤeni.
+							Vsebinski sklopi za to učno enoto trenutno niso določeni.
 						</p>
 					)}
 				</div>
@@ -455,7 +455,7 @@ function LearningUnitDetailContent({
 					renderSectionHeader({
 						icon: Star,
 						title: 'Pridobljene kompetence',
-						description: 'Kaj bo uporabnik znal po zakljuÄŤku uÄŤne enote.',
+						description: 'Kaj bo uporabnik znal po zaključku učne enote.',
 					})}
 
 				{acquiredCompetencies.length > 0 ? (
@@ -474,7 +474,7 @@ function LearningUnitDetailContent({
 					</ul>
 				) : (
 					<p className={appStyles.text.body}>
-						Pridobljene kompetence za to uÄŤno enoto trenutno niso doloÄŤene.
+						Pridobljene kompetence za to učno enoto trenutno niso določene.
 					</p>
 				)}
 			</div>
@@ -489,7 +489,7 @@ function LearningUnitDetailContent({
 						icon: Monitor,
 						title: 'DigComp kompetence',
 						description:
-							'Ta uÄŤna enota prispeva k razvoju izbranih digitalnih kompetenc.',
+							'Ta učna enota prispeva k razvoju izbranih digitalnih kompetenc.',
 					})}
 
 				{digCompCompetencies.length > 0 ? (
@@ -525,7 +525,7 @@ function LearningUnitDetailContent({
 					</div>
 				) : (
 					<p className={appStyles.text.body}>
-						DigComp kompetence za to uÄŤno enoto trenutno niso doloÄŤene.
+						DigComp kompetence za to učno enoto trenutno niso določene.
 					</p>
 				)}
 			</div>
@@ -539,7 +539,7 @@ function LearningUnitDetailContent({
 					renderSectionHeader({
 						icon: GraduationCap,
 						title: 'Predznanje',
-						description: 'PriporoÄŤeni pogoji za vkljuÄŤitev.',
+						description: 'Priporočeni pogoji za vključitev.',
 					})}
 
 				{prerequisites.length > 0 ? (
@@ -555,7 +555,7 @@ function LearningUnitDetailContent({
 					</ul>
 				) : (
 					<p className={appStyles.text.body}>
-						Za to uÄŤno enoto ni predpogojev.
+						Za to učno enoto ni predpogojev.
 					</p>
 				)}
 			</div>
@@ -658,7 +658,7 @@ function LearningUnitDetailContent({
 		<section className="lg:overflow-hidden lg:rounded-[16px] lg:border lg:border-[#eadfce] lg:bg-[#fffdf8] lg:p-0 lg:shadow-[0_10px_30px_rgba(57,47,35,0.05)]">
 			<div className="hidden border-b border-[#eadfce] px-4 py-5 sm:px-6 sm:py-6 lg:block">
 				<h2 className="font-serif text-2xl text-[#111111] sm:text-3xl">
-					Pregled uÄŤne enote
+					Pregled učne enote
 				</h2>
 			</div>
 

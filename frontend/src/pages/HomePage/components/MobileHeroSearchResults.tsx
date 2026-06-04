@@ -35,9 +35,9 @@ function MobileHeroSearchResults({
     }
 
     function getResultLabel(type: SearchResult['type']) {
-        if (type === 'learning_path') return 'UÄŤna pot'
+        if (type === 'learning_path') return 'Učna pot'
         if (type === 'module') return 'Modul'
-        return 'UÄŤna enota'
+        return 'Učna enota'
     }
 
     function renderIcon(result: SearchResult) {
@@ -91,7 +91,7 @@ function MobileHeroSearchResults({
                                     >
                                         <CircleIcon className="h-4 w-4 text-[#31583b]" />
                                     </motion.div>
-                                    IĹˇÄŤem...
+                                    Iščem...
                                 </div>
                             </motion.div>
                         ) : (

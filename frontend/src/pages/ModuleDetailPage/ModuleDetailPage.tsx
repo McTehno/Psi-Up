@@ -40,13 +40,13 @@ import { normalizeDetailContent } from '../../utils/normalizers/detail-normalize
  * Namen strani:
  * - naloĹľiti modul iz backend-a
  * - prikazati osnovne podatke modula
- * - prikazati kljuÄŤne besede in domene
- * - prikazati uÄŤne enote znotraj modula prek LearningUnitVisualizer
- * - omogoÄŤiti zaÄŤetek vpraĹˇalnika, ÄŤe ima modul povezane uÄŤne enote
- * - prikazati uporabniĹˇke akcije: shrani, priljubljeno, zakljuÄŤeno
+ * - prikazati ključne besede in domene
+ * - prikazati učne enote znotraj modula prek LearningUnitVisualizer
+ * - omogočiti začetek vprašalnika, če ima modul povezane učne enote
+ * - prikazati uporabniške akcije: shrani, priljubljeno, zaključeno
  *
  * Zakaj uporabljamo normalizerje in varne helperje:
- * Backend lahko vrne manjkajoÄŤa, prazna ali delno nepopolna polja.
+ * Backend lahko vrne manjkajoča, prazna ali delno nepopolna polja.
  * Zato podatke pred prikazom pretvorimo v stabilno obliko, da UI ne pade.
  */
 
@@ -54,11 +54,11 @@ import { normalizeDetailContent } from '../../utils/normalizers/detail-normalize
  * Oblikuje trajanje modula za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * ÄŚe trajanje manjka, prikaĹľemo "Ni doloÄŤeno".
+ * ÄŚe trajanje manjka, prikaĹľemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
-    return 'Ni doloÄŤeno'
+    return 'Ni določeno'
   }
 
   const formattedDuration = String(durationHours).replace('.', ',')
@@ -88,7 +88,7 @@ function formatDuration(durationHours?: number | null) {
  * Uporaba:
  * - domains
  *
- * ÄŚe backend poĹˇlje null, undefined ali napaÄŤne elemente,
+ * ÄŚe backend pošlje null, undefined ali napačne elemente,
  * jih ne prikaĹľemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
@@ -101,24 +101,24 @@ function getStringArrayOrEmpty(value: unknown): string[] {
 /**
  * Oblikuje domene za prikaz v compact meta podatkih.
  *
- * ÄŚe domen ni, prikaĹľemo "Ni doloÄŤeno".
+ * ÄŚe domen ni, prikaĹľemo "Ni določeno".
  */
 function formatDomains(domains: unknown) {
   const safeDomains = getStringArrayOrEmpty(domains)
 
   if (safeDomains.length === 0) {
-    return 'Ni doloÄŤeno'
+    return 'Ni določeno'
   }
 
   return safeDomains.join(', ')
 }
 
 /**
- * Preveri, ali ima modul vsebino, iz katere je smiselno odpreti vpraĹˇalnik.
+ * Preveri, ali ima modul vsebino, iz katere je smiselno odpreti vprašalnik.
  *
- * Modul trenutno nima svojega seznama vpraĹˇanj v istem smislu kot uÄŤna enota.
- * VpraĹˇalnik za modul se obiÄŤajno generira iz povezanih uÄŤnih enot.
- * Zato gumb prikaĹľemo samo, ÄŤe ima modul vsaj eno uÄŤno enoto ali detail uÄŤno enoto.
+ * Modul trenutno nima svojega seznama vprašanj v istem smislu kot učna enota.
+ * Vprašalnik za modul se običajno generira iz povezanih učnih enot.
+ * Zato gumb prikaĹľemo samo, če ima modul vsaj eno učno enoto ali detail učno enoto.
  */
 function hasQuestionnaireContent(
   learningUnitReferences: unknown[],
@@ -335,7 +335,7 @@ function ModuleDetailPage() {
       <DetailPageShell>
         <EmptyState
           title="Modul ni najden"
-          message="Modul, ki ga iĹˇÄŤete, ne obstaja ali pa je bil izbrisan."
+          message="Modul, ki ga iščete, ne obstaja ali pa je bil izbrisan."
         />
       </DetailPageShell>
     )
@@ -354,7 +354,7 @@ function ModuleDetailPage() {
       durationHours: learningPath.duration_hours,
       keywords: learningPath.keywords,
       href: `/learning-paths/${learningPath._id}`,
-      typeLabel: 'UÄŤna pot',
+      typeLabel: 'Učna pot',
     }),
   )
 
@@ -432,14 +432,14 @@ function ModuleDetailPage() {
           <div className="mt-6">
             <DetailTags
               tags={detail.keywords}
-              emptyMessage="Ni dodanih kljuÄŤnih besed."
+              emptyMessage="Ni dodanih ključnih besed."
             />
           </div>
         </DetailHero>
 
         <DetailSection
-          title="UÄŤne enote"
-          description="Vizualizacija poteka uÄŤnih enot znotraj modula."
+          title="Učne enote"
+          description="Vizualizacija poteka učnih enot znotraj modula."
         >
           <div className="relative">
             <LearningUnitVisualizer
@@ -479,9 +479,9 @@ function ModuleDetailPage() {
         </DetailSection>
 
         <DetailRecommendationCarousel
-          eyebrow="Povezane uÄŤne poti"
-          title="UÄŤne poti, ki vkljuÄŤujejo ta modul"
-          description="Ta modul je del spodnjih uÄŤnih poti. Odpri uÄŤno pot, ÄŤe ĹľeliĹˇ videti ĹˇirĹˇi uÄŤni kontekst, zaporedje modulov in priporoÄŤeno smer uÄŤenja."
+          eyebrow="Povezane učne poti"
+          title="Učne poti, ki vključujejo ta modul"
+          description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če Ĺľeliš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
           items={recommendedLearningPathItems}
         />
 
@@ -501,7 +501,7 @@ function ModuleDetailPage() {
               {canStartQuestionnaire ? (
                 <>
                   <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                    VpraĹˇalnik za samooceno se odpre v loÄŤenem oknu. Vzemite si
+                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
                     nekaj minut in preverite svoje znanje.
                   </p>
 
@@ -510,13 +510,13 @@ function ModuleDetailPage() {
                     onClick={handleStartQuestionnaire}
                     className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
                   >
-                    Odpri vpraĹˇalnik
+                    Odpri vprašalnik
                     <ExternalLink className="h-4 w-4" />
                   </button>
                 </>
               ) : (
                 <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                  VpraĹˇalnik za ta modul Ĺˇe ni pripravljen.
+                  Vprašalnik za ta modul še ni pripravljen.
                 </p>
               )}
             </div>
@@ -525,7 +525,7 @@ function ModuleDetailPage() {
               <div className="flex h-[190px] w-[240px] items-center justify-center">
                 <img
                   src={questionnaireIllustration}
-                  alt="Ilustracija vpraĹˇalnika"
+                  alt="Ilustracija vprašalnika"
                   className="max-h-full max-w-full object-contain"
                 />
               </div>

@@ -30,7 +30,7 @@ export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps)
             id="register-name"
             name="name"
             type="text"
-            placeholder="VaĹˇe ime"
+            placeholder="Vaše ime"
             required
             className="w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none focus:bg-[#fffdf8]/80 focus:border-[#31583b] transition-all duration-300"
           />
@@ -39,7 +39,7 @@ export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps)
 
       <div className="space-y-1.5">
         <label htmlFor="register-email" className="block text-sm font-semibold text-[#2C2417]">
-          E-poĹˇtni naslov
+          E-poštni naslov
         </label>
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#31583b]" />
@@ -47,7 +47,7 @@ export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps)
             id="register-email"
             name="email"
             type="email"
-            placeholder="Vnesite e-poĹˇtni naslov"
+            placeholder="Vnesite e-poštni naslov"
             required
             className="w-full bg-[#fffdf8]/50 border border-[#ded5c6] text-[#2C2417] placeholder-[#706b60] rounded-xl px-11 py-3 text-sm outline-none focus:bg-[#fffdf8]/80 focus:border-[#31583b] transition-all duration-300"
           />
@@ -77,7 +77,7 @@ export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps)
         disabled={isLoading}
         className="w-full bg-[#31583b] text-white text-sm font-semibold rounded-xl py-3.5 mt-4 hover:bg-[#2f4a31] active:scale-[0.98] transition-all duration-300 shadow-md shadow-[#31583b]/20 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Registracija...' : 'Ustvari raÄŤun'}
+        {isLoading ? 'Registracija...' : 'Ustvari račun'}
       </button>
     </form>
   )

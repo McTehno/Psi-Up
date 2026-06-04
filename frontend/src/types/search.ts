@@ -3,7 +3,7 @@
 /**
  * Request za search.
  *
- * Pri trenutnem backend endpointu se query in types poĹˇiljata kot query parametra,
+ * Pri trenutnem backend endpointu se query in types pošiljata kot query parametra,
  * ampak tip ostane uporaben za frontend state in filtre.
  */
 export type SearchRequest = {
@@ -12,7 +12,7 @@ export type SearchRequest = {
 }
 
 /**
- * Search rezultat iz starejĹˇe/natanÄŤnejĹˇe backend sheme.
+ * Search rezultat iz starejše/natančnejše backend sheme.
  *
  * Uporablja short_description.
  */
@@ -25,7 +25,7 @@ export type SearchResultResponse = {
 }
 
 /**
- * Search rezultat iz novejĹˇe normalizirane backend sheme.
+ * Search rezultat iz novejše normalizirane backend sheme.
  *
  * Uporablja description namesto short_description.
  */
@@ -40,9 +40,9 @@ export type SearchResult = {
 /**
  * Response za search endpoint.
  *
- * Backend naj bi idealno vraÄŤal query, types in results.
+ * Backend naj bi idealno vračal query, types in results.
  * Ker pa trenutna backend shema spodaj povozi prvo SearchResponse definicijo,
- * sta query in types tukaj oznaÄŤena kot optional.
+ * sta query in types tukaj označena kot optional.
  */
 export type SearchResponse = {
 	query?: string

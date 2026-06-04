@@ -1,17 +1,17 @@
 ﻿/**
- * GeneriÄŤni tipi za prikaz povezanih vsebin v detail straneh.
+ * Generični tipi za prikaz povezanih vsebin v detail straneh.
  *
  * Namen tega fila:
- * - omogoÄŤiti, da frontend ne razmiĹˇlja veÄŤ samo v strukturi:
+ * - omogočiti, da frontend ne razmišlja več samo v strukturi:
  *
  *   Learning path -> Module -> Learning unit
  *
- * - ampak lahko prikaĹľe razliÄŤne vrste vozliĹˇÄŤ z isto komponento
+ * - ampak lahko prikaĹľe različne vrste vozlišč z isto komponento
  *
  * Primer:
- * - uÄŤna pot lahko vsebuje module
- * - modul lahko vsebuje uÄŤne enote
- * - uÄŤna pot lahko v prihodnosti vsebuje tudi uÄŤno enoto direktno kot vozliĹˇÄŤe
+ * - učna pot lahko vsebuje module
+ * - modul lahko vsebuje učne enote
+ * - učna pot lahko v prihodnosti vsebuje tudi učno enoto direktno kot vozlišče
  *
  * Kje se uporablja:
  * - src/utils/normalizers/detail-normalizers.ts
@@ -26,7 +26,7 @@
  */
 
 /**
- * Tip vsebine, ki jo lahko prikaĹľemo kot vozliĹˇÄŤe v poti.
+ * Tip vsebine, ki jo lahko prikaĹľemo kot vozlišče v poti.
  *
  * Trenutno podpiramo:
  * - learning_path
@@ -42,7 +42,7 @@
 export type RouteNodeType = 'learning_path' | 'module' | 'learning_unit'
 
 /**
- * Stabilna frontend oblika za eno vozliĹˇÄŤe v poti.
+ * Stabilna frontend oblika za eno vozlišče v poti.
  *
  * To ni nujno enako kot backend model.
  * To je poenostavljena oblika, ki jo UI zna varno prikazati.
@@ -70,7 +70,7 @@ export type RouteNode = {
 	 * Naslov, ki ga prikaĹľemo uporabniku.
 	 *
 	 * Vedno mora biti string.
-	 * ÄŚe backend ne poĹˇlje naslova, ga normalizer nadomesti s fallback tekstom.
+	 * ÄŚe backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
 	 */
 	title: string
 
@@ -92,7 +92,7 @@ export type RouteNode = {
 	/**
 	 * Trajanje v minutah.
 	 *
-	 * Pustimo tudi to moĹľnost, ÄŤe backend kasneje doda duration_min.
+	 * Pustimo tudi to moĹľnost, če backend kasneje doda duration_min.
 	 */
 	durationMin?: number
 
@@ -110,15 +110,15 @@ export type RouteNode = {
 	 * Primer:
 	 * "excel_advanced_parallel"
 	 *
-	 * Uporabno za prikaz, da sta dva modula ali dve uÄŤni enoti
+	 * Uporabno za prikaz, da sta dva modula ali dve učni enoti
 	 * na isti ravni oziroma se lahko izvajata vzporedno.
 	 */
 	parallelGroup?: string | null
 
 	/**
-	 * Ali je vozliĹˇÄŤe obvezno.
+	 * Ali je vozlišče obvezno.
 	 *
-	 * ÄŚe backend tega ne poĹˇlje, ostane undefined.
+	 * ÄŚe backend tega ne pošlje, ostane undefined.
 	 */
 	isRequired?: boolean
 

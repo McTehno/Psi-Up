@@ -29,7 +29,7 @@ export default function ChangeEmailForm({
     }
 
     if (trimmedEmail === currentEmail) {
-      setErrorMessage('Novi email mora biti drugaÄŤen od trenutnega.')
+      setErrorMessage('Novi email mora biti drugačen od trenutnega.')
       setSuccessMessage('')
       return
     }
@@ -55,7 +55,7 @@ export default function ChangeEmailForm({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Emaila ni bilo mogoÄŤe spremeniti.'
+          : 'Emaila ni bilo mogoče spremeniti.'
       )
     } finally {
       setIsSubmitting(false)
@@ -93,7 +93,7 @@ export default function ChangeEmailForm({
 
       <p className="rounded-2xl border border-[#eadfce]/70 bg-[#faf7f2]/60 px-4 py-3 text-xs leading-5 text-[#8b7c65]">
         Po oddaji bo Supabase poslal potrditveni email. Email v aplikaciji se
-        posodobi Ĺˇele po uspeĹˇni potrditvi.
+        posodobi šele po uspešni potrditvi.
       </p>
 
       {errorMessage && (
@@ -115,7 +115,7 @@ export default function ChangeEmailForm({
           className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
           disabled={isSubmitting}
         >
-          PrekliÄŤi
+          Prekliči
         </button>
 
         <button
@@ -124,7 +124,7 @@ export default function ChangeEmailForm({
           disabled={isSubmitting}
         >
           <Mail className="h-4 w-4" />
-          {isSubmitting ? 'PoĹˇiljanje...' : 'PoĹˇlji zahtevo'}
+          {isSubmitting ? 'Pošiljanje...' : 'Pošlji zahtevo'}
         </button>
       </div>
     </form>

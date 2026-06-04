@@ -39,29 +39,29 @@ import {
 import LearningUnitAssistantBox from '../../features/learning-units/components/LearningUnitAssistantBox'
 
 /**
- * LearningUnitDetailPage prikazuje podrobnosti ene uÄŤne enote.
+ * LearningUnitDetailPage prikazuje podrobnosti ene učne enote.
  *
  * Namen te strani:
- * - naloĹľiti uÄŤno enoto iz backend-a
- * - prikazati osnovne podatke, kljuÄŤne besede in vsebinski del uÄŤne enote
- * - omogoÄŤiti zaÄŤetek vpraĹˇalnika za samooceno, ÄŤe vpraĹˇanja obstajajo
- * - prikazati uporabniĹˇke akcije: shrani, priljubljeno, zakljuÄŤeno
+ * - naloĹľiti učno enoto iz backend-a
+ * - prikazati osnovne podatke, ključne besede in vsebinski del učne enote
+ * - omogočiti začetek vprašalnika za samooceno, če vprašanja obstajajo
+ * - prikazati uporabniške akcije: shrani, priljubljeno, zaključeno
  *
  * Zakaj uporabljamo normalizer:
- * Backend lahko vrne manjkajoÄŤa, null ali dodatna polja.
+ * Backend lahko vrne manjkajoča, null ali dodatna polja.
  * Zato podatke najprej pretvorimo v stabilno frontend obliko z normalizeDetailContent.
  * Tako DetailHero, DetailMeta in DetailTags ne dobijo neurejenih backend vrednosti.
  */
 
 /**
- * Oblikuje trajanje uÄŤne enote za prikaz uporabniku.
+ * Oblikuje trajanje učne enote za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * ÄŚe trajanje manjka, prikaĹľemo "Ni doloÄŤeno".
+ * ÄŚe trajanje manjka, prikaĹľemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
-    return 'Ni doloÄŤeno'
+    return 'Ni določeno'
   }
 
   const formattedDuration = String(durationHours).replace('.', ',')
@@ -108,7 +108,7 @@ function getExtraFieldIcon(label: string) {
     return <Award className="h-5 w-5" />
   }
 
-  if (label === 'NaÄŤin izvedbe') {
+  if (label === 'Način izvedbe') {
     return <MapPinAreaIcon className="h-5 w-5" />
   }
 
@@ -119,9 +119,9 @@ function getExtraFieldIcon(label: string) {
  * Iz dodatnih polj izbere tista, ki jih Ĺľelimo prikazati v sekciji Osnovni podatki.
  *
  * Namen:
- * - osnovni podatki niso veÄŤ direktno vezani na learningUnit.provider itd.
- * - ÄŤe backend poĹˇlje manjkajoÄŤe vrednosti, jih normalizer ne doda
- * - ÄŤe backend kasneje doda novo dovoljeno dodatno polje, ga lahko tu vkljuÄŤimo
+ * - osnovni podatki niso več direktno vezani na learningUnit.provider itd.
+ * - če backend pošlje manjkajoče vrednosti, jih normalizer ne doda
+ * - če backend kasneje doda novo dovoljeno dodatno polje, ga lahko tu vključimo
  */
 function getBasicInfoFields(extraFields: DetailExtraField[]) {
   const allowedLabels = [
@@ -135,16 +135,16 @@ function getBasicInfoFields(extraFields: DetailExtraField[]) {
 }
 
 /**
- * DoloÄŤi Ĺˇtevilo stolpcev za osnovne podatke glede na Ĺˇtevilo prikazanih kartic.
+ * Določi število stolpcev za osnovne podatke glede na število prikazanih kartic.
  *
  * Namen:
- * - ÄŤe manjkajo opcijska polja, kartice ne ostanejo stisnjene v layout za 4 elemente
- * - ÄŤe imamo 1, 2 ali 3 kartice, se razporedijo lepĹˇe
+ * - če manjkajo opcijska polja, kartice ne ostanejo stisnjene v layout za 4 elemente
+ * - če imamo 1, 2 ali 3 kartice, se razporedijo lepše
  * - na mobilnem ostane vedno en stolpec
  *
  * Pomembno:
  * ClassName vrednosti so napisane eksplicitno, ker Tailwind ne zazna varno
- * dinamiÄŤnih classov, kot je `xl:grid-cols-${count}`.
+ * dinamičnih classov, kot je `xl:grid-cols-${count}`.
  */
 function getBasicInfoGridClass(itemCount: number) {
   if (itemCount <= 1) {
@@ -163,11 +163,11 @@ function getBasicInfoGridClass(itemCount: number) {
 }
 
 /**
- * DoloÄŤi loÄŤilne ÄŤrte med karticami v sekciji Osnovni podatki.
+ * Določi ločilne črte med karticami v sekciji Osnovni podatki.
  *
  * Namen:
  * - ohraniti isti vizualni stil kot prej
- * - prepreÄŤiti ÄŤudne borderje, ko imamo manj kot 4 kartice
+ * - preprečiti čudne borderje, ko imamo manj kot 4 kartice
  * - ohraniti lep responsive prikaz
  */
 function getBasicInfoCardBorderClass(index: number, itemCount: number) {
@@ -212,17 +212,17 @@ function getBasicInfoCardBorderClass(index: number, itemCount: number) {
 function getExtraFieldValue(
   extraFields: DetailExtraField[],
   label: string,
-  fallback = 'Ni doloÄŤeno',
+  fallback = 'Ni določeno',
 ) {
   return extraFields.find((field) => field.label === label)?.value ?? fallback
 }
 
 /**
- * Preveri, ali ima uÄŤna enota vpraĹˇanja za samooceno.
+ * Preveri, ali ima učna enota vprašanja za samooceno.
  *
  * Zakaj:
- * Gumb za vpraĹˇalnik naj se ne prikaĹľe, ÄŤe backend ne poĹˇlje vpraĹˇanj
- * ali ÄŤe je seznam vpraĹˇanj prazen.
+ * Gumb za vprašalnik naj se ne prikaĹľe, če backend ne pošlje vprašanj
+ * ali če je seznam vprašanj prazen.
  */
 function hasSelfAssessmentQuestions(learningUnit: LearningUnitResponse) {
   return (
@@ -262,7 +262,7 @@ function LearningUnitDetailPage() {
 
     async function loadLearningUnit() {
       if (!learningUnitId) {
-        setError('ID uÄŤne enote ni podan.')
+        setError('ID učne enote ni podan.')
         setIsLoading(false)
         return
       }
@@ -275,7 +275,7 @@ function LearningUnitDetailPage() {
         setLearningUnit(data)
       } catch (error) {
         console.error(error)
-        setError('Podrobnosti uÄŤne enote ni bilo mogoÄŤe naloĹľiti.')
+        setError('Podrobnosti učne enote ni bilo mogoče naloĹľiti.')
       } finally {
         setIsLoading(false)
       }
@@ -316,7 +316,7 @@ function LearningUnitDetailPage() {
     return (
       <DetailPageShell>
         <DetailSection title="Nalaganje">
-          <p className={appStyles.text.body}>Nalaganje uÄŤne enote ...</p>
+          <p className={appStyles.text.body}>Nalaganje učne enote ...</p>
         </DetailSection>
       </DetailPageShell>
     )
@@ -327,7 +327,7 @@ function LearningUnitDetailPage() {
       <DetailPageShell>
         <DetailSection title="Napaka">
           <p className={appStyles.text.body}>
-            {error ?? 'Podatki za to uÄŤno enoto niso na voljo.'}
+            {error ?? 'Podatki za to učno enoto niso na voljo.'}
           </p>
         </DetailSection>
       </DetailPageShell>
@@ -336,7 +336,7 @@ function LearningUnitDetailPage() {
 
   const detail = normalizeDetailContent(
     learningUnit,
-    'Neimenovana uÄŤna enota',
+    'Neimenovana učna enota',
   )
 
   const learningUnitContentId = learningUnit._id ?? detail.id ?? learningUnitId ?? ''
@@ -361,7 +361,7 @@ function LearningUnitDetailPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff4cc] text-[#c94f3d]">
             <CircleDot className="h-5 w-5" />
           </div>
-          UÄŤna enota
+          Učna enota
         </div>
 
         {canUseContentActions && (
@@ -385,7 +385,7 @@ function LearningUnitDetailPage() {
       </div>
 
       <DetailHero
-        eyebrow="UÄŤna enota"
+        eyebrow="Učna enota"
         title={detail.title}
         description={detail.description}
       >
@@ -399,8 +399,8 @@ function LearningUnitDetailPage() {
                 icon: <Clock className="h-5 w-5" />,
               },
               {
-                label: 'NaÄŤin izvedbe',
-                value: getExtraFieldValue(detail.extraFields, 'NaÄŤin izvedbe'),
+                label: 'Način izvedbe',
+                value: getExtraFieldValue(detail.extraFields, 'Način izvedbe'),
                 icon: <MapPinAreaIcon className="h-5 w-5" />,
               },
               {
@@ -415,7 +415,7 @@ function LearningUnitDetailPage() {
         <div className="mt-6">
           <DetailTags
             tags={detail.keywords}
-            emptyMessage="Ta uÄŤna enota nima dodanih kljuÄŤnih besed."
+            emptyMessage="Ta učna enota nima dodanih ključnih besed."
           />
         </div>
       </DetailHero>
@@ -453,7 +453,7 @@ function LearningUnitDetailPage() {
             ) : (
               <div className="px-5 py-5">
                 <p className="text-sm text-[#706b60]">
-                  Osnovni podatki za to uÄŤno enoto trenutno niso doloÄŤeni.
+                  Osnovni podatki za to učno enoto trenutno niso določeni.
                 </p>
               </div>
             )}
@@ -477,8 +477,8 @@ function LearningUnitDetailPage() {
         </section>
       </div>
       <DetailRecommendationCarousel
-        title="PriporoÄŤeni moduli"
-        description="Moduli, ki vkljuÄŤujejo to uÄŤno enoto in ti lahko pomagajo razumeti ĹˇirĹˇi kontekst vsebine."
+        title="Priporočeni moduli"
+        description="Moduli, ki vključujejo to učno enoto in ti lahko pomagajo razumeti širši kontekst vsebine."
         items={recommendedModuleItems}
       />
       <section className="overflow-hidden rounded-[18px] border border-[#eadfce] bg-[#fff6eb] p-6 shadow-[0_12px_28px_rgba(57,47,35,0.06)]">
@@ -497,7 +497,7 @@ function LearningUnitDetailPage() {
             {canStartQuestionnaire ? (
               <>
                 <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                  VpraĹˇalnik za samooceno se odpre v loÄŤenem oknu. Vzemite si nekaj
+                  Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si nekaj
                   minut in preverite svoje znanje.
                 </p>
 
@@ -506,13 +506,13 @@ function LearningUnitDetailPage() {
                   onClick={handleStartQuestionnaire}
                   className="mt-7 inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#c98a43] bg-[#c98a43] px-6 py-3 text-[16px] font-bold text-white shadow-[0_12px_24px_rgba(201,138,67,0.22)] transition hover:bg-[#b97835]"
                 >
-                  Odpri vpraĹˇalnik
+                  Odpri vprašalnik
                   <ExternalLink className="h-4 w-4" />
                 </button>
               </>
             ) : (
               <p className="max-w-[560px] text-[15px] leading-7 text-[#706b60]">
-                VpraĹˇalnik za to uÄŤno enoto Ĺˇe ni pripravljen.
+                Vprašalnik za to učno enoto še ni pripravljen.
               </p>
             )}
           </div>
@@ -521,7 +521,7 @@ function LearningUnitDetailPage() {
             <div className="flex h-[190px] w-[240px] items-center justify-center">
               <img
                 src={questionnaireIllustration}
-                alt="Ilustracija vpraĹˇalnika"
+                alt="Ilustracija vprašalnika"
                 className="max-h-full max-w-full object-contain"
               />
             </div>

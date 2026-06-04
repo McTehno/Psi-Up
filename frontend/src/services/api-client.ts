@@ -26,7 +26,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 
     const message =
       errorData?.error?.message ||
-      'PriĹˇlo je do napake pri komunikaciji s streĹľnikom.'
+      'Prišlo je do napake pri komunikaciji s streĹľnikom.'
 
     throw new Error(message)
   }

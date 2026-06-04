@@ -73,7 +73,7 @@ function getToneClassNames(isCompactViewport: boolean): Record<AssessmentPositio
 }
 
 function AssessmentPositionMarker({
-  label = 'Tukaj se nahajaĹˇ',
+  label = 'Tukaj se nahajaš',
   tone = 'current',
   className = '',
 }: AssessmentPositionMarkerProps) {

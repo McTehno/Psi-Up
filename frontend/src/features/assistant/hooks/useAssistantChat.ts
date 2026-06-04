@@ -5,7 +5,7 @@ const initialMessage: AssistantMessage = {
   id: 'assistant-welcome',
   role: 'assistant',
   content:
-    'Pozdravljena! Tukaj bom lahko pomagal pri razlagi uÄŤne vsebine, modulov in uÄŤnih poti.',
+    'Pozdravljena! Tukaj bom lahko pomagal pri razlagi učne vsebine, modulov in učnih poti.',
   createdAt: new Date().toISOString(),
 }
 

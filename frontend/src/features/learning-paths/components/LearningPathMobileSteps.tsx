@@ -26,7 +26,7 @@ export function LearningPathMobileSteps({
         </div>
 
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#6F7F58]">
-          UÄŤna pot
+          Učna pot
         </p>
 
         <h1 className="mt-2 text-2xl font-bold leading-tight text-[#283618]">
@@ -92,7 +92,7 @@ export function LearningPathMobileSteps({
 
           <div className="rounded-3xl border border-[#E1D4BF] bg-white p-5 text-center shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8A8F72]">
-              ZakljuÄŤek poti
+              Zaključek poti
             </p>
 
             <p className="mt-1 text-lg font-bold text-[#4B3027]">

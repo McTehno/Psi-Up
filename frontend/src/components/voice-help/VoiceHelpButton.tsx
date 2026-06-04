@@ -47,7 +47,7 @@ export function VoiceHelpButton({
       const message =
         error instanceof Error
           ? error.message
-          : "Glasovne pomoÄŤi trenutno ni mogoÄŤe predvajati.";
+          : "Glasovne pomoči trenutno ni mogoče predvajati.";
 
       setErrorMessage(message);
     } finally {
@@ -64,7 +64,7 @@ export function VoiceHelpButton({
         className="inline-flex items-center gap-2 rounded-xl border border-stone-300 px-5 py-3 text-sm font-medium text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Volume2 size={20} />
-        {isLoading ? "Pripravljam glasovno pomoÄŤ ..." : "Glasovna pomoÄŤ"}
+        {isLoading ? "Pripravljam glasovno pomoč ..." : "Glasovna pomoč"}
       </button>
 
       {errorMessage ? (

@@ -25,33 +25,33 @@ import { searchFilters, focusTags, digcompAreas } from './constants'
 const learningPathCards = [
 	{
 		icon: MapIcon,
-		title: 'Preglej izbrano uÄŤno pot',
-		text: 'Najprej si ogledaĹˇ, kaj pot vkljuÄŤuje: module, uÄŤne enote, kompetence in vsebine, ki te vodijo proti cilju.',
+		title: 'Preglej izbrano učno pot',
+		text: 'Najprej si ogledaš, kaj pot vključuje: module, učne enote, kompetence in vsebine, ki te vodijo proti cilju.',
 	},
 	{
 		icon: TargetIcon,
-		title: 'ZaÄŤni iz svoje pozicije',
-		text: 'Ni treba zaÄŤeti od zaÄŤetka. Pomembno je razumeti, kaj Ĺľe znaĹˇ, kaj Ĺˇe potrebujeĹˇ in kje je tvoj najbolj smiseln naslednji korak.',
+		title: 'Začni iz svoje pozicije',
+		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj Ĺľe znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ]
 
 const positionCards = [
 	{
 		icon: ClipboardListIcon,
-		title: 'Izpolni vpraĹˇalnik',
-		text: 'VpraĹˇanja so povezana z vsebino izbrane uÄŤne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
+		title: 'Izpolni vprašalnik',
+		text: 'Vprašanja so povezana z vsebino izbrane učne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
 	},
 	{
 		icon: CompassIcon,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaĹˇ in katera podroÄŤja je dobro Ĺˇe utrditi, preden nadaljujeĹˇ.',
+		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
 	},
 ]
 
 const flowSteps = [
 	'Izbira poti',
 	'Pregled vsebine',
-	'VpraĹˇalnik',
+	'Vprašalnik',
 	'Tvoja pozicija',
 	'Naslednji korak',
 ]
@@ -130,7 +130,7 @@ function HomePage() {
 								Psi-Up
 							</span>
 							<span className="block text-sm text-[#706b60]">
-								PriporoÄŤilne uÄŤne poti
+								Priporočilne učne poti
 							</span>
 						</span>
 					</a>
@@ -165,7 +165,7 @@ function HomePage() {
 
 								<input
 									type="text"
-									placeholder="Kaj se hoÄŤete nauÄŤiti?"
+									placeholder="Kaj se hočete naučiti?"
 									className="w-full rounded-2xl border border-[#eadfce] bg-[#fffdf8] py-3 pl-12 pr-12 text-sm text-[#111111] shadow-sm transition-all duration-300 placeholder:text-[#706b60] focus:border-[#31583b] focus:outline-none focus:ring-1 focus:ring-[#31583b]"
 									onFocus={() => {
 										setIsSearchActive(true)
@@ -224,7 +224,7 @@ function HomePage() {
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							Psi-Up poveĹľe vpraĹˇalnik, DigComp in uÄŤno pot v eno jasno priporoÄŤilo.
+							Psi-Up poveĹľe vprašalnik, DigComp in učno pot v eno jasno priporočilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">
@@ -240,7 +240,7 @@ function HomePage() {
 								href="#position"
 								className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-[#fff6eb] px-6 py-3 text-sm font-semibold text-[#111111] shadow-sm transition hover:border-[#d07a12]/45 hover:bg-[#fffdf8]"
 							>
-								Kaj upoĹˇteva
+								Kaj upošteva
 							</a>
 						</div>
 
@@ -268,7 +268,7 @@ function HomePage() {
 								<div className="flex flex-col gap-3">
 									{isSearching ? (
 										<div className="flex h-32 animate-pulse items-center justify-center rounded-3xl border border-[#eadfce] bg-white/60 text-[#706b60] backdrop-blur-sm">
-											IĹˇÄŤem...
+											Iščem...
 										</div>
 									) : (
 										<>
@@ -306,10 +306,10 @@ function HomePage() {
 
 																<span className="inline-flex shrink-0 items-center rounded-full bg-[#fff6eb] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[#706b60]">
 																	{result.type === 'learning_path'
-																		? 'UÄŤna pot'
+																		? 'Učna pot'
 																		: result.type === 'module'
 																			? 'Modul'
-																			: 'UÄŤna enota'}
+																			: 'Učna enota'}
 																</span>
 															</div>
 
@@ -472,16 +472,16 @@ function HomePage() {
 					<div className="w-full">
 						<div className="mx-auto max-w-3xl text-center">
 							<p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a12]">
-								ZaÄŤni z zanimanjem
+								Začni z zanimanjem
 							</p>
 
 							<h2 className="mt-4 font-display text-4xl leading-tight tracking-tight text-[#111111] sm:text-5xl">
-								Izberi uÄŤno pot, ki te pritegne.
+								Izberi učno pot, ki te pritegne.
 							</h2>
 
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
-								Ni pomembno, ali zaÄŤneĹˇ z veliko znanja ali samo z radovednostjo.
-								Pomembno je, da vidiĹˇ, kje si zdaj in kateri korak te lahko
+								Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo.
+								Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko
 								najbolj pribliĹľa cilju.
 							</p>
 						</div>
@@ -524,8 +524,8 @@ function HomePage() {
 							</h2>
 
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
-								VpraĹˇalnik ti pomaga povezati trenutno znanje z vsebino poti.
-								Tako laĹľje razumeĹˇ, kaj Ĺľe obvladaĹˇ in kje je prostor za napredek.
+								Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti.
+								Tako laĹľje razumeš, kaj Ĺľe obvladaš in kje je prostor za napredek.
 							</p>
 						</div>
 
@@ -568,9 +568,9 @@ function HomePage() {
 								</h2>
 
 								<p className="mt-5 text-lg leading-8 text-[#706b60]">
-									Ko vidiĹˇ svojo pozicijo, postane pot bolj pregledna. LaĹľje
-									izbereĹˇ naslednjo vsebino, se osredotoÄŤiĹˇ na pomembno in
-									napredujeĹˇ v svojem ritmu.
+									Ko vidiš svojo pozicijo, postane pot bolj pregledna. LaĹľje
+									izbereš naslednjo vsebino, se osredotočiš na pomembno in
+									napreduješ v svojem ritmu.
 								</p>
 							</div>
 

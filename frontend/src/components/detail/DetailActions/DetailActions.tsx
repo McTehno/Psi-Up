@@ -31,8 +31,8 @@ type DetailActionsProps = {
 function DetailActions({
 	contentId,
 	contentType,
-	completedLabel = 'DokonÄŤano',
-	uncompletedLabel = 'OznaÄŤi kot dokonÄŤano',
+	completedLabel = 'Dokončano',
+	uncompletedLabel = 'Označi kot dokončano',
 	initialIsFavorite = false,
 	initialIsSaved = false,
 	initialIsCompleted = false,
@@ -163,7 +163,7 @@ function DetailActions({
 							{isCompleted ? completedLabel : uncompletedLabel}
 						</span>
 						<span className="sm:hidden">
-							{isCompleted ? 'KonÄŤano' : 'DokonÄŤaj'}
+							{isCompleted ? 'Končano' : 'Dokončaj'}
 						</span>
 					</button>
 				</div>

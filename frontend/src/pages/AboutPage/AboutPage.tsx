@@ -6,7 +6,7 @@ const workPackages = [
 	'Razvoj prilagodljivega kurikuluma',
 	'Certificiranje in mikrodokazila',
 	'Spremljanje kakovosti',
-	'VkljuÄŤevanje partnerjev',
+	'Vključevanje partnerjev',
 ]
 
 const AboutPage = () => {
@@ -164,7 +164,7 @@ const AboutPage = () => {
 
 						<p className="mx-auto mt-8 max-w-2xl text-[18px] leading-8 text-[#5f5a52]">
 							NIDiKo razvija modularno zasnovan in prilagodljiv kurikulum za
-							neformalna izobraĹľevanja na podroÄŤju digitalnih kompetenc.
+							neformalna izobraĹľevanja na področju digitalnih kompetenc.
 						</p>
 					</div>
 				</section>
@@ -182,20 +182,20 @@ const AboutPage = () => {
 							</p>
 
 							<p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-[#706b60]">
-								Usmeritev projekta je razvoj uÄŤne strukture, ki se lahko
-								prilagaja razliÄŤnim uporabnikom in njihovemu zaÄŤetnemu znanju.
+								Usmeritev projekta je razvoj učne strukture, ki se lahko
+								prilagaja različnim uporabnikom in njihovemu začetnemu znanju.
 							</p>
 
 							<div className="mx-auto my-8 h-px max-w-xl bg-[#ded5c6]/70" />
 
 							<h2 className="mx-auto max-w-3xl font-serif text-[clamp(30px,4vw,52px)] leading-[1.05] text-[#33442f]">
-								Prilagodljiv kurikulum glede na izhodiĹˇÄŤe uporabnika.
+								Prilagodljiv kurikulum glede na izhodišče uporabnika.
 							</h2>
 
 							<p className="mx-auto mt-5 max-w-3xl text-[16px] leading-7 text-[#5f5a52]">
 								Namen je razviti kurikulum, ki se prilagaja uporabnikom,
-								izvajalcem in razliÄŤnim ravnem znanja. Sistem lahko podpira
-								razliÄŤne cilje uporabnikov ter jim pomaga razumeti, kje zaÄŤeti
+								izvajalcem in različnim ravnem znanja. Sistem lahko podpira
+								različne cilje uporabnikov ter jim pomaga razumeti, kje začeti
 								in kako napredovati.
 							</p>
 						</div>
@@ -215,13 +215,13 @@ const AboutPage = () => {
 							</p>
 
 							<h2 className="mt-5 font-serif text-[clamp(32px,4vw,54px)] leading-[1.04] text-[#33442f]">
-								Digitalne kompetence so kljuÄŤne za sodelovanje v sodobni
+								Digitalne kompetence so ključne za sodelovanje v sodobni
 								druĹľbi.
 							</h2>
 
 							<p className="mt-5 text-[16px] leading-7 text-[#5f5a52]">
-								Med razliÄŤnimi ciljnimi skupinami Ĺˇe vedno nastajajo razlike med
-								priÄŤakovanimi in dejansko doseĹľenimi digitalnimi znanji.
+								Med različnimi ciljnimi skupinami še vedno nastajajo razlike med
+								pričakovanimi in dejansko doseĹľenimi digitalnimi znanji.
 							</p>
 						</div>
 
@@ -237,13 +237,13 @@ const AboutPage = () => {
 								</p>
 
 								<h3 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-[#33442f]">
-									Neenak razvoj znanja in razliÄŤne potrebe uporabnikov.
+									Neenak razvoj znanja in različne potrebe uporabnikov.
 								</h3>
 
 								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
-									Uporabniki imajo razliÄŤne ravni predznanja. MlajĹˇi, starejĹˇi,
-									zaposleni in ljudje z razliÄŤnimi oviranostmi potrebujejo
-									razliÄŤne naÄŤine uÄŤenja ter jasnejĹˇo uÄŤno strukturo.
+									Uporabniki imajo različne ravni predznanja. Mlajši, starejši,
+									zaposleni in ljudje z različnimi oviranostmi potrebujejo
+									različne načine učenja ter jasnejšo učno strukturo.
 								</p>
 							</article>
 
@@ -262,9 +262,9 @@ const AboutPage = () => {
 								</h3>
 
 								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
-									Projekt naslavlja podroÄŤje, kjer so pomembni preglednost,
-									povezljivost in prilagodljivost. UÄŤne poti, moduli in uÄŤne
-									enote pomagajo uporabniku razumeti veÄŤjo sliko uÄŤenja.
+									Projekt naslavlja področje, kjer so pomembni preglednost,
+									povezljivost in prilagodljivost. Učne poti, moduli in učne
+									enote pomagajo uporabniku razumeti večjo sliko učenja.
 								</p>
 							</article>
 						</div>
@@ -284,13 +284,13 @@ const AboutPage = () => {
 							</p>
 
 							<h2 className="mt-5 font-serif text-[clamp(34px,4vw,58px)] leading-[1.04] text-[#33442f]">
-								Pet korakov od analize do ĹˇirĹˇe uporabe.
+								Pet korakov od analize do širše uporabe.
 							</h2>
 
 							<p className="mt-6 text-[17px] leading-8 text-[#5f5a52]">
 								Projekt je razdeljen na delovne pakete, ki vodijo od analize
 								potreb do razvoja kurikuluma, certificiranja, spremljanja
-								kakovosti in vkljuÄŤevanja partnerjev.
+								kakovosti in vključevanja partnerjev.
 							</p>
 						</div>
 

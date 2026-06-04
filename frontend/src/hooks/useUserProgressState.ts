@@ -48,7 +48,7 @@ export function useUserProgressState({
 				setIsSaved(isContentSaved(progress, contentId, contentType))
 				setIsCompleted(isContentCompleted(progress, contentId, contentType))
 			} catch (error) {
-				console.error('Napaka pri nalaganju uporabniĹˇkega napredka:', error)
+				console.error('Napaka pri nalaganju uporabniškega napredka:', error)
 				setIsFavorite(false)
 				setIsSaved(false)
 				setIsCompleted(false)

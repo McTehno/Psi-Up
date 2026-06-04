@@ -23,9 +23,9 @@ export function SearchFilters({ filters, onChange }: SearchFiltersProps) {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-brown-500">Tip vsebine</h3>
                 <div className="flex flex-col gap-2">
                     {([
-                        { label: 'UÄŤne poti', value: 'learning_path' as SearchContentType },
+                        { label: 'Učne poti', value: 'learning_path' as SearchContentType },
                         { label: 'Moduli', value: 'module' as SearchContentType },
-                        { label: 'UÄŤne enote', value: 'learning_unit' as SearchContentType }
+                        { label: 'Učne enote', value: 'learning_unit' as SearchContentType }
                     ] as { label: string; value: SearchContentType }[]).map(option => (
                         <label key={option.value} className="flex items-center gap-3 cursor-pointer group">
                             <input 
@@ -47,7 +47,7 @@ export function SearchFilters({ filters, onChange }: SearchFiltersProps) {
                     onClick={() => onChange({ ...filters, types: [] })}
                     className="mt-4 pt-4 border-t border-sand-200 text-sm font-medium text-forest-700 hover:text-forest-900 transition-colors text-left"
                 >
-                    PoÄŤisti vse filtre
+                    Počisti vse filtre
                 </button>
             )}
         </aside>

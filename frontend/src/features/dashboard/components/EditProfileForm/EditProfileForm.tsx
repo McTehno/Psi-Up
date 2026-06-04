@@ -40,13 +40,13 @@ export default function EditProfileForm({
         name: trimmedName,
       })
 
-      setSuccessMessage('Profil je bil uspeĹˇno posodobljen.')
+      setSuccessMessage('Profil je bil uspešno posodobljen.')
       onProfileUpdated(updatedUser)
     } catch (error) {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Profila ni bilo mogoÄŤe posodobiti.'
+          : 'Profila ni bilo mogoče posodobiti.'
       )
     } finally {
       setIsSubmitting(false)
@@ -92,7 +92,7 @@ export default function EditProfileForm({
           className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
           disabled={isSubmitting}
         >
-          PrekliÄŤi
+          Prekliči
         </button>
 
         <button

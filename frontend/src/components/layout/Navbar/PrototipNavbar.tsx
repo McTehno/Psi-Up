@@ -13,7 +13,7 @@ type NavbarProps = {
 const defaultLinks: NavbarLink[] = [
 	{ label: 'Domov', to: '/' },
 	{ label: 'Iskanje', to: '/search' },
-	{ label: 'VpraĹˇalnik', to: '/assessment' },
+	{ label: 'Vprašalnik', to: '/assessment' },
 ]
 
 function Navbar({ links = defaultLinks }: NavbarProps) {
@@ -41,7 +41,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 							Psi-Up
 						</span>
 						<span className="block text-xs font-medium text-[#706b60]">
-							PriporoÄŤilne uÄŤne poti
+							Priporočilne učne poti
 						</span>
 					</span>
 				</Link>

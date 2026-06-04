@@ -53,7 +53,7 @@ function AssessmentHeader({
           onClick={onVoiceSupportClick}
           disabled={isVoiceSupportDisabled}
         >
-          Glasovna pomoÄŤ
+          Glasovna pomoč
         </button>
       )}
     </header>

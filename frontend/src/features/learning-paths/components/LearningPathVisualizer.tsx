@@ -10,8 +10,8 @@ interface LearningPathVisualizerProps {
 export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ data }) => {
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const modules = Array.isArray(data?.modules) ? data.modules : []
-  const pathTitle = data?.pathTitle?.trim() || 'Neimenovana uÄŤna pot'
-  const targetCompetency = data?.targetCompetency?.trim() || 'Ciljna kompetenca ni doloÄŤena'
+  const pathTitle = data?.pathTitle?.trim() || 'Neimenovana učna pot'
+  const targetCompetency = data?.targetCompetency?.trim() || 'Ciljna kompetenca ni določena'
   const numNodes = modules.length
 
   // MAP CONSTANTS FOR MATHEMATICAL SINE CURVE
@@ -62,7 +62,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           {pathTitle}
         </h2>
         <p className="text-[#64594c] text-lg max-w-2xl leading-relaxed">
-          Sledite oznaÄŤeni poti za usvojitev osnovnih znanj in razumevanje vplivov analize ter strateĹˇkega naÄŤrtovanja. ({targetCompetency})
+          Sledite označeni poti za usvojitev osnovnih znanj in razumevanje vplivov analize ter strateškega načrtovanja. ({targetCompetency})
         </p>
       </div>
       {numNodes === 0 ? (
@@ -72,11 +72,11 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           </div>
 
           <h3 className="font-serif text-2xl font-bold text-[#5c3724]">
-            Moduli Ĺˇe niso dodani
+            Moduli še niso dodani
           </h3>
 
           <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-[#706b60]">
-            Ta uÄŤna pot trenutno Ĺˇe nima povezanih modulov.
+            Ta učna pot trenutno še nima povezanih modulov.
           </p>
         </div>
       ) : (

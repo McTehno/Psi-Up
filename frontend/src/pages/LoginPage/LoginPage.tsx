@@ -29,24 +29,24 @@ export default function LoginPage() {
   // Slovenian translations for common Supabase auth errors, this is unfortunately not an option through supabase :(
   function translateAuthError(msg: string): string {
     const translations: Record<string, string> = {
-      'Invalid login credentials': 'NapaÄŤen e-poĹˇtni naslov ali geslo.',
-      'Email not confirmed': 'E-poĹˇtni naslov Ĺˇe ni potrjen. Preverite svoj nabiralnik.',
-      'User already registered': 'Uporabnik s tem e-poĹˇtnim naslovom Ĺľe obstaja.',
+      'Invalid login credentials': 'Napačen e-poštni naslov ali geslo.',
+      'Email not confirmed': 'E-poštni naslov še ni potrjen. Preverite svoj nabiralnik.',
+      'User already registered': 'Uporabnik s tem e-poštnim naslovom Ĺľe obstaja.',
       'Signup requires a valid password': 'Geslo mora imeti vsaj 6 znakov.',
       'Password should be at least 6 characters': 'Geslo mora imeti vsaj 6 znakov.',
-      'Unable to validate email address: invalid format': 'Neveljaven format e-poĹˇtnega naslova.',
-      'Email rate limit exceeded': 'PreveÄŤ poskusov. PoÄŤakajte nekaj minut in poskusite znova.',
-      'For security purposes, you can only request this after 60 seconds.': 'Iz varnostnih razlogov poÄŤakajte 60 sekund pred ponovnim poskusom.',
+      'Unable to validate email address: invalid format': 'Neveljaven format e-poštnega naslova.',
+      'Email rate limit exceeded': 'Preveč poskusov. Počakajte nekaj minut in poskusite znova.',
+      'For security purposes, you can only request this after 60 seconds.': 'Iz varnostnih razlogov počakajte 60 sekund pred ponovnim poskusom.',
       'Auth session missing!': 'Seja je potekla. Prijavite se znova.',
       'New password should be different from the old password.': 'Novo geslo se mora razlikovati od starega.',
-      'User not found': 'Uporabnik s tem e-poĹˇtnim naslovom ne obstaja.',
+      'User not found': 'Uporabnik s tem e-poštnim naslovom ne obstaja.',
     }
 
     for (const [en, sl] of Object.entries(translations)) {
       if (msg.toLowerCase().includes(en.toLowerCase())) return sl
     }
 
-    return 'PriĹˇlo je do napake. Poskusite znova.'
+    return 'Prišlo je do napake. Poskusite znova.'
   }
 
   // -- Handlers --
@@ -71,7 +71,7 @@ export default function LoginPage() {
         })
         if (error) throw error
 
-        setToastMessage('UspeĹˇno ste se registrirali. Zdaj se lahko prijavite.')
+        setToastMessage('Uspešno ste se registrirali. Zdaj se lahko prijavite.')
         setIsRegister(false)
         return
       } else {
@@ -130,7 +130,7 @@ export default function LoginPage() {
       // currently the variant is hardcoded to "error" in LoginPage.
       // We might need to handle success variant or just show it as error variant 
       // but let's show it. (Actually let's just use setToastMessage for now).
-      setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaĹˇ e-poĹˇtni naslov.')
+      setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.')
       setIsForgotPassword(false)
     } catch (err: unknown) {
     const translated = translateAuthError(err instanceof Error ? err.message : '')
@@ -148,7 +148,7 @@ export default function LoginPage() {
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
       <Toast
         message={toastMessage}
-        variant={toastMessage === 'Povezava za ponastavitev gesla je bila poslana na vaĹˇ e-poĹˇtni naslov.' || toastMessage === 'UspeĹˇno ste se registrirali. Zdaj se lahko prijavite.' ? 'success' : 'error'}
+        variant={toastMessage === 'Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.' || toastMessage === 'Uspešno ste se registrirali. Zdaj se lahko prijavite.' ? 'success' : 'error'}
         duration={5000}
         onDismiss={() => setToastMessage(null)}
       />
@@ -189,7 +189,7 @@ export default function LoginPage() {
             {/* Title row with close button inline */}
             <div className="flex items-center justify-between mb-2">
               <h1 className={`font-serif text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
-                {isForgotPassword ? 'Ponastavitev gesla' : isRegister ? 'Ustvarite raÄŤun' : 'DobrodoĹˇli nazaj'}
+                {isForgotPassword ? 'Ponastavitev gesla' : isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
               </h1>
               <button
                 onClick={() => navigate(-1)}
@@ -201,7 +201,7 @@ export default function LoginPage() {
             </div>
 
             <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
-              {isForgotPassword ? 'Vnesite e-poĹˇtni naslov za ponastavitev.' : isRegister ? 'PridruĹľite se in zaÄŤnite svojo uÄŤno pot.' : 'Prijavite se za nadaljevanje.'}
+              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'PridruĹľite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 
             <div className="relative">
@@ -229,7 +229,7 @@ export default function LoginPage() {
                 <GoogleLoginButton onClick={handleGoogleLogin} />
 
                 <AuthFooter
-                  prompt={isRegister ? 'Ĺ˝e imate raÄŤun?' : 'Ĺ e nimate raÄŤuna?'}
+                  prompt={isRegister ? 'Ĺ˝e imate račun?' : 'Ĺ e nimate računa?'}
                   actionLabel={isRegister ? 'Prijava' : 'Registracija'}
                   onAction={toggleMode}
                 />

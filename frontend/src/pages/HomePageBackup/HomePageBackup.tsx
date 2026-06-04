@@ -93,8 +93,8 @@ function HomePageBackup() {
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							NIDiKo poveĹľe vpraĹˇalnik, DigComp in uÄŤno pot v eno jasno
-							priporoÄŤilo.
+							NIDiKo poveĹľe vprašalnik, DigComp in učno pot v eno jasno
+							priporočilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">
@@ -145,9 +145,9 @@ function HomePageBackup() {
 				<div className="relative">
 					<HomeInfoSlide
 						id="how-it-works"
-						label="ZaÄŤni z zanimanjem"
-						title="Izberi uÄŤno pot, ki te pritegne."
-						description="Ni pomembno, ali zaÄŤneĹˇ z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiĹˇ, kje si zdaj in kateri korak te lahko najbolj pribliĹľa cilju."
+						label="Začni z zanimanjem"
+						title="Izberi učno pot, ki te pritegne."
+						description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj pribliĹľa cilju."
 						labelColor="text-[#d07a12]"
 						cards={learningPathCards}
 						cardBackground="bg-[#fffdf8]"
@@ -163,7 +163,7 @@ function HomePageBackup() {
 						id="position"
 						label="Tvoja trenutna pozicija"
 						title="Ugotovi, kje si na izbrani poti."
-						description="VpraĹˇalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako laĹľje razumeĹˇ, kaj Ĺľe obvladaĹˇ in kje je prostor za napredek."
+						description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako laĹľje razumeš, kaj Ĺľe obvladaš in kje je prostor za napredek."
 						labelColor="text-[#31583b]"
 						cards={positionCards}
 						cardBackground="bg-[#fff6eb]"

@@ -59,7 +59,7 @@ function formatDuration(durationHours: number) {
 }
 
 /**
- * Vrne Ĺˇtevilo kartic, ki jih Ĺľelimo prikazati hkrati.
+ * Vrne število kartic, ki jih Ĺľelimo prikazati hkrati.
  *
  * - mobile: 1
  * - tablet: 2
@@ -82,10 +82,10 @@ function getVisibleItemCount() {
 }
 
 /**
- * Grid se prilagodi dejanskemu Ĺˇtevilu prikazanih kartic.
+ * Grid se prilagodi dejanskemu številu prikazanih kartic.
  *
  * ÄŚe imamo na desktopu samo 1 ali 2 povezani vsebini, kartice zavzamejo
- * celotno Ĺˇirino, namesto da ostanejo v gridu za 3 kartice.
+ * celotno širino, namesto da ostanejo v gridu za 3 kartice.
  */
 function getCarouselGridClass(
 	visibleItemCount: number,
@@ -108,14 +108,14 @@ function getCarouselGridClass(
  * Vrne ikono in barve glede na tip povezane vsebine.
  *
  * Usklajeno s SearchResultCard:
- * - uÄŤna pot: forest
+ * - učna pot: forest
  * - modul: blue
- * - uÄŤna enota: amber
+ * - učna enota: amber
  */
 function getTypeIcon(typeLabel?: string) {
-	if (typeLabel === 'UÄŤna pot') {
+	if (typeLabel === 'Učna pot') {
 		return {
-			label: 'UÄŤna pot',
+			label: 'Učna pot',
 			className: 'bg-forest-100 text-forest-700',
 			icon: <Route className="h-6 w-6" />,
 		}
@@ -130,7 +130,7 @@ function getTypeIcon(typeLabel?: string) {
 	}
 
 	return {
-		label: typeLabel || 'UÄŤna enota',
+		label: typeLabel || 'Učna enota',
 		className: 'bg-amber-100 text-amber-700',
 		icon: <CircleDot className="h-6 w-6" />,
 	}
@@ -140,10 +140,10 @@ function getTypeIcon(typeLabel?: string) {
  * Carousel za povezane detail vsebine.
  *
  * Namenjen je ponovni uporabi:
- * - na detail strani uÄŤne enote za povezane module
- * - na detail strani modula za povezane uÄŤne poti
+ * - na detail strani učne enote za povezane module
+ * - na detail strani modula za povezane učne poti
  *
- * ÄŚe ni povezanih vsebin, komponenta ne prikaĹľe niÄŤesar.
+ * ÄŚe ni povezanih vsebin, komponenta ne prikaĹľe ničesar.
  */
 function DetailRecommendationCarousel({
 	eyebrow = 'Povezana vsebina',
@@ -226,7 +226,7 @@ function DetailRecommendationCarousel({
 							type="button"
 							onClick={handlePrevious}
 							disabled={!canGoPrevious}
-							aria-label="PrikaĹľi prejĹˇnje povezane vsebine"
+							aria-label="PrikaĹľi prejšnje povezane vsebine"
 							className="flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce] bg-[#fffdf8] text-[#31583b] shadow-[0_10px_22px_rgba(84,59,33,0.08)] transition hover:bg-[#f8f2e8] disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<ArrowLeft className="h-4 w-4" />

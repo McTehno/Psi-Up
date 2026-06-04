@@ -9,7 +9,7 @@ type DetailTagsProps = {
 
 function DetailTags({
 	tags,
-	emptyMessage = 'Ni dodanih kljuÄŤnih besed.',
+	emptyMessage = 'Ni dodanih ključnih besed.',
 }: DetailTagsProps) {
 	if (tags.length === 0) {
 		return <p className={`text-sm ${appStyles.text.muted}`}>{emptyMessage}</p>

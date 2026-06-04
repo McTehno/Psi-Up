@@ -14,14 +14,14 @@ function AssessmentActions({
   nextLabel = 'Naslednjo â†’',
 }: AssessmentActionsProps) {
   return (
-    <div className="assessment-actions" role="group" aria-label="Navigacija vpraĹˇalnika">
+    <div className="assessment-actions" role="group" aria-label="Navigacija vprašalnika">
       <button
         className="secondary-button"
         type="button"
         onClick={onPrevious}
         disabled={!canGoPrevious}
       >
-        â† PrejĹˇnjo
+        â† Prejšnjo
       </button>
 
       <button

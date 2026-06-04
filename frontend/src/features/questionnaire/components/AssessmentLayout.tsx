@@ -96,7 +96,7 @@ function AssessmentLayout({
                   aria-live="polite"
                 >
                   <span className="assistant-note__section-label">
-                    VaĹˇe vpraĹˇanje
+                    Vaše vprašanje
                   </span>
                   <p className="assistant-note__user-question">
                     {assistantExchange.userMessage}
@@ -119,13 +119,13 @@ function AssessmentLayout({
               {phase === 'questionnaire' && !assistantExchange && (
                 <>
                   <p>
-                    Odgovarjate za podroÄŤje:{' '}
+                    Odgovarjate za področje:{' '}
                     <strong>{selectedGroup?.title}</strong>
                   </p>
 
                   {currentQuestion && (
                     <div className="assistant-competencies">
-                      <h3>Trenutno vpraĹˇanje:</h3>
+                      <h3>Trenutno vprašanje:</h3>
                       <p>{currentQuestion.question}</p>
 
                       {selectedAnswer && (
@@ -141,8 +141,8 @@ function AssessmentLayout({
 
               {phase === 'completed' && (
                 <p>
-                  VpraĹˇalnik je zakljuÄŤen. Zbrane odgovore lahko uporabimo za
-                  izraÄŤun priporoÄŤene uÄŤne poti.
+                  Vprašalnik je zaključen. Zbrane odgovore lahko uporabimo za
+                  izračun priporočene učne poti.
                 </p>
               )}
             </div>

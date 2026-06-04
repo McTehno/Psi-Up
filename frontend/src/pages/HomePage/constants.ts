@@ -18,12 +18,12 @@ export const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
 export const processSteps = [
 	{
 		icon: BookOpen,
-		title: 'VpraĹˇalnik',
-		text: 'PokaĹľe izhodiĹˇÄŤe.',
+		title: 'Vprašalnik',
+		text: 'PokaĹľe izhodišče.',
 	},
 	{
 		icon: Compass,
-		title: 'PriporoÄŤilo',
+		title: 'Priporočilo',
 		text: 'Uredi naslednji korak.',
 	},
 	{
@@ -68,15 +68,15 @@ export const digcompAreas = [
 	{
 		title: 'Varnost in odgovorna raba',
 		icon: Shield,
-		description: 'ZaĹˇÄŤita naprav, podatkov, zasebnosti in zdravja.',
+		description: 'Zaščita naprav, podatkov, zasebnosti in zdravja.',
 		themeBg: 'bg-[#4AAA4B]',
 		themeText: 'text-white',
 		svgFill: '#4AAA4B',
 	},
 	{
-		title: 'Prepoznavanje in reĹˇevanje teĹľav',
+		title: 'Prepoznavanje in reševanje teĹľav',
 		icon: Lightbulb,
-		description: 'Prepoznavanje logiÄŤnih potreb in reĹˇevanje tehniÄŤnih izzivov.',
+		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
 		themeBg: 'bg-[#F05A4E]',
 		themeText: 'text-white',
 		svgFill: '#F05A4E',
@@ -86,82 +86,82 @@ export const digcompAreas = [
 export const learningPathCards = [
 	{
 		icon: Map,
-		title: 'Preglej izbrano uÄŤno pot',
-		text: 'Najprej si ogledaĹˇ, kaj pot vkljuÄŤuje: module, uÄŤne enote, kompetence in vsebine, ki te vodijo proti cilju.',
+		title: 'Preglej izbrano učno pot',
+		text: 'Najprej si ogledaš, kaj pot vključuje: module, učne enote, kompetence in vsebine, ki te vodijo proti cilju.',
 	},
 	{
 		icon: Target,
-		title: 'ZaÄŤni iz svoje pozicije',
-		text: 'Ni treba zaÄŤeti od zaÄŤetka. Pomembno je razumeti, kaj Ĺľe znaĹˇ, kaj Ĺˇe potrebujeĹˇ in kje je tvoj najbolj smiseln naslednji korak.',
+		title: 'Začni iz svoje pozicije',
+		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj Ĺľe znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ] as const
 
 export const positionCards = [
 	{
 		icon: ClipboardList,
-		title: 'Izpolni vpraĹˇalnik',
-		text: 'VpraĹˇanja so povezana z vsebino izbrane uÄŤne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
+		title: 'Izpolni vprašalnik',
+		text: 'Vprašanja so povezana z vsebino izbrane učne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
 	},
 	{
 		icon: Compass,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaĹˇ in katera podroÄŤja je dobro Ĺˇe utrditi, preden nadaljujeĹˇ.',
+		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
 	},
 ] as const
 
 export const flowSteps = [
 	'Izbira poti',
 	'Pregled vsebine',
-	'VpraĹˇalnik',
+	'Vprašalnik',
 	'Tvoja pozicija',
 	'Naslednji korak',
 ] as const
 
 export const searchFilters = [
 	{ label: 'Moduli', value: 'module' },
-	{ label: 'UÄŤne poti', value: 'learning_path' },
-	{ label: 'UÄŤne enote', value: 'learning_unit' },
+	{ label: 'Učne poti', value: 'learning_path' },
+	{ label: 'Učne enote', value: 'learning_unit' },
 ] as const
 
 export const STORY_SECTIONS_DATA = [
 	{
 		id: 'learning-paths',
-		eyebrow: 'UÄŤne poti',
-		title: 'ZaÄŤni z veÄŤjo sliko.',
-		description: 'UÄŤna pot ti pokaĹľe celotno smer uÄŤenja. Namesto posameznih nepovezanih vsebin vidiĹˇ zaporedje korakov, ki te vodijo proti jasnemu cilju.',
+		eyebrow: 'Učne poti',
+		title: 'Začni z večjo sliko.',
+		description: 'Učna pot ti pokaĹľe celotno smer učenja. Namesto posameznih nepovezanih vsebin vidiš zaporedje korakov, ki te vodijo proti jasnemu cilju.',
 		cards: [
-			{ title: 'Pregled', front: 'VidiĹˇ celotno pot', back: 'UÄŤna pot zdruĹľi module in uÄŤne enote v logiÄŤno zaporedje.' },
-			{ title: 'Usmeritev', front: 'LaĹľje izbereĹˇ zaÄŤetek', back: 'Pomaga ti razumeti, katero podroÄŤje je zate najbolj smiselno.' },
+			{ title: 'Pregled', front: 'Vidiš celotno pot', back: 'Učna pot zdruĹľi module in učne enote v logično zaporedje.' },
+			{ title: 'Usmeritev', front: 'LaĹľje izbereš začetek', back: 'Pomaga ti razumeti, katero področje je zate najbolj smiselno.' },
 		],
 	},
 	{
 		id: 'modules',
 		eyebrow: 'Moduli',
-		title: 'VeÄŤjo pot razdeli na razumljive korake.',
-		description: 'Modul predstavlja zaokroĹľen del uÄŤne poti. Vsak modul ima svoj namen, zato laĹľje slediĹˇ napredku in razumeĹˇ, kaj posamezen korak prinese.',
+		title: 'Večjo pot razdeli na razumljive korake.',
+		description: 'Modul predstavlja zaokroĹľen del učne poti. Vsak modul ima svoj namen, zato laĹľje slediš napredku in razumeš, kaj posamezen korak prinese.',
 		cards: [
-			{ title: 'Korak', front: 'ManjĹˇi del veÄŤje poti', back: 'Modul razdeli ĹˇirĹˇe podroÄŤje na bolj obvladljive vsebinske sklope.' },
-			{ title: 'Napredek', front: 'SlediĹˇ svojemu tempu', back: 'Vsak modul ti pomaga videti, kaj si Ĺľe pregledal in kaj Ĺˇe sledi.' },
+			{ title: 'Korak', front: 'Manjši del večje poti', back: 'Modul razdeli širše področje na bolj obvladljive vsebinske sklope.' },
+			{ title: 'Napredek', front: 'Slediš svojemu tempu', back: 'Vsak modul ti pomaga videti, kaj si Ĺľe pregledal in kaj še sledi.' },
 		],
 	},
 	{
 		id: 'learning-units',
-		eyebrow: 'UÄŤne enote',
-		title: 'UÄŤi se skozi kratke in konkretne vsebine.',
-		description: 'UÄŤna enota je najmanjĹˇi del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula.',
+		eyebrow: 'Učne enote',
+		title: 'Uči se skozi kratke in konkretne vsebine.',
+		description: 'Učna enota je najmanjši del strukture. Namenjena je hitremu pregledu konkretnega znanja, spretnosti ali aktivnosti znotraj modula.',
 		cards: [
-			{ title: 'Fokus', front: 'Ena vsebina naenkrat', back: 'Vsaka uÄŤna enota predstavi jasen in omejen del znanja.' },
-			{ title: 'Samostojnost', front: 'PregledaĹˇ jo lahko posebej', back: 'Enote lahko raziskujeĹˇ znotraj modula ali kot samostojen vir.' },
+			{ title: 'Fokus', front: 'Ena vsebina naenkrat', back: 'Vsaka učna enota predstavi jasen in omejen del znanja.' },
+			{ title: 'Samostojnost', front: 'Pregledaš jo lahko posebej', back: 'Enote lahko raziskuješ znotraj modula ali kot samostojen vir.' },
 		],
 	},
 	{
 		id: 'questionnaire',
-		eyebrow: 'VpraĹˇalnik',
+		eyebrow: 'Vprašalnik',
 		title: 'Preveri, kje si trenutno.',
-		description: 'VpraĹˇalnik ti pomaga oceniti trenutno znanje in prepoznati podroÄŤja, kjer imaĹˇ najveÄŤ prostora za napredek.',
+		description: 'Vprašalnik ti pomaga oceniti trenutno znanje in prepoznati področja, kjer imaš največ prostora za napredek.',
 		cards: [
-			{ title: 'Samoocena', front: 'RazumeĹˇ svoje izhodiĹˇÄŤe', back: 'Odgovori pokaĹľejo, katera podroÄŤja Ĺľe poznaĹˇ in katera potrebujejo veÄŤ pozornosti.' },
-			{ title: 'PriporoÄŤilo', front: 'DobiĹˇ bolj jasno smer', back: 'Rezultat ti pomaga izbrati primernejĹˇo pot, modul ali naslednjo vsebino.' },
+			{ title: 'Samoocena', front: 'Razumeš svoje izhodišče', back: 'Odgovori pokaĹľejo, katera področja Ĺľe poznaš in katera potrebujejo več pozornosti.' },
+			{ title: 'Priporočilo', front: 'Dobiš bolj jasno smer', back: 'Rezultat ti pomaga izbrati primernejšo pot, modul ali naslednjo vsebino.' },
 		],
 	},
 ]

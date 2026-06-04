@@ -148,11 +148,11 @@ function normalizeTargetType(value: string | null): QuestionnaireTargetType | nu
 
 function getTargetTypeLabel(targetType: QuestionnaireTargetType) {
   if (targetType === 'learning_path') {
-    return 'uÄŤna pot'
+    return 'učna pot'
   }
 
   if (targetType === 'learning_unit') {
-    return 'uÄŤna enota'
+    return 'učna enota'
   }
 
   return 'modul'
@@ -177,7 +177,7 @@ function createFallbackTitle(
   targetType: QuestionnaireTargetType,
   targetId: string,
 ) {
-  return `VpraĹˇalnik za ${getTargetTypeLabel(targetType)} ${targetId}`
+  return `Vprašalnik za ${getTargetTypeLabel(targetType)} ${targetId}`
 }
 
 function normalizeQuestionnaireResponse(
@@ -853,10 +853,10 @@ function createFallbackProgressSteps(params: {
         group.contentType === 'module'
           ? `Modul ${groupIndex + 1}`
           : group.contentType === 'learning_unit'
-            ? `UÄŤna enota ${groupIndex + 1}`
+            ? `Učna enota ${groupIndex + 1}`
             : group.contentType === 'learning_path'
-              ? `UÄŤna pot ${groupIndex + 1}`
-              : `VpraĹˇanje ${groupIndex + 1}`,
+              ? `Učna pot ${groupIndex + 1}`
+              : `Vprašanje ${groupIndex + 1}`,
       status: getLeafStatus(questionIds, questionProgressById),
       questionCountUntilStep: getQuestionProgressPosition(
         questionCountUntilStep,
@@ -1048,7 +1048,7 @@ const questionProgressById = useMemo(
     return {
       _id: targetId,
       title: questionnaireTitle,
-      description: `VpraĹˇalnik za ${getTargetTypeLabel(targetType)}`,
+      description: `Vprašalnik za ${getTargetTypeLabel(targetType)}`,
       competencies: [],
     }
   }, [questionnaireTitle, targetId, targetType])
@@ -1087,8 +1087,8 @@ const questionProgressById = useMemo(
     selectedAnswer?.weight === false &&
     targetType !== 'learning_unit'
     ? nextQuestion
-      ? 'Odgovor "Ne" bo preskoÄŤil preostala vpraĹˇanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniĹˇ.'
-      : 'Odgovor "Ne" bo zakljuÄŤil vpraĹˇalnik, ker ni veÄŤ naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniĹˇ.'
+      ? 'Odgovor "Ne" bo preskočil preostala vprašanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniš.'
+      : 'Odgovor "Ne" bo zaključil vprašalnik, ker ni več naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniš.'
     : null
 
   const confirmedQuestionCount =
@@ -1107,7 +1107,7 @@ const questionProgressById = useMemo(
           return {
             id: question.runtimeId,
             label: String(index + 1),
-            title: `VpraĹˇanje ${index + 1}`,
+            title: `Vprašanje ${index + 1}`,
             status: getLeafStatus([question.runtimeId], questionProgressById),
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
@@ -1149,7 +1149,7 @@ const questionProgressById = useMemo(
             moduleDetail.learning_unit_details?.find(
               (learningUnit) =>
                 getBackendEntityId(learningUnit) === learningUnitId,
-            )?.title ?? `UÄŤna enota ${unitIndex + 1}`
+            )?.title ?? `Učna enota ${unitIndex + 1}`
 
           return {
             id: learningUnitId,
@@ -1180,7 +1180,7 @@ const questionProgressById = useMemo(
         steps.push({
           id: 'module_additional_questions',
           label: String(steps.length + 1),
-          title: 'Dodatna vpraĹˇanja',
+          title: 'Dodatna vprašanja',
           status: getLeafStatus(questionIds, questionProgressById),
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
@@ -1251,7 +1251,7 @@ const questionProgressById = useMemo(
                   moduleItem?.learning_unit_details?.find(
                     (learningUnit) =>
                       getBackendEntityId(learningUnit) === learningUnitId,
-                  )?.title ?? `UÄŤna enota ${unitIndex + 1}`
+                  )?.title ?? `Učna enota ${unitIndex + 1}`
 
                 return {
                   id: learningUnitId,
@@ -1292,7 +1292,7 @@ const questionProgressById = useMemo(
           const learningUnitTitle =
             learningPathDetail.learning_unit_details?.find(
               (learningUnit) => getBackendEntityId(learningUnit) === refId,
-            )?.title ?? `UÄŤna enota ${stepIndex + 1}`
+            )?.title ?? `Učna enota ${stepIndex + 1}`
 
           return {
             id: refId || `learning_unit_${stepIndex}`,
@@ -1323,7 +1323,7 @@ const questionProgressById = useMemo(
         steps.push({
           id: 'learning_path_additional_questions',
           label: String(steps.length + 1),
-          title: 'Dodatna vpraĹˇanja',
+          title: 'Dodatna vprašanja',
            status: getLeafStatus(questionIds, questionProgressById),
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
@@ -1395,8 +1395,8 @@ const questionProgressById = useMemo(
   const currentLabel = assessmentCopy.questionnaire.label
   const currentTitle =
     phase === 'completed'
-      ? 'Cilj uÄŤne poti je doseĹľen'
-      : currentQuestion?.question ?? 'VpraĹˇalnik se nalaga ...'
+      ? 'Cilj učne poti je doseĹľen'
+      : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
   const currentDescription =
     phase === 'completed'
@@ -1414,10 +1414,10 @@ const questionProgressById = useMemo(
     !isSubmittingAssessment
 
   const nextButtonLabel = isSubmittingAssessment
-    ? 'PoĹˇiljanje ...'
+    ? 'Pošiljanje ...'
     : nextQuestion
       ? 'Naslednjo â†’'
-      : 'ZakljuÄŤi â†’'
+      : 'Zaključi â†’'
 
   useEffect(() => {
     setAssistantExchange(null)
@@ -1502,7 +1502,7 @@ const questionProgressById = useMemo(
         setError(
           error instanceof Error
             ? error.message
-            : 'VpraĹˇalnika ni bilo mogoÄŤe naloĹľiti. Preverite, ÄŤe backend deluje.',
+            : 'Vprašalnika ni bilo mogoče naloĹľiti. Preverite, če backend deluje.',
         )
       } finally {
         if (isActive) {
@@ -1592,7 +1592,7 @@ const questionProgressById = useMemo(
     rejectedQuestionIdsToSubmit = rejectedQuestionIds,
   ) {
     if (!targetType || !targetId) {
-      setError('Manjka cilj vpraĹˇalnika.')
+      setError('Manjka cilj vprašalnika.')
       return
     }
 
@@ -1634,7 +1634,7 @@ const questionProgressById = useMemo(
       setError(
         error instanceof Error
           ? error.message
-          : 'Napaka pri poĹˇiljanju vpraĹˇalnika. Preverite, ÄŤe backend deluje.',
+          : 'Napaka pri pošiljanju vprašalnika. Preverite, če backend deluje.',
       )
     } finally {
       setIsSubmittingAssessment(false)
@@ -1739,7 +1739,7 @@ const questionProgressById = useMemo(
     return (
       <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-12">
         <section className="rounded-3xl bg-white p-8 text-center shadow-sm">
-          <p className="text-slate-700">Nalaganje vpraĹˇalnika ...</p>
+          <p className="text-slate-700">Nalaganje vprašalnika ...</p>
         </section>
       </main>
     )
@@ -1749,7 +1749,7 @@ const questionProgressById = useMemo(
     return (
       <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-12">
         <section className="rounded-3xl bg-white p-8 text-center shadow-sm">
-          <p className="text-slate-700">Ta cilj trenutno nima vpraĹˇanj.</p>
+          <p className="text-slate-700">Ta cilj trenutno nima vprašanj.</p>
         </section>
       </main>
     )
@@ -1758,7 +1758,7 @@ const questionProgressById = useMemo(
   return (
     <AssessmentLayout
       imageSrc={womanImage}
-      defaultNote="Odgovorite na kratka vpraĹˇanja, da lahko pripravimo priporoÄŤilo."
+      defaultNote="Odgovorite na kratka vprašanja, da lahko pripravimo priporočilo."
       phase={phase}
       selectedGroup={selectedGroup}
       currentQuestion={currentQuestion}
@@ -1814,10 +1814,10 @@ const questionProgressById = useMemo(
         <>
           <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
             <h2 className="text-xl font-bold text-[#31583b]">
-              OdliÄŤno, cilj je doseĹľen.
+              Odlično, cilj je doseĹľen.
             </h2>
             <p className="mt-3 text-slate-700">
-              VpraĹˇalnik kaĹľe, da trenutno Ĺľe obvladate celotno uÄŤno pot.
+              Vprašalnik kaĹľe, da trenutno Ĺľe obvladate celotno učno pot.
               Preusmeritev na podrobnosti se bo izvedla samodejno.
             </p>
           </section>
@@ -1827,7 +1827,7 @@ const questionProgressById = useMemo(
             canGoNext={false}
             onPrevious={goToPreviousStep}
             onNext={goToNextStep}
-            nextLabel="ZakljuÄŤeno"
+            nextLabel="Zaključeno"
           />
         </>
       )}
@@ -1849,7 +1849,7 @@ const questionProgressById = useMemo(
             }}
             className="mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
           >
-            {isChatOpen ? 'Skrij pomoÄŤnika' : 'VpraĹˇaj pomoÄŤnika'}
+            {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
           </button>
 
           {assistantExchange && (

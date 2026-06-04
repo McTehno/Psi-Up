@@ -19,7 +19,7 @@ function MobileDigCompVisual({
 				</p>
 
 				<p className="mt-2 text-sm leading-6 text-[#706b60]">
-					Pet podroÄŤij digitalnih kompetenc, ki pomagajo doloÄŤiti tvojo uÄŤno
+					Pet področij digitalnih kompetenc, ki pomagajo določiti tvojo učno
 					pot.
 				</p>
 			</div>

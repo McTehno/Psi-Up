@@ -51,10 +51,10 @@ export async function getLearningPathSteps(
 }
 
 /**
- * Compatibility endpoint za starejĹˇo logiko.
+ * Compatibility endpoint za starejšo logiko.
  *
- * Nova struktura uÄŤne poti uporablja steps, ampak ta endpoint
- * Ĺˇe vedno vrne samo reference modulov znotraj uÄŤne poti.
+ * Nova struktura učne poti uporablja steps, ampak ta endpoint
+ * še vedno vrne samo reference modulov znotraj učne poti.
  */
 export async function getLearningPathModules(
 	learningPathId: string,
@@ -79,7 +79,7 @@ export async function getLearningPathAvailableSteps(
 }
 
 /**
- * Compatibility endpoint za starejĹˇo logiko.
+ * Compatibility endpoint za starejšo logiko.
  *
  * Nova struktura uporablja available-steps, ta endpoint pa vrne
  * samo dostopne module.

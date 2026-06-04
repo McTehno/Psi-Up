@@ -38,7 +38,7 @@ export default function UpdatePasswordPage() {
     for (const [en, sl] of Object.entries(translations)) {
       if (msg.toLowerCase().includes(en.toLowerCase())) return sl
     }
-    return 'PriĹˇlo je do napake. Poskusite znova.'
+    return 'Prišlo je do napake. Poskusite znova.'
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -58,7 +58,7 @@ export default function UpdatePasswordPage() {
       const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
 
-      setToastMessage('Geslo je bilo uspeĹˇno spremenjeno.')
+      setToastMessage('Geslo je bilo uspešno spremenjeno.')
       // Wait a moment so user can read the toast, then redirect
       setTimeout(() => {
         navigate('/login', { replace: true })
@@ -79,7 +79,7 @@ export default function UpdatePasswordPage() {
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
       <Toast
         message={toastMessage}
-        variant={toastMessage === 'Geslo je bilo uspeĹˇno spremenjeno.' ? 'success' : 'error'}
+        variant={toastMessage === 'Geslo je bilo uspešno spremenjeno.' ? 'success' : 'error'}
         duration={5000}
         onDismiss={() => setToastMessage(null)}
       />

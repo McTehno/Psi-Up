@@ -51,7 +51,7 @@ export default function ChangePasswordForm({
       setNewPassword('')
       setConfirmPassword('')
       setSuccessMessage(
-        'Geslo je bilo uspeĹˇno posodobljeno. Preusmerjeni boste na prijavo.'
+        'Geslo je bilo uspešno posodobljeno. Preusmerjeni boste na prijavo.'
       )
 
       await onPasswordChanged()
@@ -59,7 +59,7 @@ export default function ChangePasswordForm({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Gesla ni bilo mogoÄŤe posodobiti.'
+          : 'Gesla ni bilo mogoče posodobiti.'
       )
     } finally {
       setIsSubmitting(false)
@@ -143,7 +143,7 @@ export default function ChangePasswordForm({
       </div>
 
       <p className="rounded-2xl border border-[#eadfce]/70 bg-[#faf7f2]/60 px-4 py-3 text-xs leading-5 text-[#8b7c65]">
-        Po uspeĹˇni spremembi gesla boĹˇ odjavljena in preusmerjena na prijavo.
+        Po uspešni spremembi gesla boš odjavljena in preusmerjena na prijavo.
       </p>
 
       {errorMessage && (
@@ -165,7 +165,7 @@ export default function ChangePasswordForm({
           className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
           disabled={isSubmitting}
         >
-          PrekliÄŤi
+          Prekliči
         </button>
 
         <button

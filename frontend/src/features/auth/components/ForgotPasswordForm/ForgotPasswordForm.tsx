@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Mail } from 'lucide-react'
 
 type ForgotPasswordFormProps = {

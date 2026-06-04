@@ -2,8 +2,8 @@ import { ArrowRight, Search } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { useGlobalSearch } from '../../../contexts/SearchContext'
-import HeroSearch from '../../HomePageBackup/components/HeroSearch'
-import HeroSearchResults from '../../HomePageBackup/components/HeroSearchResults'
+import HeroSearch from './HeroSearch'
+import HeroSearchResults from './HeroSearchResults'
 import MobileHeroSearchResults from './MobileHeroSearchResults'
 
 function HomeHeroSection() {

@@ -16,16 +16,44 @@ function HomePage() {
 	const { isSearchActive, setIsSearchActive } = useGlobalSearch()
 
 	const parallaxContainerRef = useRef<HTMLDivElement | null>(null)
+	const lenisRef = useRef<Lenis | null>(null)
+	
 	const { scrollYProgress } = useScroll({
 		target: parallaxContainerRef,
 		offset: ['start start', 'end start'],
 	})
 
 	useEffect(() => {
-		document.body.style.overflow = isSearchActive ? 'hidden' : 'unset'
+		if (isSearchActive) {
+			// Standard lock
+			document.body.style.overflow = 'hidden'
+			
+			// iOS Safari robust lock
+			document.documentElement.style.overflow = 'hidden'
+			
+			if (lenisRef.current) {
+				lenisRef.current.scrollTo(0, { immediate: true })
+				lenisRef.current.stop()
+			} else {
+				// Instant scroll to top for Safari
+				window.scrollTo(0, 0)
+			}
+		} else {
+			document.body.style.overflow = 'unset'
+			document.documentElement.style.overflow = 'unset'
+			
+			if (lenisRef.current) {
+				lenisRef.current.start()
+			}
+		}
 
 		return () => {
 			document.body.style.overflow = 'unset'
+			document.documentElement.style.overflow = 'unset'
+			
+			if (lenisRef.current) {
+				lenisRef.current.start()
+			}
 		}
 	}, [isSearchActive])
 
@@ -51,6 +79,8 @@ function HomePage() {
 			wheelMultiplier: 1,
 			touchMultiplier: 1.5,
 		})
+		
+		lenisRef.current = lenis
 
 		let animationFrameId: number
 
@@ -64,6 +94,7 @@ function HomePage() {
 		return () => {
 			cancelAnimationFrame(animationFrameId)
 			lenis.destroy()
+			lenisRef.current = null
 		}
 	}, [])
 

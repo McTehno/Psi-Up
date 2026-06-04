@@ -52,6 +52,7 @@ function getPathD(mode: JourneyMode, height: number) {
 
 function HomeScrollJourney() {
 	const pathRef = useRef<SVGPathElement | null>(null)
+	const glowPathRef = useRef<SVGPathElement | null>(null)
 	const animationFrameRef = useRef<number | null>(null)
 
 	const targetProgressRef = useRef(0)
@@ -99,6 +100,11 @@ function HomeScrollJourney() {
 			trailPathRef.current.setAttribute('stroke-width', nextMode === 'mobile' ? '8' : '10')
 		}
 
+		if (glowPathRef.current) {
+			glowPathRef.current.setAttribute('d', newPathD)
+			glowPathRef.current.setAttribute('stroke-width', nextMode === 'mobile' ? '14' : '20')
+		}
+
 		if (pathRef.current) {
 			pathRef.current.setAttribute('d', newPathD)
 			pathRef.current.setAttribute('stroke-width', nextMode === 'mobile' ? '5' : '7')
@@ -111,6 +117,11 @@ function HomeScrollJourney() {
 			// Update strokeDasharray
 			pathRef.current.setAttribute('stroke-dasharray', String(totalLength))
 			pathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
+
+			if (glowPathRef.current) {
+				glowPathRef.current.setAttribute('stroke-dasharray', String(totalLength))
+				glowPathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
+			}
 		}
 
 		// Update the gradient y2 attribute
@@ -138,6 +149,11 @@ function HomeScrollJourney() {
 		pathLengthRef.current = totalLength
 		pathRef.current.setAttribute('stroke-dasharray', String(totalLength))
 		pathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
+
+		if (glowPathRef.current) {
+			glowPathRef.current.setAttribute('stroke-dasharray', String(totalLength))
+			glowPathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
+		}
 	}, [pathD])
 
 	// Main scroll-driven animation loop
@@ -185,6 +201,9 @@ function HomeScrollJourney() {
 			const pl = pathLengthRef.current
 			if (pathRef.current && pl > 0) {
 				pathRef.current.setAttribute('stroke-dashoffset', String(pl * (1 - next)))
+			}
+			if (glowPathRef.current && pl > 0) {
+				glowPathRef.current.setAttribute('stroke-dashoffset', String(pl * (1 - next)))
 			}
 
 			animationFrameRef.current = window.requestAnimationFrame(animate)
@@ -234,30 +253,7 @@ function HomeScrollJourney() {
 						<stop offset="100%" stopColor="#c98a43" stopOpacity="0.22" />
 					</linearGradient>
 
-					<filter
-						id="home-journey-glow"
-						x="-20%"
-						y="-5%"
-						width="140%"
-						height="110%"
-					>
-						<feGaussianBlur stdDeviation="7" result="blur" />
-						<feColorMatrix
-							in="blur"
-							type="matrix"
-							values="
-                0 0 0 0 0.19
-                0 0 0 0 0.35
-                0 0 0 0 0.23
-                0 0 0 0.35 0
-              "
-							result="glow"
-						/>
-						<feMerge>
-							<feMergeNode in="glow" />
-							<feMergeNode in="SourceGraphic" />
-						</feMerge>
-					</filter>
+
 				</defs>
 
 				<path
@@ -269,13 +265,22 @@ function HomeScrollJourney() {
 					opacity="0.34"
 				/>
 
+				{/* Glow path: thicker semi-transparent duplicate replaces expensive feGaussianBlur */}
+				<path
+					ref={glowPathRef}
+					d={pathD}
+					stroke="url(#home-journey-gradient)"
+					strokeWidth={initialMode === 'mobile' ? '14' : '20'}
+					strokeLinecap="round"
+					opacity="0.3"
+				/>
+
 				<path
 					ref={pathRef}
 					d={pathD}
 					stroke="url(#home-journey-gradient)"
 					strokeWidth={initialMode === 'mobile' ? '5' : '7'}
 					strokeLinecap="round"
-					filter="url(#home-journey-glow)"
 				/>
 			</svg>
 		</div>

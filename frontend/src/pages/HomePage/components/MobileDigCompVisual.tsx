@@ -20,7 +20,6 @@ function MobileDigCompVisual({
 					style={{
 						transform: `rotate(${-81 - rotationCount * 72}deg)`,
 						transformOrigin: 'center center',
-						willChange: 'transform',
 						backfaceVisibility: 'hidden',
 						WebkitBackfaceVisibility: 'hidden',
 					}}

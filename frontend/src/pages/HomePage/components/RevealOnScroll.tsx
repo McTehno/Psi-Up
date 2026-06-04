@@ -49,7 +49,6 @@ function RevealOnScroll({
 			].join(' ')}
 			style={{
 				transitionDelay: `${delay}ms`,
-				willChange: 'transform, opacity',
 			}}
 		>
 			{children}

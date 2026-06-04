@@ -21,8 +21,9 @@ type HomeParallaxEnvironmentProps = {
 }
 
 function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentProps) {
-	// Safari-safe: Use refs for blur to avoid per-frame re-rasterization
 	const mountainContainerRef = useRef<HTMLDivElement | null>(null)
+	// Track last applied blur step to avoid redundant DOM writes
+	const lastBlurStepRef = useRef(0)
 
 	/* ── Cloud layer transforms ──────────────────────────────────── */
 	// Clouds clear the screen fully by the time Učne poti starts (~0.14)
@@ -59,28 +60,32 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30, 1.40]
 	)
 
-	// Safari-safe blur: Apply via direct DOM manipulation instead of useMotionTemplate
-	// This avoids WebKit's per-frame re-rasterization bug with motion template blur values
-	useMotionValueEvent(scrollYProgress, 'change', (v) => {
-		if (!mountainContainerRef.current) return
-		let blur = 0
-		if (v > 0.92 && v <= 0.97) {
-			blur = ((v - 0.92) / 0.05) * 8
-		} else if (v > 0.97) {
-			blur = 8
-		}
-		const filterVal = `blur(${blur}px)`
-		mountainContainerRef.current.style.filter = filterVal
-		;(mountainContainerRef.current.style as any).webkitFilter = filterVal
-	})
-
-	// The highlighted module mountain reveals from bottom to top
+	/* ── Mountain reveal masks (Wipe effect for nice timing flow) ── */
 	const moduleGlowReveal = useTransform(scrollYProgress, [0.305, 0.381], [-20, 120])
 	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${moduleGlowReveal}%, rgba(0,0,0,0) calc(${moduleGlowReveal}% + 20%))`
 
-	// The highlighted unit mountain reveals from bottom to top
 	const unitGlowReveal = useTransform(scrollYProgress, [0.472, 0.549], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
+
+	/* ── End-of-page blur: quantized steps to avoid per-frame rasterization ── */
+	// Instead of setting blur on every scroll tick (~60/sec), we only write
+	// to the DOM when crossing a threshold (4 writes total). CSS transition
+	// on the element handles smooth interpolation on the GPU.
+	useMotionValueEvent(scrollYProgress, 'change', (v) => {
+		if (!mountainContainerRef.current) return
+		let step = 0
+		if (v > 0.97) step = 8
+		else if (v > 0.95) step = 6
+		else if (v > 0.93) step = 4
+		else if (v > 0.91) step = 2
+		// Only touch the DOM if the step actually changed
+		if (step !== lastBlurStepRef.current) {
+			lastBlurStepRef.current = step
+			const filterVal = step === 0 ? 'none' : `blur(${step}px)`
+			mountainContainerRef.current.style.filter = filterVal
+			;(mountainContainerRef.current.style as any).webkitFilter = filterVal
+		}
+	})
 
 	return (
 		<div className="fixed inset-0 h-screen w-full overflow-hidden -z-30 pointer-events-none" style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}>
@@ -103,6 +108,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 					willChange: 'transform',
 					backfaceVisibility: 'hidden',
 					WebkitBackfaceVisibility: 'hidden',
+					transition: 'filter 0.5s ease, -webkit-filter 0.5s ease',
 				}}
 			>
 				<div className="relative h-full w-full">
@@ -170,6 +176,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 							'linear-gradient(to bottom, #fffdf8 0%, rgba(255,253,248,0.5) 40%, transparent 100%)',
 					}}
 				/>
+
 			</motion.div>
 
 			{/* ── Layer 3 · Cloud video (covers mountains, drifts upward) ── */}
@@ -199,7 +206,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 					className="h-full w-full object-cover"
 					style={{ pointerEvents: 'none' }}
 				>
-					<source src={fogVideo} type="video/mp4" />
+					<source src={fogVideo} type="video/webm" />
 				</video>
 			</motion.div>
 

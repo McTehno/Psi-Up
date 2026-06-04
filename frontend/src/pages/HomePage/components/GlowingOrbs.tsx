@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, MotionValue, useTransform, useMotionTemplate, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import LocationPinIcon from '../../../components/icons/LocationPinIcon'
 
@@ -134,6 +134,17 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
   // we trigger a React state when the user reaches the Vprašalnik section.
   const [showPin, setShowPin] = useState(false)
 
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth >= 1024
+  )
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1024px)')
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (latest >= 0.82 && !showPin) {
       setShowPin(true)
@@ -144,22 +155,24 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
-      {/* The Orbs (Hidden on Mobile and Tablets — only desktop) */}
-      <div className="hidden lg:block">
-        {modules.map((mod) => (
-          <div key={mod.id}>
-            {mod.orbs.map((orb) => (
-              <OrbNode
-                key={orb.id}
-                orb={orb}
-                baseColor={mod.color}
-                baseGlowColor={mod.glowColor}
-                scrollYProgress={scrollYProgress}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
+      {/* The Orbs (Unmounted on Mobile and Tablets — only desktop) */}
+      {isDesktop && (
+        <div>
+          {modules.map((mod) => (
+            <div key={mod.id}>
+              {mod.orbs.map((orb) => (
+                <OrbNode
+                  key={orb.id}
+                  orb={orb}
+                  baseColor={mod.color}
+                  baseGlowColor={mod.glowColor}
+                  scrollYProgress={scrollYProgress}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Standalone Location Pin (Mounted dynamically to completely avoid scroll-linked bugs) */}
       <div className="absolute pointer-events-none top-[58%] left-[90%] md:left-[65%] md:ml-[5px] -mt-[56px] -translate-x-1/2 z-[999]">

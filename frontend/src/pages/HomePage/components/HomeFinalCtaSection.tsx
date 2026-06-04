@@ -6,7 +6,7 @@ function HomeFinalCtaSection() {
 			id="contact"
 			className="relative flex min-h-[78vh] items-center py-24 lg:py-32"
 		>
-			<div className="relative w-full overflow-hidden rounded-[40px] border border-[#ded5c6]/80 bg-[#fffdf8]/72 p-8 text-center shadow-[0_28px_80px_rgba(57,47,35,0.13)] backdrop-blur-2xl sm:p-12 lg:p-16">
+			<div className="relative w-full overflow-hidden rounded-[40px] border border-[#ded5c6]/80 bg-[#fffdf8]/92 p-8 text-center shadow-[0_28px_80px_rgba(57,47,35,0.13)] sm:p-12 lg:p-16">
 				<div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#f2f8f1]/80 blur-3xl" />
 				<div className="pointer-events-none absolute -bottom-28 -right-20 h-72 w-72 rounded-full bg-[#fff4e6]/90 blur-3xl" />
 				<div className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#d08a34]/40 to-transparent" />
@@ -36,7 +36,7 @@ function HomeFinalCtaSection() {
 
 						<a
 							href="mailto:info.nidiko@gmail.com"
-							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#ded5c6]/90 bg-[#fffdf8]/72 px-7 py-3.5 text-sm font-bold text-[#706b60] shadow-[0_10px_24px_rgba(57,47,35,0.08)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-[#fff6eb]"
+							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#ded5c6]/90 bg-[#fffdf8]/90 px-7 py-3.5 text-sm font-bold text-[#706b60] shadow-[0_10px_24px_rgba(57,47,35,0.08)] transition hover:-translate-y-0.5 hover:bg-[#fff6eb]"
 						>
 							<Mail className="h-4 w-4" />
 							Kontakt

@@ -48,9 +48,15 @@ export default function LoginPage() {
   }
 
   // -- Handlers --
-  async function handleSubmit(email: string, password: string, name?: string, _rememberMe?: boolean) {
+  async function handleSubmit(email: string, password: string, name?: string, rememberMe?: boolean) {
     setIsLoading(true)
     try {
+      if (rememberMe !== undefined) {
+        window.localStorage.setItem('rememberMe', String(rememberMe))
+      } else if (isRegister) {
+        window.localStorage.setItem('rememberMe', 'false')
+      }
+
       if (isRegister) {
         const { error } = await supabase.auth.signUp({
           email,
@@ -83,6 +89,7 @@ export default function LoginPage() {
   async function handleGoogleLogin() {
     try {
       setIsLoading(true); // Optional: if you want to show a loading state
+      window.localStorage.setItem('rememberMe', 'true') // Default to remember for OAuth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

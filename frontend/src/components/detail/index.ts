@@ -1,4 +1,4 @@
-export { default as DetailPageShell } from './DetailPageShell'
+﻿export { default as DetailPageShell } from './DetailPageShell'
 export { default as DetailHero } from './DetailHero'
 export { default as DetailMeta } from './DetailMeta'
 export { default as DetailTags } from './DetailTags'
@@ -7,3 +7,4 @@ export { default as DetailActions } from './DetailActions'
 export { default as DetailRouteMap } from './DetailRouteMap'
 export { default as DetailRecommendationCarousel } from './DetailRecommendationCarousel'
 export type { DetailRecommendationCarouselItem } from './DetailRecommendationCarousel'
+

@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type {
 	AdvancedSearchFilters,
 	PaginatedSearchResults,
@@ -44,3 +44,4 @@ export async function performSearch(
 		totalPages: 1,
 	}
 }
+

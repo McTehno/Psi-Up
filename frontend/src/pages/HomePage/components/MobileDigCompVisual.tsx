@@ -1,4 +1,4 @@
-import { digcompAreas } from '../constants.ts'
+﻿import { digcompAreas } from '../constants.ts'
 
 type MobileDigCompVisualProps = {
 	activeIndex: number
@@ -76,3 +76,4 @@ function MobileDigCompVisual({
 }
 
 export default MobileDigCompVisual
+

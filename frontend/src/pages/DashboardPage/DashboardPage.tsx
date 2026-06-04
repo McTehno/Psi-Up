@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
 	Heart,
@@ -17,7 +17,7 @@ import { getLearningPathById } from '../../services/learning-path-service'
 import { getModuleById } from '../../services/module-service'
 import { getLearningUnitById } from '../../services/learning-unit-service'
 
-import { useAuth } from '../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 import { useDashboardProgress } from '../../hooks/useDashboardProgress'
 import { supabase } from '../../services/supabase-client'
 import DashboardModal from '../../features/dashboard/components/DashboardModal'
@@ -388,11 +388,11 @@ export default function DashboardPage() {
 								</h3>
 								<p className="mt-1.5 max-w-xs text-sm text-[#a89880]">
 									{activeTab === 'favorites' &&
-										'Še nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
+										'Ĺ e nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
 									{activeTab === 'saved' &&
-										'Še nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
+										'Ĺ e nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
 									{activeTab === 'completed' &&
-										'Še niste dokončali nobene vsebine. Začnite z učno potjo!'}
+										'Ĺ e niste dokončali nobene vsebine. Začnite z učno potjo!'}
 								</p>
 								<Link
 									to="/search"
@@ -456,3 +456,4 @@ export default function DashboardPage() {
 		</div>
 	)
 }
+

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader2, Search as SearchIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SearchFilters } from '../../features/search/components/SearchFilters';
 import { SearchResultCard } from '../../features/search/components/SearchResultCard';
-import type { AdvancedSearchFilters, PaginatedSearchResults, SearchContentType } from '../../types/search';
+import type { AdvancedSearchFilters, PaginatedSearchResults, SearchContentType, SearchUiResult } from '../../types/search';
 import { performSearch } from '../../services/search-service';
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -52,7 +52,7 @@ export default function SearchPage() {
                 filters.types.forEach((t: string) => newParams.append('type', t));
                 setSearchParams(newParams, { replace: true });
                 
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Iskanje neuspešno:", err);
                 setError("Prišlo je do napake pri iskanju. Prosimo, poskusite znova.");
             } finally {
@@ -67,7 +67,7 @@ export default function SearchPage() {
         setFilters(newFilters);
     };
 
-    const handleResultClick = (result: any) => {
+    const handleResultClick = (result: SearchUiResult) => {
         if (result.type === 'learning_path') {
             navigate(`/learning-paths/${result.id}`);
         } else if (result.type === 'module') {
@@ -143,7 +143,7 @@ export default function SearchPage() {
                                     Prikazujem {Math.min(visibleCount, results.results.length)} od {results.total} rezultatov
                                 </div>
                                 <AnimatePresence mode="popLayout">
-                                    {results.results.slice(0, visibleCount).map((result: any, index: number) => (
+                                    {results.results.slice(0, visibleCount).map((result: SearchUiResult, index: number) => (
                                         <motion.div
                                             key={result.id}
                                             initial={{ opacity: 0, y: 20 }}
@@ -153,7 +153,7 @@ export default function SearchPage() {
                                             layout
                                         >
                                             <SearchResultCard 
-                                                result={result as any} // temporary fix zaradi "dummy" properties
+                                                result={result as SearchUiResult} // temporary fix zaradi "dummy" properties
                                                 onClick={handleResultClick}
                                             />
                                         </motion.div>
@@ -168,7 +168,7 @@ export default function SearchPage() {
                                         className="mt-4 w-full py-3 rounded-2xl border-2 border-dashed border-sand-200 text-brown-600 font-medium hover:border-forest-400 hover:text-forest-600 hover:bg-forest-50 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         <SearchIcon className="w-4 h-4" />
-                                        Naloži več rezultatov
+                                        NaloĹľi več rezultatov
                                     </motion.button>
                                 )}
                             </div>
@@ -179,3 +179,9 @@ export default function SearchPage() {
         </div>
     );
 }
+
+
+
+
+
+

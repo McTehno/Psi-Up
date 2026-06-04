@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type {
 	QuestionnaireResponse,
 	QuestionnaireTargetType,
@@ -22,3 +22,4 @@ export async function getQuestionnaire(
 		`/questionnaires?${params.toString()}`,
 	)
 }
+

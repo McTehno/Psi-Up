@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 
@@ -31,7 +31,7 @@ export default function LoginPage() {
     const translations: Record<string, string> = {
       'Invalid login credentials': 'Napačen e-poštni naslov ali geslo.',
       'Email not confirmed': 'E-poštni naslov še ni potrjen. Preverite svoj nabiralnik.',
-      'User already registered': 'Uporabnik s tem e-poštnim naslovom že obstaja.',
+      'User already registered': 'Uporabnik s tem e-poštnim naslovom Ĺľe obstaja.',
       'Signup requires a valid password': 'Geslo mora imeti vsaj 6 znakov.',
       'Password should be at least 6 characters': 'Geslo mora imeti vsaj 6 znakov.',
       'Unable to validate email address: invalid format': 'Neveljaven format e-poštnega naslova.',
@@ -84,8 +84,8 @@ export default function LoginPage() {
 
       // On success
       navigate(from, { replace: true })
-    } catch (err: any) {
-      const translated = translateAuthError(err.message || '')
+    } catch (err: unknown) {
+    const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false)
@@ -106,8 +106,8 @@ export default function LoginPage() {
       if (error) throw error
       // Note: You don't need to navigate() here. 
       // OAuth will physically redirect the user away from your app to Google, and then back.
-    } catch (err: any) {
-      const translated = translateAuthError(err.message || '')
+    } catch (err: unknown) {
+    const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false);
@@ -132,8 +132,8 @@ export default function LoginPage() {
       // but let's show it. (Actually let's just use setToastMessage for now).
       setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.')
       setIsForgotPassword(false)
-    } catch (err: any) {
-      const translated = translateAuthError(err.message || '')
+    } catch (err: unknown) {
+    const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false)
@@ -201,7 +201,7 @@ export default function LoginPage() {
             </div>
 
             <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
-              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
+              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'PridruĹľite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 
             <div className="relative">
@@ -229,7 +229,7 @@ export default function LoginPage() {
                 <GoogleLoginButton onClick={handleGoogleLogin} />
 
                 <AuthFooter
-                  prompt={isRegister ? 'Že imate račun?' : 'Še nimate računa?'}
+                  prompt={isRegister ? 'Ĺ˝e imate račun?' : 'Ĺ e nimate računa?'}
                   actionLabel={isRegister ? 'Prijava' : 'Registracija'}
                   onAction={toggleMode}
                 />
@@ -241,3 +241,7 @@ export default function LoginPage() {
     </div>
   )
 }
+
+
+
+

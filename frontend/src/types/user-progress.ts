@@ -1,4 +1,4 @@
-export type ContentType = 'learning_path' | 'module' | 'learning_unit'
+﻿export type ContentType = 'learning_path' | 'module' | 'learning_unit'
 
 export type QuestionnaireTargetType =
 	| 'learning_path'
@@ -91,3 +91,4 @@ export type UpdateCurrentPositionRequest = {
 	current_module_id?: string | null
 	current_learning_unit_id?: string | null
 }
+

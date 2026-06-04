@@ -1,4 +1,4 @@
-import {
+﻿import {
 	BookOpen,
 	ClipboardList,
 	Compass,
@@ -19,7 +19,7 @@ export const processSteps = [
 	{
 		icon: BookOpen,
 		title: 'Vprašalnik',
-		text: 'Pokaže izhodišče.',
+		text: 'PokaĹľe izhodišče.',
 	},
 	{
 		icon: Compass,
@@ -29,7 +29,7 @@ export const processSteps = [
 	{
 		icon: Target,
 		title: 'Napredek',
-		text: 'Drži smer do cilja.',
+		text: 'DrĹľi smer do cilja.',
 	},
 ] as const
 
@@ -74,7 +74,7 @@ export const digcompAreas = [
 		svgFill: '#4AAA4B',
 	},
 	{
-		title: 'Prepoznavanje in reševanje težav',
+		title: 'Prepoznavanje in reševanje teĹľav',
 		icon: Lightbulb,
 		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
 		themeBg: 'bg-[#F05A4E]',
@@ -92,7 +92,7 @@ export const learningPathCards = [
 	{
 		icon: Target,
 		title: 'Začni iz svoje pozicije',
-		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj že znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
+		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj Ĺľe znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ] as const
 
@@ -105,7 +105,7 @@ export const positionCards = [
 	{
 		icon: Compass,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaže, katere dele poti že obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
+		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
 	},
 ] as const
 
@@ -122,3 +122,4 @@ export const searchFilters = [
 	{ label: 'Moduli', value: 'module' },
 	{ label: 'Učne enote', value: 'learning_unit' },
 ] as const
+

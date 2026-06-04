@@ -1,4 +1,4 @@
-export type LearningUnitAssistantMessageRequest = {
+﻿export type LearningUnitAssistantMessageRequest = {
   sessionId?: string
   userId?: string
   learningUnitId: string
@@ -53,3 +53,4 @@ export async function sendLearningUnitAssistantMessage(
 
   return payload as LearningUnitAssistantMessageResponse
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react'
+﻿import { useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -1253,8 +1253,9 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       )}
 
       <div className="absolute bottom-6 right-6 z-20 hidden text-right text-xs font-bold uppercase tracking-[0.24em] text-[#344E41]/75 md:block">
-        {isCompleted ? 'Cilj dosežen' : 'Cilj poti'}
+        {isCompleted ? 'Cilj doseĹľen' : 'Cilj poti'}
       </div>
     </section>
   )
 }
+

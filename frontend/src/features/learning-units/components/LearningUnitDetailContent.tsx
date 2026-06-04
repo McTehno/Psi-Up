@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import type { ComponentType } from 'react'
 import {
 	BookOpen,
@@ -98,8 +98,8 @@ const menuItems: MenuItem[] = [
  * - known_topics
  * - missing_topics
  *
- * Če backend pošlje null, undefined ali ne-string vrednosti,
- * jih ne prikažemo.
+ * ÄŚe backend pošlje null, undefined ali ne-string vrednosti,
+ * jih ne prikaĹľemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
 	return getArrayOrEmpty(value as string[])
@@ -125,7 +125,7 @@ function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
 		.map((item) => ({
 			code: getTextOrFallback(
 				typeof item.code === 'string' ? item.code : undefined,
-				'–',
+				'â€“',
 			),
 			title: getTextOrFallback(
 				typeof item.title === 'string' ? item.title : undefined,
@@ -175,7 +175,7 @@ function getSafeContentTopics(value: unknown): SafeContentTopic[] {
  * Vrne mehke barve za DigComp področje glede na prvo številko kode.
  *
  * Primer:
- * 3.2 → področje 3
+ * 3.2 â†’ področje 3
  */
 function getDigCompSoftColor(code: string) {
 	const area = code.trim().match(/^(\d)\./)?.[1]
@@ -253,7 +253,7 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 			row: 'border border-[#a8d2ad] bg-[#edf7ec]',
 			circle: 'border-[#8fbe96] bg-white text-[#31583b]',
 			text: 'text-[#31583b]',
-			description: 'To področje že dobro poznate.',
+			description: 'To področje Ĺľe dobro poznate.',
 		}
 	}
 
@@ -705,3 +705,4 @@ function LearningUnitDetailContent({
 }
 
 export default LearningUnitDetailContent
+

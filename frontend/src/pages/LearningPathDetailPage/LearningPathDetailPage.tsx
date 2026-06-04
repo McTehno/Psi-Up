@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -892,7 +892,7 @@ function LearningPathDetailPage() {
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <ErrorState
-            title="Učne poti ni bilo mogoče naložiti"
+            title="Učne poti ni bilo mogoče naloĹľiti"
             message={errorMessage}
           />
         </div>
@@ -1067,3 +1067,4 @@ function LearningPathDetailPage() {
 }
 
 export default LearningPathDetailPage
+

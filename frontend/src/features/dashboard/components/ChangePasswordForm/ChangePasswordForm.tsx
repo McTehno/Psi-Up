@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Eye, EyeOff, KeyRound } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -92,7 +92,7 @@ export default function ChangePasswordForm({
             onClick={() => setShowNewPassword((current) => !current)}
             className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#8b7c65] transition-all duration-300 hover:bg-[#fff6eb] hover:text-[#d07a12] disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSubmitting}
-            aria-label={showNewPassword ? 'Skrij novo geslo' : 'Prikaži novo geslo'}
+            aria-label={showNewPassword ? 'Skrij novo geslo' : 'PrikaĹľi novo geslo'}
           >
             {showNewPassword ? (
               <EyeOff className="h-4 w-4" />
@@ -130,7 +130,7 @@ export default function ChangePasswordForm({
             aria-label={
               showConfirmPassword
                 ? 'Skrij potrditveno geslo'
-                : 'Prikaži potrditveno geslo'
+                : 'PrikaĹľi potrditveno geslo'
             }
           >
             {showConfirmPassword ? (
@@ -180,3 +180,4 @@ export default function ChangePasswordForm({
     </form>
   )
 }
+

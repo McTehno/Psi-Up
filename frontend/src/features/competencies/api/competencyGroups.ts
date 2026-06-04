@@ -1,4 +1,4 @@
-const API_HOST = import.meta.env.VITE_BACKEND_HOST
+﻿const API_HOST = import.meta.env.VITE_BACKEND_HOST
 
 export async function getCompetencyGroups() {
 	const response = await fetch(`${API_HOST}/api/competency-groups`)
@@ -21,3 +21,4 @@ export async function getCompetencyGroupQuestionnaire(groupId: string) {
 
 	return response.json()
 }
+

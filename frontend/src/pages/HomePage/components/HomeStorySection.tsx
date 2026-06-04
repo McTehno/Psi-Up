@@ -1,4 +1,4 @@
-import HomeGlassNote from './HomeGlassNote'
+﻿import HomeGlassNote from './HomeGlassNote'
 import RevealOnScroll from './RevealOnScroll'
 
 type StoryCard = {
@@ -87,3 +87,4 @@ function HomeStorySection({
 }
 
 export default HomeStorySection
+

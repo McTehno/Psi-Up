@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+﻿import { AlertCircle } from 'lucide-react'
 
 type ErrorStateProps = {
   title?: string
@@ -23,3 +23,4 @@ function ErrorState({
 }
 
 export default ErrorState
+

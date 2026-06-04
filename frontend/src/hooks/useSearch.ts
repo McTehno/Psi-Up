@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useState } from 'react'
 import type { SearchResult } from '../types/domain'
 import { performSearch } from '../services/search-service'
 import type { SearchContentType } from '../types/search'
@@ -70,3 +70,4 @@ export function useSearch() {
     setIsSearching,
   }
 }
+

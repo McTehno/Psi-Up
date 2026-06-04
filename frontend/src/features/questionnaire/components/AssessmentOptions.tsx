@@ -1,4 +1,4 @@
-import CompetencyCard from '../../competencies/components/CompetencyCard'
+﻿import CompetencyCard from '../../competencies/components/CompetencyCard'
 
 type CompetencyGroup = {
 	_id: string
@@ -33,3 +33,4 @@ function AssessmentOptions({
 }
 
 export default AssessmentOptions
+

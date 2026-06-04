@@ -1,4 +1,4 @@
-import type { AdvancedSearchFilters, SearchContentType } from '../../../types/search';
+﻿import type { AdvancedSearchFilters, SearchContentType } from '../../../types/search';
 
 interface SearchFiltersProps {
     filters: AdvancedSearchFilters;
@@ -53,3 +53,4 @@ export function SearchFilters({ filters, onChange }: SearchFiltersProps) {
         </aside>
     );
 }
+

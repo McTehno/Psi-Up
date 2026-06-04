@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLocation } from 'react-router-dom';
 import type { LearningPathData } from '../../types/domain';
 import { LearningPathVisualizer } from '../../features/learning-paths/components/LearningPathVisualizer';
@@ -15,7 +15,7 @@ const mockData: LearningPathData = {
       id: "mod_11",
       order: 1,
       title: "Kibernetska varnost za končne uporabnike",
-      description: "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
+      description: "Zavedanje o tveganjih, socialni inĹľeniring in upravljanje gesel.",
       learningUnitsCount: 6
     },
     {
@@ -29,7 +29,7 @@ const mockData: LearningPathData = {
       id: "mod_14",
       order: 3,
       title: "Prepoznavanje zlonamerne programske opreme",
-      description: "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
+      description: "Identifikacija groĹľenj in pravilno ukrepanje ob incidentih.",
       learningUnitsCount: 6
     },
     {
@@ -103,3 +103,5 @@ export const PathResultPage: React.FC = () => {
 };
 
 export default PathResultPage;
+
+

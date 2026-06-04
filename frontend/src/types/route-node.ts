@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Generični tipi za prikaz povezanih vsebin v detail straneh.
  *
  * Namen tega fila:
@@ -6,7 +6,7 @@
  *
  *   Learning path -> Module -> Learning unit
  *
- * - ampak lahko prikaže različne vrste vozlišč z isto komponento
+ * - ampak lahko prikaĹľe različne vrste vozlišč z isto komponento
  *
  * Primer:
  * - učna pot lahko vsebuje module
@@ -20,20 +20,20 @@
  * - ModuleDetailPage
  *
  * Zakaj je to pomembno:
- * Če backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
+ * ÄŚe backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
  * ne rabimo takoj pisati popolnoma nove UI komponente.
  * Dovolj je, da backend podatke pretvorimo v RouteNode obliko.
  */
 
 /**
- * Tip vsebine, ki jo lahko prikažemo kot vozlišče v poti.
+ * Tip vsebine, ki jo lahko prikaĹľemo kot vozlišče v poti.
  *
  * Trenutno podpiramo:
  * - learning_path
  * - module
  * - learning_unit
  *
- * Če kasneje dodamo nov tip, ga dodamo tukaj.
+ * ÄŚe kasneje dodamo nov tip, ga dodamo tukaj.
  * Na primer:
  * - assessment
  * - resource
@@ -67,10 +67,10 @@ export type RouteNode = {
 	type: RouteNodeType
 
 	/**
-	 * Naslov, ki ga prikažemo uporabniku.
+	 * Naslov, ki ga prikaĹľemo uporabniku.
 	 *
 	 * Vedno mora biti string.
-	 * Če backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
+	 * ÄŚe backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
 	 */
 	title: string
 
@@ -78,7 +78,7 @@ export type RouteNode = {
 	 * Kratek opis vsebine.
 	 *
 	 * Opcijsko polje.
-	 * Če ga ni, ga komponenta lahko ne prikaže.
+	 * ÄŚe ga ni, ga komponenta lahko ne prikaĹľe.
 	 */
 	description?: string
 
@@ -92,7 +92,7 @@ export type RouteNode = {
 	/**
 	 * Trajanje v minutah.
 	 *
-	 * Pustimo tudi to možnost, če backend kasneje doda duration_min.
+	 * Pustimo tudi to moĹľnost, če backend kasneje doda duration_min.
 	 */
 	durationMin?: number
 
@@ -118,7 +118,7 @@ export type RouteNode = {
 	/**
 	 * Ali je vozlišče obvezno.
 	 *
-	 * Če backend tega ne pošlje, ostane undefined.
+	 * ÄŚe backend tega ne pošlje, ostane undefined.
 	 */
 	isRequired?: boolean
 
@@ -130,3 +130,4 @@ export type RouteNode = {
 	 */
 	prerequisites: string[]
 }
+

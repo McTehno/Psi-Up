@@ -1,4 +1,4 @@
-type AuthHeaderProps = {
+﻿type AuthHeaderProps = {
   title: string
   subtitle: string
 }
@@ -13,3 +13,5 @@ export default function AuthHeader({ title, subtitle }: AuthHeaderProps) {
     </div>
   )
 }
+
+

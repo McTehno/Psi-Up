@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+﻿import { Link, useLocation } from 'react-router-dom'
 import Logo from '../Logo'
 
 type NavbarLink = {
@@ -87,3 +87,4 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 }
 
 export default Navbar
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import womanImage from '../../assets/woman.png'
@@ -19,7 +19,7 @@ import AssessmentProgress, {
 import QuestionnaireQuestion from '../../features/questionnaire/components/QuestionnaireQuestion'
 import { assessmentCopy } from '../../features/questionnaire/utils/assessmentSteps'
 
-import { useAuth } from '../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 import { evaluateAssessment } from '../../services/assessment-service'
 import { getLearningPathDetail } from '../../services/learning-path-service'
 import { getModuleDetail } from '../../services/module-service'
@@ -1164,7 +1164,10 @@ const questionProgressById = useMemo(
           }
         })
         .filter((step) => step.questionCount > 0)
-        .map(({ questionCount, ...step }) => step)
+        .map(({ questionCount: _questionCount, ...step }) => {
+      void _questionCount
+      return step
+    })
 
       const unmatchedQuestions = questionnaire.filter(
         (question) => !usedQuestionIds.has(question.runtimeId),
@@ -1258,7 +1261,7 @@ const questionProgressById = useMemo(
                 }
               })
               .filter((subStep) => subStep.questionCount > 0)
-              .map(({ questionCount, ...subStep }) => subStep)
+              .map(({ questionCount: _questionCount, ...subStep }) => subStep)
 
             questionCountUntilStep += moduleQuestionCount
 
@@ -1304,7 +1307,10 @@ const questionProgressById = useMemo(
           }
         })
         .filter((step) => step.questionCount > 0)
-        .map(({ questionCount, ...step }) => step)
+        .map(({ questionCount: _questionCount, ...step }) => {
+      void _questionCount
+      return step
+    })
 
       const unmatchedQuestions = questionnaire.filter(
         (question) => !usedQuestionIds.has(question.runtimeId),
@@ -1389,7 +1395,7 @@ const questionProgressById = useMemo(
   const currentLabel = assessmentCopy.questionnaire.label
   const currentTitle =
     phase === 'completed'
-      ? 'Cilj učne poti je dosežen'
+      ? 'Cilj učne poti je doseĹľen'
       : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
   const currentDescription =
@@ -1410,8 +1416,8 @@ const questionProgressById = useMemo(
   const nextButtonLabel = isSubmittingAssessment
     ? 'Pošiljanje ...'
     : nextQuestion
-      ? 'Naslednjo →'
-      : 'Zaključi →'
+      ? 'Naslednjo â†’'
+      : 'Zaključi â†’'
 
   useEffect(() => {
     setAssistantExchange(null)
@@ -1447,7 +1453,7 @@ const questionProgressById = useMemo(
           try {
             nextModuleDetail = await getModuleDetail(targetId)
           } catch (detailError) {
-            console.warn('Module detail ni bil naložen.', detailError)
+            console.warn('Module detail ni bil naloĹľen.', detailError)
           }
         }
 
@@ -1455,7 +1461,7 @@ const questionProgressById = useMemo(
           try {
             nextLearningPathDetail = await getLearningPathDetail(targetId)
           } catch (detailError) {
-            console.warn('Learning path detail ni bil naložen.', detailError)
+            console.warn('Learning path detail ni bil naloĹľen.', detailError)
           }
         }
 
@@ -1496,7 +1502,7 @@ const questionProgressById = useMemo(
         setError(
           error instanceof Error
             ? error.message
-            : 'Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.',
+            : 'Vprašalnika ni bilo mogoče naloĹľiti. Preverite, če backend deluje.',
         )
       } finally {
         if (isActive) {
@@ -1808,10 +1814,10 @@ const questionProgressById = useMemo(
         <>
           <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
             <h2 className="text-xl font-bold text-[#31583b]">
-              Odlično, cilj je dosežen.
+              Odlično, cilj je doseĹľen.
             </h2>
             <p className="mt-3 text-slate-700">
-              Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
+              Vprašalnik kaĹľe, da trenutno Ĺľe obvladate celotno učno pot.
               Preusmeritev na podrobnosti se bo izvedla samodejno.
             </p>
           </section>
@@ -1890,3 +1896,9 @@ const questionProgressById = useMemo(
 }
 
 export default QuestionnairePage
+
+
+
+
+
+

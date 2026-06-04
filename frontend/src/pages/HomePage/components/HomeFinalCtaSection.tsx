@@ -1,4 +1,4 @@
-import { ArrowRight, Mail } from 'lucide-react'
+﻿import { ArrowRight, Mail } from 'lucide-react'
 
 function HomeFinalCtaSection() {
 	return (
@@ -44,7 +44,7 @@ function HomeFinalCtaSection() {
 					</div>
 
 					<p className="mt-12 text-xs font-medium text-[#8a8175]">
-						© 2026 NIDiKo. Vse pravice pridržane.
+						Â© 2026 NIDiKo. Vse pravice pridrĹľane.
 					</p>
 				</div>
 			</div>
@@ -53,3 +53,4 @@ function HomeFinalCtaSection() {
 }
 
 export default HomeFinalCtaSection
+

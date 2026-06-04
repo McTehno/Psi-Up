@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { LearningPathData, Module } from '../../../types/domain';
 import { Shield, BookOpen, Check } from 'lucide-react';
 import { ModuleDetailsModal } from './ModuleDetailsModal';
@@ -181,7 +181,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
 
             <div className="absolute top-[80px] w-64 text-center">
               <h3 className="font-serif font-bold text-xl text-[#5c3724]">
-                Cilj dosežen
+                Cilj doseĹľen
               </h3>
 
               <p className="text-[#86968B] font-bold text-[10px] uppercase tracking-[0.2em] mt-1.5">
@@ -200,3 +200,4 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
 
   );
 };
+

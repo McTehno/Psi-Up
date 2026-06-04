@@ -1,4 +1,4 @@
-/**
+﻿/**
  * DigComp kompetenca, ki jo učna enota pokriva.
  */
 export type DigCompCompetencyResponse = {
@@ -11,7 +11,7 @@ export type DigCompCompetencyResponse = {
  * Vsebinska tema znotraj učne enote.
  *
  * Tema ima stabilen ID, da se lahko odgovori vprašalnika
- * povežejo na topic_id namesto na besedilo teme.
+ * poveĹľejo na topic_id namesto na besedilo teme.
  */
 export type ContentTopicResponse = {
 	id: string
@@ -95,3 +95,4 @@ export type LearningUnitReferenceResponse = {
 	is_required: boolean
 	prerequisites: string[]
 }
+

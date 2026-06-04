@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   LearningUnitReferenceResponse,
   LearningUnitResponse,
 } from './learning-unit'
@@ -35,3 +35,4 @@ export type ModuleResponse = {
 	learning_units: LearningUnitReferenceResponse[]
 	recommended_learning_paths?: RecommendedLearningPathResponse[]
 }
+

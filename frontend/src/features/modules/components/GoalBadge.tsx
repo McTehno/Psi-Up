@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Award } from 'lucide-react';
 
 interface GoalBadgeProps {
@@ -33,3 +33,5 @@ export const GoalBadge: React.FC<GoalBadgeProps> = ({ finalGoalY }) => {
     </div>
   );
 };
+
+

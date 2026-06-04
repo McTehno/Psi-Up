@@ -1,4 +1,4 @@
-import { Mail, Lock, User } from 'lucide-react'
+﻿import { Mail, Lock, User } from 'lucide-react'
 
 type RegisterFormProps = {
   /** Called when form is submitted. */
@@ -82,3 +82,5 @@ export default function RegisterForm({ onSubmit, isLoading }: RegisterFormProps)
     </form>
   )
 }
+
+

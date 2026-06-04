@@ -1,4 +1,4 @@
-export const assessmentCopy = {
+﻿export const assessmentCopy = {
 	groupSelection: {
 		label: 'Pa pričnimo',
 		title: 'V katero skupino kompetenc bi se podali?',
@@ -10,3 +10,4 @@ export const assessmentCopy = {
 		description: 'Izberite odgovor, ki najbolje opisuje vaše trenutno stanje.',
 	},
 }
+

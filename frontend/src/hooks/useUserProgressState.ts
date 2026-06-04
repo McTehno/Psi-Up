@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
-import { useAuth } from '../features/auth/contexts/AuthContext'
+import { useAuth } from '../features/auth/hooks/useAuth'
 import {
 	getUserProgress,
 	isContentCompleted,
@@ -69,3 +69,4 @@ export function useUserProgressState({
 		userProgress,
 	}
 }
+

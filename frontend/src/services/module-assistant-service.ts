@@ -1,4 +1,4 @@
-export type ModuleAssistantMessageRequest = {
+﻿export type ModuleAssistantMessageRequest = {
   sessionId?: string
   userId?: string
   moduleId: string
@@ -53,3 +53,4 @@ export async function sendModuleAssistantMessage(
 
   return payload as ModuleAssistantMessageResponse
 }
+

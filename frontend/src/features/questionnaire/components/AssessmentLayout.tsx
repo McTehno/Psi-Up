@@ -1,4 +1,4 @@
-import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+﻿import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
 
 type Competency = {
   competency_id: string
@@ -61,7 +61,7 @@ function AssessmentLayout({
 
           <div className="assistant-note">
             <div className="assistant-note__icon" aria-hidden="true">
-              ☘
+              â
             </div>
 
             <div className="assistant-note__content">
@@ -156,3 +156,5 @@ function AssessmentLayout({
 }
 
 export default AssessmentLayout
+
+

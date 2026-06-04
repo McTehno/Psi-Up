@@ -1,4 +1,4 @@
-import { Mail } from 'lucide-react'
+﻿import { Mail } from 'lucide-react'
 
 type ForgotPasswordFormProps = {
   onSubmit: (email: string) => void
@@ -61,3 +61,5 @@ export default function ForgotPasswordForm({ onSubmit, isLoading, onCancel }: Fo
     </form>
   )
 }
+
+

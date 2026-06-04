@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+﻿import { useEffect, useState, useCallback, useRef } from 'react'
 import { AlertCircle, CheckCircle2, X } from 'lucide-react'
 
 type ToastVariant = 'error' | 'success'
@@ -41,7 +41,7 @@ const VARIANTS: Record<
 
 /**
  * Phase lifecycle:
- *   hidden → mounting (renders at off-screen position) → visible (animates in) → exit (animates out) → hidden
+ *   hidden â†’ mounting (renders at off-screen position) â†’ visible (animates in) â†’ exit (animates out) â†’ hidden
  */
 export default function Toast({
   message,
@@ -193,3 +193,5 @@ export default function Toast({
     </div>
   )
 }
+
+

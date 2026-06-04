@@ -202,3 +202,4 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
     </div>
   )
 }
+

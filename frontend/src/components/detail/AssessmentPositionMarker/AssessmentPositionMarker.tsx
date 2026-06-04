@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
 
 type AssessmentPositionTone = 'current' | 'recommended'
@@ -145,3 +145,4 @@ function AssessmentPositionMarker({
 }
 
 export default AssessmentPositionMarker
+

@@ -1,4 +1,4 @@
-import { BookOpen, Flag, Mountain } from 'lucide-react'
+﻿import { BookOpen, Flag, Mountain } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import type { LearningPathMountainNode } from './LearningPathMountain'
@@ -96,7 +96,7 @@ export function LearningPathMobileSteps({
             </p>
 
             <p className="mt-1 text-lg font-bold text-[#4B3027]">
-              Cilj dosežen
+              Cilj doseĹľen
             </p>
           </div>
         </div>
@@ -104,3 +104,4 @@ export function LearningPathMobileSteps({
     </section>
   )
 }
+

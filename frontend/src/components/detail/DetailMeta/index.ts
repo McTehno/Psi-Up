@@ -1,1 +1,2 @@
-export { default } from './DetailMeta'
+﻿export { default } from './DetailMeta'
+

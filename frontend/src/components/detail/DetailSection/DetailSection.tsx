@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 type DetailSectionProps = {
 	title: string
@@ -39,3 +39,4 @@ function DetailSection({
 }
 
 export default DetailSection
+

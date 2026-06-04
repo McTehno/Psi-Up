@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
 
 type DashboardModalProps = {
@@ -59,3 +59,4 @@ export default function DashboardModal({
     </div>
   )
 }
+

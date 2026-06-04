@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type {
 	LearningPathDetailResponse,
 	LearningPathResponse,
@@ -105,3 +105,4 @@ export async function getLearningPathQuestionnaire(
 		`/learning-paths/${learningPathId}/questionnaire`,
 	)
 }
+

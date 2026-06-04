@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type { LearningUnitReferenceResponse } from '../types/learning-unit'
 import type { QuestionnaireResponse } from '../types/questionnaire'
 import type { ModuleDetailResponse, ModuleResponse } from '../types/module'
@@ -86,3 +86,4 @@ export async function getModuleQuestionnaire(
 		`/modules/${moduleId}/questionnaire`,
 	)
 }
+

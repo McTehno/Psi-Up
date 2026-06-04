@@ -1,8 +1,8 @@
-import { useEffect, useRef, Fragment } from 'react'
+﻿import { useEffect, useRef, Fragment } from 'react'
 import Lenis from 'lenis'
 import { useScroll } from 'framer-motion'
 
-import { useGlobalSearch } from '../../contexts/SearchContext'
+import { useGlobalSearch } from '../../hooks/useGlobalSearch'
 import SectionSpacer from '../../components/layout/SectionSpacer'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
 import HomeScrollJourney from './components/HomeScrollJourney'
@@ -141,7 +141,7 @@ function HomePage() {
 					</Fragment>
 				))}
 
-				{/* ── Spacer: Vprašalnik → CTA ── */}
+				{/* â”€â”€ Spacer: Vprašalnik â†’ CTA â”€â”€ */}
 				<SectionSpacer size="normal" />
 
 				<HomeFinalCtaSection />
@@ -151,3 +151,4 @@ function HomePage() {
 }
 
 export default HomePage
+

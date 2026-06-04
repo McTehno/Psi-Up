@@ -1,4 +1,4 @@
-import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
+﻿import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
 import type { AssistantContextType } from '../../assistant'
 import {
   getLearningPathDetail,
@@ -381,3 +381,4 @@ export async function buildDetailViewState(
 
   return buildLearningUnitView(targetInfo.id)
 }
+

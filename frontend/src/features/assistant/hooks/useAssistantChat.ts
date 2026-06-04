@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import type { AssistantMessage } from '../types'
 
 const initialMessage: AssistantMessage = {
@@ -51,3 +51,4 @@ export function useAssistantChat() {
     sendMessage,
   }
 }
+

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 
 import type { AssessmentResultResponse } from '../../../types/assessment'
 
@@ -275,7 +275,7 @@ function AssessmentJourneyResult({
 
   const resultMetaLabel = hasAllKnowledge ? 'Rezultat' : 'Preskočeno'
   const resultMetaValue = hasAllKnowledge
-    ? 'Vse potrebno znanje že imate'
+    ? 'Vse potrebno znanje Ĺľe imate'
     : `${skippedLearningUnitCount} vsebin`
 
   if (!moduleDetail || steps.length === 0 || !selectedStep) {
@@ -289,7 +289,7 @@ function AssessmentJourneyResult({
   return (
     <div className="assessment-journey">
       <div className="assessment-journey__eyebrow">
-        Priporočena učna pot · {title}
+        Priporočena učna pot Â· {title}
       </div>
 
       <p className="assessment-journey__description">
@@ -405,3 +405,4 @@ function AssessmentJourneyResult({
 }
 
 export default AssessmentJourneyResult
+

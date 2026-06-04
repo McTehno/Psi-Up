@@ -1,7 +1,7 @@
-import { ArrowRight, Search } from 'lucide-react'
+﻿import { ArrowRight, Search } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-import { useGlobalSearch } from '../../../contexts/SearchContext'
+import { useGlobalSearch } from '../../../hooks/useGlobalSearch'
 import HeroSearch from './HeroSearch'
 import HeroSearchResults from './HeroSearchResults'
 import MobileHeroSearchResults from './MobileHeroSearchResults'
@@ -108,7 +108,7 @@ function HomeHeroSection() {
 						<div className="rounded-[24px] border border-[#ded5c6]/70 bg-[#fffdf8]/85 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.07)]">
 							<p className="font-serif text-2xl text-[#2f4a31]">Učna pot</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
-								Širši načrt učenja, ki povezuje več sorodnih področij v eno jasno
+								Ĺ irši načrt učenja, ki povezuje več sorodnih področij v eno jasno
 								smer.
 							</p>
 						</div>
@@ -116,7 +116,7 @@ function HomeHeroSection() {
 						<div className="ml-8 rounded-[22px] border border-[#ded5c6]/65 bg-[#fffdf8]/80 p-5 shadow-[0_14px_34px_rgba(57,47,35,0.06)]">
 							<p className="font-serif text-xl text-[#33442f]">Modul</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
-								Zaokrožen korak znotraj poti, ki ti pomaga razumeti posamezen del
+								ZaokroĹľen korak znotraj poti, ki ti pomaga razumeti posamezen del
 								področja.
 							</p>
 						</div>
@@ -135,3 +135,5 @@ function HomeHeroSection() {
 }
 
 export default HomeHeroSection
+
+

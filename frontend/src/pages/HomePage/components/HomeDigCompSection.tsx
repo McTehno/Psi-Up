@@ -1,4 +1,4 @@
-import MobileDigCompVisual from './MobileDigCompVisual'
+﻿import MobileDigCompVisual from './MobileDigCompVisual'
 import RevealOnScroll from './RevealOnScroll'
 
 type HomeDigCompSectionProps = {
@@ -52,3 +52,4 @@ function HomeDigCompSection({
 }
 
 export default HomeDigCompSection
+

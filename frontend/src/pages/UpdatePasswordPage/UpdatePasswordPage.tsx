@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../services/supabase-client'
@@ -63,8 +63,8 @@ export default function UpdatePasswordPage() {
       setTimeout(() => {
         navigate('/login', { replace: true })
       }, 2000)
-    } catch (err: any) {
-      setToastMessage(translateAuthError(err.message || ''))
+    } catch (err: unknown) {
+    setToastMessage(translateAuthError(err instanceof Error ? err.message : ''))
     } finally {
       setIsLoading(false)
     }
@@ -171,3 +171,7 @@ export default function UpdatePasswordPage() {
     </div>
   )
 }
+
+
+
+

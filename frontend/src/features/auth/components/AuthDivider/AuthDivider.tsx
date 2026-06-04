@@ -1,4 +1,4 @@
-type AuthDividerProps = {
+﻿type AuthDividerProps = {
   label?: string
 }
 
@@ -13,3 +13,5 @@ export default function AuthDivider({ label = 'Ali nadaljujte z' }: AuthDividerP
     </div>
   )
 }
+
+

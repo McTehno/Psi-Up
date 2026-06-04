@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Mail, MessageCircle, Quote } from 'lucide-react'
 
 function HomeContactSlide() {
@@ -28,7 +28,7 @@ function HomeContactSlide() {
 						type="button"
 						onClick={() => setIsFlipped((value) => !value)}
 						className="group mx-auto mt-12 block h-[340px] w-full max-w-xl text-left [perspective:1200px]"
-						aria-label={isFlipped ? 'Prikaži citat' : 'Prikaži kontakt'}
+						aria-label={isFlipped ? 'PrikaĹľi citat' : 'PrikaĹľi kontakt'}
 					>
 						<div
 							className={[
@@ -42,7 +42,7 @@ function HomeContactSlide() {
 								</span>
 
 								<p className="mt-8 font-display text-2xl font-semibold leading-snug text-[#111111] sm:text-3xl">
-									“Prava učna pot se začne tam, kjer se trenutno nahajaš.”
+									â€śPrava učna pot se začne tam, kjer se trenutno nahajaš.â€ť
 								</p>
 
 								<p className="mt-5 text-sm font-medium text-[#706b60]">
@@ -78,7 +78,7 @@ function HomeContactSlide() {
 					</button>
 
 					<p className="mt-8 text-xs font-medium text-[#8a8175]">
-						© 2026 NIDiKo. Vse pravice pridržane.
+						Â© 2026 NIDiKo. Vse pravice pridrĹľane.
 					</p>
 				</div>
 			</div>
@@ -87,3 +87,4 @@ function HomeContactSlide() {
 }
 
 export default HomeContactSlide
+

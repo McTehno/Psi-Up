@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+﻿import type { CSSProperties } from 'react'
 import './AssessmentProgress.css'
 
 export type AssessmentProgressStepStatus =
@@ -142,11 +142,11 @@ function getStepPositionPercent(
 
 function getStepMarker(step: AssessmentProgressStep, index: number) {
   if (step.status === 'completed') {
-    return '✓'
+    return 'âś“'
   }
 
   if (step.status === 'rejected') {
-    return '×'
+    return 'Ă—'
   }
 
   if (step.status === 'missing') {
@@ -316,9 +316,9 @@ function AssessmentProgress({
             className={`assessment-progress__flag ${
               isGoalReached ? 'assessment-progress__flag--completed' : ''
             }`}
-            aria-label={isGoalReached ? 'Cilj dosežen' : 'Cilj'}
+            aria-label={isGoalReached ? 'Cilj doseĹľen' : 'Cilj'}
           >
-            ⚑
+            âš‘
           </div>
         )}
 
@@ -343,3 +343,4 @@ function AssessmentProgress({
 }
 
 export default AssessmentProgress
+

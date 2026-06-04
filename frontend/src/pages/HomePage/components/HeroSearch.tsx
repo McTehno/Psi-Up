@@ -1,14 +1,14 @@
 import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import type { SearchResult } from '../../../types/search'
+import type { SearchResult, SearchContentType } from '../../../types/search'
 import { searchFilters } from '../constants'
 
 type HeroSearchProps = {
 	isSearchActive: boolean
 	setIsSearchActive: (isActive: boolean) => void
-	activeFilters: string[]
-	toggleFilter: (filter: string) => void
+	activeFilters: SearchContentType[]
+	toggleFilter: (filter: SearchContentType) => void
 	searchQuery: string
 	setSearchQuery: (query: string) => void
 	setSearchResults: (results: SearchResult[]) => void
@@ -84,9 +84,9 @@ function HeroSearch({
 								whileTap={{ scale: 0.95 }}
 								type="button"
 								key={filter.label}
-								onClick={() => toggleFilter(filter.label)}
+								onClick={() => toggleFilter(filter.value)}
 								className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
-									activeFilters.includes(filter.label)
+									activeFilters.includes(filter.value)
 										? 'border-[#31583b] bg-[#31583b] text-white hover:bg-[#274a31]'
 										: 'border-[#eadfce] bg-white text-[#706b60] hover:bg-[#fff6eb]'
 								}`}

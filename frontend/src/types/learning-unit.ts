@@ -1,5 +1,5 @@
-/**
- * DigComp kompetenca, ki jo učna enota pokriva.
+﻿/**
+ * DigComp kompetenca, ki jo uÄŤna enota pokriva.
  */
 export type DigCompCompetencyResponse = {
 	code: string
@@ -8,10 +8,10 @@ export type DigCompCompetencyResponse = {
 }
 
 /**
- * Vsebinska tema znotraj učne enote.
+ * Vsebinska tema znotraj uÄŤne enote.
  *
- * Tema ima stabilen ID, da se lahko odgovori vprašalnika
- * povežejo na topic_id namesto na besedilo teme.
+ * Tema ima stabilen ID, da se lahko odgovori vpraĹˇalnika
+ * poveĹľejo na topic_id namesto na besedilo teme.
  */
 export type ContentTopicResponse = {
 	id: string
@@ -20,7 +20,7 @@ export type ContentTopicResponse = {
 }
 
 /**
- * Vprašanje za samooceno znotraj učne enote.
+ * VpraĹˇanje za samooceno znotraj uÄŤne enote.
  */
 export type SelfAssessmentQuestionResponse = {
 	id: string
@@ -32,10 +32,10 @@ export type SelfAssessmentQuestionResponse = {
 }
 
 /**
- * Kratek prikaz modula, ki vsebuje izbrano učno enoto.
+ * Kratek prikaz modula, ki vsebuje izbrano uÄŤno enoto.
  *
- * Uporablja se na detail strani učne enote v sekciji
- * priporočenih oziroma povezanih modulov.
+ * Uporablja se na detail strani uÄŤne enote v sekciji
+ * priporoÄŤenih oziroma povezanih modulov.
  */
 export type RecommendedModuleResponse = {
 	_id: string
@@ -47,10 +47,10 @@ export type RecommendedModuleResponse = {
 }
 
 /**
- * Osnovni response za učno enoto.
+ * Osnovni response za uÄŤno enoto.
  *
  * Uporablja se pri seznamih, osnovnem detail prikazu in kot osnova
- * za razširjen detail response.
+ * za razĹˇirjen detail response.
  */
 export type LearningUnitResponse = {
 	_id: string
@@ -74,19 +74,19 @@ export type LearningUnitResponse = {
 }
 
 /**
- * Razširjen response za detail stran učne enote.
+ * RazĹˇirjen response za detail stran uÄŤne enote.
  *
  * Backend pri /learning-units/:id/detail doda tudi module,
- * ki vsebujejo to učno enoto.
+ * ki vsebujejo to uÄŤno enoto.
  */
 export type LearningUnitDetailResponse = LearningUnitResponse & {
 	recommended_modules: RecommendedModuleResponse[]
 }
 
 /**
- * Referenca učne enote znotraj modula.
+ * Referenca uÄŤne enote znotraj modula.
  *
- * Uporablja se pri prikazu zaporedja učnih enot v modulu.
+ * Uporablja se pri prikazu zaporedja uÄŤnih enot v modulu.
  */
 export type LearningUnitReferenceResponse = {
 	learning_unit_id: string
@@ -95,3 +95,4 @@ export type LearningUnitReferenceResponse = {
 	is_required: boolean
 	prerequisites: string[]
 }
+

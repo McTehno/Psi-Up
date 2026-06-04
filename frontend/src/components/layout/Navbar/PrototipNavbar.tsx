@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+﻿import { Link, useLocation } from 'react-router-dom'
 import Logo from '../Logo'
 
 type NavbarLink = {
@@ -13,7 +13,7 @@ type NavbarProps = {
 const defaultLinks: NavbarLink[] = [
 	{ label: 'Domov', to: '/' },
 	{ label: 'Iskanje', to: '/search' },
-	{ label: 'Vprašalnik', to: '/assessment' },
+	{ label: 'VpraĹˇalnik', to: '/assessment' },
 ]
 
 function Navbar({ links = defaultLinks }: NavbarProps) {
@@ -41,7 +41,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 							Psi-Up
 						</span>
 						<span className="block text-xs font-medium text-[#706b60]">
-							Priporočilne učne poti
+							PriporoÄŤilne uÄŤne poti
 						</span>
 					</span>
 				</Link>
@@ -87,3 +87,4 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 }
 
 export default Navbar
+

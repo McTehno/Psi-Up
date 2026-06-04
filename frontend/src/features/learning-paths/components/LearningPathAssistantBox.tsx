@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type JSX } from 'react'
+﻿import { useEffect, useMemo, useState, type JSX } from 'react'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
@@ -26,9 +26,9 @@ type LearningPathAssistantBoxProps = {
 }
 
 const suggestedQuestions = [
-  'Kaj bom znal po tej učni poti?',
-  'Kateri moduli so najpomembnejši?',
-  'Kako naj se lotim te učne poti?',
+  'Kaj bom znal po tej uÄŤni poti?',
+  'Kateri moduli so najpomembnejĹˇi?',
+  'Kako naj se lotim te uÄŤne poti?',
 ]
 
 function readStoredState(storageKey: string): StoredAssistantState {
@@ -207,7 +207,7 @@ function LearningPathAssistantBox({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Pomočnika trenutno ni mogoče doseči. Poskusite znova.',
+          : 'PomoÄŤnika trenutno ni mogoÄŤe doseÄŤi. Poskusite znova.',
       )
     } finally {
       setIsLoading(false)
@@ -228,7 +228,7 @@ function LearningPathAssistantBox({
         {state.messages.length === 0 ? (
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Predlagana vprašanja
+              Predlagana vpraĹˇanja
             </p>
 
             <div className="mt-3 flex flex-col gap-2">
@@ -247,7 +247,7 @@ function LearningPathAssistantBox({
         ) : (
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Pretekla vprašanja
+              Pretekla vpraĹˇanja
             </p>
 
             <div className="mt-2 flex max-h-28 flex-col gap-2 overflow-y-auto pr-1">
@@ -284,8 +284,8 @@ function LearningPathAssistantBox({
             </div>
           ) : (
             <p className="text-sm leading-6 text-[#5f6652]">
-              Tukaj se bo prikazal odgovor pomočnika. Odgovarjal bo samo na podlagi
-              podatkov te učne poti.
+              Tukaj se bo prikazal odgovor pomoÄŤnika. Odgovarjal bo samo na podlagi
+              podatkov te uÄŤne poti.
             </p>
           )}
         </div>
@@ -298,7 +298,7 @@ function LearningPathAssistantBox({
 
         <form onSubmit={handleSubmit} className="mt-4">
           <label htmlFor="learning-path-assistant-question" className="sr-only">
-            Vprašanje za pomočnika
+            VpraĹˇanje za pomoÄŤnika
           </label>
 
           <textarea
@@ -316,7 +316,7 @@ function LearningPathAssistantBox({
             disabled={isLoading || inputValue.trim().length === 0 || !learningPathId}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#31583b] px-5 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)] transition hover:-translate-y-0.5 hover:bg-[#274a31] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            {isLoading ? 'Pomočnik razmišlja...' : 'Pošlji vprašanje'}
+            {isLoading ? 'PomoÄŤnik razmiĹˇlja...' : 'PoĹˇlji vpraĹˇanje'}
             <Send className="h-4 w-4" />
           </button>
         </form>
@@ -326,3 +326,4 @@ function LearningPathAssistantBox({
 }
 
 export default LearningPathAssistantBox
+

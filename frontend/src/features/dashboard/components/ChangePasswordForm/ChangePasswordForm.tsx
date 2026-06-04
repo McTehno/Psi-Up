@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Eye, EyeOff, KeyRound } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -51,7 +51,7 @@ export default function ChangePasswordForm({
       setNewPassword('')
       setConfirmPassword('')
       setSuccessMessage(
-        'Geslo je bilo uspešno posodobljeno. Preusmerjeni boste na prijavo.'
+        'Geslo je bilo uspeĹˇno posodobljeno. Preusmerjeni boste na prijavo.'
       )
 
       await onPasswordChanged()
@@ -59,7 +59,7 @@ export default function ChangePasswordForm({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Gesla ni bilo mogoče posodobiti.'
+          : 'Gesla ni bilo mogoÄŤe posodobiti.'
       )
     } finally {
       setIsSubmitting(false)
@@ -92,7 +92,7 @@ export default function ChangePasswordForm({
             onClick={() => setShowNewPassword((current) => !current)}
             className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#8b7c65] transition-all duration-300 hover:bg-[#fff6eb] hover:text-[#d07a12] disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSubmitting}
-            aria-label={showNewPassword ? 'Skrij novo geslo' : 'Prikaži novo geslo'}
+            aria-label={showNewPassword ? 'Skrij novo geslo' : 'PrikaĹľi novo geslo'}
           >
             {showNewPassword ? (
               <EyeOff className="h-4 w-4" />
@@ -130,7 +130,7 @@ export default function ChangePasswordForm({
             aria-label={
               showConfirmPassword
                 ? 'Skrij potrditveno geslo'
-                : 'Prikaži potrditveno geslo'
+                : 'PrikaĹľi potrditveno geslo'
             }
           >
             {showConfirmPassword ? (
@@ -143,7 +143,7 @@ export default function ChangePasswordForm({
       </div>
 
       <p className="rounded-2xl border border-[#eadfce]/70 bg-[#faf7f2]/60 px-4 py-3 text-xs leading-5 text-[#8b7c65]">
-        Po uspešni spremembi gesla boš odjavljena in preusmerjena na prijavo.
+        Po uspeĹˇni spremembi gesla boĹˇ odjavljena in preusmerjena na prijavo.
       </p>
 
       {errorMessage && (
@@ -165,7 +165,7 @@ export default function ChangePasswordForm({
           className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
           disabled={isSubmitting}
         >
-          Prekliči
+          PrekliÄŤi
         </button>
 
         <button
@@ -180,3 +180,4 @@ export default function ChangePasswordForm({
     </form>
   )
 }
+

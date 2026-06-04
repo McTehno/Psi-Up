@@ -1,13 +1,13 @@
-import { Search as SearchIcon, X as XIcon } from 'lucide-react'
+﻿import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 
-import type { SearchResult } from '../../../types/search'
+import type { SearchContentType, SearchResult } from '../../../types/search'
 import { searchFilters } from '../constants'
 
 type HeroSearchProps = {
 	isSearchActive: boolean
 	setIsSearchActive: (isActive: boolean) => void
-	activeFilters: any[]
-	toggleFilter: (filter: any) => void
+	activeFilters: SearchContentType[]
+	toggleFilter: (filter: SearchContentType) => void
 	searchQuery: string
 	setSearchQuery: (query: string) => void
 	setSearchResults: (results: SearchResult[]) => void
@@ -35,7 +35,7 @@ function HeroSearch({
 
 				<input
 					type="text"
-					placeholder="Kaj se hočete naučiti?"
+					placeholder="Kaj se hoÄŤete nauÄŤiti?"
 					className="w-full rounded-2xl border border-[#eadfce] bg-[#fffdf8] py-3 pl-12 pr-12 text-sm text-[#111111] shadow-sm transition-all duration-300 placeholder:text-[#706b60] focus:border-[#31583b] focus:outline-none focus:ring-1 focus:ring-[#31583b]"
 					onFocus={() => {
 						setIsSearchActive(true)
@@ -74,9 +74,9 @@ function HeroSearch({
 					<button
 						type="button"
 						key={filter.label}
-						onClick={() => toggleFilter(filter.label)}
+						onClick={() => toggleFilter(filter.value)}
 						className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
-							activeFilters.includes(filter.label)
+							activeFilters.includes(filter.value)
 								? 'border-[#31583b] bg-[#31583b] text-white hover:bg-[#274a31]'
 								: 'border-[#eadfce] bg-white text-[#706b60] hover:bg-[#fff6eb]'
 						}`}
@@ -90,3 +90,6 @@ function HeroSearch({
 }
 
 export default HeroSearch
+
+
+

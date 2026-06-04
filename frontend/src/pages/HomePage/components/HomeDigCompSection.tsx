@@ -1,4 +1,4 @@
-import MobileDigCompVisual from './MobileDigCompVisual'
+﻿import MobileDigCompVisual from './MobileDigCompVisual'
 import RevealOnScroll from './RevealOnScroll'
 
 type HomeDigCompSectionProps = {
@@ -23,12 +23,12 @@ function HomeDigCompSection({
 						</p>
 
 						<h2 className="mt-5 font-serif text-[clamp(36px,4.6vw,60px)] leading-[1.02] text-[#33442f]">
-							Pet področij, ki stojijo za digitalnimi kompetencami.
+							Pet podroÄŤij, ki stojijo za digitalnimi kompetencami.
 						</h2>
 
 						<p className="mt-6 max-w-xl text-[18px] leading-8 text-[#6f6a60]">
-							DigComp pomaga razumeti, katera znanja razvijaš skozi učne
-							poti, module in učne enote.
+							DigComp pomaga razumeti, katera znanja razvijaĹˇ skozi uÄŤne
+							poti, module in uÄŤne enote.
 						</p>
 					</div>
 				</RevealOnScroll>
@@ -52,3 +52,4 @@ function HomeDigCompSection({
 }
 
 export default HomeDigCompSection
+

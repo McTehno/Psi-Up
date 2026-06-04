@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type JSX } from 'react'
+﻿import { useEffect, useMemo, useState, type JSX } from 'react'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
@@ -27,7 +27,7 @@ type ModuleAssistantBoxProps = {
 
 const suggestedQuestions = [
   'Kaj vsebuje ta modul?',
-  'Katere učne enote so v tem modulu?',
+  'Katere uÄŤne enote so v tem modulu?',
   'Kako naj se lotim tega modula?',
   'Katere digitalne kompetence razvijam?',
 ]
@@ -208,7 +208,7 @@ function ModuleAssistantBox({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Pomočnika trenutno ni mogoče doseči. Poskusite znova.',
+          : 'PomoÄŤnika trenutno ni mogoÄŤe doseÄŤi. Poskusite znova.',
       )
     } finally {
       setIsLoading(false)
@@ -229,7 +229,7 @@ function ModuleAssistantBox({
         {state.messages.length === 0 ? (
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Predlagana vprašanja
+              Predlagana vpraĹˇanja
             </p>
 
             <div className="mt-3 flex flex-col gap-2">
@@ -248,7 +248,7 @@ function ModuleAssistantBox({
         ) : (
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Pretekla vprašanja
+              Pretekla vpraĹˇanja
             </p>
 
             <div className="mt-2 flex max-h-28 flex-col gap-2 overflow-y-auto pr-1">
@@ -285,8 +285,8 @@ function ModuleAssistantBox({
             </div>
           ) : (
             <p className="text-sm leading-6 text-[#5f6652]">
-              Tukaj se bo prikazal odgovor pomočnika. Odgovarjal bo samo na podlagi
-              podatkov tega modula in njegovih učnih enot.
+              Tukaj se bo prikazal odgovor pomoÄŤnika. Odgovarjal bo samo na podlagi
+              podatkov tega modula in njegovih uÄŤnih enot.
             </p>
           )}
         </div>
@@ -299,14 +299,14 @@ function ModuleAssistantBox({
 
         <form onSubmit={handleSubmit} className="mt-4">
           <label htmlFor="module-assistant-question" className="sr-only">
-            Vprašanje za pomočnika
+            VpraĹˇanje za pomoÄŤnika
           </label>
 
           <textarea
             id="module-assistant-question"
             value={inputValue}
             onChange={(event) => setInputValue(event.target.value)}
-            placeholder="Npr. Katere učne enote so najpomembnejše?"
+            placeholder="Npr. Katere uÄŤne enote so najpomembnejĹˇe?"
             rows={3}
             className="w-full resize-none rounded-[1.5rem] border border-white/55 bg-white/45 px-4 py-3 text-sm leading-6 text-[#2b2118] outline-none transition placeholder:text-[#8c8378] focus:border-white/80 focus:bg-white/60 focus:ring-4 focus:ring-white/30"
             disabled={isLoading}
@@ -317,7 +317,7 @@ function ModuleAssistantBox({
             disabled={isLoading || inputValue.trim().length === 0 || !moduleId}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#31583b] px-5 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)] transition hover:-translate-y-0.5 hover:bg-[#274a31] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            {isLoading ? 'Pomočnik razmišlja...' : 'Pošlji vprašanje'}
+            {isLoading ? 'PomoÄŤnik razmiĹˇlja...' : 'PoĹˇlji vpraĹˇanje'}
             <Send className="h-4 w-4" />
           </button>
         </form>
@@ -327,3 +327,4 @@ function ModuleAssistantBox({
 }
 
 export default ModuleAssistantBox
+

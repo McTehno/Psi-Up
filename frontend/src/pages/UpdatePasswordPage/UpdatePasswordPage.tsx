@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../services/supabase-client'
@@ -38,7 +38,7 @@ export default function UpdatePasswordPage() {
     for (const [en, sl] of Object.entries(translations)) {
       if (msg.toLowerCase().includes(en.toLowerCase())) return sl
     }
-    return 'Prišlo je do napake. Poskusite znova.'
+    return 'PriĹˇlo je do napake. Poskusite znova.'
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -58,13 +58,13 @@ export default function UpdatePasswordPage() {
       const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
 
-      setToastMessage('Geslo je bilo uspešno spremenjeno.')
+      setToastMessage('Geslo je bilo uspeĹˇno spremenjeno.')
       // Wait a moment so user can read the toast, then redirect
       setTimeout(() => {
         navigate('/login', { replace: true })
       }, 2000)
-    } catch (err: any) {
-      setToastMessage(translateAuthError(err.message || ''))
+    } catch (err: unknown) {
+    setToastMessage(translateAuthError(err instanceof Error ? err.message : ''))
     } finally {
       setIsLoading(false)
     }
@@ -79,7 +79,7 @@ export default function UpdatePasswordPage() {
     <div className="h-screen flex items-center justify-center px-4 overflow-hidden bg-sand-50">
       <Toast
         message={toastMessage}
-        variant={toastMessage === 'Geslo je bilo uspešno spremenjeno.' ? 'success' : 'error'}
+        variant={toastMessage === 'Geslo je bilo uspeĹˇno spremenjeno.' ? 'success' : 'error'}
         duration={5000}
         onDismiss={() => setToastMessage(null)}
       />
@@ -171,3 +171,7 @@ export default function UpdatePasswordPage() {
     </div>
   )
 }
+
+
+
+

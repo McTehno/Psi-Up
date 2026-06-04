@@ -1,4 +1,4 @@
-export type AssessmentAssistantMessageRequest = {
+﻿export type AssessmentAssistantMessageRequest = {
   sessionId?: string
   userId?: string
   learningPathId: string
@@ -50,3 +50,5 @@ export async function sendAssessmentAssistantMessage(
 
   return response.json()
 }
+
+

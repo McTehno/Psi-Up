@@ -1,4 +1,4 @@
-import type { AssessmentResultResponse } from '../types/assessment'
+﻿import type { AssessmentResultResponse } from '../types/assessment'
 import type { QuestionnaireTargetType } from '../types/questionnaire'
 
 const ASSESSMENT_RESULT_STORAGE_PREFIX = 'assessment_result'
@@ -79,3 +79,4 @@ export function getSessionAssessmentResult(
 
   return null
 }
+

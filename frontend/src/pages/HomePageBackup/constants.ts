@@ -1,4 +1,4 @@
-import {
+﻿import {
 	BookOpen,
 	ClipboardList,
 	Compass,
@@ -18,18 +18,18 @@ export const focusTags = ['Personalizirano', 'Mirno', 'Jasno'] as const
 export const processSteps = [
 	{
 		icon: BookOpen,
-		title: 'Vprašalnik',
-		text: 'Pokaže izhodišče.',
+		title: 'VpraĹˇalnik',
+		text: 'PokaĹľe izhodiĹˇÄŤe.',
 	},
 	{
 		icon: Compass,
-		title: 'Priporočilo',
+		title: 'PriporoÄŤilo',
 		text: 'Uredi naslednji korak.',
 	},
 	{
 		icon: Target,
 		title: 'Napredek',
-		text: 'Drži smer do cilja.',
+		text: 'DrĹľi smer do cilja.',
 	},
 ] as const
 
@@ -68,15 +68,15 @@ export const digcompAreas = [
 	{
 		title: 'Varnost in odgovorna raba',
 		icon: Shield,
-		description: 'Zaščita naprav, podatkov, zasebnosti in zdravja.',
+		description: 'ZaĹˇÄŤita naprav, podatkov, zasebnosti in zdravja.',
 		themeBg: 'bg-[#4AAA4B]',
 		themeText: 'text-white',
 		svgFill: '#4AAA4B',
 	},
 	{
-		title: 'Prepoznavanje in reševanje težav',
+		title: 'Prepoznavanje in reĹˇevanje teĹľav',
 		icon: Lightbulb,
-		description: 'Prepoznavanje logičnih potreb in reševanje tehničnih izzivov.',
+		description: 'Prepoznavanje logiÄŤnih potreb in reĹˇevanje tehniÄŤnih izzivov.',
 		themeBg: 'bg-[#F05A4E]',
 		themeText: 'text-white',
 		svgFill: '#F05A4E',
@@ -86,39 +86,40 @@ export const digcompAreas = [
 export const learningPathCards = [
 	{
 		icon: Map,
-		title: 'Preglej izbrano učno pot',
-		text: 'Najprej si ogledaš, kaj pot vključuje: module, učne enote, kompetence in vsebine, ki te vodijo proti cilju.',
+		title: 'Preglej izbrano uÄŤno pot',
+		text: 'Najprej si ogledaĹˇ, kaj pot vkljuÄŤuje: module, uÄŤne enote, kompetence in vsebine, ki te vodijo proti cilju.',
 	},
 	{
 		icon: Target,
-		title: 'Začni iz svoje pozicije',
-		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj že znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
+		title: 'ZaÄŤni iz svoje pozicije',
+		text: 'Ni treba zaÄŤeti od zaÄŤetka. Pomembno je razumeti, kaj Ĺľe znaĹˇ, kaj Ĺˇe potrebujeĹˇ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ] as const
 
 export const positionCards = [
 	{
 		icon: ClipboardList,
-		title: 'Izpolni vprašalnik',
-		text: 'Vprašanja so povezana z vsebino izbrane učne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
+		title: 'Izpolni vpraĹˇalnik',
+		text: 'VpraĹˇanja so povezana z vsebino izbrane uÄŤne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
 	},
 	{
 		icon: Compass,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaže, katere dele poti že obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
+		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaĹˇ in katera podroÄŤja je dobro Ĺˇe utrditi, preden nadaljujeĹˇ.',
 	},
 ] as const
 
 export const flowSteps = [
 	'Izbira poti',
 	'Pregled vsebine',
-	'Vprašalnik',
+	'VpraĹˇalnik',
 	'Tvoja pozicija',
 	'Naslednji korak',
 ] as const
 
 export const searchFilters = [
-	{ label: 'Učne poti', value: 'learning_path' },
+	{ label: 'UÄŤne poti', value: 'learning_path' },
 	{ label: 'Moduli', value: 'module' },
-	{ label: 'Učne enote', value: 'learning_unit' },
+	{ label: 'UÄŤne enote', value: 'learning_unit' },
 ] as const
+

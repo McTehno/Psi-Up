@@ -1,4 +1,4 @@
-type HomeGlassNoteProps = {
+﻿type HomeGlassNoteProps = {
 	eyebrow: string
 	title: string
 	text: string
@@ -38,3 +38,4 @@ function HomeGlassNote({
 }
 
 export default HomeGlassNote
+

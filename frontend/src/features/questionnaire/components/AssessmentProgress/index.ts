@@ -1,4 +1,4 @@
-export { default } from './AssessmentProgress'
+﻿export { default } from './AssessmentProgress'
 
 export type {
   AssessmentProgressQuestion,
@@ -7,3 +7,4 @@ export type {
   AssessmentProgressStepStatus,
   AssessmentProgressSubStep,
 } from './AssessmentProgress'
+

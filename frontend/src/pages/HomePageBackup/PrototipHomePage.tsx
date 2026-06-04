@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { landingAnchors } from '../../app/navigation'
 
-import { useGlobalSearch } from '../../contexts/SearchContext'
+import { useGlobalSearch } from '../../hooks/useGlobalSearch'
 
 import {
 	ArrowRight as ArrowRightIcon,
@@ -25,33 +25,33 @@ import { searchFilters, focusTags, digcompAreas } from './constants'
 const learningPathCards = [
 	{
 		icon: MapIcon,
-		title: 'Preglej izbrano učno pot',
-		text: 'Najprej si ogledaš, kaj pot vključuje: module, učne enote, kompetence in vsebine, ki te vodijo proti cilju.',
+		title: 'Preglej izbrano uÄŤno pot',
+		text: 'Najprej si ogledaĹˇ, kaj pot vkljuÄŤuje: module, uÄŤne enote, kompetence in vsebine, ki te vodijo proti cilju.',
 	},
 	{
 		icon: TargetIcon,
-		title: 'Začni iz svoje pozicije',
-		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj že znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
+		title: 'ZaÄŤni iz svoje pozicije',
+		text: 'Ni treba zaÄŤeti od zaÄŤetka. Pomembno je razumeti, kaj Ĺľe znaĹˇ, kaj Ĺˇe potrebujeĹˇ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ]
 
 const positionCards = [
 	{
 		icon: ClipboardListIcon,
-		title: 'Izpolni vprašalnik',
-		text: 'Vprašanja so povezana z vsebino izbrane učne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
+		title: 'Izpolni vpraĹˇalnik',
+		text: 'VpraĹˇanja so povezana z vsebino izbrane uÄŤne poti. Pomagajo oceniti tvoje trenutno znanje znotraj poti, ki te zanima.',
 	},
 	{
 		icon: CompassIcon,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaže, katere dele poti že obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
+		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaĹˇ in katera podroÄŤja je dobro Ĺˇe utrditi, preden nadaljujeĹˇ.',
 	},
 ]
 
 const flowSteps = [
 	'Izbira poti',
 	'Pregled vsebine',
-	'Vprašalnik',
+	'VpraĹˇalnik',
 	'Tvoja pozicija',
 	'Naslednji korak',
 ]
@@ -130,7 +130,7 @@ function HomePage() {
 								Psi-Up
 							</span>
 							<span className="block text-sm text-[#706b60]">
-								Priporočilne učne poti
+								PriporoÄŤilne uÄŤne poti
 							</span>
 						</span>
 					</a>
@@ -165,7 +165,7 @@ function HomePage() {
 
 								<input
 									type="text"
-									placeholder="Kaj se hočete naučiti?"
+									placeholder="Kaj se hoÄŤete nauÄŤiti?"
 									className="w-full rounded-2xl border border-[#eadfce] bg-[#fffdf8] py-3 pl-12 pr-12 text-sm text-[#111111] shadow-sm transition-all duration-300 placeholder:text-[#706b60] focus:border-[#31583b] focus:outline-none focus:ring-1 focus:ring-[#31583b]"
 									onFocus={() => {
 										setIsSearchActive(true)
@@ -206,9 +206,9 @@ function HomePage() {
 								{searchFilters.map((filter) => (
 									<button
 										key={filter.label}
-										onClick={() => toggleFilter(filter.value as any)}
+										onClick={() => toggleFilter(filter.value)}
 										className={`rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
-											activeFilters.includes(filter.value as any)
+											activeFilters.includes(filter.value)
 												? 'border-[#31583b] bg-[#31583b] text-white hover:bg-[#274a31]'
 												: 'border-[#eadfce] bg-white text-[#706b60] hover:bg-[#fff6eb]'
 										}`}
@@ -220,11 +220,11 @@ function HomePage() {
 						</div>
 
 						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-[#111111] sm:text-6xl xl:text-7xl">
-							Pot do cilja je lažja, ko je najprej mirna.
+							Pot do cilja je laĹľja, ko je najprej mirna.
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							Psi-Up poveže vprašalnik, DigComp in učno pot v eno jasno priporočilo.
+							Psi-Up poveĹľe vpraĹˇalnik, DigComp in uÄŤno pot v eno jasno priporoÄŤilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">
@@ -240,7 +240,7 @@ function HomePage() {
 								href="#position"
 								className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-[#fff6eb] px-6 py-3 text-sm font-semibold text-[#111111] shadow-sm transition hover:border-[#d07a12]/45 hover:bg-[#fffdf8]"
 							>
-								Kaj upošteva
+								Kaj upoĹˇteva
 							</a>
 						</div>
 
@@ -268,7 +268,7 @@ function HomePage() {
 								<div className="flex flex-col gap-3">
 									{isSearching ? (
 										<div className="flex h-32 animate-pulse items-center justify-center rounded-3xl border border-[#eadfce] bg-white/60 text-[#706b60] backdrop-blur-sm">
-											Iščem...
+											IĹˇÄŤem...
 										</div>
 									) : (
 										<>
@@ -306,10 +306,10 @@ function HomePage() {
 
 																<span className="inline-flex shrink-0 items-center rounded-full bg-[#fff6eb] px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[#706b60]">
 																	{result.type === 'learning_path'
-																		? 'Učna pot'
+																		? 'UÄŤna pot'
 																		: result.type === 'module'
 																			? 'Modul'
-																			: 'Učna enota'}
+																			: 'UÄŤna enota'}
 																</span>
 															</div>
 
@@ -366,7 +366,7 @@ function HomePage() {
 													className="flex items-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#274a31] hover:shadow-lg"
 												>
 													{searchResults.length > 0
-														? 'Prikaži vse zadetke'
+														? 'PrikaĹľi vse zadetke'
 														: 'Napredno iskanje'}
 													<ArrowRightIcon className="h-4 w-4" />
 												</button>
@@ -472,17 +472,17 @@ function HomePage() {
 					<div className="w-full">
 						<div className="mx-auto max-w-3xl text-center">
 							<p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a12]">
-								Začni z zanimanjem
+								ZaÄŤni z zanimanjem
 							</p>
 
 							<h2 className="mt-4 font-display text-4xl leading-tight tracking-tight text-[#111111] sm:text-5xl">
-								Izberi učno pot, ki te pritegne.
+								Izberi uÄŤno pot, ki te pritegne.
 							</h2>
 
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
-								Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo.
-								Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko
-								najbolj približa cilju.
+								Ni pomembno, ali zaÄŤneĹˇ z veliko znanja ali samo z radovednostjo.
+								Pomembno je, da vidiĹˇ, kje si zdaj in kateri korak te lahko
+								najbolj pribliĹľa cilju.
 							</p>
 						</div>
 
@@ -524,8 +524,8 @@ function HomePage() {
 							</h2>
 
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
-								Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti.
-								Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek.
+								VpraĹˇalnik ti pomaga povezati trenutno znanje z vsebino poti.
+								Tako laĹľje razumeĹˇ, kaj Ĺľe obvladaĹˇ in kje je prostor za napredek.
 							</p>
 						</div>
 
@@ -568,9 +568,9 @@ function HomePage() {
 								</h2>
 
 								<p className="mt-5 text-lg leading-8 text-[#706b60]">
-									Ko vidiš svojo pozicijo, postane pot bolj pregledna. Lažje
-									izbereš naslednjo vsebino, se osredotočiš na pomembno in
-									napreduješ v svojem ritmu.
+									Ko vidiĹˇ svojo pozicijo, postane pot bolj pregledna. LaĹľje
+									izbereĹˇ naslednjo vsebino, se osredotoÄŤiĹˇ na pomembno in
+									napredujeĹˇ v svojem ritmu.
 								</p>
 							</div>
 
@@ -613,3 +613,6 @@ function HomePage() {
 }
 
 export default HomePage
+
+
+

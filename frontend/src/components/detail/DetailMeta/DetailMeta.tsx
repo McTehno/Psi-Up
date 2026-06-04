@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 export type DetailMetaItem = {
 	label: string
@@ -72,3 +72,4 @@ function DetailMeta({ items, variant = 'cards' }: DetailMetaProps) {
 }
 
 export default DetailMeta
+

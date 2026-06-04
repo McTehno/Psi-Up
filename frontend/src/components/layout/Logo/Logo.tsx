@@ -1,4 +1,4 @@
-import favicon from '../../../assets/favicon.svg'
+﻿import favicon from '../../../assets/favicon.svg'
 
 type LogoProps = {
   label?: string
@@ -34,3 +34,4 @@ function Logo({
 }
 
 export default Logo
+

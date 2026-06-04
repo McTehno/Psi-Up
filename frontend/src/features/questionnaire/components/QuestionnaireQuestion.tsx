@@ -1,4 +1,4 @@
-type AnswerOption = {
+﻿type AnswerOption = {
 	answer: string
 	weight: boolean
 }
@@ -35,7 +35,7 @@ function QuestionnaireQuestion({
 					<span>{answer.answer}</span>
 
 					{selectedAnswer?.answer === answer.answer && (
-						<span className="answer-card__check">✓</span>
+						<span className="answer-card__check">âś“</span>
 					)}
 				</button>
 			))}
@@ -44,3 +44,4 @@ function QuestionnaireQuestion({
 }
 
 export default QuestionnaireQuestion
+

@@ -1,4 +1,4 @@
-export type VoiceHelpRequest = {
+﻿export type VoiceHelpRequest = {
   targetType?: "learning_path" | "module" | "learning_unit";
   targetId?: string;
   questionId?: string;
@@ -41,9 +41,10 @@ export async function getQuestionVoiceHelp(
     const errorBody = await response.json().catch(() => null);
 
     throw new Error(
-      errorBody?.detail ?? "Glasovna pomoč ni bila uspešno ustvarjena."
+      errorBody?.detail ?? "Glasovna pomoÄŤ ni bila uspeĹˇno ustvarjena."
     );
   }
 
   return response.json();
 }
+

@@ -1,4 +1,4 @@
-export type AssistantContextType =
+﻿export type AssistantContextType =
   | 'learning_path'
   | 'module'
   | 'learning_unit'
@@ -18,3 +18,4 @@ export type AssistantChatContext = {
   contextId?: string
   title?: string
 }
+

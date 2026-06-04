@@ -1,4 +1,5 @@
-export { default } from './DetailRecommendationCarousel'
+﻿export { default } from './DetailRecommendationCarousel'
 export type {
   DetailRecommendationCarouselItem,
 } from './DetailRecommendationCarousel'
+

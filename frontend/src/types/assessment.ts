@@ -1,4 +1,4 @@
-import type { QuestionnaireTargetType } from './questionnaire'
+﻿import type { QuestionnaireTargetType } from './questionnaire'
 
 export type AssessmentStatus =
 	| 'completed'
@@ -58,3 +58,4 @@ export type AssessmentResultResponse = {
 
 	summary?: string | null
 }
+

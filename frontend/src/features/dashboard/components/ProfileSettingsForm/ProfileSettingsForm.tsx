@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { KeyRound, Save } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -75,7 +75,7 @@ export default function ProfileSettingsForm({
 					'Profil je bil posodobljen. Za spremembo emaila preveri potrditveni email.'
 				)
 			} else if (shouldUpdateName) {
-				setSuccessMessage('Profil je bil uspešno posodobljen.')
+				setSuccessMessage('Profil je bil uspeĹˇno posodobljen.')
 			} else {
 				setSuccessMessage('Ni sprememb za shranjevanje.')
 			}
@@ -83,7 +83,7 @@ export default function ProfileSettingsForm({
 			setErrorMessage(
 				error instanceof Error
 					? error.message
-					: 'Profila ni bilo mogoče posodobiti.'
+					: 'Profila ni bilo mogoÄŤe posodobiti.'
 			)
 		} finally {
 			setIsSubmitting(false)
@@ -128,7 +128,7 @@ export default function ProfileSettingsForm({
 						disabled={isSubmitting}
 					/>
 					<p className="mt-2 text-xs leading-5 text-[#a89880]">
-						Če spremeniš email, bo treba spremembo potrditi prek emaila.
+						ÄŚe spremeniĹˇ email, bo treba spremembo potrditi prek emaila.
 					</p>
 				</div>
 
@@ -151,7 +151,7 @@ export default function ProfileSettingsForm({
 						className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
 						disabled={isSubmitting}
 					>
-						Prekliči
+						PrekliÄŤi
 					</button>
 
 					<button
@@ -177,13 +177,14 @@ export default function ProfileSettingsForm({
 							Spremeni geslo
 						</span>
 						<span className="mt-1 block text-xs leading-5 text-[#a89880]">
-							Odpre se ločeno okno za nastavitev novega gesla.
+							Odpre se loÄŤeno okno za nastavitev novega gesla.
 						</span>
 					</span>
 
-					<span className="text-lg font-bold text-[#d07a12]">›</span>
+					<span className="text-lg font-bold text-[#d07a12]">â€ş</span>
 				</button>
 			</div>
 		</div>
 	)
 }
+

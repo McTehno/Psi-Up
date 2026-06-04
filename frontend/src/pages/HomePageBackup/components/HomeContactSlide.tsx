@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Mail, MessageCircle, Quote } from 'lucide-react'
 
 function HomeContactSlide() {
@@ -16,11 +16,11 @@ function HomeContactSlide() {
 					</p>
 
 					<h2 className="mt-4 font-display text-4xl leading-tight tracking-tight text-[#111111] sm:text-5xl">
-						Imaš vprašanje ali predlog?
+						ImaĹˇ vpraĹˇanje ali predlog?
 					</h2>
 
 					<p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#706b60]">
-						NIDiKo nastaja kot projekt za bolj jasen izbor učnih poti na
+						NIDiKo nastaja kot projekt za bolj jasen izbor uÄŤnih poti na
 						podlagi digitalnih kompetenc.
 					</p>
 
@@ -28,7 +28,7 @@ function HomeContactSlide() {
 						type="button"
 						onClick={() => setIsFlipped((value) => !value)}
 						className="group mx-auto mt-12 block h-[340px] w-full max-w-xl text-left [perspective:1200px]"
-						aria-label={isFlipped ? 'Prikaži citat' : 'Prikaži kontakt'}
+						aria-label={isFlipped ? 'PrikaĹľi citat' : 'PrikaĹľi kontakt'}
 					>
 						<div
 							className={[
@@ -42,12 +42,12 @@ function HomeContactSlide() {
 								</span>
 
 								<p className="mt-8 font-display text-2xl font-semibold leading-snug text-[#111111] sm:text-3xl">
-									“Prava učna pot se začne tam, kjer se trenutno nahajaš.”
+									â€śPrava uÄŤna pot se zaÄŤne tam, kjer se trenutno nahajaĹˇ.â€ť
 								</p>
 
 								<p className="mt-5 text-sm font-medium text-[#706b60]">
 									<span className="lg:hidden">Tapni kartico za kontakt.</span>
-									<span className="hidden lg:inline">Premakni se čez kartico za kontakt.</span>
+									<span className="hidden lg:inline">Premakni se ÄŤez kartico za kontakt.</span>
 								</p>
 							</div>
 
@@ -61,8 +61,8 @@ function HomeContactSlide() {
 								</h3>
 
 								<p className="mt-4 max-w-md text-base leading-7 text-[#fffdf8]/80">
-									Za vprašanja, povratne informacije ali predloge glede projekta
-									NIDiKo nam lahko pišeš.
+									Za vpraĹˇanja, povratne informacije ali predloge glede projekta
+									NIDiKo nam lahko piĹˇeĹˇ.
 								</p>
 
 								<a
@@ -78,7 +78,7 @@ function HomeContactSlide() {
 					</button>
 
 					<p className="mt-8 text-xs font-medium text-[#8a8175]">
-						© 2026 NIDiKo. Vse pravice pridržane.
+						Â© 2026 NIDiKo. Vse pravice pridrĹľane.
 					</p>
 				</div>
 			</div>
@@ -87,3 +87,4 @@ function HomeContactSlide() {
 }
 
 export default HomeContactSlide
+

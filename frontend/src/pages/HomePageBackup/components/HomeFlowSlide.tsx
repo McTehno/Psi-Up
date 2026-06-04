@@ -1,4 +1,4 @@
-import {
+﻿import {
 	ArrowRight as ArrowRightIcon,
 	CheckCircle2 as CheckCircleIcon,
 	Sparkles as SparklesIcon,
@@ -26,9 +26,9 @@ function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 						</h2>
 
 						<p className="mt-5 text-lg leading-8 text-[#706b60]">
-							Ko vidiš svojo pozicijo, postane pot bolj pregledna. Lažje
-							izbereš naslednjo vsebino, se osredotočiš na pomembno in
-							napreduješ v svojem ritmu.
+							Ko vidiĹˇ svojo pozicijo, postane pot bolj pregledna. LaĹľje
+							izbereĹˇ naslednjo vsebino, se osredotoÄŤiĹˇ na pomembno in
+							napredujeĹˇ v svojem ritmu.
 						</p>
 					</div>
 
@@ -69,3 +69,4 @@ function HomeFlowSlide({ flowSteps }: HomeFlowSlideProps) {
 }
 
 export default HomeFlowSlide
+

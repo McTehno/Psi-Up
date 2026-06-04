@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Save } from 'lucide-react'
 
 import { updateUser } from '../../../../services/user-service'
@@ -40,13 +40,13 @@ export default function EditProfileForm({
         name: trimmedName,
       })
 
-      setSuccessMessage('Profil je bil uspešno posodobljen.')
+      setSuccessMessage('Profil je bil uspeĹˇno posodobljen.')
       onProfileUpdated(updatedUser)
     } catch (error) {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : 'Profila ni bilo mogoče posodobiti.'
+          : 'Profila ni bilo mogoÄŤe posodobiti.'
       )
     } finally {
       setIsSubmitting(false)
@@ -92,7 +92,7 @@ export default function EditProfileForm({
           className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfce]/90 bg-[#fffdf8]/70 px-5 text-sm font-bold text-[#6e614f] shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb] hover:text-[#d07a12] active:scale-95"
           disabled={isSubmitting}
         >
-          Prekliči
+          PrekliÄŤi
         </button>
 
         <button
@@ -107,3 +107,4 @@ export default function EditProfileForm({
     </form>
   )
 }
+

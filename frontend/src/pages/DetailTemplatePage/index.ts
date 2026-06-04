@@ -1,1 +1,2 @@
-export { default } from './DetailTemplatePage'
+﻿export { default } from './DetailTemplatePage'
+

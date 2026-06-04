@@ -1,4 +1,4 @@
-export type QuestionnaireTargetType =
+﻿export type QuestionnaireTargetType =
   | 'learning_path'
   | 'module'
   | 'learning_unit'
@@ -70,3 +70,4 @@ export type QuestionnaireQuestionSourceResponse = {
   is_required?: boolean
   prerequisites?: string[]
 }
+

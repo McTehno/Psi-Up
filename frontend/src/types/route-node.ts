@@ -1,17 +1,17 @@
-/**
- * Generični tipi za prikaz povezanih vsebin v detail straneh.
+﻿/**
+ * GeneriÄŤni tipi za prikaz povezanih vsebin v detail straneh.
  *
  * Namen tega fila:
- * - omogočiti, da frontend ne razmišlja več samo v strukturi:
+ * - omogoÄŤiti, da frontend ne razmiĹˇlja veÄŤ samo v strukturi:
  *
  *   Learning path -> Module -> Learning unit
  *
- * - ampak lahko prikaže različne vrste vozlišč z isto komponento
+ * - ampak lahko prikaĹľe razliÄŤne vrste vozliĹˇÄŤ z isto komponento
  *
  * Primer:
- * - učna pot lahko vsebuje module
- * - modul lahko vsebuje učne enote
- * - učna pot lahko v prihodnosti vsebuje tudi učno enoto direktno kot vozlišče
+ * - uÄŤna pot lahko vsebuje module
+ * - modul lahko vsebuje uÄŤne enote
+ * - uÄŤna pot lahko v prihodnosti vsebuje tudi uÄŤno enoto direktno kot vozliĹˇÄŤe
  *
  * Kje se uporablja:
  * - src/utils/normalizers/detail-normalizers.ts
@@ -20,20 +20,20 @@
  * - ModuleDetailPage
  *
  * Zakaj je to pomembno:
- * Če backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
+ * ÄŚe backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
  * ne rabimo takoj pisati popolnoma nove UI komponente.
  * Dovolj je, da backend podatke pretvorimo v RouteNode obliko.
  */
 
 /**
- * Tip vsebine, ki jo lahko prikažemo kot vozlišče v poti.
+ * Tip vsebine, ki jo lahko prikaĹľemo kot vozliĹˇÄŤe v poti.
  *
  * Trenutno podpiramo:
  * - learning_path
  * - module
  * - learning_unit
  *
- * Če kasneje dodamo nov tip, ga dodamo tukaj.
+ * ÄŚe kasneje dodamo nov tip, ga dodamo tukaj.
  * Na primer:
  * - assessment
  * - resource
@@ -42,7 +42,7 @@
 export type RouteNodeType = 'learning_path' | 'module' | 'learning_unit'
 
 /**
- * Stabilna frontend oblika za eno vozlišče v poti.
+ * Stabilna frontend oblika za eno vozliĹˇÄŤe v poti.
  *
  * To ni nujno enako kot backend model.
  * To je poenostavljena oblika, ki jo UI zna varno prikazati.
@@ -67,10 +67,10 @@ export type RouteNode = {
 	type: RouteNodeType
 
 	/**
-	 * Naslov, ki ga prikažemo uporabniku.
+	 * Naslov, ki ga prikaĹľemo uporabniku.
 	 *
 	 * Vedno mora biti string.
-	 * Če backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
+	 * ÄŚe backend ne poĹˇlje naslova, ga normalizer nadomesti s fallback tekstom.
 	 */
 	title: string
 
@@ -78,7 +78,7 @@ export type RouteNode = {
 	 * Kratek opis vsebine.
 	 *
 	 * Opcijsko polje.
-	 * Če ga ni, ga komponenta lahko ne prikaže.
+	 * ÄŚe ga ni, ga komponenta lahko ne prikaĹľe.
 	 */
 	description?: string
 
@@ -92,7 +92,7 @@ export type RouteNode = {
 	/**
 	 * Trajanje v minutah.
 	 *
-	 * Pustimo tudi to možnost, če backend kasneje doda duration_min.
+	 * Pustimo tudi to moĹľnost, ÄŤe backend kasneje doda duration_min.
 	 */
 	durationMin?: number
 
@@ -110,15 +110,15 @@ export type RouteNode = {
 	 * Primer:
 	 * "excel_advanced_parallel"
 	 *
-	 * Uporabno za prikaz, da sta dva modula ali dve učni enoti
+	 * Uporabno za prikaz, da sta dva modula ali dve uÄŤni enoti
 	 * na isti ravni oziroma se lahko izvajata vzporedno.
 	 */
 	parallelGroup?: string | null
 
 	/**
-	 * Ali je vozlišče obvezno.
+	 * Ali je vozliĹˇÄŤe obvezno.
 	 *
-	 * Če backend tega ne pošlje, ostane undefined.
+	 * ÄŚe backend tega ne poĹˇlje, ostane undefined.
 	 */
 	isRequired?: boolean
 
@@ -130,3 +130,4 @@ export type RouteNode = {
 	 */
 	prerequisites: string[]
 }
+

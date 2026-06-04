@@ -1,1 +1,2 @@
-export { default } from './DetailHero'
+﻿export { default } from './DetailHero'
+

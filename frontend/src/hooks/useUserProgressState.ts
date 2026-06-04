@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
-import { useAuth } from '../features/auth/contexts/AuthContext'
+import { useAuth } from '../features/auth/hooks/useAuth'
 import {
 	getUserProgress,
 	isContentCompleted,
@@ -48,7 +48,7 @@ export function useUserProgressState({
 				setIsSaved(isContentSaved(progress, contentId, contentType))
 				setIsCompleted(isContentCompleted(progress, contentId, contentType))
 			} catch (error) {
-				console.error('Napaka pri nalaganju uporabniškega napredka:', error)
+				console.error('Napaka pri nalaganju uporabniĹˇkega napredka:', error)
 				setIsFavorite(false)
 				setIsSaved(false)
 				setIsCompleted(false)
@@ -69,3 +69,4 @@ export function useUserProgressState({
 		userProgress,
 	}
 }
+

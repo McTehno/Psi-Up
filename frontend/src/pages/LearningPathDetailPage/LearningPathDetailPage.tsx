@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -441,13 +441,13 @@ function createMountainNode(params: {
     title: getTextOrFallback(
       source?.title,
       kind === 'learning_unit'
-        ? 'Neimenovana učna enota'
+        ? 'Neimenovana uÄŤna enota'
         : 'Neimenovan modul',
     ),
     description: getTextOrFallback(
       source?.short_description,
       kind === 'learning_unit'
-        ? 'Opis učne enote trenutno ni na voljo.'
+        ? 'Opis uÄŤne enote trenutno ni na voljo.'
         : 'Opis modula trenutno ni na voljo.',
     ),
 
@@ -646,7 +646,7 @@ function formatDuration(durationHours?: number | null) {
     return `${durationHours} h`
   }
 
-  return 'Ni določeno'
+  return 'Ni doloÄŤeno'
 }
 
 function getLearningPathEntityId(
@@ -777,7 +777,7 @@ function LearningPathDetailPage() {
 
     async function loadLearningPath() {
       if (!learningPathId) {
-        setErrorMessage('ID učne poti manjka.')
+        setErrorMessage('ID uÄŤne poti manjka.')
         setIsLoading(false)
         return
       }
@@ -819,7 +819,7 @@ function LearningPathDetailPage() {
         setErrorMessage(
           error instanceof Error
             ? error.message
-            : 'Prišlo je do napake pri nalaganju učne poti.',
+            : 'PriĹˇlo je do napake pri nalaganju uÄŤne poti.',
         )
       } finally {
         if (isActive) {
@@ -881,7 +881,7 @@ function LearningPathDetailPage() {
     return (
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
-          <LoadingState message="Nalaganje učne poti..." />
+          <LoadingState message="Nalaganje uÄŤne poti..." />
         </div>
       </main>
     )
@@ -892,7 +892,7 @@ function LearningPathDetailPage() {
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <ErrorState
-            title="Učne poti ni bilo mogoče naložiti"
+            title="UÄŤne poti ni bilo mogoÄŤe naloĹľiti"
             message={errorMessage}
           />
         </div>
@@ -905,8 +905,8 @@ function LearningPathDetailPage() {
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <EmptyState
-            title="Učna pot ni najdena"
-            message="Učna pot, ki jo iščete, ne obstaja ali pa je bila izbrisana."
+            title="UÄŤna pot ni najdena"
+            message="UÄŤna pot, ki jo iĹˇÄŤete, ne obstaja ali pa je bila izbrisana."
           />
         </div>
       </main>
@@ -915,7 +915,7 @@ function LearningPathDetailPage() {
 
   const learningPathTitle = getTextOrFallback(
     learningPath.title,
-    'Neimenovana učna pot',
+    'Neimenovana uÄŤna pot',
   )
 
   const learningPathDescription = getTextOrFallback(
@@ -938,7 +938,7 @@ function LearningPathDetailPage() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest-100 text-forest-700">
               <PathIcon className="h-5 w-5" />
             </span>
-            Učna pot
+            UÄŤna pot
           </div>
 
           <h1 className="mt-5 max-w-5xl font-serif text-[clamp(3.2rem,5.8vw,6.4rem)] leading-[0.92] tracking-[-0.035em] text-[var(--color-brown-900)]">
@@ -952,7 +952,7 @@ function LearningPathDetailPage() {
           <div className="mt-7">
             <DetailTags
               tags={learningPathKeywords}
-              emptyMessage="Ni dodanih ključnih besed."
+              emptyMessage="Ni dodanih kljuÄŤnih besed."
             />
           </div>
         </section>
@@ -990,7 +990,7 @@ function LearningPathDetailPage() {
               <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
                 <EmptyState
                   title="Ni modulov"
-                  message="Ta učna pot trenutno nima modulov za prikaz."
+                  message="Ta uÄŤna pot trenutno nima modulov za prikaz."
                 />
               </div>
             )}
@@ -1028,7 +1028,7 @@ function LearningPathDetailPage() {
               {canStartQuestionnaire ? (
                 <>
                   <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
-                    Vprašalnik za samooceno se odpre v ločenem oknu. Vzemite si
+                    VpraĹˇalnik za samooceno se odpre v loÄŤenem oknu. Vzemite si
                     nekaj minut in preverite svoje znanje.
                   </p>
 
@@ -1037,13 +1037,13 @@ function LearningPathDetailPage() {
                     onClick={handleStartQuestionnaire}
                     className="mt-7 inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#d08a34] px-7 py-4 text-base font-bold text-white shadow-[0_14px_30px_rgba(208,138,52,0.20)] transition hover:-translate-y-0.5 hover:bg-[#bd7928]"
                   >
-                    Odpri vprašalnik
+                    Odpri vpraĹˇalnik
                     <ExternalLink className="h-4 w-4" />
                   </button>
                 </>
               ) : (
                 <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--color-brown-600)]">
-                  Vprašalnik za to učno pot še ni pripravljen.
+                  VpraĹˇalnik za to uÄŤno pot Ĺˇe ni pripravljen.
                 </p>
               )}
             </div>
@@ -1067,3 +1067,4 @@ function LearningPathDetailPage() {
 }
 
 export default LearningPathDetailPage
+

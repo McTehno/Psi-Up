@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useCallback } from 'react'
+﻿import { useEffect, useMemo, useRef, useCallback } from 'react'
 
 type JourneyMode = 'mobile' | 'desktop'
 
@@ -141,7 +141,7 @@ function HomeScrollJourney() {
 	}, [pathD])
 
 	// Main scroll-driven animation loop
-	// Key optimization: No React state updates — all DOM manipulation via refs
+	// Key optimization: No React state updates â€” all DOM manipulation via refs
 	useEffect(() => {
 		function getProgressForViewportBottom() {
 			const pl = pathLengthRef.current
@@ -181,7 +181,7 @@ function HomeScrollJourney() {
 
 			currentProgressRef.current = next
 
-			// Direct DOM update — bypasses React render entirely
+			// Direct DOM update â€” bypasses React render entirely
 			const pl = pathLengthRef.current
 			if (pathRef.current && pl > 0) {
 				pathRef.current.setAttribute('stroke-dashoffset', String(pl * (1 - next)))
@@ -283,3 +283,4 @@ function HomeScrollJourney() {
 }
 
 export default HomeScrollJourney
+

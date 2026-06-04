@@ -1,4 +1,4 @@
-type AssessmentIntroProps = {
+﻿type AssessmentIntroProps = {
 	title: string
 	description: string
 }
@@ -13,3 +13,4 @@ function AssessmentIntro({ title, description }: AssessmentIntroProps) {
 }
 
 export default AssessmentIntro
+

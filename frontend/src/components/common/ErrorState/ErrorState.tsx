@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+﻿import { AlertCircle } from 'lucide-react'
 
 type ErrorStateProps = {
   title?: string
@@ -6,7 +6,7 @@ type ErrorStateProps = {
 }
 
 function ErrorState({
-  title = 'Prišlo je do napake',
+  title = 'PriĹˇlo je do napake',
   message,
 }: ErrorStateProps) {
   return (
@@ -23,3 +23,4 @@ function ErrorState({
 }
 
 export default ErrorState
+

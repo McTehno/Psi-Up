@@ -1,4 +1,4 @@
-import { VoiceHelpButton } from "../../../components/voice-help/VoiceHelpButton"
+﻿import { VoiceHelpButton } from "../../../components/voice-help/VoiceHelpButton"
 
 type AssessmentQuestion = {
   id: string | number
@@ -28,7 +28,7 @@ function AssessmentHeader({
   return (
     <header className="assessment-header">
       <div className="assessment-step">
-        <span className="assessment-step__icon">ⓘ</span>
+        <span className="assessment-step__icon">â“</span>
 
         <div className="assessment-step__content">
           <span>{label}</span>
@@ -53,7 +53,7 @@ function AssessmentHeader({
           onClick={onVoiceSupportClick}
           disabled={isVoiceSupportDisabled}
         >
-          Glasovna pomoč
+          Glasovna pomoÄŤ
         </button>
       )}
     </header>
@@ -61,3 +61,4 @@ function AssessmentHeader({
 }
 
 export default AssessmentHeader
+

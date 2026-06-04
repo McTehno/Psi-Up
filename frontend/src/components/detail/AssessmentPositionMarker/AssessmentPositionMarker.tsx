@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
 
 type AssessmentPositionTone = 'current' | 'recommended'
@@ -73,7 +73,7 @@ function getToneClassNames(isCompactViewport: boolean): Record<AssessmentPositio
 }
 
 function AssessmentPositionMarker({
-  label = 'Tukaj se nahajaš',
+  label = 'Tukaj se nahajaĹˇ',
   tone = 'current',
   className = '',
 }: AssessmentPositionMarkerProps) {
@@ -145,3 +145,4 @@ function AssessmentPositionMarker({
 }
 
 export default AssessmentPositionMarker
+

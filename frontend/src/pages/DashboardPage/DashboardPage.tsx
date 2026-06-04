@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
 	Heart,
@@ -17,7 +17,7 @@ import { getLearningPathById } from '../../services/learning-path-service'
 import { getModuleById } from '../../services/module-service'
 import { getLearningUnitById } from '../../services/learning-unit-service'
 
-import { useAuth } from '../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 import { useDashboardProgress } from '../../hooks/useDashboardProgress'
 import { supabase } from '../../services/supabase-client'
 import DashboardModal from '../../features/dashboard/components/DashboardModal'
@@ -38,7 +38,7 @@ type DashboardContentItem = {
 const tabs: { key: DashboardTab; label: string; icon: typeof Heart }[] = [
 	{ key: 'favorites', label: 'Priljubljeno', icon: Heart },
 	{ key: 'saved', label: 'Shranjeno', icon: Bookmark },
-	{ key: 'completed', label: 'Dokončano', icon: CheckCircle2 },
+	{ key: 'completed', label: 'DokonÄŤano', icon: CheckCircle2 },
 ]
 
 type ContentItemProps = {
@@ -48,9 +48,9 @@ type ContentItemProps = {
 }
 
 const typeLabels: Record<ContentType, string> = {
-	learning_path: 'Učna pot',
+	learning_path: 'UÄŤna pot',
 	module: 'Modul',
-	learning_unit: 'Učna enota',
+	learning_unit: 'UÄŤna enota',
 }
 
 const typeRoutes: Record<ContentType, string> = {
@@ -388,17 +388,17 @@ export default function DashboardPage() {
 								</h3>
 								<p className="mt-1.5 max-w-xs text-sm text-[#a89880]">
 									{activeTab === 'favorites' &&
-										'Še nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
+										'Ĺ e nimate priljubljenih vsebin. Raziskujte uÄŤne poti in dodajajte med priljubljene.'}
 									{activeTab === 'saved' &&
-										'Še nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
+										'Ĺ e nimate shranjenih vsebin. Shranite vsebine za kasnejĹˇi pregled.'}
 									{activeTab === 'completed' &&
-										'Še niste dokončali nobene vsebine. Začnite z učno potjo!'}
+										'Ĺ e niste dokonÄŤali nobene vsebine. ZaÄŤnite z uÄŤno potjo!'}
 								</p>
 								<Link
 									to="/search"
 									className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#d07a12] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#b3660f] hover:shadow-md"
 								>
-									Razišči vsebine
+									RaziĹˇÄŤi vsebine
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
 			{activeModal === 'edit-profile' && localUser && (
 				<DashboardModal
 					title="Uredi profil"
-					description="Uredi ime in email za svoj račun."
+					description="Uredi ime in email za svoj raÄŤun."
 					onClose={() => setActiveModal(null)}
 				>
 					<ProfileSettingsForm
@@ -441,7 +441,7 @@ export default function DashboardPage() {
 			{activeModal === 'change-password' && (
 				<DashboardModal
 					title="Spremeni geslo"
-					description="Nastavi novo geslo za svoj prijavni račun."
+					description="Nastavi novo geslo za svoj prijavni raÄŤun."
 					onClose={() => setActiveModal(null)}
 				>
 					<ChangePasswordForm
@@ -456,3 +456,4 @@ export default function DashboardPage() {
 		</div>
 	)
 }
+

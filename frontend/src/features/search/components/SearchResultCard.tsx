@@ -1,9 +1,9 @@
-import type { SearchResult } from '../../../types/search';
+﻿import type { SearchUiResult } from '../../../types/search';
 import { Route as PathIcon, Circle as CircleIcon, CircleDot as DotIcon } from 'lucide-react';
 
 interface SearchResultCardProps {
-    result: SearchResult;
-    onClick?: (result: SearchResult) => void;
+    result: SearchUiResult;
+    onClick?: (result: SearchUiResult) => void;
 }
 
 export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
@@ -36,15 +36,15 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
                         </h3>
                         <div className="mt-1 flex flex-wrap gap-2 text-xs font-semibold">
                             <span className="inline-flex items-center rounded-full bg-sand-100 px-2.5 py-0.5 uppercase tracking-wider text-brown-600 border border-sand-200">
-                                {result.type === 'learning_path' ? 'Učna pot' : result.type === 'module' ? 'Modul' : 'Učna enota'}
+                                {result.type === 'learning_path' ? 'UÄŤna pot' : result.type === 'module' ? 'Modul' : 'UÄŤna enota'}
                             </span>
                         </div>
                     </div>
                 </div>
                 
-                {result.description && (
+                {result.shortDescription && (
                     <p className="mt-3 text-sm leading-relaxed text-brown-600 line-clamp-3">
-                        {result.description}
+                        {result.shortDescription}
                     </p>
                 )}
                 
@@ -66,3 +66,6 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
         </article>
     );
 }
+
+
+

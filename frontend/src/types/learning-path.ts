@@ -1,4 +1,4 @@
-import type { ModuleDetailResponse } from './module'
+﻿import type { ModuleDetailResponse } from './module'
 import type { LearningUnitResponse } from './learning-unit'
 
 export type LearningPathStepType = 'module' | 'learning_unit' | 'unit'
@@ -41,14 +41,14 @@ export type LearningPathResponse = {
   keywords: string[]
 
   /**
-   * Novi oziroma bolj generičen način prikaza poti.
-   * Tukaj so lahko moduli ali učne enote.
+   * Novi oziroma bolj generiÄŤen naÄŤin prikaza poti.
+   * Tukaj so lahko moduli ali uÄŤne enote.
    */
   steps?: LearningPathStepResponse[]
 
   /**
    * Backward compatibility.
-   * Če katera druga stran še vedno uporablja modules, je ne zlomimo.
+   * ÄŚe katera druga stran Ĺˇe vedno uporablja modules, je ne zlomimo.
    */
   modules?: LearningPathModuleReference[]
 }
@@ -57,3 +57,4 @@ export type LearningPathDetailResponse = LearningPathResponse & {
   module_details?: ModuleDetailResponse[]
   learning_unit_details?: LearningUnitResponse[]
 }
+

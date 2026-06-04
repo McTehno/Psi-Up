@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import AuthRequiredDialog from '../../common/AuthRequiredDialog'
 import { Bookmark, CheckCircle2, Heart } from 'lucide-react'
 
@@ -31,8 +31,8 @@ type DetailActionsProps = {
 function DetailActions({
 	contentId,
 	contentType,
-	completedLabel = 'Dokončano',
-	uncompletedLabel = 'Označi kot dokončano',
+	completedLabel = 'DokonÄŤano',
+	uncompletedLabel = 'OznaÄŤi kot dokonÄŤano',
 	initialIsFavorite = false,
 	initialIsSaved = false,
 	initialIsCompleted = false,
@@ -163,7 +163,7 @@ function DetailActions({
 							{isCompleted ? completedLabel : uncompletedLabel}
 						</span>
 						<span className="sm:hidden">
-							{isCompleted ? 'Končano' : 'Dokončaj'}
+							{isCompleted ? 'KonÄŤano' : 'DokonÄŤaj'}
 						</span>
 					</button>
 				</div>
@@ -184,3 +184,4 @@ function DetailActions({
 }
 
 export default DetailActions
+

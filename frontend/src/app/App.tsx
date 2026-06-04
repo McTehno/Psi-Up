@@ -1,6 +1,6 @@
-import { RouterProvider } from 'react-router-dom';
+﻿import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
-import { AuthProvider } from '../features/auth/contexts/AuthContext';
+import { AuthProvider } from '../features/auth/contexts/AuthProvider'
 
 function App() {
   return (
@@ -11,4 +11,6 @@ function App() {
 }
 
 export default App;
+
+
 

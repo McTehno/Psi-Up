@@ -206,9 +206,9 @@ function HomePage() {
 								{searchFilters.map((filter) => (
 									<button
 										key={filter.label}
-										onClick={() => toggleFilter(filter.label)}
+										onClick={() => toggleFilter(filter.value as any)}
 										className={`rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors ${
-											activeFilters.includes(filter.label)
+											activeFilters.includes(filter.value as any)
 												? 'border-[#31583b] bg-[#31583b] text-white hover:bg-[#274a31]'
 												: 'border-[#eadfce] bg-white text-[#706b60] hover:bg-[#fff6eb]'
 										}`}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import EmptyState from '../../../components/common/EmptyState';
 import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker';
 import { GoalBadge } from './GoalBadge';
@@ -159,6 +160,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const nodePositions: {
     unit: LearningUnitReferenceResponse;
     order: number;
+    rowIndex: number;
     x: number;
     y: number;
     isSingle: boolean;
@@ -178,6 +180,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       nodePositions.push({
         unit: units[0],
         order,
+        rowIndex: i,
         x: isRightRow ? CENTER_X + SWING : CENTER_X - SWING,
         y: currentY,
         isSingle: true,
@@ -186,12 +189,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       currentY += 200;
     } else if (numUnits === 2) {
       if (isMobile) {
-        nodePositions.push({ unit: units[0], order, x: CENTER_X - 140, y: currentY, isSingle: false, isOnRightSide: false });
-        nodePositions.push({ unit: units[1], order, x: CENTER_X + 140, y: currentY + 140, isSingle: false, isOnRightSide: true });
+        nodePositions.push({ unit: units[0], order, rowIndex: i, x: CENTER_X - 140, y: currentY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[1], order, rowIndex: i, x: CENTER_X + 140, y: currentY + 140, isSingle: false, isOnRightSide: true });
         currentY += 340;
       } else {
-        nodePositions.push({ unit: units[0], order, x: CENTER_X - 180, y: currentY, isSingle: false, isOnRightSide: false });
-        nodePositions.push({ unit: units[1], order, x: CENTER_X + 180, y: currentY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[0], order, rowIndex: i, x: CENTER_X - 180, y: currentY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[1], order, rowIndex: i, x: CENTER_X + 180, y: currentY, isSingle: false, isOnRightSide: false });
         currentY += 320;
       }
     } else {
@@ -200,7 +203,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       for (let j = 0; j < numUnits; j++) {
         const x = CENTER_X - spread / 2 + (spread / (numUnits - 1)) * j;
         const staggeredY = currentY + (j * staggerAmount);
-        nodePositions.push({ unit: units[j], order, x, y: staggeredY, isSingle: false, isOnRightSide: false });
+        nodePositions.push({ unit: units[j], order, rowIndex: i, x, y: staggeredY, isSingle: false, isOnRightSide: false });
       }
       currentY += (isMobile ? 200 + (numUnits - 1) * staggerAmount : 320);
     }
@@ -209,38 +212,58 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const finalGoalY = numRows > 0 ? currentY + 40 : OFFSET_TOP + 100;
   const totalHeight = finalGoalY + 160;
 
-  const paths: string[] = [];
+  type PathSegment = {
+    d: string;
+    delay: number;
+    duration: number;
+  };
+
+  const pathSegments: PathSegment[] = [];
+  const DRAW_DURATION = 0.8;
+
   if (numRows > 0) {
-    const firstRow = nodePositions.filter(n => n.order === sortedOrders[0]);
+    const firstRow = nodePositions.filter(n => n.rowIndex === 0);
     for (const tgt of firstRow) {
       const cpY = tgt.y / 2;
-      paths.push(`M ${CENTER_X} 0 C ${CENTER_X} ${cpY}, ${tgt.x} ${cpY}, ${tgt.x} ${tgt.y}`);
+      pathSegments.push({
+        d: `M ${CENTER_X} 0 C ${CENTER_X} ${cpY}, ${tgt.x} ${cpY}, ${tgt.x} ${tgt.y}`,
+        delay: 0,
+        duration: DRAW_DURATION
+      });
     }
 
     for (let i = 0; i < numRows - 1; i++) {
-      const currOrder = sortedOrders[i];
-      const nextOrder = sortedOrders[i + 1];
-      const currNodes = nodePositions.filter(n => n.order === currOrder);
-      const nextNodes = nodePositions.filter(n => n.order === nextOrder);
+      const currNodes = nodePositions.filter(n => n.rowIndex === i);
+      const nextNodes = nodePositions.filter(n => n.rowIndex === i + 1);
 
       for (const src of currNodes) {
         for (const tgt of nextNodes) {
           const cpY = (src.y + tgt.y) / 2;
-          paths.push(`M ${src.x} ${src.y} C ${src.x} ${cpY}, ${tgt.x} ${cpY}, ${tgt.x} ${tgt.y}`);
+          pathSegments.push({
+            d: `M ${src.x} ${src.y} C ${src.x} ${cpY}, ${tgt.x} ${cpY}, ${tgt.x} ${tgt.y}`,
+            delay: (i + 1) * DRAW_DURATION,
+            duration: DRAW_DURATION
+          });
         }
       }
     }
 
-    const lastRow = nodePositions.filter(n => n.order === sortedOrders[numRows - 1]);
+    const lastRow = nodePositions.filter(n => n.rowIndex === numRows - 1);
     for (const src of lastRow) {
       const cpY = (src.y + finalGoalY) / 2;
-      paths.push(`M ${src.x} ${src.y} C ${src.x} ${cpY}, ${CENTER_X} ${cpY}, ${CENTER_X} ${finalGoalY}`);
+      pathSegments.push({
+        d: `M ${src.x} ${src.y} C ${src.x} ${cpY}, ${CENTER_X} ${cpY}, ${CENTER_X} ${finalGoalY}`,
+        delay: numRows * DRAW_DURATION,
+        duration: DRAW_DURATION
+      });
     }
   } else {
-    paths.push(`M ${CENTER_X} 0 L ${CENTER_X} ${finalGoalY}`);
+    pathSegments.push({
+      d: `M ${CENTER_X} 0 L ${CENTER_X} ${finalGoalY}`,
+      delay: 0,
+      duration: DRAW_DURATION * 2
+    });
   }
-
-  const pathD = paths.join(' ');
 
   // Mobile popup data
   const activeNode = activeNodeIdx !== null ? nodePositions[activeNodeIdx] : null;
@@ -351,19 +374,29 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             preserveAspectRatio="none"
           >
             <defs>
-              <linearGradient id="lu-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="lu-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#7DAE8C" />
                 <stop offset="60%" stopColor="#A4B98E" />
                 <stop offset="100%" stopColor="#C4B491" />
               </linearGradient>
             </defs>
-            <path
-              d={pathD}
-              fill="none"
-              stroke="url(#lu-path-gradient)"
-              strokeWidth="5"
-              strokeLinecap="round"
-            />
+            {pathSegments.map((segment, idx) => (
+              <motion.path
+                key={`path-${idx}`}
+                d={segment.d}
+                fill="none"
+                stroke="url(#lu-path-gradient)"
+                strokeWidth="5"
+                strokeLinecap="round"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ 
+                  pathLength: { duration: segment.duration, delay: segment.delay, ease: "linear" },
+                  opacity: { duration: 0.01, delay: segment.delay } 
+                }}
+              />
+            ))}
           </svg>
 
           {nodePositions.map((pos, idx) => {
@@ -377,6 +410,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const isUnitCompleted = safeCompletedUnitIds.includes(ref.learning_unit_id);
             const isNodeActive = isMobile && activeNodeIdx === idx;
             const isAssessmentPosition = assessmentPositionUnitId === ref.learning_unit_id;
+            const nodeDelay = (pos.rowIndex + 1) * DRAW_DURATION;
 
             return (
               <div
@@ -385,17 +419,28 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 style={{ left: `${(pos.x / 800) * 100}%`, top: `${pos.y - 28}px` }}
               >
                 {isAssessmentPosition && (
-                  <AssessmentPositionMarker
-                    label="Tukaj se nahajaš"
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
                     className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
-                  />
+                  >
+                    <AssessmentPositionMarker
+                      label="Tukaj se nahajaš"
+                    />
+                  </motion.div>
                 )}
 
                 {/* Center Node */}
-                <button
+                <motion.button
                   type="button"
                   data-lu-node={idx}
                   onClick={() => handleNodeClick(idx, ref.learning_unit_id)}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.8, delay: nodeDelay, ease: "easeInOut" }}
                   className={`
                     w-[56px] h-[56px] shrink-0 rounded-full flex items-center justify-center relative z-20 shadow-sm cursor-pointer
                     transition-all duration-300
@@ -416,86 +461,108 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   ) : (
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />
                   )}
-                </button>
+                </motion.button>
 
                 {/* Mobile Node Label */}
                 {isMobile && !isUnitCompleted && (
-                  <div className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.8, delay: nodeDelay + 0.1, ease: "easeInOut" }}
+                    className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300"
+                  >
                     <h4 className="text-[11px] font-bold leading-snug line-clamp-2 text-[#4a392b]">
                       {normalizedDetail.title}
                     </h4>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Desktop cards â€” hidden on mobile */}
                 {!isMobile && pos.isSingle && (
-                  <button
-                    type="button"
-                    onClick={() => handleUnitClick(ref.learning_unit_id)}
-                    className={`absolute top-[28px] -translate-y-1/2 w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-[calc(50%+4px)] cursor-pointer flex flex-col group/card ${pos.isOnRightSide ? 'left-[70px] md:left-[90px]' : 'right-[70px] md:right-[90px]'} ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
+                    className={`absolute top-[28px] ${pos.isOnRightSide ? 'left-[70px] md:left-[90px]' : 'right-[70px] md:right-[90px]'} z-0`}
                   >
-                    <div className={`uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2 w-full ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                      Stopnja {ref.order}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleUnitClick(ref.learning_unit_id)}
+                      className={`-translate-y-1/2 w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-[calc(50%+4px)] cursor-pointer flex flex-col group/card ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                    >
+                      <div className={`uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2 w-full ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
+                        Stopnja {ref.order}
+                      </div>
 
-                    <div className={`w-full flex items-start gap-2 ${pos.isOnRightSide ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
-                      <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {normalizedDetail.title}
-                      </h4>
-                      {isUnitCompleted ? (
-                        <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                        </div>
-                      ) : (
-                        <ArrowRight className={`w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0 ${pos.isOnRightSide ? '' : 'rotate-180'}`} />
+                      <div className={`w-full flex items-start gap-2 ${pos.isOnRightSide ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
+                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
+                          {normalizedDetail.title}
+                        </h4>
+                        {isUnitCompleted ? (
+                          <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                          </div>
+                        ) : (
+                          <ArrowRight className={`w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0 ${pos.isOnRightSide ? '' : 'rotate-180'}`} />
+                        )}
+                      </div>
+                      {normalizedDetail.description && (
+                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
+                          {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
+                        </p>
                       )}
-                    </div>
-                    {normalizedDetail.description && (
-                      <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
-                        {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
-                      </p>
-                    )}
-                    {!ref.is_required && (
-                      <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'} ${pos.isOnRightSide ? 'self-start' : 'self-end'}`}>
-                        Izbirno
-                      </span>
-                    )}
-                  </button>
+                      {!ref.is_required && (
+                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'} ${pos.isOnRightSide ? 'self-start' : 'self-end'}`}>
+                          Izbirno
+                        </span>
+                      )}
+                    </button>
+                  </motion.div>
                 )}
 
                 {!isMobile && !pos.isSingle && (
-                  <button
-                    type="button"
-                    onClick={() => handleUnitClick(ref.learning_unit_id)}
-                    className={`mt-4 w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer flex flex-col group/card text-left ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
+                    className="mt-4"
                   >
-                    <div className="uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2">
-                      Stopnja {ref.order}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleUnitClick(ref.learning_unit_id)}
+                      className={`w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer flex flex-col group/card text-left ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                    >
+                      <div className="uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2">
+                        Stopnja {ref.order}
+                      </div>
 
-                    <div className="w-full flex items-start justify-between gap-2">
-                      <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
-                        {normalizedDetail.title}
-                      </h4>
-                      {isUnitCompleted ? (
-                        <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                        </div>
-                      ) : (
-                        <ArrowRight className="w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0" />
+                      <div className="w-full flex items-start justify-between gap-2">
+                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
+                          {normalizedDetail.title}
+                        </h4>
+                        {isUnitCompleted ? (
+                          <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                          </div>
+                        ) : (
+                          <ArrowRight className="w-4 h-4 mt-1 text-[#C98A43] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex-shrink-0" />
+                        )}
+                      </div>
+                      {normalizedDetail.description && (
+                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
+                          {normalizedDetail.description}
+                        </p>
                       )}
-                    </div>
-                    {normalizedDetail.description && (
-                      <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
-                        {normalizedDetail.description}
-                      </p>
-                    )}
-                    {!ref.is_required && (
-                      <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold self-start ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'}`}>
-                        Izbirno
-                      </span>
-                    )}
-                  </button>
+                      {!ref.is_required && (
+                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold self-start ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'}`}>
+                          Izbirno
+                        </span>
+                      )}
+                    </button>
+                  </motion.div>
                 )}
               </div>
             );
@@ -503,9 +570,13 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
           {/* Mobile popup card â€” only rendered on mobile when a node is active */}
           {isMobile && activeNode && activeRef && (
-            <div
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               ref={popupRef}
-              className="absolute z-50 animate-fade-in-up"
+              className="absolute z-50"
               style={getPopupStyle()}
             >
               {/* Arrow pointing at the node */}
@@ -554,7 +625,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Goal Node */}

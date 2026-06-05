@@ -11,7 +11,7 @@ type AppShellProps = {
 function AppShell({
   children,
   showNavbar = true,
-  showFooter = true,
+  showFooter = false,
 }: AppShellProps) {
   return (
     <div className="min-h-screen text-brown-900">

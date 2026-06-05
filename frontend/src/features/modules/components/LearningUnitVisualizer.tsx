@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
@@ -70,9 +70,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const currentDesktopBg = desktopBgs[bgIndex];
   const currentMobileBg = mobileBgs[bgIndex];
 
-  // Detect mobile viewport (below Tailwind md breakpoint)
+  // Detect mobile viewport (below Tailwind xl breakpoint to prevent card cutoffs)
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia('(max-width: 1199px)');
     setIsMobile(mq.matches);
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);

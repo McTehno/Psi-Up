@@ -1,4 +1,4 @@
-import {
+﻿import {
 	ArrowRight as ArrowRightIcon,
 	Circle as CircleIcon,
 	CircleDot as DotIcon,
@@ -141,7 +141,7 @@ function HeroSearchResults({
 									className="flex items-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#274a31] hover:shadow-lg"
 								>
 									{searchResults.length > 0
-										? 'Prikaži vse zadetke'
+										? 'PrikaĹľi vse zadetke'
 										: 'Napredno iskanje'}
 									<ArrowRightIcon className="h-4 w-4" />
 								</button>
@@ -155,3 +155,4 @@ function HeroSearchResults({
 }
 
 export default HeroSearchResults
+

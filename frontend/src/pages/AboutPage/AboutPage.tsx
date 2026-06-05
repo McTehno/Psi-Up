@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import aboutMountains from '../../assets/AboutUsPage/about-mountains.png'
 
 const workPackages = [
@@ -164,7 +164,7 @@ const AboutPage = () => {
 
 						<p className="mx-auto mt-8 max-w-2xl text-[18px] leading-8 text-[#5f5a52]">
 							NIDiKo razvija modularno zasnovan in prilagodljiv kurikulum za
-							neformalna izobraževanja na področju digitalnih kompetenc.
+							neformalna izobraĹľevanja na področju digitalnih kompetenc.
 						</p>
 					</div>
 				</section>
@@ -216,12 +216,12 @@ const AboutPage = () => {
 
 							<h2 className="mt-5 font-serif text-[clamp(32px,4vw,54px)] leading-[1.04] text-[#33442f]">
 								Digitalne kompetence so ključne za sodelovanje v sodobni
-								družbi.
+								druĹľbi.
 							</h2>
 
 							<p className="mt-5 text-[16px] leading-7 text-[#5f5a52]">
 								Med različnimi ciljnimi skupinami še vedno nastajajo razlike med
-								pričakovanimi in dejansko doseženimi digitalnimi znanji.
+								pričakovanimi in dejansko doseĹľenimi digitalnimi znanji.
 							</p>
 						</div>
 
@@ -258,7 +258,7 @@ const AboutPage = () => {
 								</p>
 
 								<h3 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-[#33442f]">
-									Neformalno izobraževanje z jasno strukturo vsebin.
+									Neformalno izobraĹľevanje z jasno strukturo vsebin.
 								</h3>
 
 								<p className="mt-4 text-sm leading-6 text-[#5f5a52]">
@@ -391,3 +391,4 @@ const AboutPage = () => {
 }
 
 export default AboutPage
+

@@ -1,4 +1,4 @@
-export const appStyles = {
+﻿export const appStyles = {
   page: {
     base: 'min-h-screen pt-20 pb-[18px] px-[18px] md:pt-24 text-[#2f3328]',
     panel:
@@ -134,3 +134,4 @@ export const appStyles = {
       'border-t border-[rgba(47,74,49,0.16)] pt-6',
   },
 } as const
+

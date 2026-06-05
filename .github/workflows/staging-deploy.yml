@@ -1,0 +1,153 @@
+name: CI + Deploy Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  ci:
+    name: Run CI checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx
+
+      - name: Run backend tests
+        working-directory: backend
+        run: pytest
+
+  deploy-staging:
+    name: Deploy to staging VPS
+    runs-on: ubuntu-latest
+    needs: ci
+
+    environment:
+      name: staging
+      url: http://46.225.17.135
+
+    steps:
+      - name: Configure SSH
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_PORT: ${{ secrets.STAGING_PORT }}
+          STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+        run: |
+          set -euo pipefail
+
+          : "${STAGING_HOST:?Missing STAGING_HOST secret}"
+          : "${STAGING_SSH_KEY:?Missing STAGING_SSH_KEY secret}"
+
+          STAGING_PORT="${STAGING_PORT:-22}"
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/staging_key
+          chmod 600 ~/.ssh/staging_key
+
+          ssh-keyscan -T 10 -p "$STAGING_PORT" "$STAGING_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy on VPS
+        env:
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_PORT: ${{ secrets.STAGING_PORT }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          set -euo pipefail
+
+          : "${STAGING_HOST:?Missing STAGING_HOST secret}"
+          : "${STAGING_USER:?Missing STAGING_USER secret}"
+
+          STAGING_PORT="${STAGING_PORT:-22}"
+
+          ssh -i ~/.ssh/staging_key \
+              -p "$STAGING_PORT" \
+              "$STAGING_USER@$STAGING_HOST" \
+              "/var/www/psi-up/deploy-staging.sh"
+
+      - name: Keep only latest staging deployment
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          deployments_json="$(curl -fsS \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/deployments?environment=staging&per_page=100")"
+
+          latest_id="$(echo "$deployments_json" | jq -r 'sort_by(.created_at) | reverse | .[0].id // empty')"
+
+          if [ -z "$latest_id" ]; then
+            echo "No staging deployments found."
+            exit 0
+          fi
+
+          echo "Keeping latest staging deployment: $latest_id"
+
+          echo "$deployments_json" \
+            | jq -r 'sort_by(.created_at) | reverse | .[1:][]?.id' \
+            | while read -r deployment_id; do
+                [ -z "$deployment_id" ] && continue
+
+                echo "Marking old deployment $deployment_id inactive..."
+
+                curl -fsS -X POST \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "https://api.github.com/repos/$REPO/deployments/$deployment_id/statuses" \
+                  -d '{"state":"inactive","description":"Old staging deployment cleaned up"}' \
+                  > /dev/null
+
+                echo "Deleting old deployment $deployment_id..."
+
+                curl -fsS -X DELETE \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "https://api.github.com/repos/$REPO/deployments/$deployment_id" \
+                  > /dev/null
+              done

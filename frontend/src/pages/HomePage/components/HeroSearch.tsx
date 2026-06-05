@@ -1,4 +1,4 @@
-import { Search as SearchIcon, X as XIcon } from 'lucide-react'
+﻿import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import type { SearchResult, SearchContentType } from '../../../types/search'
@@ -102,3 +102,5 @@ function HeroSearch({
 }
 
 export default HeroSearch
+
+

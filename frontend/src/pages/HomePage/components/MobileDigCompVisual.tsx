@@ -1,4 +1,4 @@
-import { digcompAreas } from '../constants.ts'
+﻿import { digcompAreas } from '../constants.ts'
 
 type MobileDigCompVisualProps = {
 	activeIndex: number
@@ -20,7 +20,6 @@ function MobileDigCompVisual({
 					style={{
 						transform: `rotate(${-81 - rotationCount * 72}deg)`,
 						transformOrigin: 'center center',
-						willChange: 'transform',
 						backfaceVisibility: 'hidden',
 						WebkitBackfaceVisibility: 'hidden',
 					}}
@@ -77,3 +76,4 @@ function MobileDigCompVisual({
 }
 
 export default MobileDigCompVisual
+

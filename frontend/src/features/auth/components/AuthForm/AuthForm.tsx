@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 
 type AuthFormProps = {
@@ -94,7 +94,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all duration-300 cursor-pointer ${accentColor} opacity-50 hover:opacity-100 hover:bg-black/[0.04]`}
-            aria-label={showPassword ? 'Skrij geslo' : 'Prikaži geslo'}
+            aria-label={showPassword ? 'Skrij geslo' : 'PrikaĹľi geslo'}
             tabIndex={-1}
           >
             {showPassword
@@ -162,3 +162,5 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
     </form>
   )
 }
+
+

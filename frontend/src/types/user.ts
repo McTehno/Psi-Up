@@ -1,4 +1,4 @@
-export type UserContentProgress = {
+﻿export type UserContentProgress = {
 	learning_path_ids: string[]
 	module_ids: string[]
 	learning_unit_ids: string[]
@@ -71,3 +71,4 @@ export type UserUpdateRequest = {
 	name?: string | null
 	email?: string | null
 }
+

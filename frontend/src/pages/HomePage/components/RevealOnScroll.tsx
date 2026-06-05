@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+﻿import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 type RevealOnScrollProps = {
 	children: ReactNode
@@ -49,7 +49,6 @@ function RevealOnScroll({
 			].join(' ')}
 			style={{
 				transitionDelay: `${delay}ms`,
-				willChange: 'transform, opacity',
 			}}
 		>
 			{children}
@@ -58,3 +57,4 @@ function RevealOnScroll({
 }
 
 export default RevealOnScroll
+

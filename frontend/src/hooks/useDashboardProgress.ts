@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
-import { useAuth } from '../features/auth/contexts/AuthContext'
+import { useAuth } from '../features/auth/hooks/useAuth'
 import { getUserProgress } from '../services/user-progress-service'
 import type { UserProgressResponse } from '../types/user-progress'
 
@@ -47,3 +47,5 @@ export function useDashboardProgress() {
 		error,
 	}
 }
+
+

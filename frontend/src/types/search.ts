@@ -1,4 +1,4 @@
-export type SearchContentType = 'learning_path' | 'module' | 'learning_unit'
+﻿export type SearchContentType = 'learning_path' | 'module' | 'learning_unit'
 
 /**
  * Request za search.
@@ -74,3 +74,4 @@ export type PaginatedSearchResults = {
 	page: number
 	totalPages: number
 }
+

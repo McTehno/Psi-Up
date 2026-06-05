@@ -1,4 +1,4 @@
-import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
+﻿import type { DetailRouteItem } from '../../../components/detail/DetailRouteMap/DetailRouteMap'
 import type {
   LearningPathResponse,
   LearningPathStepResponse,
@@ -142,7 +142,7 @@ function buildLearningUnitRouteItem(
     id: reference.learning_unit_id,
     title: learningUnit.title,
     description: learningUnit.short_description,
-    typeLabel: 'UÄŤna enota',
+    typeLabel: 'UĂ„Ĺ¤na enota',
     durationLabel: formatDuration(learningUnit.duration_hours),
     order: reference.order,
     parallelGroup: reference.parallel_group,
@@ -264,3 +264,4 @@ export function buildModuleRouteMapItems({
     })
     .filter((item): item is DetailRouteItem => item !== null)
 }
+

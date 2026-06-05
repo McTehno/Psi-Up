@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 
@@ -23,3 +23,4 @@ function AppShell({
 }
 
 export default AppShell
+

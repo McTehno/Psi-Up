@@ -1,4 +1,4 @@
-export type QuestionnaireTargetType =
+﻿export type QuestionnaireTargetType =
 	| 'learning_unit'
 	| 'module'
 	| 'learning_path'
@@ -33,7 +33,7 @@ export async function getQuestionnaire(
 	)
 
 	if (!response.ok) {
-		throw new Error('Vprašalnika ni bilo mogoče naložiti.')
+		throw new Error('Vprašalnika ni bilo mogoče naloĹľiti.')
 	}
 
 	return response.json()
@@ -59,3 +59,4 @@ export async function evaluateAssessment(payload: {
 
 	return response.json()
 }
+

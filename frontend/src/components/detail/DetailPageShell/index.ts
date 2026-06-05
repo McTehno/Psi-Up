@@ -1,1 +1,2 @@
-export { default } from './DetailPageShell'
+﻿export { default } from './DetailPageShell'
+

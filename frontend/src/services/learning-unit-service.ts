@@ -1,4 +1,4 @@
-import { apiGet } from './api-client'
+﻿import { apiGet } from './api-client'
 import type {
 	LearningUnitDetailResponse,
 	LearningUnitResponse,
@@ -47,3 +47,4 @@ export async function getLearningUnitQuestionnaire(
 		`/learning-units/${learningUnitId}/questionnaire`,
 	)
 }
+

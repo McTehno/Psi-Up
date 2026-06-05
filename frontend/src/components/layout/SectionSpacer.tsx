@@ -1,4 +1,4 @@
-type SectionSpacerProps = {
+﻿type SectionSpacerProps = {
 	size?: 'normal' | 'large'
 }
 
@@ -10,3 +10,5 @@ export default function SectionSpacer({ size = 'normal' }: SectionSpacerProps) {
 		/>
 	)
 }
+
+

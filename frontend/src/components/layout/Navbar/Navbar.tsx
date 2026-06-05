@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, LogOut, User } from 'lucide-react'
 
 import Logo from '../Logo'
-import { useAuth } from '../../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../../features/auth/hooks/useAuth'
 import { supabase } from '../../../services/supabase-client'
 
 type NavbarLink = {
@@ -102,7 +102,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 							NIDiKo
 						</span>
 						<span className="block text-[10px] font-medium leading-[1.3] text-[#5f5a52]">
-							Razvoj prilagodljivega kurikuluma neformalnih izobraževanj
+							Razvoj prilagodljivega kurikuluma neformalnih izobraĹľevanj
 							<br />
 							za pridobitev in razvoj digitalnih kompetenc
 						</span>
@@ -235,3 +235,4 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 }
 
 export default Navbar
+

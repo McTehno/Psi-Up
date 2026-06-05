@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react'
+﻿import { ChevronDown } from 'lucide-react'
 
 type ScrollDownHintProps = {
 	href: string
@@ -24,3 +24,4 @@ function ScrollDownHint({ href, label = 'Nadaljuj' }: ScrollDownHintProps) {
 }
 
 export default ScrollDownHint
+

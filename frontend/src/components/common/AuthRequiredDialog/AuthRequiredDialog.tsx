@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+﻿import { useLocation, useNavigate } from 'react-router-dom'
 
 type AuthRequiredDialogProps = {
   isOpen: boolean
@@ -60,3 +60,4 @@ function AuthRequiredDialog({ isOpen, onClose }: AuthRequiredDialogProps) {
 }
 
 export default AuthRequiredDialog
+

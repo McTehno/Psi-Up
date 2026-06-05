@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 type SimpleMarkdownTextProps = {
   content: string
@@ -118,3 +118,4 @@ function SimpleMarkdownText({ content, className = '' }: SimpleMarkdownTextProps
 }
 
 export default SimpleMarkdownText
+

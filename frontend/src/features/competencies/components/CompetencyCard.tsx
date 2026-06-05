@@ -1,4 +1,4 @@
-import './CompetencyCard.css'
+﻿import './CompetencyCard.css'
 import icon from '../../../assets/lamp.png'
 
 type CompetencyCardProps = {
@@ -24,7 +24,7 @@ function CompetencyCard({
 		>
 			{isSelected && (
 				<div className="competency-card__check">
-					✓
+					âś“
 				</div>
 			)}
 
@@ -41,3 +41,4 @@ function CompetencyCard({
 }
 
 export default CompetencyCard
+

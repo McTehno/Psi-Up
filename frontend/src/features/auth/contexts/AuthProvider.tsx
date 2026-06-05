@@ -1,25 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+﻿import React, { useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 
 import { supabase } from '../../../services/supabase-client'
 import { createUserProfile, updateUser } from '../../../services/user-service'
 import type { UserResponse } from '../../../types/user'
-
-type AuthContextType = {
-  session: Session | null
-  user: User | null
-  localUser: UserResponse | null
-  isLoading: boolean
-  updateLocalUser: (updatedUser: UserResponse) => void
-}
-
-const AuthContext = createContext<AuthContextType>({
-  session: null,
-  user: null,
-  localUser: null,
-  isLoading: true,
-  updateLocalUser: () => {},
-})
+import { AuthContext } from './auth-context'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
@@ -99,6 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function useAuth() {
-  return useContext(AuthContext)
-}
+
+
+
+
+
+

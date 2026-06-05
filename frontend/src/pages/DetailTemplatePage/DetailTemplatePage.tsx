@@ -1,4 +1,4 @@
-import {
+﻿import {
   Award,
   Blocks,
   Bookmark,
@@ -217,3 +217,4 @@ function DetailTemplatePage() {
 }
 
 export default DetailTemplatePage
+

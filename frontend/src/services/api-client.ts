@@ -1,4 +1,4 @@
-import type { ErrorResponse } from '../types/api'
+﻿import type { ErrorResponse } from '../types/api'
 import { supabase } from './supabase-client'
 
 const API_BASE_URL =
@@ -26,7 +26,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 
     const message =
       errorData?.error?.message ||
-      'Prišlo je do napake pri komunikaciji s strežnikom.'
+      'Prišlo je do napake pri komunikaciji s streĹľnikom.'
 
     throw new Error(message)
   }
@@ -125,3 +125,4 @@ export async function apiDeleteWithBody<TResponse, TBody>(
 
   return parseResponse<TResponse>(response)
 }
+

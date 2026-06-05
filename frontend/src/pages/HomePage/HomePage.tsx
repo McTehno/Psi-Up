@@ -1,8 +1,8 @@
-import { useEffect, useRef, Fragment } from 'react'
+﻿import { useEffect, useRef, Fragment } from 'react'
 import Lenis from 'lenis'
 import { useScroll } from 'framer-motion'
 
-import { useGlobalSearch } from '../../contexts/SearchContext'
+import { useGlobalSearch } from '../../hooks/useGlobalSearch'
 import SectionSpacer from '../../components/layout/SectionSpacer'
 import HomeParallaxEnvironment from './components/HomeParallaxEnvironment'
 import HomeScrollJourney from './components/HomeScrollJourney'
@@ -110,9 +110,9 @@ function HomePage() {
 			</div>
 
 			<div
-				className={`fixed inset-0 z-40 transition-[opacity,backdrop-filter] duration-500 ease-in-out ${isSearchActive
-					? 'bg-[#fffdf8]/60 backdrop-blur-md opacity-100'
-					: 'pointer-events-none bg-transparent backdrop-blur-none opacity-0'
+				className={`fixed inset-0 z-40 transition-opacity duration-500 ease-in-out ${isSearchActive
+					? 'bg-[#fffdf8]/80 opacity-100'
+					: 'pointer-events-none bg-transparent opacity-0'
 					}`}
 				style={{
 					transform: 'translateZ(0)',
@@ -141,7 +141,7 @@ function HomePage() {
 					</Fragment>
 				))}
 
-				{/* ── Spacer: Vprašalnik → CTA ── */}
+				{/* â”€â”€ Spacer: Vprašalnik â†’ CTA â”€â”€ */}
 				<SectionSpacer size="normal" />
 
 				<HomeFinalCtaSection />
@@ -151,3 +151,4 @@ function HomePage() {
 }
 
 export default HomePage
+

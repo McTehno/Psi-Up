@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Mail } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -130,3 +130,4 @@ export default function ChangeEmailForm({
     </form>
   )
 }
+

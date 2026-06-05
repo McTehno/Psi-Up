@@ -1,4 +1,4 @@
-import { Send } from 'lucide-react'
+﻿import { Send } from 'lucide-react'
 
 type AssistantInputProps = {
   value: string
@@ -40,3 +40,4 @@ function AssistantInput({
 }
 
 export default AssistantInput
+

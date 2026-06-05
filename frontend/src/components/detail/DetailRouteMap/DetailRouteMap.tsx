@@ -1,4 +1,4 @@
-import type { RouteNode } from '../../../types/route-node'
+﻿import type { RouteNode } from '../../../types/route-node'
 
 /**
  * Status elementa v prikazu poti.
@@ -16,11 +16,11 @@ export type DetailRouteItemStatus =
   | 'current'
 
 /**
- * Oblika podatka, ki jo DetailRouteMap neposredno prikaže.
+ * Oblika podatka, ki jo DetailRouteMap neposredno prikaĹľe.
  *
  * To je UI-friendly oblika:
- * - title je že pripravljen za prikaz
- * - durationLabel je že oblikovan tekst
+ * - title je Ĺľe pripravljen za prikaz
+ * - durationLabel je Ĺľe oblikovan tekst
  * - typeLabel je tekst, ki ga uporabnik vidi
  *
  * Ta tip lahko še naprej uporabljajo obstoječe detail strani,
@@ -41,7 +41,7 @@ export type DetailRouteItem = {
 
 /**
  * DetailRouteMap lahko sprejme:
- * - DetailRouteItem[]: stara UI oblika, ki jo komponenta že podpira
+ * - DetailRouteItem[]: stara UI oblika, ki jo komponenta Ĺľe podpira
  * - RouteNode[]: nova normalizirana oblika iz detail-normalizers.ts
  *
  * S tem lahko postopoma prehajamo na bolj fleksibilen frontend model,
@@ -84,7 +84,7 @@ const statusClasses: Record<DetailRouteItemStatus, string> = {
  * - module
  * - learning_unit
  *
- * Uporabniku pa prikažemo lepše slovenske oznake.
+ * Uporabniku pa prikaĹľemo lepše slovenske oznake.
  */
 const routeNodeTypeLabels: Record<RouteNode['type'], string> = {
   learning_path: 'Učna pot',
@@ -124,9 +124,9 @@ const formatDurationLabel = (item: RouteNode): string | null => {
  * Pretvori RouteNode v DetailRouteItem.
  *
  * Zakaj to potrebujemo:
- * DetailRouteMap interno že zna lepo prikazati DetailRouteItem.
+ * DetailRouteMap interno Ĺľe zna lepo prikazati DetailRouteItem.
  * Namesto da prepišemo celotno komponento, RouteNode samo pretvorimo
- * v obliko, ki jo komponenta že razume.
+ * v obliko, ki jo komponenta Ĺľe razume.
  */
 const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
   return {
@@ -145,8 +145,8 @@ const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
 /**
  * Pretvori vsak vhodni item v DetailRouteItem.
  *
- * Če komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
- * Če dobi nov RouteNode, ga pretvori.
+ * ÄŚe komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
+ * ÄŚe dobi nov RouteNode, ga pretvori.
  */
 const normalizeDetailRouteItem = (
   item: DetailRouteMapItem,
@@ -159,15 +159,15 @@ const normalizeDetailRouteItem = (
 }
 
 /**
- * DetailRouteMap prikaže zaporedje povezanih vsebin na detail strani.
+ * DetailRouteMap prikaĹľe zaporedje povezanih vsebin na detail strani.
  *
  * Primeri uporabe:
- * - LearningPathDetailPage: prikaže module znotraj učne poti
- * - ModuleDetailPage: prikaže učne enote znotraj modula
- * - prihodnje razširitve: prikaže tudi učno enoto direktno znotraj učne poti
+ * - LearningPathDetailPage: prikaĹľe module znotraj učne poti
+ * - ModuleDetailPage: prikaĹľe učne enote znotraj modula
+ * - prihodnje razširitve: prikaĹľe tudi učno enoto direktno znotraj učne poti
  *
  * Komponenta ne bere direktno backend strukture.
- * Dobi že pripravljene oziroma normalizirane podatke.
+ * Dobi Ĺľe pripravljene oziroma normalizirane podatke.
  */
 function DetailRouteMap({
   items,
@@ -284,3 +284,4 @@ function DetailRouteMap({
 }
 
 export default DetailRouteMap
+

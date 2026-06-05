@@ -1,4 +1,4 @@
-export default function LocationPinIcon() {
+﻿export default function LocationPinIcon() {
 	return (
 		<svg
 			viewBox="0 0 24 24"
@@ -13,3 +13,5 @@ export default function LocationPinIcon() {
 		</svg>
 	)
 }
+
+

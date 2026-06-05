@@ -1,4 +1,4 @@
-import type {
+﻿import type {
 	ContentType,
 	SaveQuestionnaireAnswersRequest,
 	UpdateCurrentPositionRequest,
@@ -29,7 +29,7 @@ type UpdateUserProgressParams = {
 	/**
 	 * Compatibility parameter.
 	 *
-	 * Starejši hooki ga še lahko pošiljajo, ampak api-client že sam
+	 * Starejši hooki ga še lahko pošiljajo, ampak api-client Ĺľe sam
 	 * prebere access token iz Supabase session.
 	 */
 	accessToken?: string
@@ -226,3 +226,4 @@ export function isContentCompleted(
 
 	return progress.completed.learning_unit_ids.includes(contentId)
 }
+

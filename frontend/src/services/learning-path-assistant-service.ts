@@ -1,4 +1,4 @@
-export type LearningPathAssistantMessageRequest = {
+﻿export type LearningPathAssistantMessageRequest = {
   sessionId?: string
   userId?: string
   learningPathId: string
@@ -53,3 +53,4 @@ export async function sendLearningPathAssistantMessage(
 
   return payload as LearningPathAssistantMessageResponse
 }
+

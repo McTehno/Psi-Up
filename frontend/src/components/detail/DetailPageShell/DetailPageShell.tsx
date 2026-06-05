@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 type DetailPageShellProps = {
 	children: ReactNode
@@ -60,3 +60,4 @@ function DetailPageShell({ children, sidebar }: DetailPageShellProps) {
 }
 
 export default DetailPageShell
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
@@ -123,7 +123,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll(); // Initial position
     return () => {
-      window.removeEventListener('scroll', handleScroll, { capture: true } as any);
+      window.removeEventListener('scroll', handleScroll, { capture: true });
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -209,7 +209,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const finalGoalY = numRows > 0 ? currentY + 40 : OFFSET_TOP + 100;
   const totalHeight = finalGoalY + 160;
 
-  let paths: string[] = [];
+  const paths: string[] = [];
   if (numRows > 0) {
     const firstRow = nodePositions.filter(n => n.order === sortedOrders[0]);
     for (const tgt of firstRow) {
@@ -427,7 +427,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   </div>
                 )}
 
-                {/* Desktop cards — hidden on mobile */}
+                {/* Desktop cards â€” hidden on mobile */}
                 {!isMobile && pos.isSingle && (
                   <button
                     type="button"
@@ -501,7 +501,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             );
           })}
 
-          {/* Mobile popup card — only rendered on mobile when a node is active */}
+          {/* Mobile popup card â€” only rendered on mobile when a node is active */}
           {isMobile && activeNode && activeRef && (
             <div
               ref={popupRef}
@@ -565,3 +565,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     </div>
   );
 };
+
+
+
+

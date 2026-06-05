@@ -1,4 +1,4 @@
-import AssistantInput from '../AssistantInput'
+﻿import AssistantInput from '../AssistantInput'
 import AssistantMessage from '../AssistantMessage'
 import { useAssistantChat } from '../../hooks/useAssistantChat'
 import type { AssistantContextType } from '../../types'
@@ -55,3 +55,4 @@ function AssistantChat({
 }
 
 export default AssistantChat
+

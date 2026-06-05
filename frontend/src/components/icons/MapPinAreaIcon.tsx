@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+﻿import type { CSSProperties } from 'react'
 
 type MapPinAreaIconProps = {
   size?: number | string
@@ -55,3 +55,4 @@ function MapPinAreaIcon({
 }
 
 export default MapPinAreaIcon
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Circle,
@@ -38,7 +38,7 @@ import { normalizeDetailContent } from '../../utils/normalizers/detail-normalize
  * ModuleDetailPage prikazuje podrobnosti enega modula.
  *
  * Namen strani:
- * - naložiti modul iz backend-a
+ * - naloĹľiti modul iz backend-a
  * - prikazati osnovne podatke modula
  * - prikazati ključne besede in domene
  * - prikazati učne enote znotraj modula prek LearningUnitVisualizer
@@ -54,7 +54,7 @@ import { normalizeDetailContent } from '../../utils/normalizers/detail-normalize
  * Oblikuje trajanje modula za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * Če trajanje manjka, prikažemo "Ni določeno".
+ * ÄŚe trajanje manjka, prikaĹľemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
@@ -88,8 +88,8 @@ function formatDuration(durationHours?: number | null) {
  * Uporaba:
  * - domains
  *
- * Če backend pošlje null, undefined ali napačne elemente,
- * jih ne prikažemo.
+ * ÄŚe backend pošlje null, undefined ali napačne elemente,
+ * jih ne prikaĹľemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
   return getArrayOrEmpty(value as string[])
@@ -101,7 +101,7 @@ function getStringArrayOrEmpty(value: unknown): string[] {
 /**
  * Oblikuje domene za prikaz v compact meta podatkih.
  *
- * Če domen ni, prikažemo "Ni določeno".
+ * ÄŚe domen ni, prikaĹľemo "Ni določeno".
  */
 function formatDomains(domains: unknown) {
   const safeDomains = getStringArrayOrEmpty(domains)
@@ -118,7 +118,7 @@ function formatDomains(domains: unknown) {
  *
  * Modul trenutno nima svojega seznama vprašanj v istem smislu kot učna enota.
  * Vprašalnik za modul se običajno generira iz povezanih učnih enot.
- * Zato gumb prikažemo samo, če ima modul vsaj eno učno enoto ali detail učno enoto.
+ * Zato gumb prikaĹľemo samo, če ima modul vsaj eno učno enoto ali detail učno enoto.
  */
 function hasQuestionnaireContent(
   learningUnitReferences: unknown[],
@@ -481,7 +481,7 @@ function ModuleDetailPage() {
         <DetailRecommendationCarousel
           eyebrow="Povezane učne poti"
           title="Učne poti, ki vključujejo ta modul"
-          description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če želiš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
+          description="Ta modul je del spodnjih učnih poti. Odpri učno pot, če Ĺľeliš videti širši učni kontekst, zaporedje modulov in priporočeno smer učenja."
           items={recommendedLearningPathItems}
         />
 
@@ -538,3 +538,4 @@ function ModuleDetailPage() {
 }
 
 export default ModuleDetailPage
+

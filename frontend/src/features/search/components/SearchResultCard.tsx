@@ -1,9 +1,9 @@
-import type { SearchResult } from '../../../types/search';
+﻿import type { SearchUiResult } from '../../../types/search';
 import { Route as PathIcon, Circle as CircleIcon, CircleDot as DotIcon } from 'lucide-react';
 
 interface SearchResultCardProps {
-    result: SearchResult;
-    onClick?: (result: SearchResult) => void;
+    result: SearchUiResult;
+    onClick?: (result: SearchUiResult) => void;
 }
 
 export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
@@ -42,9 +42,9 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
                     </div>
                 </div>
                 
-                {result.description && (
+                {result.shortDescription && (
                     <p className="mt-3 text-sm leading-relaxed text-brown-600 line-clamp-3">
-                        {result.description}
+                        {result.shortDescription}
                     </p>
                 )}
                 
@@ -66,3 +66,6 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
         </article>
     );
 }
+
+
+

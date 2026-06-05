@@ -1,4 +1,4 @@
-type AssessmentActionsProps = {
+﻿type AssessmentActionsProps = {
   canGoPrevious: boolean
   canGoNext: boolean
   onPrevious: () => void
@@ -11,7 +11,7 @@ function AssessmentActions({
   canGoNext,
   onPrevious,
   onNext,
-  nextLabel = 'Naslednjo →',
+  nextLabel = 'Naslednjo â†’',
 }: AssessmentActionsProps) {
   return (
     <div className="assessment-actions" role="group" aria-label="Navigacija vprašalnika">
@@ -21,7 +21,7 @@ function AssessmentActions({
         onClick={onPrevious}
         disabled={!canGoPrevious}
       >
-        ← Prejšnjo
+        â† Prejšnjo
       </button>
 
       <button
@@ -37,3 +37,4 @@ function AssessmentActions({
 }
 
 export default AssessmentActions
+

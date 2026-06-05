@@ -1,4 +1,4 @@
-import { digcompAreas } from '../constants'
+﻿import { digcompAreas } from '../constants'
 
 type DigCompHeroVisualProps = {
 	isSearchActive: boolean
@@ -99,3 +99,4 @@ function DigCompHeroVisual({
 }
 
 export default DigCompHeroVisual
+

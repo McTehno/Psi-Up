@@ -1,4 +1,4 @@
-import type { ModuleDetailResponse } from './module'
+﻿import type { ModuleDetailResponse } from './module'
 import type { LearningUnitResponse } from './learning-unit'
 
 export type LearningPathStepType = 'module' | 'learning_unit' | 'unit'
@@ -48,7 +48,7 @@ export type LearningPathResponse = {
 
   /**
    * Backward compatibility.
-   * Če katera druga stran še vedno uporablja modules, je ne zlomimo.
+   * ÄŚe katera druga stran še vedno uporablja modules, je ne zlomimo.
    */
   modules?: LearningPathModuleReference[]
 }
@@ -57,3 +57,4 @@ export type LearningPathDetailResponse = LearningPathResponse & {
   module_details?: ModuleDetailResponse[]
   learning_unit_details?: LearningUnitResponse[]
 }
+

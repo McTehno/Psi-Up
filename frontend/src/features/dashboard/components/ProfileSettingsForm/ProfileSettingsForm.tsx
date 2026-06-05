@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { KeyRound, Save } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -128,7 +128,7 @@ export default function ProfileSettingsForm({
 						disabled={isSubmitting}
 					/>
 					<p className="mt-2 text-xs leading-5 text-[#a89880]">
-						Če spremeniš email, bo treba spremembo potrditi prek emaila.
+						ÄŚe spremeniš email, bo treba spremembo potrditi prek emaila.
 					</p>
 				</div>
 
@@ -181,9 +181,10 @@ export default function ProfileSettingsForm({
 						</span>
 					</span>
 
-					<span className="text-lg font-bold text-[#d07a12]">›</span>
+					<span className="text-lg font-bold text-[#d07a12]">â€ş</span>
 				</button>
 			</div>
 		</div>
 	)
 }
+

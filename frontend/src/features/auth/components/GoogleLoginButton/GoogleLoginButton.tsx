@@ -1,4 +1,4 @@
-type GoogleLoginButtonProps = {
+﻿type GoogleLoginButtonProps = {
   /** Called when the Google login button is clicked. Ready for OAuth integration. */
   onClick?: () => void
 }
@@ -32,3 +32,5 @@ export default function GoogleLoginButton({ onClick }: GoogleLoginButtonProps) {
     </button>
   )
 }
+
+

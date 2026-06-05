@@ -1,4 +1,4 @@
-import {
+﻿import {
   Bot,
   ChevronDown,
   ChevronLeft,
@@ -211,3 +211,4 @@ export function CollapsibleChatPanel({
     </aside>
   )
 }
+

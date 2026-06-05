@@ -1,1 +1,2 @@
-export { default } from './LearningPathDetailPage'
+﻿export { default } from './LearningPathDetailPage'
+

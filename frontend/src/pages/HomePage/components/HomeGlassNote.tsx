@@ -1,4 +1,4 @@
-type HomeGlassNoteProps = {
+﻿type HomeGlassNoteProps = {
 	eyebrow: string
 	title: string
 	text: string
@@ -18,7 +18,7 @@ function HomeGlassNote({
 	}
 
 	return (
-		<div className="rounded-[26px] border border-[#ded5c6]/70 bg-[#fffdf8]/42 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.09)] backdrop-blur-2xl">
+		<div className="rounded-[26px] border border-[#ded5c6]/70 bg-[#fffdf8]/85 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.09)]">
 			<span
 				className={[
 					'inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
@@ -38,3 +38,4 @@ function HomeGlassNote({
 }
 
 export default HomeGlassNote
+

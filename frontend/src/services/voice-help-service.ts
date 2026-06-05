@@ -1,4 +1,4 @@
-export type VoiceHelpRequest = {
+﻿export type VoiceHelpRequest = {
   targetType?: "learning_path" | "module" | "learning_unit";
   targetId?: string;
   questionId?: string;
@@ -47,3 +47,4 @@ export async function getQuestionVoiceHelp(
 
   return response.json();
 }
+

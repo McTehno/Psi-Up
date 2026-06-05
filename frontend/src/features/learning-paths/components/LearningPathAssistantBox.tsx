@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type JSX } from 'react'
+﻿import { useEffect, useMemo, useState, type JSX } from 'react'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
@@ -326,3 +326,4 @@ function LearningPathAssistantBox({
 }
 
 export default LearningPathAssistantBox
+

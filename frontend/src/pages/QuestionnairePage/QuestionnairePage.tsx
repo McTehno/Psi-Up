@@ -92,6 +92,7 @@ type BackendEntity = {
 }
 
 const GUEST_ASSESSMENT_USER_ID_KEY = 'assessment_guest_user_id'
+const GUEST_QUESTIONNAIRE_ANSWERS_KEY_PREFIX = 'nidiko_guest_questionnaire_answers'
 
 const yesNoAnswers: AnswerOption[] = [
   { answer: 'Da', weight: true },
@@ -118,17 +119,26 @@ function getAnswerOptionFromBackendQuestion(
 
 function createInitialSelectedAnswers(
   questions: QuestionnaireItem[],
+  storedAnswers: Record<string, boolean> = {},
 ): Record<string, AnswerOption> {
   const initialAnswers: Record<string, AnswerOption> = {}
 
   for (const question of questions) {
     const prefilledAnswer = getAnswerOptionFromBackendQuestion(question)
 
-    if (!prefilledAnswer) {
-      continue
+    if (prefilledAnswer) {
+      initialAnswers[question.runtimeId] = prefilledAnswer
     }
 
-    initialAnswers[question.runtimeId] = prefilledAnswer
+    const storedAnswer = storedAnswers[question.runtimeId]
+
+    if (storedAnswer === true) {
+      initialAnswers[question.runtimeId] = yesNoAnswers[0]
+    }
+
+    if (storedAnswer === false) {
+      initialAnswers[question.runtimeId] = yesNoAnswers[1]
+    }
   }
 
   return initialAnswers
@@ -716,6 +726,88 @@ function saveAssessmentResult(
     JSON.stringify(result),
   )
   storage.setItem(`assessment_result_${targetId}`, JSON.stringify(result))
+}
+function getGuestQuestionnaireAnswersStorageKey(
+  targetType: QuestionnaireTargetType,
+  targetId: string,
+) {
+  return `${GUEST_QUESTIONNAIRE_ANSWERS_KEY_PREFIX}_${targetType}_${targetId}`
+}
+
+function getGuestQuestionnaireAnswers(
+  targetType: QuestionnaireTargetType,
+  targetId: string,
+): Record<string, boolean> {
+  const storage = getSessionStorage()
+
+  if (!storage) {
+    return {}
+  }
+
+  const storedValue = storage.getItem(
+    getGuestQuestionnaireAnswersStorageKey(targetType, targetId),
+  )
+
+  if (!storedValue) {
+    return {}
+  }
+
+  try {
+    const parsedValue = JSON.parse(storedValue)
+
+    if (!parsedValue || typeof parsedValue !== 'object') {
+      return {}
+    }
+
+    return parsedValue as Record<string, boolean>
+  } catch {
+    return {}
+  }
+}
+
+function saveGuestQuestionnaireAnswer(
+  targetType: QuestionnaireTargetType,
+  targetId: string,
+  questionId: string,
+  answer: boolean,
+) {
+  const storage = getSessionStorage()
+
+  if (!storage) {
+    return
+  }
+
+  const storageKey = getGuestQuestionnaireAnswersStorageKey(targetType, targetId)
+  const currentAnswers = getGuestQuestionnaireAnswers(targetType, targetId)
+
+  storage.setItem(
+    storageKey,
+    JSON.stringify({
+      ...currentAnswers,
+      [questionId]: answer,
+    }),
+  )
+}
+
+function removeGuestQuestionnaireAnswers(
+  targetType: QuestionnaireTargetType,
+  targetId: string,
+  questionIds: string[],
+) {
+  const storage = getSessionStorage()
+
+  if (!storage || questionIds.length === 0) {
+    return
+  }
+
+  const storageKey = getGuestQuestionnaireAnswersStorageKey(targetType, targetId)
+  const currentAnswers = getGuestQuestionnaireAnswers(targetType, targetId)
+
+  for (const questionId of questionIds) {
+    delete currentAnswers[questionId]
+  }
+
+  storage.setItem(storageKey, JSON.stringify(currentAnswers))
 }
 
 function getOrderedItems<T extends { order?: number | null }>(items: T[]) {
@@ -1490,7 +1582,11 @@ function QuestionnairePage() {
         setQuestionnaire(questions)
         setVisibleQuestionIds(questions[0] ? [questions[0].runtimeId] : [])
         setActiveQuestionIndex(0)
-        setSelectedAnswers(createInitialSelectedAnswers(questions))
+        const storedGuestAnswers = userId
+          ? {}
+          : getGuestQuestionnaireAnswers(targetType, targetId)
+
+        setSelectedAnswers(createInitialSelectedAnswers(questions, storedGuestAnswers))
         setRejectedQuestionIds(new Set())
         setModuleDetail(nextModuleDetail)
         setLearningPathDetail(nextLearningPathDetail)
@@ -1536,7 +1632,7 @@ function QuestionnairePage() {
   }, [isLearningPathGoalReached, navigate, targetId, targetType])
 
   function handleSelectAnswer(answer: AnswerOption) {
-    if (!currentQuestion) {
+    if (!currentQuestion || !targetType || !targetId) {
       return
     }
 
@@ -1552,6 +1648,23 @@ function QuestionnairePage() {
       ...questionIdsToClear,
       ...questionIdsRejectedByCurrentQuestion,
     ])
+
+    if (!userId) {
+      removeGuestQuestionnaireAnswers(
+        targetType,
+        targetId,
+        Array.from(rejectedQuestionIdsToClear).filter(
+          (questionId) => questionId !== currentQuestion.runtimeId,
+        ),
+      )
+
+      saveGuestQuestionnaireAnswer(
+        targetType,
+        targetId,
+        currentQuestion.runtimeId,
+        answer.weight,
+      )
+    }
 
     setSelectedAnswers((currentAnswers) => {
       const nextAnswers = { ...currentAnswers }

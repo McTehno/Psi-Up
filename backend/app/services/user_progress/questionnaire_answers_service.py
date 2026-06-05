@@ -397,3 +397,73 @@ class QuestionnaireAnswersService:
         """
 
         return " ".join(question.lower().strip().split())
+    
+    async def save_assessment_result_snapshot(
+        self,
+        user_id: str,
+        target_type: str,
+        target_id: str,
+        assessment_result: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Shrani assessment result snapshot brez spreminjanja odgovorov vprašalnika.
+        """
+
+        self._validate_target_lookup_data(
+            user_id=user_id,
+            target_type=target_type,
+            target_id=target_id,
+        )
+
+        return await self.questionnaire_answers_repository.save_assessment_result_snapshot(
+            user_id=user_id,
+            target_type=target_type,
+            target_id=target_id,
+            assessment_result=assessment_result,
+        )
+    
+    async def get_questionnaire_answers(
+        self,
+        user_id: str,
+        target_type: str,
+        target_id: str,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Vrne zadnji shranjeni questionnaire_answers zapis za target.
+
+        Uporablja se za branje shranjenega assessment_result snapshota.
+        """
+
+        self._validate_target_lookup_data(
+            user_id=user_id,
+            target_type=target_type,
+            target_id=target_id,
+        )
+
+        return await self.questionnaire_answers_repository.get_questionnaire_answers(
+            user_id=user_id,
+            target_type=target_type,
+            target_id=target_id,
+        )
+    
+    def _validate_target_lookup_data(
+        self,
+        user_id: str,
+        target_type: str,
+        target_id: str,
+    ) -> None:
+        """
+        Validira podatke za branje target zapisa.
+        """
+
+        if not user_id:
+            raise HTTPException(status_code=400, detail="Manjka user_id.")
+
+        if target_type not in self.VALID_TARGET_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail="Neveljaven target_type.",
+            )
+
+        if not target_id:
+            raise HTTPException(status_code=400, detail="Manjka target_id.")

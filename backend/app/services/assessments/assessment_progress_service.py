@@ -169,6 +169,13 @@ class AssessmentProgressService:
             result=result,
         )
 
+        await self.questionnaire_answers_service.save_assessment_result_snapshot(
+            user_id=user_id,
+            target_type=self._get_target_type_value(target_type),
+            target_id=target_id,
+            assessment_result=result,
+        )
+
         return result
 
     async def _get_questions_for_target(
@@ -1270,3 +1277,33 @@ class AssessmentProgressService:
             return target_type.value
 
         return str(target_type)
+    
+    async def get_latest_assessment_result(
+        self,
+        user_id: str,
+        target_type: QuestionnaireTargetType,
+        target_id: str,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Vrne zadnji shranjeni assessment result snapshot.
+
+        Ne računa ponovno.
+        Ne bere trenutnega completed stanja.
+        Ne spreminja baze.
+        """
+
+        saved_answers_entry = await self.questionnaire_answers_service.get_questionnaire_answers(
+            user_id=user_id,
+            target_type=self._get_target_type_value(target_type),
+            target_id=target_id,
+        )
+
+        if not saved_answers_entry:
+            return None
+
+        assessment_result = saved_answers_entry.get("assessment_result")
+
+        if not isinstance(assessment_result, dict):
+            return None
+
+        return assessment_result

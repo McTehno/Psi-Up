@@ -4,14 +4,14 @@ import { Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../services/supabase-client'
 import { Toast } from '../../features/auth'
 import loginBgImage from '../../assets/login-background-mountains.jpeg'
-
+import { usePageTitle } from '../../hooks/usePageTitle'
 export default function UpdatePasswordPage() {
   const navigate = useNavigate()
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [isSessionReady, setIsSessionReady] = useState(false)
-
+  usePageTitle('NIDiKo')
   // Wait for Supabase to process the URL hash and set up the session
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

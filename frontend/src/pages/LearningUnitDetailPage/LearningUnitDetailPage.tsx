@@ -10,6 +10,7 @@ import {
   CircleDot,
   Users,
 } from 'lucide-react'
+import {usePageTitle} from '../../hooks/usePageTitle'
 
 import MapPinAreaIcon from '../../components/icons/MapPinAreaIcon'
 import {
@@ -242,7 +243,7 @@ function LearningUnitDetailPage() {
   const [localIsCompleted, setLocalIsCompleted] = useState(false)
   const [manualCompletionOverride, setManualCompletionOverride] =
     useState<boolean | null>(null)
-
+  usePageTitle(learningUnit ? `Učna enota - ${learningUnit.title}` : 'Nalaganje učne enote...')
 
   const {
     isFavorite,

@@ -7,11 +7,12 @@ import { SearchResultCard } from '../../features/search/components/SearchResultC
 import type { AdvancedSearchFilters, PaginatedSearchResults, SearchContentType, SearchUiResult } from '../../types/search';
 import { performSearch } from '../../services/search-service';
 import { useDebounce } from '../../hooks/useDebounce';
-
+import { usePageTitle } from '../../hooks/usePageTitle';
 export default function SearchPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    
+    usePageTitle('NIDiKo');
+
     // Uporabimo debounce na query stringu, da ne requestamo ob vsakem pritisku na tipko
     const initialQuery = searchParams.get('q') || '';
     const initialTypes = searchParams.getAll('type') as SearchContentType[];

@@ -13,11 +13,14 @@ import {
   ForgotPasswordForm,
 } from '../../features/auth'
 
+import {usePageTitle} from '../../hooks/usePageTitle'
 // Using relative path to the image as it is now in src/assets
 import loginBgImage from '../../assets/login-background-mountains.jpeg'
 import registerBgImage from '../../assets/register-background-mountains.jpeg'
 
 export default function LoginPage() {
+  usePageTitle('Prijava')
+
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from || '/'

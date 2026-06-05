@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import aboutMountains from '../../assets/AboutUsPage/about-mountains.png'
-
+import { usePageTitle } from '../../hooks/usePageTitle'
 const workPackages = [
 	'Analiza potreb',
 	'Razvoj prilagodljivega kurikuluma',
@@ -25,6 +25,7 @@ const AboutPage = () => {
 		reason: false,
 		timeline: false,
 	})
+	usePageTitle('O nas')
 
 	useEffect(() => {
 		let animationFrameId = 0

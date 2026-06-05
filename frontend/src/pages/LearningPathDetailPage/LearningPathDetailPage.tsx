@@ -1055,7 +1055,7 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <section className="mt-12 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:px-10 lg:px-14">
+        <section className="mt-16 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:mt-20 sm:px-10 lg:mt-24 lg:px-14">
           <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
             <div>
               <div className="flex items-center gap-4">

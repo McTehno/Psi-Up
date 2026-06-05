@@ -29,7 +29,7 @@ import type {
 import type { LearningUnitResponse } from '../../types/learning-unit'
 import type { ModuleDetailResponse } from '../../types/module'
 
-import { useAuth } from '../../features/auth/contexts/AuthContext'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 import { getLatestAssessmentResult } from '../../services/assessment-service'
 
 

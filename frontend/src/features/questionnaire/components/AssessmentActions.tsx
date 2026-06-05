@@ -11,7 +11,7 @@ function AssessmentActions({
   canGoNext,
   onPrevious,
   onNext,
-  nextLabel = 'Naslednjo â†’',
+  nextLabel = 'Naslednjo → ',
 }: AssessmentActionsProps) {
   return (
     <div className="assessment-actions" role="group" aria-label="Navigacija vprašalnika">
@@ -21,7 +21,7 @@ function AssessmentActions({
         onClick={onPrevious}
         disabled={!canGoPrevious}
       >
-        â† Prejšnjo
+        ← Prejšnjo
       </button>
 
       <button

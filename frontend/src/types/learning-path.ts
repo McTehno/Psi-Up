@@ -48,7 +48,7 @@ export type LearningPathResponse = {
 
   /**
    * Backward compatibility.
-   * ÄŚe katera druga stran še vedno uporablja modules, je ne zlomimo.
+   * Če katera druga stran še vedno uporablja modules, je ne zlomimo.
    */
   modules?: LearningPathModuleReference[]
 }

@@ -141,7 +141,7 @@ function HomePage() {
 					</Fragment>
 				))}
 
-				{/* â”€â”€ Spacer: Vprašalnik â†’ CTA â”€â”€ */}
+				{/* â”€â”€ Spacer: Vprašalnik →  CTA â”€â”€ */}
 				<SectionSpacer size="normal" />
 
 				<HomeFinalCtaSection />

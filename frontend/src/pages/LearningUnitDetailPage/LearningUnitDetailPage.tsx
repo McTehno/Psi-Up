@@ -57,7 +57,7 @@ import LearningUnitAssistantBox from '../../features/learning-units/components/L
  * Oblikuje trajanje učne enote za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * ÄŚe trajanje manjka, prikažemo "Ni določeno".
+ * Če trajanje manjka, prikažemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {

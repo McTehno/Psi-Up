@@ -108,7 +108,7 @@ function HomeHeroSection() {
 						<div className="rounded-[24px] border border-[#ded5c6]/70 bg-[#fffdf8]/85 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.07)]">
 							<p className="font-serif text-2xl text-[#2f4a31]">Učna pot</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
-								Ĺ irši načrt učenja, ki povezuje več sorodnih področij v eno jasno
+								Širši načrt učenja, ki povezuje več sorodnih področij v eno jasno
 								smer.
 							</p>
 						</div>

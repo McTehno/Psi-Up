@@ -41,7 +41,7 @@ const VARIANTS: Record<
 
 /**
  * Phase lifecycle:
- *   hidden â†’ mounting (renders at off-screen position) â†’ visible (animates in) â†’ exit (animates out) â†’ hidden
+ *   hidden →  mounting (renders at off-screen position) →  visible (animates in) →  exit (animates out) →  hidden
  */
 export default function Toast({
   message,

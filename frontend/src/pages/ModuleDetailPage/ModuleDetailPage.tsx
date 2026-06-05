@@ -54,7 +54,7 @@ import { normalizeDetailContent } from '../../utils/normalizers/detail-normalize
  * Oblikuje trajanje modula za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * ÄŚe trajanje manjka, prikažemo "Ni določeno".
+ * Če trajanje manjka, prikažemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
@@ -88,7 +88,7 @@ function formatDuration(durationHours?: number | null) {
  * Uporaba:
  * - domains
  *
- * ÄŚe backend pošlje null, undefined ali napačne elemente,
+ * Če backend pošlje null, undefined ali napačne elemente,
  * jih ne prikažemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
@@ -101,7 +101,7 @@ function getStringArrayOrEmpty(value: unknown): string[] {
 /**
  * Oblikuje domene za prikaz v compact meta podatkih.
  *
- * ÄŚe domen ni, prikažemo "Ni določeno".
+ * Če domen ni, prikažemo "Ni določeno".
  */
 function formatDomains(domains: unknown) {
   const safeDomains = getStringArrayOrEmpty(domains)

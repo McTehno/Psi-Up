@@ -1416,8 +1416,8 @@ const questionProgressById = useMemo(
   const nextButtonLabel = isSubmittingAssessment
     ? 'Pošiljanje ...'
     : nextQuestion
-      ? 'Naslednjo â†’'
-      : 'Zaključi â†’'
+      ? 'Naslednjo → '
+      : 'Zaključi → '
 
   useEffect(() => {
     setAssistantExchange(null)

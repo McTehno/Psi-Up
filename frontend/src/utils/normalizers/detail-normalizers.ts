@@ -125,7 +125,7 @@ export type DetailContentViewModel = {
  * Primer:
  * {
  *   label: 'Izvajalec',
- *   value: 'Ĺ olski center Kungota'
+ *   value: 'Šolski center Kungota'
  * }
  */
 export type DetailExtraField = {
@@ -161,7 +161,7 @@ const EXTRA_FIELD_LABELS: Record<string, string> = {
 /**
  * Lepši prikaz znanih tehničnih vrednosti.
  *
- * ÄŚe backend vrne difficulty: "beginner",
+ * Če backend vrne difficulty: "beginner",
  * uporabniku raje pokažemo "Začetna".
  */
 const DIFFICULTY_LABELS: Record<string, string> = {
@@ -202,7 +202,7 @@ export const normalizeContentId = (content: RawDetailContent): string => {
  * - title
  * - name
  *
- * ÄŚe naslov manjka, uporabimo fallback.
+ * Če naslov manjka, uporabimo fallback.
  *
  * Pri referencah, kot je:
  * { module_id: "mod_003", order: 1 }
@@ -223,7 +223,7 @@ export const normalizeContentTitle = (
  * - short_description
  * - description
  *
- * ÄŚe opis manjka, vrnemo prazen string.
+ * Če opis manjka, vrnemo prazen string.
  *
  * Zakaj prazen string?
  * Pri referencah v modules / learning_units pogosto nimamo opisa.
@@ -243,7 +243,7 @@ export const normalizeContentDescription = (
 /**
  * Vrne stabilen seznam ključnih besed.
  *
- * ÄŚe backend vrne null, undefined ali napačno vrednost,
+ * Če backend vrne null, undefined ali napačno vrednost,
  * funkcija vrne prazen array.
  */
 export const normalizeKeywords = (content: RawDetailContent): string[] => {
@@ -318,7 +318,7 @@ const formatExtraFieldValue = (
  * Normalizira dodatna znana polja.
  *
  * Funkcija pregleda samo polja iz EXTRA_FIELD_LABELS.
- * ÄŚe polje obstaja in ima uporabno vrednost, ga doda v extraFields.
+ * Če polje obstaja in ima uporabno vrednost, ga doda v extraFields.
  *
  * Neznana backend polja se ignorirajo.
  */
@@ -417,7 +417,7 @@ export const normalizeRouteNode = (
 /**
  * Normalizira seznam vsebin v RouteNode[].
  *
- * ÄŚe backend vrne null ali undefined,
+ * Če backend vrne null ali undefined,
  * funkcija vrne prazen array.
  *
  * Elemente brez ID-ja odstranimo,

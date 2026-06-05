@@ -128,7 +128,7 @@ export default function ProfileSettingsForm({
 						disabled={isSubmitting}
 					/>
 					<p className="mt-2 text-xs leading-5 text-[#a89880]">
-						ÄŚe spremeniš email, bo treba spremembo potrditi prek emaila.
+						Če spremeniš email, bo treba spremembo potrditi prek emaila.
 					</p>
 				</div>
 

@@ -20,7 +20,7 @@
  * - ModuleDetailPage
  *
  * Zakaj je to pomembno:
- * ÄŚe backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
+ * Če backend kasneje spremeni strukturo poti ali doda nov tip vsebine,
  * ne rabimo takoj pisati popolnoma nove UI komponente.
  * Dovolj je, da backend podatke pretvorimo v RouteNode obliko.
  */
@@ -33,7 +33,7 @@
  * - module
  * - learning_unit
  *
- * ÄŚe kasneje dodamo nov tip, ga dodamo tukaj.
+ * Če kasneje dodamo nov tip, ga dodamo tukaj.
  * Na primer:
  * - assessment
  * - resource
@@ -70,7 +70,7 @@ export type RouteNode = {
 	 * Naslov, ki ga prikažemo uporabniku.
 	 *
 	 * Vedno mora biti string.
-	 * ÄŚe backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
+	 * Če backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
 	 */
 	title: string
 
@@ -78,7 +78,7 @@ export type RouteNode = {
 	 * Kratek opis vsebine.
 	 *
 	 * Opcijsko polje.
-	 * ÄŚe ga ni, ga komponenta lahko ne prikaže.
+	 * Če ga ni, ga komponenta lahko ne prikaže.
 	 */
 	description?: string
 
@@ -118,7 +118,7 @@ export type RouteNode = {
 	/**
 	 * Ali je vozlišče obvezno.
 	 *
-	 * ÄŚe backend tega ne pošlje, ostane undefined.
+	 * Če backend tega ne pošlje, ostane undefined.
 	 */
 	isRequired?: boolean
 

@@ -84,7 +84,7 @@ function getVisibleItemCount() {
 /**
  * Grid se prilagodi dejanskemu številu prikazanih kartic.
  *
- * ÄŚe imamo na desktopu samo 1 ali 2 povezani vsebini, kartice zavzamejo
+ * Če imamo na desktopu samo 1 ali 2 povezani vsebini, kartice zavzamejo
  * celotno širino, namesto da ostanejo v gridu za 3 kartice.
  */
 function getCarouselGridClass(
@@ -143,7 +143,7 @@ function getTypeIcon(typeLabel?: string) {
  * - na detail strani učne enote za povezane module
  * - na detail strani modula za povezane učne poti
  *
- * ÄŚe ni povezanih vsebin, komponenta ne prikaže ničesar.
+ * Če ni povezanih vsebin, komponenta ne prikaže ničesar.
  */
 function DetailRecommendationCarousel({
 	eyebrow = 'Povezana vsebina',

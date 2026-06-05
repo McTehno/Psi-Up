@@ -145,8 +145,8 @@ const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
 /**
  * Pretvori vsak vhodni item v DetailRouteItem.
  *
- * ÄŚe komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
- * ÄŚe dobi nov RouteNode, ga pretvori.
+ * Če komponenta dobi star DetailRouteItem, ga pusti takšnega, kot je.
+ * Če dobi nov RouteNode, ga pretvori.
  */
 const normalizeDetailRouteItem = (
   item: DetailRouteMapItem,

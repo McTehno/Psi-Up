@@ -142,7 +142,7 @@ function buildLearningUnitRouteItem(
     id: reference.learning_unit_id,
     title: learningUnit.title,
     description: learningUnit.short_description,
-    typeLabel: 'UĂ„Ĺ¤na enota',
+    typeLabel: 'Učna enota',
     durationLabel: formatDuration(learningUnit.duration_hours),
     order: reference.order,
     parallelGroup: reference.parallel_group,

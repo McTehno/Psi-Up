@@ -26,7 +26,7 @@
 
 /**
  * Vrne tekst, če obstaja in ni prazen.
- * ÄŚe je vrednost null, undefined ali prazen string, vrne fallback.
+ * Če je vrednost null, undefined ali prazen string, vrne fallback.
  *
  * Uporaba:
  * - za obvezna UI polja, kjer želimo vedno nekaj prikazati
@@ -41,7 +41,7 @@ export const getTextOrFallback = (
 
 /**
  * Vrne tekst, če obstaja in ni prazen.
- * ÄŚe vrednost ne obstaja, vrne null.
+ * Če vrednost ne obstaja, vrne null.
  *
  * Uporaba:
  * - za opcijska polja, ki jih želimo prikazati samo, če obstajajo
@@ -55,7 +55,7 @@ export const getOptionalText = (
 
 /**
  * Vrne array, če je vrednost res array.
- * ÄŚe je vrednost null, undefined ali napačnega tipa, vrne prazen array.
+ * Če je vrednost null, undefined ali napačnega tipa, vrne prazen array.
  *
  * Uporaba:
  * - za keywords
@@ -85,7 +85,7 @@ export const hasItems = <T>(
 
 /**
  * Vrne številko, če je vrednost res number.
- * ÄŚe vrednost manjka ali ni številka, vrne undefined.
+ * Če vrednost manjka ali ni številka, vrne undefined.
  *
  * Uporaba:
  * - za duration_min

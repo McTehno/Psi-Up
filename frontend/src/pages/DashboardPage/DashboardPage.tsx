@@ -388,11 +388,11 @@ export default function DashboardPage() {
 								</h3>
 								<p className="mt-1.5 max-w-xs text-sm text-[#a89880]">
 									{activeTab === 'favorites' &&
-										'Ĺ e nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
+										'Če nimate priljubljenih vsebin. Raziskujte učne poti in dodajajte med priljubljene.'}
 									{activeTab === 'saved' &&
-										'Ĺ e nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
+										'Če nimate shranjenih vsebin. Shranite vsebine za kasnejši pregled.'}
 									{activeTab === 'completed' &&
-										'Ĺ e niste dokončali nobene vsebine. Začnite z učno potjo!'}
+										'Če niste dokončali nobene vsebine. Začnite z učno potjo!'}
 								</p>
 								<Link
 									to="/search"

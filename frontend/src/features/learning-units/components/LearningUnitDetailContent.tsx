@@ -98,7 +98,7 @@ const menuItems: MenuItem[] = [
  * - known_topics
  * - missing_topics
  *
- * ÄŚe backend pošlje null, undefined ali ne-string vrednosti,
+ * Če backend pošlje null, undefined ali ne-string vrednosti,
  * jih ne prikažemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
@@ -175,7 +175,7 @@ function getSafeContentTopics(value: unknown): SafeContentTopic[] {
  * Vrne mehke barve za DigComp področje glede na prvo številko kode.
  *
  * Primer:
- * 3.2 â†’ področje 3
+ * 3.2 →  področje 3
  */
 function getDigCompSoftColor(code: string) {
 	const area = code.trim().match(/^(\d)\./)?.[1]

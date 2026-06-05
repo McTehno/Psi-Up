@@ -238,7 +238,7 @@ function ModuleAssistantBox({
                   key={question}
                   type="button"
                   onClick={() => handleSuggestedQuestion(question)}
-                  className="rounded-2xl border border-white/45 bg-white/35 px-4 py-2 text-left text-sm font-semibold text-[#31583b] transition hover:bg-white/55"
+                  className="rounded-2xl border border-[#c8b79b]/70 bg-white/35 px-4 py-2 text-left text-sm font-semibold text-[#31583b] transition hover:border-[#b39b78]/80 hover:bg-white/55 hover:shadow-sm"
                 >
                   {question}
                 </button>
@@ -260,11 +260,10 @@ function ModuleAssistantBox({
                     key={message.id}
                     type="button"
                     onClick={() => setSelectedMessageId(message.id)}
-                    className={`rounded-2xl border px-3 py-2 text-left text-sm transition ${
-                      isSelected
-                        ? 'border-white/70 bg-white/60 text-[#2b2118]'
-                        : 'border-white/45 bg-white/30 text-[#31583b] hover:bg-white/50'
-                    }`}
+                    className={`rounded-2xl border px-3 py-2 text-left text-sm transition ${isSelected
+                        ? 'border-[#b39b78]/85 bg-white/60 text-[#2b2118] shadow-sm'
+                        : 'border-[#c8b79b]/70 bg-white/30 text-[#31583b] hover:border-[#b39b78]/80 hover:bg-white/50 hover:shadow-sm'
+                      }`}
                   >
                     {message.question}
                   </button>
@@ -274,7 +273,7 @@ function ModuleAssistantBox({
           </div>
         )}
 
-        <div className="mt-4 min-h-[120px] flex-1 overflow-y-auto rounded-[1.5rem] border border-white/45 bg-white/24 p-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl">
+        <div className="mt-4 min-h-[120px] flex-1 overflow-y-auto rounded-[1.5rem] border border-[#c8b79b]/70 bg-white/24 p-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl transition hover:border-[#b39b78]/80">
           {selectedMessage ? (
             <div>
               <p className="mb-3 text-sm font-bold text-[#2b2118]">
@@ -308,7 +307,7 @@ function ModuleAssistantBox({
             onChange={(event) => setInputValue(event.target.value)}
             placeholder="Npr. Katere učne enote so najpomembnejše?"
             rows={3}
-            className="w-full resize-none rounded-[1.5rem] border border-white/55 bg-white/45 px-4 py-3 text-sm leading-6 text-[#2b2118] outline-none transition placeholder:text-[#8c8378] focus:border-white/80 focus:bg-white/60 focus:ring-4 focus:ring-white/30"
+            className="w-full resize-none rounded-[1.5rem] border border-[#b8a486]/90 bg-white/45 px-4 py-3 text-sm leading-6 text-[#2b2118] outline-none transition placeholder:text-[#8c8378] focus:border-[#8f7553] focus:bg-white/60 focus:ring-4 focus:ring-white/30"
             disabled={isLoading}
           />
 

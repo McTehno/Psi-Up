@@ -339,50 +339,6 @@
   }
 }
 
-@media (max-width: 767px) {
-  .assessment-progress {
-    margin: 18px 0 34px;
-  }
-
-  .assessment-progress__line {
-    height: 12px;
-  }
-
-  .assessment-progress__track {
-    min-height: 62px;
-  }
-
-  .assessment-progress--with-goal .assessment-progress__track {
-    padding-right: 34px;
-  }
-
-  .assessment-progress--with-goal .assessment-progress__line,
-  .assessment-progress--with-goal .assessment-progress__steps {
-    right: 17px;
-  }
-
-  .assessment-progress__marker {
-    width: 34px;
-    height: 34px;
-    font-size: 0.85rem;
-  }
-
-  .assessment-progress__question-dot {
-    width: 8px;
-    height: 8px;
-  }
-
-  .assessment-progress__label {
-    display: none;
-  }
-
-  .assessment-progress__flag {
-    width: 34px;
-    height: 34px;
-    font-size: 1rem;
-  }
-}
-
 .assessment-progress__track {
   min-height: 108px;
   padding-top: 26px;
@@ -432,37 +388,7 @@
   top: 32px;
 }
 
-@media (max-width: 767px) {
-  .assessment-progress__track {
-    min-height: 62px;
-    padding-top: 0;
-  }
-
-  .assessment-progress__line {
-    top: 20px;
-  }
-
-  .assessment-progress__steps {
-    top: 0;
-  }
-
-  .assessment-progress__flag {
-    top: 6px;
-  }
-}
-
-.assessment-progress__step--learning-unit .assessment-progress__marker {
-  width: 34px;
-  height: 34px;
-  font-size: 0.72rem;
-  border-radius: 999px;
-}
-
-.assessment-progress__step--learning-unit.assessment-progress__step--active
-  .assessment-progress__marker {
-  transform: translateY(-1px) scale(1.03);
-}
-
+/* Učna enota je na desktopu malo manjša od modula. */
 .assessment-progress__step--learning-unit .assessment-progress__marker {
   width: 38px;
   height: 38px;
@@ -489,6 +415,7 @@
   bottom: 44px;
 }
 
+/* Mobile: manjši markerji in več uporabne širine. */
 @media (max-width: 767px) {
   .assessment-progress {
     margin: 14px 0 24px;
@@ -553,6 +480,7 @@
   }
 }
 
+/* Zelo ozki zasloni, npr. Samsung Fold. */
 @media (max-width: 420px) {
   .assessment-progress {
     --assessment-progress-edge-inset: 6px;

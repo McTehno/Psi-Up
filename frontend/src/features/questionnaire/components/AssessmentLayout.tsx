@@ -61,7 +61,7 @@ function AssessmentLayout({
 
           <div className="assistant-note">
             <div className="assistant-note__icon" aria-hidden="true">
-              â
+              ☘
             </div>
 
             <div className="assistant-note__content">

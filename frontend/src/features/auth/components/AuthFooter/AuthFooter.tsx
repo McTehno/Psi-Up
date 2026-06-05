@@ -8,7 +8,7 @@
 }
 
 export default function AuthFooter({
-  prompt = 'Ĺ e nimate računa?',
+  prompt = 'Če nimate računa?',
   actionLabel = 'Registracija',
   onAction,
 }: AuthFooterProps) {

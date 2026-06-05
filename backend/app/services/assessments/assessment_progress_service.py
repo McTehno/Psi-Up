@@ -60,14 +60,11 @@ class AssessmentProgressService:
         """
         Izvede glavni submit flow za vprašalnik.
 
-        Koraki:
-        - dopolni neodgovorjena vprašanja,
-        - shrani odgovore,
-        - prebere obstoječ completed progress,
-        - izvede assessment,
-        - označi novo dokončane vsebine,
-        - določi trenutno pozicijo,
-        - vrne obogaten rezultat za frontend.
+        Pomembno:
+        - eksplicitni odgovor uporabnika ima prednost,
+        - globalno completed stanje se lahko uporabi za prikaz,
+        če ni v konfliktu z assessment rezultatom,
+        - snapshot, ki se shrani, predstavlja stanje za prikaz po vprašalniku.
         """
 
         all_questions = await self._get_questions_for_target(
@@ -100,42 +97,65 @@ class AssessmentProgressService:
             answers=prepared_answers,
         )
 
-        completed_learning_unit_ids = self._extract_completed_learning_unit_ids(
+        snapshot_completed_learning_unit_ids = (
+            self._extract_snapshot_completed_learning_unit_ids(
+                result=result,
+                existing_completed=existing_completed,
+            )
+        )
+
+        result = self._sync_result_with_completed_progress(
+            result=result,
+            completed_learning_unit_ids=snapshot_completed_learning_unit_ids,
+            completed_module_ids=[],
+        )
+
+        snapshot_completed_module_ids = self._extract_snapshot_completed_module_ids(
             result=result,
             existing_completed=existing_completed,
         )
 
         result = self._sync_result_with_completed_progress(
             result=result,
-            completed_learning_unit_ids=completed_learning_unit_ids,
-            completed_module_ids=existing_completed.get("module_ids", []),
+            completed_learning_unit_ids=snapshot_completed_learning_unit_ids,
+            completed_module_ids=snapshot_completed_module_ids,
         )
 
-        completed_module_ids = self._extract_completed_module_ids(
-            result=result,
-            existing_completed=existing_completed,
-        )
-
-        result = self._sync_result_with_completed_progress(
-            result=result,
-            completed_learning_unit_ids=completed_learning_unit_ids,
-            completed_module_ids=completed_module_ids,
-        )
-
-        completed_learning_path_ids = await self._extract_completed_learning_path_ids(
+        snapshot_completed_learning_path_ids = await self._extract_completed_learning_path_ids(
             target_type=target_type,
             target_id=target_id,
-            completed_module_ids=completed_module_ids,
-            completed_learning_unit_ids=completed_learning_unit_ids,
+            completed_module_ids=snapshot_completed_module_ids,
+            completed_learning_unit_ids=snapshot_completed_learning_unit_ids,
+            existing_completed={
+                "learning_path_ids": [],
+                "module_ids": [],
+                "learning_unit_ids": [],
+            },
+        )
+
+        progress_completed_learning_unit_ids = self._extract_completed_learning_unit_ids(
+            result=result,
             existing_completed=existing_completed,
         )
 
+        progress_completed_module_ids = self._extract_completed_module_ids(
+            result=result,
+            existing_completed=existing_completed,
+        )
+
+        progress_completed_learning_path_ids = await self._extract_completed_learning_path_ids(
+            target_type=target_type,
+            target_id=target_id,
+            completed_module_ids=progress_completed_module_ids,
+            completed_learning_unit_ids=progress_completed_learning_unit_ids,
+            existing_completed=existing_completed,
+        )
 
         await self._save_completed_content(
             user_id=user_id,
-            completed_learning_unit_ids=completed_learning_unit_ids,
-            completed_module_ids=completed_module_ids,
-            completed_learning_path_ids=completed_learning_path_ids,
+            completed_learning_unit_ids=progress_completed_learning_unit_ids,
+            completed_module_ids=progress_completed_module_ids,
+            completed_learning_path_ids=progress_completed_learning_path_ids,
             existing_completed=existing_completed,
         )
 
@@ -143,20 +163,20 @@ class AssessmentProgressService:
             user_id=user_id,
             target_type=target_type,
             target_id=target_id,
-            completed_module_ids=completed_module_ids,
-            completed_learning_unit_ids=completed_learning_unit_ids,
+            completed_module_ids=snapshot_completed_module_ids,
+            completed_learning_unit_ids=snapshot_completed_learning_unit_ids,
             result=result,
         )
 
-        result["completed_learning_unit_ids"] = completed_learning_unit_ids
-        result["completed_module_ids"] = completed_module_ids
-        result["completed_learning_path_ids"] = completed_learning_path_ids
+        result["completed_learning_unit_ids"] = snapshot_completed_learning_unit_ids
+        result["completed_module_ids"] = snapshot_completed_module_ids
+        result["completed_learning_path_ids"] = snapshot_completed_learning_path_ids
         result["current_position"] = current_position
 
         result = self._sync_result_with_completed_progress(
             result=result,
-            completed_learning_unit_ids=completed_learning_unit_ids,
-            completed_module_ids=completed_module_ids,
+            completed_learning_unit_ids=snapshot_completed_learning_unit_ids,
+            completed_module_ids=snapshot_completed_module_ids,
         )
 
         result = self._sync_global_competency_codes_from_results(result)
@@ -165,7 +185,7 @@ class AssessmentProgressService:
         result = self._clear_next_recommendations_if_learning_path_completed(
             target_type=target_type,
             target_id=target_id,
-            completed_learning_path_ids=completed_learning_path_ids,
+            completed_learning_path_ids=snapshot_completed_learning_path_ids,
             result=result,
         )
 
@@ -177,6 +197,88 @@ class AssessmentProgressService:
         )
 
         return result
+
+    def _extract_snapshot_completed_learning_unit_ids(
+        self,
+        result: Dict[str, Any],
+        existing_completed: Dict[str, List[str]],
+    ) -> List[str]:
+        """
+        Pripravi completed učne enote za prikaz/snapshot.
+
+        Globalno completed stanje se upošteva samo, če assessment rezultat
+        za isto učno enoto ne pravi, da ni completed.
+        """
+
+        completed_learning_unit_ids = list(
+            existing_completed.get("learning_unit_ids", [])
+        )
+
+        for unit_result in self._get_dict_list_value(
+            result.get("learning_unit_results")
+        ):
+            learning_unit_id = unit_result.get("learning_unit_id")
+
+            if not isinstance(learning_unit_id, str) or not learning_unit_id:
+                continue
+
+            is_completed_by_assessment = (
+                unit_result.get("is_completed_by_assessment") is True
+            )
+
+            if is_completed_by_assessment:
+                if learning_unit_id not in completed_learning_unit_ids:
+                    completed_learning_unit_ids.append(learning_unit_id)
+
+                continue
+
+            if learning_unit_id in completed_learning_unit_ids:
+                completed_learning_unit_ids.remove(learning_unit_id)
+
+        return completed_learning_unit_ids
+
+    def _extract_snapshot_completed_module_ids(
+        self,
+        result: Dict[str, Any],
+        existing_completed: Dict[str, List[str]],
+    ) -> List[str]:
+        """
+        Pripravi completed module za prikaz/snapshot.
+
+        Globalno completed stanje se upošteva samo, če assessment rezultat
+        za isti modul ne pravi, da je not_started ali partially_completed.
+        """
+
+        completed_module_ids = list(
+            existing_completed.get("module_ids", [])
+        )
+
+        for module_result in self._get_dict_list_value(
+            result.get("module_results")
+        ):
+            module_id = module_result.get("module_id")
+
+            if not isinstance(module_id, str) or not module_id:
+                continue
+
+            status = module_result.get("status")
+
+            is_completed_by_assessment = (
+                status == AssessmentStatus.COMPLETED
+                or status == AssessmentStatus.COMPLETED.value
+            )
+
+            if is_completed_by_assessment:
+                if module_id not in completed_module_ids:
+                    completed_module_ids.append(module_id)
+
+                continue
+
+            if module_id in completed_module_ids:
+                completed_module_ids.remove(module_id)
+
+        return completed_module_ids
+
 
     async def _get_questions_for_target(
         self,

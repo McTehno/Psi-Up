@@ -751,7 +751,6 @@ function getLearningUnitCount(learningPath: LearningPathDetailResponse) {
 function LearningPathDetailPage() {
   const { learningPathId } = useParams<{ learningPathId: string }>()
   const navigate = useNavigate()
-
   const { localUser } = useAuth()
 
   const [learningPath, setLearningPath] =

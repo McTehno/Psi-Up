@@ -35,7 +35,7 @@ function QuestionnaireQuestion({
 					<span>{answer.answer}</span>
 
 					{selectedAnswer?.answer === answer.answer && (
-						<span className="answer-card__check">âś“</span>
+						<span className="answer-card__check">✓</span>
 					)}
 				</button>
 			))}

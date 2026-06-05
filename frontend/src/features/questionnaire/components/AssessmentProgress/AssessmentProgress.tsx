@@ -142,7 +142,7 @@ function getStepPositionPercent(
 
 function getStepMarker(step: AssessmentProgressStep, index: number) {
   if (step.status === 'completed') {
-    return 'âś“'
+    return '✓'
   }
 
   if (step.status === 'rejected') {

@@ -13,15 +13,19 @@ export type VoiceHelpResponse = {
   content_hash: string;
 };
 
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_HOST ??
-  import.meta.env.VITE_API_BASE_URL ??
-  ""
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ""
+
+function buildApiUrl(path: string) {
+  const baseUrl = API_BASE_URL.replace(/\/$/, "")
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+
+  return `${baseUrl}${normalizedPath}`
+}
 
 export async function getQuestionVoiceHelp(
   request: VoiceHelpRequest
 ): Promise<VoiceHelpResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/voice-help/question`, {
+  const response = await fetch(buildApiUrl("/voice-help/question"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-﻿import type { CSSProperties } from 'react'
+﻿import { useState, type CSSProperties } from 'react'
 import './AssessmentProgress.css'
 
 export type AssessmentProgressStepStatus =
@@ -172,6 +172,10 @@ function AssessmentProgress({
   showGoalFlag = false,
   questions = [],
 }: AssessmentProgressProps) {
+
+  const [activeTooltipStepId, setActiveTooltipStepId] = useState<string | null>(
+    null,
+  )
   const safeQuestionCount = Math.max(questionCount ?? questions.length ?? 0, 0)
 
   const normalizedQuestions =
@@ -268,8 +272,8 @@ function AssessmentProgress({
             return (
               <div
                 className={`assessment-progress__step assessment-progress__step--${step.status} ${step.variant
-                    ? `assessment-progress__step--${step.variant}`
-                    : ''
+                  ? `assessment-progress__step--${step.variant}`
+                  : ''
                   } ${isLabelBelow
                     ? 'assessment-progress__step--label-bottom'
                     : 'assessment-progress__step--label-top'
@@ -287,10 +291,19 @@ function AssessmentProgress({
                   } as CSSProperties
                 }
               >
-                <span className="assessment-progress__marker">
+                <button
+                  type="button"
+                  className="assessment-progress__marker"
+                  aria-label={step.title}
+                  title={step.title}
+                  onClick={() =>
+                    setActiveTooltipStepId((currentStepId) =>
+                      currentStepId === step.id ? null : step.id,
+                    )
+                  }
+                >
                   {getStepMarker(step, index)}
-                </span>
-
+                </button>
                 <span
                   className={`assessment-progress__label ${isLabelBelow
                       ? 'assessment-progress__label--bottom'
@@ -299,6 +312,16 @@ function AssessmentProgress({
                 >
                   {step.title}
                 </span>
+                <span
+  className={`assessment-progress__tooltip ${
+    activeTooltipStepId === step.id
+      ? 'assessment-progress__tooltip--visible'
+      : ''
+  }`}
+  role="tooltip"
+>
+  {step.title}
+</span>
 
                 {step.subSteps && step.subSteps.length > 0 && (
                   <span className="assessment-progress__substeps">

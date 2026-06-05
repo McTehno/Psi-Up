@@ -175,6 +175,45 @@
     color 180ms ease,
     transform 180ms ease;
 }
+.assessment-progress__marker {
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.assessment-progress__marker {
+  pointer-events: auto;
+}
+
+.assessment-progress__tooltip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: 58px;
+  max-width: min(220px, 70vw);
+  padding: 8px 10px;
+  border: 1px solid #ded5c6;
+  border-radius: 14px;
+  background: #fffdf8;
+  color: #31583b;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: normal;
+  box-shadow: 0 12px 28px rgba(63, 56, 45, 0.14);
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.assessment-progress__step:hover .assessment-progress__tooltip,
+.assessment-progress__step:focus-within .assessment-progress__tooltip,
+.assessment-progress__tooltip--visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 .assessment-progress__step--completed .assessment-progress__marker {
   border-color: #f8f5ef;
@@ -478,6 +517,17 @@
     height: 28px;
     font-size: 0.85rem;
   }
+
+  .assessment-progress__tooltip {
+  bottom: 42px;
+  max-width: min(190px, 78vw);
+  font-size: 0.7rem;
+}
+
+.assessment-progress__step--label-top .assessment-progress__tooltip {
+  top: 40px;
+  bottom: auto;
+}
 }
 
 /* Zelo ozki zasloni, npr. Samsung Fold. */
@@ -516,4 +566,9 @@
     height: 24px;
     font-size: 0.78rem;
   }
+
+  .assessment-progress__tooltip {
+  max-width: min(170px, 82vw);
+  font-size: 0.66rem;
+}
 }

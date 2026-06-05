@@ -1000,7 +1000,7 @@ function LearningPathDetailPage() {
           </div>
         </section>
 
-        <section className="mb-6">
+        <section className="mb-2 min-[1500px]:mb-6">
           <LearningPathOverviewCard
             durationLabel={formatDuration(learningPath.duration_hours)}
             moduleCount={moduleCount}
@@ -1013,7 +1013,7 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <div className="relative h-[calc(100vh-7.5rem)] min-h-[760px] min-[1500px]:min-h-[720px]">
+        <div className="relative h-[720px] min-[480px]:h-[760px] min-[640px]:h-[520px] min-[900px]:h-[570px] min-[1200px]:h-[620px] min-[1500px]:h-[calc(100vh-7.5rem)] min-[1500px]:min-h-[720px]">
           <div className="h-full">
             {hasMountainNodes ? (
               <LearningPathMountain

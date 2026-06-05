@@ -177,12 +177,13 @@
 }
 
 .assessment-progress__step--completed .assessment-progress__marker {
-  border-color: #6f8b5f;
+  border-color: #f8f5ef;
   background: #6f8b5f;
   color: #fffdf8;
   box-shadow:
+    0 0 0 2px #6f8b5f,
     0 10px 22px rgba(49, 88, 59, 0.18),
-    0 0 0 4px rgba(111, 139, 95, 0.12);
+    0 0 0 6px rgba(111, 139, 95, 0.12);
 }
 
 .assessment-progress__step--active .assessment-progress__marker {
@@ -447,5 +448,144 @@
 
   .assessment-progress__flag {
     top: 6px;
+  }
+}
+
+.assessment-progress__step--learning-unit .assessment-progress__marker {
+  width: 34px;
+  height: 34px;
+  font-size: 0.72rem;
+  border-radius: 999px;
+}
+
+.assessment-progress__step--learning-unit.assessment-progress__step--active
+  .assessment-progress__marker {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.assessment-progress__step--learning-unit .assessment-progress__marker {
+  width: 38px;
+  height: 38px;
+  font-size: 0.68rem;
+  border-radius: 999px;
+  letter-spacing: -0.03em;
+}
+
+.assessment-progress__step--learning-unit.assessment-progress__step--active
+  .assessment-progress__marker {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.assessment-progress__step--learning-unit .assessment-progress__label {
+  max-width: 112px;
+  font-size: 0.72rem;
+}
+
+.assessment-progress__step--learning-unit .assessment-progress__label--bottom {
+  top: 44px;
+}
+
+.assessment-progress__step--learning-unit .assessment-progress__label--top {
+  bottom: 44px;
+}
+
+@media (max-width: 767px) {
+  .assessment-progress {
+    margin: 14px 0 24px;
+    --assessment-progress-edge-inset: 10px;
+  }
+
+  .assessment-progress__meta {
+    margin-bottom: 8px;
+    font-size: 0.84rem;
+  }
+
+  .assessment-progress__track {
+    min-height: 50px;
+    padding-top: 0;
+  }
+
+  .assessment-progress--with-goal .assessment-progress__track {
+    padding-right: 24px;
+  }
+
+  .assessment-progress__line {
+    top: 17px;
+    height: 9px;
+  }
+
+  .assessment-progress__steps {
+    top: 0;
+  }
+
+  .assessment-progress--with-goal .assessment-progress__line,
+  .assessment-progress--with-goal .assessment-progress__steps {
+    right: 10px;
+  }
+
+  .assessment-progress__step {
+    width: 40px;
+  }
+
+  .assessment-progress__marker {
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
+  }
+
+  .assessment-progress__step--learning-unit .assessment-progress__marker {
+    width: 24px;
+    height: 24px;
+    font-size: 0.5rem;
+    letter-spacing: -0.04em;
+  }
+
+  .assessment-progress__label,
+  .assessment-progress__substeps {
+    display: none;
+  }
+
+  .assessment-progress__flag {
+    top: 2px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .assessment-progress {
+    --assessment-progress-edge-inset: 6px;
+  }
+
+  .assessment-progress--with-goal .assessment-progress__track {
+    padding-right: 18px;
+  }
+
+  .assessment-progress--with-goal .assessment-progress__line,
+  .assessment-progress--with-goal .assessment-progress__steps {
+    right: 6px;
+  }
+
+  .assessment-progress__step {
+    width: 34px;
+  }
+
+  .assessment-progress__marker {
+    width: 26px;
+    height: 26px;
+    font-size: 0.62rem;
+  }
+
+  .assessment-progress__step--learning-unit .assessment-progress__marker {
+    width: 21px;
+    height: 21px;
+    font-size: 0.46rem;
+  }
+
+  .assessment-progress__flag {
+    width: 24px;
+    height: 24px;
+    font-size: 0.78rem;
   }
 }

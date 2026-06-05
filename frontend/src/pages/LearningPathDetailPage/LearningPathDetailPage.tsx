@@ -29,6 +29,10 @@ import type {
 import type { LearningUnitResponse } from '../../types/learning-unit'
 import type { ModuleDetailResponse } from '../../types/module'
 
+import { useAuth } from '../../features/auth/contexts/AuthContext'
+import { getLatestAssessmentResult } from '../../services/assessment-service'
+
+
 const MAX_VISIBLE_NODES = 7
 
 type BackendEntity = {
@@ -387,11 +391,14 @@ function getNodeAssessmentStatus(
   kind: LearningPathDisplayNodeKind,
   nodeId: string,
   assessmentResult: AssessmentResultResponse | null,
+  allowSessionAssessmentFallback: boolean,
 ): AssessmentStatus | null {
-  const nodeSpecificAssessmentResult = getSessionAssessmentResult(
-    kind === 'learning_unit' ? 'learning_unit' : 'module',
-    nodeId,
-  )
+  const nodeSpecificAssessmentResult = allowSessionAssessmentFallback
+    ? getSessionAssessmentResult(
+      kind === 'learning_unit' ? 'learning_unit' : 'module',
+      nodeId,
+    )
+    : null
 
   if (kind === 'learning_unit') {
     return (
@@ -413,19 +420,31 @@ function createMountainNode(params: {
   step?: LearningPathDisplayStep
   order: number
   assessmentResult: AssessmentResultResponse | null
+  allowSessionAssessmentFallback: boolean
 }): LearningPathMountainNode {
-  const { kind, nodeId, source, step, order, assessmentResult } = params
+  const {
+    kind,
+    nodeId,
+    source,
+    step,
+    order,
+    assessmentResult,
+    allowSessionAssessmentFallback,
+  } = params
 
   const nodeAssessmentStatus = getNodeAssessmentStatus(
     kind,
     nodeId,
     assessmentResult,
+    allowSessionAssessmentFallback,
   )
 
-  const nodeSpecificAssessmentResult = getSessionAssessmentResult(
-    kind === 'learning_unit' ? 'learning_unit' : 'module',
-    nodeId,
-  )
+  const nodeSpecificAssessmentResult = allowSessionAssessmentFallback
+    ? getSessionAssessmentResult(
+      kind === 'learning_unit' ? 'learning_unit' : 'module',
+      nodeId,
+    )
+    : null
 
   const isNodeAssessmentPosition =
     nodeAssessmentStatus !== 'completed' &&
@@ -469,6 +488,7 @@ function createMountainNode(params: {
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,
   assessmentResult: AssessmentResultResponse | null = null,
+  allowSessionAssessmentFallback = true,
 ): LearningPathMountainNode[] {
   const learningUnitAwarePath = learningPath as LearningUnitAwareLearningPath
 
@@ -524,6 +544,7 @@ function createMountainNodes(
           parallelGroupOrderMap,
         ),
         assessmentResult,
+        allowSessionAssessmentFallback,
       }),
     )
   })
@@ -548,6 +569,7 @@ function createMountainNodes(
         source: module,
         order: steps.length + index + 1,
         assessmentResult,
+        allowSessionAssessmentFallback,
       }),
     )
   })
@@ -572,6 +594,7 @@ function createMountainNodes(
         source: learningUnit,
         order: steps.length + moduleDetails.length + index + 1,
         assessmentResult,
+        allowSessionAssessmentFallback,
       }),
     )
   })
@@ -728,6 +751,8 @@ function LearningPathDetailPage() {
   const { learningPathId } = useParams<{ learningPathId: string }>()
   const navigate = useNavigate()
 
+  const { localUser } = useAuth()
+
   const [learningPath, setLearningPath] =
     useState<LearningPathDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -770,7 +795,7 @@ function LearningPathDetailPage() {
     initialIsCompleted: initialIsCompleted || isCompletedByAssessment,
   })
 
-  const learningPathIsCompleted = progressIsCompleted || isCompletedByAssessment
+  const learningPathIsCompleted = progressIsCompleted
 
   useEffect(() => {
     let isActive = true
@@ -797,19 +822,32 @@ function LearningPathDetailPage() {
           learningPathId,
         )
 
-        const sessionAssessmentResult =
-          getSessionAssessmentResult('learning_path', targetId) ??
-          (targetId !== learningPathId
-            ? getSessionAssessmentResult('learning_path', learningPathId)
-            : null)
+        let nextAssessmentResult: AssessmentResultResponse | null = null
+
+        if (localUser?._id) {
+          nextAssessmentResult = await getLatestAssessmentResult(
+            'learning_path',
+            targetId,
+          )
+        } else {
+          nextAssessmentResult =
+            getSessionAssessmentResult('learning_path', targetId) ??
+            (targetId !== learningPathId
+              ? getSessionAssessmentResult('learning_path', learningPathId)
+              : null)
+        }
+
+        if (!isActive) {
+          return
+        }
 
         const nextIsCompletedByAssessment = isLearningPathCompletedByAssessment(
           learningPathDetail,
-          sessionAssessmentResult,
+          nextAssessmentResult,
         )
 
         setLearningPath(learningPathDetail)
-        setAssessmentResult(sessionAssessmentResult)
+        setAssessmentResult(nextAssessmentResult)
         setIsCompletedByAssessment(nextIsCompletedByAssessment)
       } catch (error) {
         if (!isActive) {
@@ -833,15 +871,17 @@ function LearningPathDetailPage() {
     return () => {
       isActive = false
     }
-  }, [learningPathId])
+  }, [learningPathId, localUser?._id])
+
+  const allowSessionAssessmentFallback = !localUser?._id
 
   const mountainNodes = useMemo(() => {
     if (!learningPath) {
       return []
     }
 
-    return createMountainNodes(learningPath, assessmentResult)
-  }, [assessmentResult, learningPath])
+    return createMountainNodes(learningPath, assessmentResult, allowSessionAssessmentFallback)
+  }, [allowSessionAssessmentFallback, assessmentResult, learningPath])
 
   function handleStartQuestionnaire() {
     if (!learningPath) {

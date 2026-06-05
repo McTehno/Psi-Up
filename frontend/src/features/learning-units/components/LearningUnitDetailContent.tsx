@@ -125,7 +125,7 @@ function getSafeDigCompCompetencies(value: unknown): SafeDigCompCompetency[] {
 		.map((item) => ({
 			code: getTextOrFallback(
 				typeof item.code === 'string' ? item.code : undefined,
-				'â€“',
+				'–',
 			),
 			title: getTextOrFallback(
 				typeof item.title === 'string' ? item.title : undefined,

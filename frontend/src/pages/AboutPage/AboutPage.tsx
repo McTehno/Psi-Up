@@ -25,7 +25,7 @@ const AboutPage = () => {
 		reason: false,
 		timeline: false,
 	})
-	usePageTitle('O nas')
+	usePageTitle('NIDiKo')
 
 	useEffect(() => {
 		let animationFrameId = 0

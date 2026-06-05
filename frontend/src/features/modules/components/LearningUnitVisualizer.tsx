@@ -478,7 +478,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   </motion.div>
                 )}
 
-                {/* Desktop cards â€” hidden on mobile */}
+                {/* Desktop cards — hidden on mobile */}
                 {!isMobile && pos.isSingle && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -568,7 +568,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             );
           })}
 
-          {/* Mobile popup card â€” only rendered on mobile when a node is active */}
+          {/* Mobile popup card — only rendered on mobile when a node is active */}
           {isMobile && activeNode && activeRef && (
             <motion.div
               initial={{ opacity: 0 }}

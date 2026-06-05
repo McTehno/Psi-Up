@@ -19,7 +19,7 @@ import loginBgImage from '../../assets/login-background-mountains.jpeg'
 import registerBgImage from '../../assets/register-background-mountains.jpeg'
 
 export default function LoginPage() {
-  usePageTitle('Prijava')
+  usePageTitle('NIDiKo')
 
   const navigate = useNavigate()
   const location = useLocation()

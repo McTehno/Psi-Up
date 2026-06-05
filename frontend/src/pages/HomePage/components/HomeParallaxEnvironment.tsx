@@ -25,7 +25,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	// Track last applied blur step to avoid redundant DOM writes
 	const lastBlurStepRef = useRef(0)
 
-	/* â”€â”€ Cloud layer transforms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+	/* ── Cloud layer transforms ──────────────────────────────────── */
 	// Clouds clear the screen fully by the time Učne poti starts (~0.14)
 	const cloudY = useTransform(
 		scrollYProgress,
@@ -42,7 +42,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	// Performance optimization: Completely remove video from render tree when invisible
 	const cloudDisplay = useTransform(scrollYProgress, (v) => v > 0.15 ? 'none' : 'block')
 
-	/* â”€â”€ Mountain layer transforms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+	/* ── Mountain layer transforms ───────────────────────────────── */
 	const mountainY = useTransform(scrollYProgress, [0, 0.762, 1], ['0%', '-20%', '-28%'])
 
 	// Pan left for Učne enote
@@ -91,15 +91,15 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 
 	return (
 		<div className="fixed inset-0 h-screen w-full overflow-hidden -z-30 pointer-events-none" style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}>
-			{/* â”€â”€ Layer 1 Â· Warm gradient base + ambient orbs â”€â”€â”€â”€â”€â”€â”€â”€ */}
+			{/* ── Layer 1 · Warm gradient base + ambient orbs ──────── */}
 			<div
 				className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(208,122,18,0.10),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(49,88,59,0.10),_transparent_24%),radial-gradient(circle_at_90%_80%,_rgba(234,223,206,0.45),_transparent_32%),linear-gradient(180deg,_#fffdf8,_#fff6eb)]"
 			/>
-			{/* Static ambient blurs â€” hidden on tablets for performance */}
+			{/* Static ambient blurs — hidden on tablets for performance */}
 			<div className="absolute left-0 top-36 h-72 w-72 rounded-full bg-[#fff4e6] blur-3xl hidden lg:block" />
 			<div className="absolute right-0 top-24 h-96 w-96 rounded-full bg-[#f2f8f1] blur-3xl hidden lg:block" />
 
-			{/* â”€â”€ Layer 2 Â· Mountain image (behind clouds) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+			{/* ── Layer 2 · Mountain image (behind clouds) ────────── */}
 			<motion.div
 				ref={mountainContainerRef}
 				className="absolute inset-x-0 top-0 h-[120%] w-full pt-[12vh]"
@@ -181,7 +181,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 
 			</motion.div>
 
-			{/* â”€â”€ Layer 3 Â· Cloud video (covers mountains, drifts upward) â”€â”€ */}
+			{/* ── Layer 3 · Cloud video (covers mountains, drifts upward) ── */}
 			{/* Hidden on mobile/small tablets for battery + performance (Safari autoplay video is expensive) */}
 			<motion.div
 				className="absolute inset-x-0 top-0 h-[130%] w-full hidden sm:block"

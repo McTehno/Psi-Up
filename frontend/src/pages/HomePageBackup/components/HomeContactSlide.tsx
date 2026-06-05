@@ -42,7 +42,7 @@ function HomeContactSlide() {
 								</span>
 
 								<p className="mt-8 font-display text-2xl font-semibold leading-snug text-[#111111] sm:text-3xl">
-									â€śPrava učna pot se začne tam, kjer se trenutno nahajaš.â€ť
+									“Prava učna pot se začne tam, kjer se trenutno nahajaš.”
 								</p>
 
 								<p className="mt-5 text-sm font-medium text-[#706b60]">

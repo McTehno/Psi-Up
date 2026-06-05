@@ -181,7 +181,7 @@ export default function ProfileSettingsForm({
 						</span>
 					</span>
 
-					<span className="text-lg font-bold text-[#d07a12]">â€ş</span>
+					<span className="text-lg font-bold text-[#d07a12]">›</span>
 				</button>
 			</div>
 		</div>

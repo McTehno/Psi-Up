@@ -289,7 +289,7 @@ function AssessmentJourneyResult({
   return (
     <div className="assessment-journey">
       <div className="assessment-journey__eyebrow">
-        Priporočena učna pot Â· {title}
+        Priporočena učna pot · {title}
       </div>
 
       <p className="assessment-journey__description">

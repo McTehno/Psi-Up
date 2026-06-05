@@ -105,7 +105,7 @@ function HomeHeroSection() {
 					</p>
 
 					<div className="mt-8 space-y-5">
-						<div className="rounded-[24px] border border-[#ded5c6]/70 bg-[#fffdf8]/85 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.07)]">
+						<div className="rounded-[24px] border border-[#ded5c6]/70 bg-[#fffdf8]/42 p-5 shadow-[0_16px_42px_rgba(57,47,35,0.07)] backdrop-blur-2xl">
 							<p className="font-serif text-2xl text-[#2f4a31]">Učna pot</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
 								Širši načrt učenja, ki povezuje več sorodnih področij v eno jasno
@@ -113,7 +113,7 @@ function HomeHeroSection() {
 							</p>
 						</div>
 
-						<div className="ml-8 rounded-[22px] border border-[#ded5c6]/65 bg-[#fffdf8]/80 p-5 shadow-[0_14px_34px_rgba(57,47,35,0.06)]">
+						<div className="ml-8 rounded-[22px] border border-[#ded5c6]/65 bg-[#fffdf8]/34 p-5 shadow-[0_14px_34px_rgba(57,47,35,0.06)] backdrop-blur-xl">
 							<p className="font-serif text-xl text-[#33442f]">Modul</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
 								Zaokrožen korak znotraj poti, ki ti pomaga razumeti posamezen del
@@ -121,7 +121,7 @@ function HomeHeroSection() {
 							</p>
 						</div>
 
-						<div className="ml-16 rounded-[20px] border border-[#ded5c6]/60 bg-[#fffdf8]/75 p-5 shadow-[0_12px_28px_rgba(57,47,35,0.05)]">
+						<div className="ml-16 rounded-[20px] border border-[#ded5c6]/60 bg-[#fffdf8]/28 p-5 shadow-[0_12px_28px_rgba(57,47,35,0.05)] backdrop-blur-xl">
 							<p className="font-serif text-lg text-[#33442f]">Učna enota</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
 								Kratek in konkreten del znanja, ki ga lahko pregledaš samostojno.
@@ -135,5 +135,3 @@ function HomeHeroSection() {
 }
 
 export default HomeHeroSection
-
-

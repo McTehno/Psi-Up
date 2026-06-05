@@ -197,5 +197,3 @@ function HeroSearchResults({
 }
 
 export default HeroSearchResults
-
-

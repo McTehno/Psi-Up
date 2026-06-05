@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import type { SearchResult } from '../types/domain'
 import { performSearch } from '../services/search-service'
 import type { SearchContentType } from '../types/search'
@@ -13,6 +13,8 @@ const defaultActiveFilters: SearchContentType[] = ['learning_path']
 export function useSearch() {
   const [isSearchActive, setIsSearchActive] = useState(false)
   const [activeFilters, setActiveFilters] = useState<SearchContentType[]>(defaultActiveFilters)
+  const [hasSearched, setHasSearched] = useState(false)
+  const searchRequestIdRef = useRef(0)
 
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFiltersState>({
     query: '',
@@ -33,22 +35,39 @@ export function useSearch() {
   }, [])
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(async () => {
-      setIsSearching(true)
+    const query = searchQuery.trim()
 
+    searchRequestIdRef.current += 1
+    const requestId = searchRequestIdRef.current
+
+    setIsSearching(true)
+    setHasSearched(false)
+
+    const timeoutId = window.setTimeout(async () => {
       try {
         const data = await performSearch({
-          query: searchQuery,
-          types: activeFilters
+          query,
+          types: activeFilters,
         })
 
-        // Cast SearchUiResult to SearchResult for compatibility with the homepage components
+        if (requestId !== searchRequestIdRef.current) {
+          return
+        }
+
         setSearchResults(data.results as unknown as SearchResult[])
+        setHasSearched(true)
       } catch (error) {
+        if (requestId !== searchRequestIdRef.current) {
+          return
+        }
+
         console.error('Failed to fetch search results', error)
         setSearchResults([])
+        setHasSearched(true)
       } finally {
-        setIsSearching(false)
+        if (requestId === searchRequestIdRef.current) {
+          setIsSearching(false)
+        }
       }
     }, 300)
 
@@ -68,6 +87,7 @@ export function useSearch() {
     setSearchResults,
     isSearching,
     setIsSearching,
+    hasSearched,
   }
 }
 

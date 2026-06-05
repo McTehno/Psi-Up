@@ -24,7 +24,7 @@ function CompetencyCard({
 		>
 			{isSelected && (
 				<div className="competency-card__check">
-					âś“
+					✓
 				</div>
 			)}
 

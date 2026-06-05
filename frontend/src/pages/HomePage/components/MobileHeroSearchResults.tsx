@@ -205,4 +205,3 @@ function MobileHeroSearchResults({
 }
 
 export default MobileHeroSearchResults
-

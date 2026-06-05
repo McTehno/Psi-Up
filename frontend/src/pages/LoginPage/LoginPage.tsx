@@ -232,7 +232,7 @@ export default function LoginPage() {
                 <GoogleLoginButton onClick={handleGoogleLogin} />
 
                 <AuthFooter
-                  prompt={isRegister ? 'Ĺ˝e imate račun?' : 'Če nimate računa?'}
+                  prompt={isRegister ? 'Če imate račun?' : 'Če nimate računa?'}
                   actionLabel={isRegister ? 'Prijava' : 'Registracija'}
                   onAction={toggleMode}
                 />

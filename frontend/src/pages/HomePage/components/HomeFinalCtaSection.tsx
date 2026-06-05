@@ -44,7 +44,7 @@ function HomeFinalCtaSection() {
 					</div>
 
 					<p className="mt-12 text-xs font-medium text-[#8a8175]">
-						Â© 2026 NIDiKo. Vse pravice pridržane.
+						© 2026 NIDiKo. Vse pravice pridržane.
 					</p>
 				</div>
 			</div>

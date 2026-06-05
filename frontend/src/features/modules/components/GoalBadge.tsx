@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { Award } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface GoalBadgeProps {
   finalGoalY: number;
@@ -7,8 +8,12 @@ interface GoalBadgeProps {
 
 export const GoalBadge: React.FC<GoalBadgeProps> = ({ finalGoalY }) => {
   return (
-    <div
-      className="absolute z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2 group"
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="absolute z-10 flex flex-col items-center justify-center group transform -translate-x-1/2 -translate-y-1/2"
       style={{ left: '50%', top: `${finalGoalY}px` }}
     >
       {/* Main Node */}
@@ -30,8 +35,7 @@ export const GoalBadge: React.FC<GoalBadgeProps> = ({ finalGoalY }) => {
           <div className="w-6 md:w-8 h-[1.5px] bg-gradient-to-l from-transparent to-[#C98A43]/60" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
-
 

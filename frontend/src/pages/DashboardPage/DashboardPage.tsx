@@ -25,6 +25,7 @@ import ProfileSettingsForm from '../../features/dashboard/components/ProfileSett
 import ChangePasswordForm from '../../features/dashboard/components/ChangePasswordForm'
 
 import './DashboardPage.css'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 type DashboardTab = 'favorites' | 'saved' | 'completed'
 type DashboardModalType = 'edit-profile' | 'change-password' | null
@@ -93,6 +94,7 @@ function ContentItem({ id, type, index }: ContentItemProps) {
 
 	const [title, setTitle] = useState<string>(id)
 
+
 	useEffect(() => {
 		async function fetchTitle() {
 			try {
@@ -150,6 +152,7 @@ export default function DashboardPage() {
 		navigate('/')
 	}
 
+	usePageTitle('Profil')
 	const displayName =
 		localUser?.name ||
 		user?.user_metadata?.full_name ||

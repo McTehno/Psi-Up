@@ -7,7 +7,7 @@ import {
   CircleHelp,
   ExternalLink,
 } from 'lucide-react'
-
+import {usePageTitle} from '../../hooks/usePageTitle'
 import {
   DetailActions,
   DetailHero,
@@ -182,6 +182,8 @@ function ModuleDetailPage() {
   const [manualCompletionOverride, setManualCompletionOverride] =
     useState<boolean | null>(null)
 
+
+  usePageTitle(moduleData ? `Modul - ${moduleData.title}` : 'Nalaganje modula...')  
   const {
     isFavorite,
     isSaved,

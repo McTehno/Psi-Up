@@ -31,6 +31,7 @@ import type { ModuleDetailResponse } from '../../types/module'
 
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { getLatestAssessmentResult } from '../../services/assessment-service'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 
 const MAX_VISIBLE_NODES = 7
@@ -761,11 +762,14 @@ function LearningPathDetailPage() {
     useState<AssessmentResultResponse | null>(null)
   const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
 
+
+  usePageTitle("Učna pot - " + (learningPath?.title ?? 'Nalaganje...'))
+
   const learningPathContentId = useMemo(() => {
     if (!learningPath) {
       return undefined
     }
-
+    
     const contentId = getLearningPathEntityId(learningPath, learningPathId)
 
     return contentId || undefined

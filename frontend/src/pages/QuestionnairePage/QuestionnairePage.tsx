@@ -2,7 +2,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import womanImage from '../../assets/woman.png'
-
+import {usePageTitle} from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
 import AssessmentContextBox, {
   type AssessmentAssistantDisplayExchange,
@@ -875,7 +875,7 @@ function QuestionnairePage() {
   const assessmentUserId = useMemo(() => getAssessmentUserId(userId), [userId])
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
-
+  usePageTitle("Vprašalnik")
   const [phase, setPhase] = useState<AssessmentPhase>('questionnaire')
   const [questionnaireTitle, setQuestionnaireTitle] = useState('')
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([])

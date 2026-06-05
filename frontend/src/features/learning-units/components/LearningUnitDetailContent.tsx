@@ -99,7 +99,7 @@ const menuItems: MenuItem[] = [
  * - missing_topics
  *
  * ÄŚe backend pošlje null, undefined ali ne-string vrednosti,
- * jih ne prikaĹľemo.
+ * jih ne prikažemo.
  */
 function getStringArrayOrEmpty(value: unknown): string[] {
 	return getArrayOrEmpty(value as string[])
@@ -253,7 +253,7 @@ function getTopicAssessmentStyle(status: TopicAssessmentStatus) {
 			row: 'border border-[#a8d2ad] bg-[#edf7ec]',
 			circle: 'border-[#8fbe96] bg-white text-[#31583b]',
 			text: 'text-[#31583b]',
-			description: 'To področje Ĺľe dobro poznate.',
+			description: 'To področje že dobro poznate.',
 		}
 	}
 

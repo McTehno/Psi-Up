@@ -31,7 +31,7 @@ export default function LoginPage() {
     const translations: Record<string, string> = {
       'Invalid login credentials': 'Napačen e-poštni naslov ali geslo.',
       'Email not confirmed': 'E-poštni naslov še ni potrjen. Preverite svoj nabiralnik.',
-      'User already registered': 'Uporabnik s tem e-poštnim naslovom Ĺľe obstaja.',
+      'User already registered': 'Uporabnik s tem e-poštnim naslovom že obstaja.',
       'Signup requires a valid password': 'Geslo mora imeti vsaj 6 znakov.',
       'Password should be at least 6 characters': 'Geslo mora imeti vsaj 6 znakov.',
       'Unable to validate email address: invalid format': 'Neveljaven format e-poštnega naslova.',
@@ -201,7 +201,7 @@ export default function LoginPage() {
             </div>
 
             <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
-              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'PridruĹľite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
+              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
             </p>
 
             <div className="relative">

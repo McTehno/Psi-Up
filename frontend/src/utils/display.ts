@@ -29,7 +29,7 @@
  * ÄŚe je vrednost null, undefined ali prazen string, vrne fallback.
  *
  * Uporaba:
- * - za obvezna UI polja, kjer Ĺľelimo vedno nekaj prikazati
+ * - za obvezna UI polja, kjer želimo vedno nekaj prikazati
  * - na primer title ali description
  */
 export const getTextOrFallback = (
@@ -44,7 +44,7 @@ export const getTextOrFallback = (
  * ÄŚe vrednost ne obstaja, vrne null.
  *
  * Uporaba:
- * - za opcijska polja, ki jih Ĺľelimo prikazati samo, če obstajajo
+ * - za opcijska polja, ki jih želimo prikazati samo, če obstajajo
  * - na primer provider, language ali dodatni opis
  */
 export const getOptionalText = (

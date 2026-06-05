@@ -932,7 +932,7 @@ function LearningPathDetailPage() {
       <main className="min-h-screen px-4 pb-6 pt-24 sm:px-6 lg:px-8">
         <div className="mx-auto flex h-[calc(100vh-7.5rem)] min-h-[720px] max-w-[1800px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
           <ErrorState
-            title="Učne poti ni bilo mogoče naloĹľiti"
+            title="Učne poti ni bilo mogoče naložiti"
             message={errorMessage}
           />
         </div>

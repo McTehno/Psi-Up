@@ -34,7 +34,7 @@ export const ModuleDetailsModal: React.FC<ModuleDetailsModalProps> = ({ module, 
           <div className="flex items-center gap-3 p-4 bg-white/60 rounded-xl border border-brown-200/40">
             <BookOpen className="w-5 h-5 text-forest-600" />
             <span className="font-semibold text-slate-700">
-              Vsebuje {module.learningUnitsCount} učnih podruĹľnic
+              Vsebuje {module.learningUnitsCount} učnih podružnic
             </span>
           </div>
         </div>

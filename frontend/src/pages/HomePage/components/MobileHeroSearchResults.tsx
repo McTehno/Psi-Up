@@ -189,7 +189,7 @@ function MobileHeroSearchResults({
                                         className="inline-flex items-center justify-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#274a31]"
                                     >
                                         {searchResults.length > 0
-                                            ? 'PrikaĹľi vse zadetke'
+                                            ? 'Prikaži vse zadetke'
                                             : 'Napredno iskanje'}
                                         <ArrowRightIcon className="h-4 w-4" />
                                     </motion.button>

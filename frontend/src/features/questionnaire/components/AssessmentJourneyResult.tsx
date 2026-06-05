@@ -275,7 +275,7 @@ function AssessmentJourneyResult({
 
   const resultMetaLabel = hasAllKnowledge ? 'Rezultat' : 'Preskočeno'
   const resultMetaValue = hasAllKnowledge
-    ? 'Vse potrebno znanje Ĺľe imate'
+    ? 'Vse potrebno znanje že imate'
     : `${skippedLearningUnitCount} vsebin`
 
   if (!moduleDetail || steps.length === 0 || !selectedStep) {

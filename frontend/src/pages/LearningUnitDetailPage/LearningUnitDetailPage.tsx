@@ -42,7 +42,7 @@ import LearningUnitAssistantBox from '../../features/learning-units/components/L
  * LearningUnitDetailPage prikazuje podrobnosti ene učne enote.
  *
  * Namen te strani:
- * - naloĹľiti učno enoto iz backend-a
+ * - naložiti učno enoto iz backend-a
  * - prikazati osnovne podatke, ključne besede in vsebinski del učne enote
  * - omogočiti začetek vprašalnika za samooceno, če vprašanja obstajajo
  * - prikazati uporabniške akcije: shrani, priljubljeno, zaključeno
@@ -57,7 +57,7 @@ import LearningUnitAssistantBox from '../../features/learning-units/components/L
  * Oblikuje trajanje učne enote za prikaz uporabniku.
  *
  * Trenutna MongoDB struktura uporablja duration_hours.
- * ÄŚe trajanje manjka, prikaĹľemo "Ni določeno".
+ * ÄŚe trajanje manjka, prikažemo "Ni določeno".
  */
 function formatDuration(durationHours?: number | null) {
   if (!durationHours) {
@@ -116,7 +116,7 @@ function getExtraFieldIcon(label: string) {
 }
 
 /**
- * Iz dodatnih polj izbere tista, ki jih Ĺľelimo prikazati v sekciji Osnovni podatki.
+ * Iz dodatnih polj izbere tista, ki jih želimo prikazati v sekciji Osnovni podatki.
  *
  * Namen:
  * - osnovni podatki niso več direktno vezani na learningUnit.provider itd.
@@ -207,7 +207,7 @@ function getBasicInfoCardBorderClass(index: number, itemCount: number) {
  * Vrne vrednost dodatnega polja po labelu.
  *
  * To uporabimo za compact meta podatke v hero sekciji,
- * kjer Ĺľelimo vedno prikazati ista tri polja.
+ * kjer želimo vedno prikazati ista tri polja.
  */
 function getExtraFieldValue(
   extraFields: DetailExtraField[],
@@ -221,7 +221,7 @@ function getExtraFieldValue(
  * Preveri, ali ima učna enota vprašanja za samooceno.
  *
  * Zakaj:
- * Gumb za vprašalnik naj se ne prikaĹľe, če backend ne pošlje vprašanj
+ * Gumb za vprašalnik naj se ne prikaže, če backend ne pošlje vprašanj
  * ali če je seznam vprašanj prazen.
  */
 function hasSelfAssessmentQuestions(learningUnit: LearningUnitResponse) {
@@ -275,7 +275,7 @@ function LearningUnitDetailPage() {
         setLearningUnit(data)
       } catch (error) {
         console.error(error)
-        setError('Podrobnosti učne enote ni bilo mogoče naloĹľiti.')
+        setError('Podrobnosti učne enote ni bilo mogoče naložiti.')
       } finally {
         setIsLoading(false)
       }

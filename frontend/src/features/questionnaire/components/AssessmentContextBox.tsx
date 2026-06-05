@@ -296,7 +296,7 @@ function AssessmentContextBox({
           Vprašajte asistentko za pomoč pri razumevanju vprašanja
         </label>
         <p>
-          Odgovor se na večjem zaslonu prikaĹľe pri asistentki, na manjšem pa
+          Odgovor se na večjem zaslonu prikaže pri asistentki, na manjšem pa
           spodaj v seznamu. Izbira Da/Ne se ob tem ne spremeni.
         </p>
       </div>
@@ -360,7 +360,7 @@ function AssessmentContextBox({
                     onClick={() => handleSelectHistoryItem(item)}
                   >
                     <span>{item.userMessage}</span>
-                    <small>{isActive ? 'Prikazano' : 'PrikaĹľi odgovor'}</small>
+                    <small>{isActive ? 'Prikazano' : 'Prikaži odgovor'}</small>
                   </button>
 
                   {isActive && (

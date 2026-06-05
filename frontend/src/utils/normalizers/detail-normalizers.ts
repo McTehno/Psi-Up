@@ -75,7 +75,7 @@ import {
  *
  * Pomembno:
  * Neznanih polj ne prikazujemo avtomatsko.
- * PrikaĹľemo samo tista, ki so dovoljena v EXTRA_FIELD_LABELS.
+ * Prikažemo samo tista, ki so dovoljena v EXTRA_FIELD_LABELS.
  */
 export type RawDetailContent = {
 	id?: string | null
@@ -107,7 +107,7 @@ export type RawDetailContent = {
  * Stabilna frontend oblika za detail vsebino.
  *
  * To je oblika, ki jo uporabljajo UI komponente.
- * Komponente zato ne rabijo preverjati vseh moĹľnih backend primerov.
+ * Komponente zato ne rabijo preverjati vseh možnih backend primerov.
  */
 export type DetailContentViewModel = {
 	id: string
@@ -120,7 +120,7 @@ export type DetailContentViewModel = {
 }
 
 /**
- * Oblika dodatnega polja, ki ga lahko prikaĹľemo v UI.
+ * Oblika dodatnega polja, ki ga lahko prikažemo v UI.
  *
  * Primer:
  * {
@@ -144,8 +144,8 @@ export type DetailExtraField = {
  * - updated_at
  * - debug
  *
- * Teh polj ne Ĺľelimo avtomatsko prikazati uporabniku.
- * Zato prikaĹľemo samo polja, ki jih tukaj eksplicitno dovolimo.
+ * Teh polj ne želimo avtomatsko prikazati uporabniku.
+ * Zato prikažemo samo polja, ki jih tukaj eksplicitno dovolimo.
  */
 const EXTRA_FIELD_LABELS: Record<string, string> = {
 	provider: 'Izvajalec',
@@ -162,7 +162,7 @@ const EXTRA_FIELD_LABELS: Record<string, string> = {
  * Lepši prikaz znanih tehničnih vrednosti.
  *
  * ÄŚe backend vrne difficulty: "beginner",
- * uporabniku raje pokaĹľemo "Začetna".
+ * uporabniku raje pokažemo "Začetna".
  */
 const DIFFICULTY_LABELS: Record<string, string> = {
 	beginner: 'Začetna',
@@ -227,7 +227,7 @@ export const normalizeContentTitle = (
  *
  * Zakaj prazen string?
  * Pri referencah v modules / learning_units pogosto nimamo opisa.
- * Bolje je, da komponenta opisa ne prikaĹľe, kot da za vsako referenco pokaĹľe:
+ * Bolje je, da komponenta opisa ne prikaže, kot da za vsako referenco pokaže:
  * "Opis trenutno ni na voljo."
  */
 export const normalizeContentDescription = (
@@ -264,7 +264,7 @@ export const normalizeDurationHours = (
 /**
  * Vrne trajanje v minutah.
  *
- * To pustimo zaradi moĹľne prihodnje podpore,
+ * To pustimo zaradi možne prihodnje podpore,
  * če backend kasneje doda duration_min.
  */
 export const normalizeDurationMin = (
@@ -344,7 +344,7 @@ export const normalizeExtraFields = (
 /**
  * Glavni normalizer za detail vsebino.
  *
- * To funkcijo uporabimo, kadar Ĺľelimo backend objekt pretvoriti
+ * To funkcijo uporabimo, kadar želimo backend objekt pretvoriti
  * v stabilno obliko za prikaz na detail strani.
  */
 export const normalizeDetailContent = (

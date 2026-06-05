@@ -11,7 +11,7 @@ export type DigCompCompetencyResponse = {
  * Vsebinska tema znotraj učne enote.
  *
  * Tema ima stabilen ID, da se lahko odgovori vprašalnika
- * poveĹľejo na topic_id namesto na besedilo teme.
+ * povežejo na topic_id namesto na besedilo teme.
  */
 export type ContentTopicResponse = {
 	id: string

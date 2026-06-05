@@ -1253,7 +1253,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       )}
 
       <div className="absolute bottom-6 right-6 z-20 hidden text-right text-xs font-bold uppercase tracking-[0.24em] text-[#344E41]/75 md:block">
-        {isCompleted ? 'Cilj doseĹľen' : 'Cilj poti'}
+        {isCompleted ? 'Cilj dosežen' : 'Cilj poti'}
       </div>
     </section>
   )

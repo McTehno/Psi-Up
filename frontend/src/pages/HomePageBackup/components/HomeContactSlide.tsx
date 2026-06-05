@@ -28,7 +28,7 @@ function HomeContactSlide() {
 						type="button"
 						onClick={() => setIsFlipped((value) => !value)}
 						className="group mx-auto mt-12 block h-[340px] w-full max-w-xl text-left [perspective:1200px]"
-						aria-label={isFlipped ? 'PrikaĹľi citat' : 'PrikaĹľi kontakt'}
+						aria-label={isFlipped ? 'Prikaži citat' : 'Prikaži kontakt'}
 					>
 						<div
 							className={[
@@ -78,7 +78,7 @@ function HomeContactSlide() {
 					</button>
 
 					<p className="mt-8 text-xs font-medium text-[#8a8175]">
-						Â© 2026 NIDiKo. Vse pravice pridrĹľane.
+						Â© 2026 NIDiKo. Vse pravice pridržane.
 					</p>
 				</div>
 			</div>

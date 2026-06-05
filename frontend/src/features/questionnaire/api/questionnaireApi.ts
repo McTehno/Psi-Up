@@ -33,7 +33,7 @@ export async function getQuestionnaire(
 	)
 
 	if (!response.ok) {
-		throw new Error('Vprašalnika ni bilo mogoče naloĹľiti.')
+		throw new Error('Vprašalnika ni bilo mogoče naložiti.')
 	}
 
 	return response.json()

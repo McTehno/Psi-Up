@@ -6,7 +6,7 @@
  *
  *   Learning path -> Module -> Learning unit
  *
- * - ampak lahko prikaĹľe različne vrste vozlišč z isto komponento
+ * - ampak lahko prikaže različne vrste vozlišč z isto komponento
  *
  * Primer:
  * - učna pot lahko vsebuje module
@@ -26,7 +26,7 @@
  */
 
 /**
- * Tip vsebine, ki jo lahko prikaĹľemo kot vozlišče v poti.
+ * Tip vsebine, ki jo lahko prikažemo kot vozlišče v poti.
  *
  * Trenutno podpiramo:
  * - learning_path
@@ -67,7 +67,7 @@ export type RouteNode = {
 	type: RouteNodeType
 
 	/**
-	 * Naslov, ki ga prikaĹľemo uporabniku.
+	 * Naslov, ki ga prikažemo uporabniku.
 	 *
 	 * Vedno mora biti string.
 	 * ÄŚe backend ne pošlje naslova, ga normalizer nadomesti s fallback tekstom.
@@ -78,7 +78,7 @@ export type RouteNode = {
 	 * Kratek opis vsebine.
 	 *
 	 * Opcijsko polje.
-	 * ÄŚe ga ni, ga komponenta lahko ne prikaĹľe.
+	 * ÄŚe ga ni, ga komponenta lahko ne prikaže.
 	 */
 	description?: string
 
@@ -92,7 +92,7 @@ export type RouteNode = {
 	/**
 	 * Trajanje v minutah.
 	 *
-	 * Pustimo tudi to moĹľnost, če backend kasneje doda duration_min.
+	 * Pustimo tudi to možnost, če backend kasneje doda duration_min.
 	 */
 	durationMin?: number
 

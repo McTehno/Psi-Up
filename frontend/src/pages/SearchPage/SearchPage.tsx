@@ -168,7 +168,7 @@ export default function SearchPage() {
                                         className="mt-4 w-full py-3 rounded-2xl border-2 border-dashed border-sand-200 text-brown-600 font-medium hover:border-forest-400 hover:text-forest-600 hover:bg-forest-50 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         <SearchIcon className="w-4 h-4" />
-                                        NaloĹľi več rezultatov
+                                        Naloži več rezultatov
                                     </motion.button>
                                 )}
                             </div>

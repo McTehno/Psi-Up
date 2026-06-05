@@ -16,11 +16,11 @@ export type DetailRouteItemStatus =
   | 'current'
 
 /**
- * Oblika podatka, ki jo DetailRouteMap neposredno prikaĹľe.
+ * Oblika podatka, ki jo DetailRouteMap neposredno prikaže.
  *
  * To je UI-friendly oblika:
- * - title je Ĺľe pripravljen za prikaz
- * - durationLabel je Ĺľe oblikovan tekst
+ * - title je že pripravljen za prikaz
+ * - durationLabel je že oblikovan tekst
  * - typeLabel je tekst, ki ga uporabnik vidi
  *
  * Ta tip lahko še naprej uporabljajo obstoječe detail strani,
@@ -41,7 +41,7 @@ export type DetailRouteItem = {
 
 /**
  * DetailRouteMap lahko sprejme:
- * - DetailRouteItem[]: stara UI oblika, ki jo komponenta Ĺľe podpira
+ * - DetailRouteItem[]: stara UI oblika, ki jo komponenta že podpira
  * - RouteNode[]: nova normalizirana oblika iz detail-normalizers.ts
  *
  * S tem lahko postopoma prehajamo na bolj fleksibilen frontend model,
@@ -84,7 +84,7 @@ const statusClasses: Record<DetailRouteItemStatus, string> = {
  * - module
  * - learning_unit
  *
- * Uporabniku pa prikaĹľemo lepše slovenske oznake.
+ * Uporabniku pa prikažemo lepše slovenske oznake.
  */
 const routeNodeTypeLabels: Record<RouteNode['type'], string> = {
   learning_path: 'Učna pot',
@@ -124,9 +124,9 @@ const formatDurationLabel = (item: RouteNode): string | null => {
  * Pretvori RouteNode v DetailRouteItem.
  *
  * Zakaj to potrebujemo:
- * DetailRouteMap interno Ĺľe zna lepo prikazati DetailRouteItem.
+ * DetailRouteMap interno že zna lepo prikazati DetailRouteItem.
  * Namesto da prepišemo celotno komponento, RouteNode samo pretvorimo
- * v obliko, ki jo komponenta Ĺľe razume.
+ * v obliko, ki jo komponenta že razume.
  */
 const mapRouteNodeToDetailRouteItem = (item: RouteNode): DetailRouteItem => {
   return {
@@ -159,15 +159,15 @@ const normalizeDetailRouteItem = (
 }
 
 /**
- * DetailRouteMap prikaĹľe zaporedje povezanih vsebin na detail strani.
+ * DetailRouteMap prikaže zaporedje povezanih vsebin na detail strani.
  *
  * Primeri uporabe:
- * - LearningPathDetailPage: prikaĹľe module znotraj učne poti
- * - ModuleDetailPage: prikaĹľe učne enote znotraj modula
- * - prihodnje razširitve: prikaĹľe tudi učno enoto direktno znotraj učne poti
+ * - LearningPathDetailPage: prikaže module znotraj učne poti
+ * - ModuleDetailPage: prikaže učne enote znotraj modula
+ * - prihodnje razširitve: prikaže tudi učno enoto direktno znotraj učne poti
  *
  * Komponenta ne bere direktno backend strukture.
- * Dobi Ĺľe pripravljene oziroma normalizirane podatke.
+ * Dobi že pripravljene oziroma normalizirane podatke.
  */
 function DetailRouteMap({
   items,

@@ -89,11 +89,11 @@ function HomePageBackup() {
 						/>
 
 						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-[#111111] sm:text-6xl xl:text-7xl">
-							Pot do cilja je laĹľja, ko je najprej mirna.
+							Pot do cilja je lažja, ko je najprej mirna.
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							NIDiKo poveĹľe vprašalnik, DigComp in učno pot v eno jasno
+							NIDiKo poveže vprašalnik, DigComp in učno pot v eno jasno
 							priporočilo.
 						</p>
 
@@ -147,7 +147,7 @@ function HomePageBackup() {
 						id="how-it-works"
 						label="Začni z zanimanjem"
 						title="Izberi učno pot, ki te pritegne."
-						description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj pribliĹľa cilju."
+						description="Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo. Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko najbolj približa cilju."
 						labelColor="text-[#d07a12]"
 						cards={learningPathCards}
 						cardBackground="bg-[#fffdf8]"
@@ -163,7 +163,7 @@ function HomePageBackup() {
 						id="position"
 						label="Tvoja trenutna pozicija"
 						title="Ugotovi, kje si na izbrani poti."
-						description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako laĹľje razumeš, kaj Ĺľe obvladaš in kje je prostor za napredek."
+						description="Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti. Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek."
 						labelColor="text-[#31583b]"
 						cards={positionCards}
 						cardBackground="bg-[#fff6eb]"

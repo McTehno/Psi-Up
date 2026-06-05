@@ -31,7 +31,7 @@ const learningPathCards = [
 	{
 		icon: TargetIcon,
 		title: 'Začni iz svoje pozicije',
-		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj Ĺľe znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
+		text: 'Ni treba začeti od začetka. Pomembno je razumeti, kaj že znaš, kaj še potrebuješ in kje je tvoj najbolj smiseln naslednji korak.',
 	},
 ]
 
@@ -44,7 +44,7 @@ const positionCards = [
 	{
 		icon: CompassIcon,
 		title: 'Odkrij svojo pozicijo',
-		text: 'Rezultat pokaĹľe, katere dele poti Ĺľe obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
+		text: 'Rezultat pokaže, katere dele poti že obvladaš in katera področja je dobro še utrditi, preden nadaljuješ.',
 	},
 ]
 
@@ -220,11 +220,11 @@ function HomePage() {
 						</div>
 
 						<h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight text-[#111111] sm:text-6xl xl:text-7xl">
-							Pot do cilja je laĹľja, ko je najprej mirna.
+							Pot do cilja je lažja, ko je najprej mirna.
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							Psi-Up poveĹľe vprašalnik, DigComp in učno pot v eno jasno priporočilo.
+							Psi-Up poveže vprašalnik, DigComp in učno pot v eno jasno priporočilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">
@@ -366,7 +366,7 @@ function HomePage() {
 													className="flex items-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#274a31] hover:shadow-lg"
 												>
 													{searchResults.length > 0
-														? 'PrikaĹľi vse zadetke'
+														? 'Prikaži vse zadetke'
 														: 'Napredno iskanje'}
 													<ArrowRightIcon className="h-4 w-4" />
 												</button>
@@ -482,7 +482,7 @@ function HomePage() {
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
 								Ni pomembno, ali začneš z veliko znanja ali samo z radovednostjo.
 								Pomembno je, da vidiš, kje si zdaj in kateri korak te lahko
-								najbolj pribliĹľa cilju.
+								najbolj približa cilju.
 							</p>
 						</div>
 
@@ -525,7 +525,7 @@ function HomePage() {
 
 							<p className="mt-5 text-lg leading-8 text-[#706b60]">
 								Vprašalnik ti pomaga povezati trenutno znanje z vsebino poti.
-								Tako laĹľje razumeš, kaj Ĺľe obvladaš in kje je prostor za napredek.
+								Tako lažje razumeš, kaj že obvladaš in kje je prostor za napredek.
 							</p>
 						</div>
 
@@ -568,7 +568,7 @@ function HomePage() {
 								</h2>
 
 								<p className="mt-5 text-lg leading-8 text-[#706b60]">
-									Ko vidiš svojo pozicijo, postane pot bolj pregledna. LaĹľje
+									Ko vidiš svojo pozicijo, postane pot bolj pregledna. Lažje
 									izbereš naslednjo vsebino, se osredotočiš na pomembno in
 									napreduješ v svojem ritmu.
 								</p>

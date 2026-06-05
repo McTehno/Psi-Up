@@ -28,7 +28,7 @@ function AssessmentHeader({
   return (
     <header className="assessment-header">
       <div className="assessment-step">
-        <span className="assessment-step__icon">â“</span>
+        <span className="assessment-step__icon">ⓘ</span>
 
         <div className="assessment-step__content">
           <span>{label}</span>

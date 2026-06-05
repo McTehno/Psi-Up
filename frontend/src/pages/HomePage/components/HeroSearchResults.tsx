@@ -180,7 +180,7 @@ function HeroSearchResults({
 												className="flex items-center gap-2 rounded-full border border-[#31583b] bg-[#31583b] px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-[#274a31] hover:shadow-lg"
 											>
 												{searchResults.length > 0
-													? 'PrikaĹľi vse zadetke'
+													? 'Prikaži vse zadetke'
 													: 'Napredno iskanje'}
 												<ArrowRightIcon className="h-4 w-4" />
 											</motion.button>

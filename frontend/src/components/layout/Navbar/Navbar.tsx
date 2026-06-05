@@ -102,7 +102,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 							NIDiKo
 						</span>
 						<span className="block text-[10px] font-medium leading-[1.3] text-[#5f5a52]">
-							Razvoj prilagodljivega kurikuluma neformalnih izobraĹľevanj
+							Razvoj prilagodljivega kurikuluma neformalnih izobraževanj
 							<br />
 							za pridobitev in razvoj digitalnih kompetenc
 						</span>

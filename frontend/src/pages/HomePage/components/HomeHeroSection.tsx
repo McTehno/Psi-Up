@@ -116,7 +116,7 @@ function HomeHeroSection() {
 						<div className="ml-8 rounded-[22px] border border-[#ded5c6]/65 bg-[#fffdf8]/80 p-5 shadow-[0_14px_34px_rgba(57,47,35,0.06)]">
 							<p className="font-serif text-xl text-[#33442f]">Modul</p>
 							<p className="mt-2 text-sm leading-6 text-[#706b60]">
-								ZaokroĹľen korak znotraj poti, ki ti pomaga razumeti posamezen del
+								Zaokrožen korak znotraj poti, ki ti pomaga razumeti posamezen del
 								področja.
 							</p>
 						</div>

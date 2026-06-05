@@ -15,7 +15,7 @@ const mockData: LearningPathData = {
       id: "mod_11",
       order: 1,
       title: "Kibernetska varnost za končne uporabnike",
-      description: "Zavedanje o tveganjih, socialni inĹľeniring in upravljanje gesel.",
+      description: "Zavedanje o tveganjih, socialni inženiring in upravljanje gesel.",
       learningUnitsCount: 6
     },
     {
@@ -29,7 +29,7 @@ const mockData: LearningPathData = {
       id: "mod_14",
       order: 3,
       title: "Prepoznavanje zlonamerne programske opreme",
-      description: "Identifikacija groĹľenj in pravilno ukrepanje ob incidentih.",
+      description: "Identifikacija groženj in pravilno ukrepanje ob incidentih.",
       learningUnitsCount: 6
     },
     {

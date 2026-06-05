@@ -29,7 +29,7 @@ type UpdateUserProgressParams = {
 	/**
 	 * Compatibility parameter.
 	 *
-	 * Starejši hooki ga še lahko pošiljajo, ampak api-client Ĺľe sam
+	 * Starejši hooki ga še lahko pošiljajo, ampak api-client že sam
 	 * prebere access token iz Supabase session.
 	 */
 	accessToken?: string

@@ -96,7 +96,7 @@ export function LearningPathMobileSteps({
             </p>
 
             <p className="mt-1 text-lg font-bold text-[#4B3027]">
-              Cilj doseĹľen
+              Cilj dosežen
             </p>
           </div>
         </div>

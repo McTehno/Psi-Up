@@ -316,9 +316,9 @@ function AssessmentProgress({
             className={`assessment-progress__flag ${
               isGoalReached ? 'assessment-progress__flag--completed' : ''
             }`}
-            aria-label={isGoalReached ? 'Cilj doseĹľen' : 'Cilj'}
+            aria-label={isGoalReached ? 'Cilj dosežen' : 'Cilj'}
           >
-            âš‘
+            ⚑
           </div>
         )}
 

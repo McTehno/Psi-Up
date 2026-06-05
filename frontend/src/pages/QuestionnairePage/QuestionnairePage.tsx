@@ -1395,7 +1395,7 @@ const questionProgressById = useMemo(
   const currentLabel = assessmentCopy.questionnaire.label
   const currentTitle =
     phase === 'completed'
-      ? 'Cilj učne poti je doseĹľen'
+      ? 'Cilj učne poti je dosežen'
       : currentQuestion?.question ?? 'Vprašalnik se nalaga ...'
 
   const currentDescription =
@@ -1453,7 +1453,7 @@ const questionProgressById = useMemo(
           try {
             nextModuleDetail = await getModuleDetail(targetId)
           } catch (detailError) {
-            console.warn('Module detail ni bil naloĹľen.', detailError)
+            console.warn('Module detail ni bil naložen.', detailError)
           }
         }
 
@@ -1461,7 +1461,7 @@ const questionProgressById = useMemo(
           try {
             nextLearningPathDetail = await getLearningPathDetail(targetId)
           } catch (detailError) {
-            console.warn('Learning path detail ni bil naloĹľen.', detailError)
+            console.warn('Learning path detail ni bil naložen.', detailError)
           }
         }
 
@@ -1502,7 +1502,7 @@ const questionProgressById = useMemo(
         setError(
           error instanceof Error
             ? error.message
-            : 'Vprašalnika ni bilo mogoče naloĹľiti. Preverite, če backend deluje.',
+            : 'Vprašalnika ni bilo mogoče naložiti. Preverite, če backend deluje.',
         )
       } finally {
         if (isActive) {
@@ -1814,10 +1814,10 @@ const questionProgressById = useMemo(
         <>
           <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
             <h2 className="text-xl font-bold text-[#31583b]">
-              Odlično, cilj je doseĹľen.
+              Odlično, cilj je dosežen.
             </h2>
             <p className="mt-3 text-slate-700">
-              Vprašalnik kaĹľe, da trenutno Ĺľe obvladate celotno učno pot.
+              Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
               Preusmeritev na podrobnosti se bo izvedla samodejno.
             </p>
           </section>

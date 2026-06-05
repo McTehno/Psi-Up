@@ -247,3 +247,53 @@ class QuestionnaireAnswersRepository:
         )
 
         return await self._get_progress_response(user_id)
+    
+    async def save_assessment_result_snapshot(
+        self,
+        user_id: str,
+        target_type: str,
+        target_id: str,
+        assessment_result: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Shrani zadnji assessment result snapshot v obstoječ questionnaire_answers zapis.
+
+        Pomembno:
+        - ne spreminja answers,
+        - ne spreminja was_answered,
+        - ne dela merge logike,
+        - samo doda/posodobi assessment_result.
+        """
+
+        progress = await self._ensure_progress_exists(user_id)
+
+        if progress is None:
+            return None
+
+        now = datetime.now(timezone.utc)
+
+        collection = self.database[self.collection_name]
+
+        update_result = collection.update_one(
+            {
+                "_id": user_id,
+                "progress.questionnaire_answers": {
+                    "$elemMatch": {
+                        "target_type": target_type,
+                        "target_id": target_id,
+                    }
+                },
+            },
+            {
+                "$set": {
+                    "progress.questionnaire_answers.$.assessment_result": assessment_result,
+                    "progress.questionnaire_answers.$.assessment_result_saved_at": now,
+                    "updated_at": now,
+                }
+            },
+        )
+
+        if update_result.matched_count == 0:
+            return None
+
+        return await self._get_progress_response(user_id)

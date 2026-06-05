@@ -1,4 +1,4 @@
-﻿import { ArrowRight, Search } from 'lucide-react'
+import { ArrowRight, Search } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { useGlobalSearch } from '../../../hooks/useGlobalSearch'
@@ -65,21 +65,21 @@ function HomeHeroSection() {
 					</p>
 
 					<div className="mt-9 flex flex-wrap gap-3">
-						<a
-							href="#learning-paths"
+						<button
+							onClick={() => navigate('/register')}
 							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#31583b] bg-[#31583b] px-7 py-3.5 text-sm font-bold text-[#fffdf8] shadow-[0_14px_34px_rgba(49,88,59,0.22)] transition hover:bg-[#2a4d33]"
 						>
-							Razišči učne poti
+							Registriraj se
 							<ArrowRight className="h-4 w-4" />
-						</a>
+						</button>
 
-						<a
-							href="#modules"
+						<button
+							onClick={() => setIsSearchActive(true)}
 							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#ded5c6]/70 bg-[#fffdf8]/36 px-7 py-3.5 text-sm font-bold text-[#706b60] shadow-sm backdrop-blur-sm transition hover:bg-[#fffdf8]/52"
 						>
 							<Search className="h-4 w-4" />
-							Kako je zgrajeno
-						</a>
+							Išči vsebine
+						</button>
 					</div>
 				</div>
 			</div>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
 	Heart,
@@ -147,9 +147,27 @@ export default function DashboardPage() {
 	const [activeTab, setActiveTab] = useState<DashboardTab>('favorites')
 	const [activeModal, setActiveModal] = useState<DashboardModalType>(null)
 
+	useEffect(() => {
+		if (!isAuthLoading && !user) {
+			navigate('/login')
+		}
+	}, [isAuthLoading, user, navigate])
+
 	const handleLogout = async () => {
 		await supabase.auth.signOut()
 		navigate('/')
+	}
+
+	if (isAuthLoading) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-[#fffdf8]">
+				<div className="h-8 w-8 animate-spin rounded-full border-[3px] border-[#ede5d8] border-t-[#d07a12]" />
+			</div>
+		)
+	}
+
+	if (!user) {
+		return null
 	}
 
 	usePageTitle('Profil')

@@ -1,8 +1,7 @@
 ﻿import type { ErrorResponse } from '../types/api'
 import { supabase } from './supabase-client'
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
+const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '')
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
   const {
@@ -22,9 +21,10 @@ async function parseResponse<T>(response: Response): Promise<T> {
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    const errorData = data as ErrorResponse | null
+    const errorData = data as (ErrorResponse & { detail?: string }) | null
 
     const message =
+      errorData?.detail ||
       errorData?.error?.message ||
       'Prišlo je do napake pri komunikaciji s strežnikom.'
 

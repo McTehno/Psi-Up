@@ -1,4 +1,5 @@
-﻿import { ArrowRight, Mail } from 'lucide-react'
+import { ArrowRight, Info } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 function HomeFinalCtaSection() {
 	return (
@@ -34,13 +35,13 @@ function HomeFinalCtaSection() {
 							<ArrowRight className="h-4 w-4" />
 						</a>
 
-						<a
-							href="mailto:info.nidiko@gmail.com"
+						<Link
+							to="/about"
 							className="inline-flex items-center justify-center gap-3 rounded-full border border-[#ded5c6]/90 bg-[#fffdf8]/90 px-7 py-3.5 text-sm font-bold text-[#706b60] shadow-[0_10px_24px_rgba(57,47,35,0.08)] transition hover:-translate-y-0.5 hover:bg-[#fff6eb]"
 						>
-							<Mail className="h-4 w-4" />
-							Kontakt
-						</a>
+							<Info className="h-4 w-4" />
+							O nas
+						</Link>
 					</div>
 
 					<p className="mt-12 text-xs font-medium text-[#8a8175]">

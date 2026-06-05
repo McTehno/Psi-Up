@@ -25,6 +25,10 @@ from app.api.learning_path_assistant import router as learning_path_assistant_ro
 from app.api.module_assistant import router as module_assistant_router
 from app.api.learning_unit_assistant import router as learning_unit_assistant_router
 
+from app.api.learning_path_assistant import router as learning_path_assistant_router
+from app.api.learning_unit_assistant import router as learning_unit_assistant_router
+from app.api.module_assistant import router as module_assistant_router
+
 app = FastAPI(
     title="Psi-Up API",
     description="Backend API for the Psi-Up learning path recommendation system.",
@@ -61,6 +65,9 @@ app.include_router(assessment_assistant_router, prefix="/api")
 app.include_router(learning_path_assistant_router, prefix="/api")
 app.include_router(module_assistant_router, prefix="/api")
 app.include_router(learning_unit_assistant_router, prefix="/api")
+app.include_router(learning_path_assistant_router, prefix="/api")
+app.include_router(learning_unit_assistant_router, prefix="/api")
+app.include_router(module_assistant_router, prefix="/api")
 
 @app.get("/")
 def read_root():

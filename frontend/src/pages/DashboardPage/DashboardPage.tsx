@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
 	Heart,
@@ -146,7 +146,7 @@ export default function DashboardPage() {
 	const { progress, isLoading: isProgressLoading, error } = useDashboardProgress()
 	const [activeTab, setActiveTab] = useState<DashboardTab>('favorites')
 	const [activeModal, setActiveModal] = useState<DashboardModalType>(null)
-
+	usePageTitle('Profil')
 	useEffect(() => {
 		if (!isAuthLoading && !user) {
 			navigate('/login')
@@ -170,7 +170,7 @@ export default function DashboardPage() {
 		return null
 	}
 
-	usePageTitle('Profil')
+	
 	const displayName =
 		localUser?.name ||
 		user?.user_metadata?.full_name ||

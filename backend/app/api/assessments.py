@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Depends
 
 from app.database.mongodb import get_database
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
+from app.schemas.questionnaire_schema import QuestionnaireTargetType
+
+from app.core.security import get_current_user
+from app.repositories.user_repository import UserRepository
 
 from app.repositories.learning_path_repository import LearningPathRepository
 from app.repositories.learning_unit_repository import LearningUnitRepository
@@ -42,6 +49,30 @@ from app.services.user_progress.user_progress_service import UserProgressService
 
 router = APIRouter(prefix="/assessments", tags=["Assessments"])
 
+async def get_authenticated_local_user_id(
+    current_user: dict = Depends(get_current_user),
+) -> str:
+    """
+    Vrne lokalni user_id na podlagi prijavljenega uporabnika iz JWT tokena.
+    """
+
+    auth_user_id = current_user.get("sub")
+
+    if not auth_user_id:
+        raise HTTPException(status_code=401, detail="Neveljaven uporabniški token.")
+
+    database = get_database()
+    user_repository = UserRepository(database)
+
+    user = await user_repository.get_user_by_auth_user_id(auth_user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Uporabniški profil ne obstaja. Najprej ustvarite profil.",
+        )
+
+    return user["_id"]
 
 def get_assessment_progress_service() -> AssessmentProgressService:
     """
@@ -146,3 +177,18 @@ async def evaluate_questionnaire_answers(
     )
 
     return result
+
+@router.get("/latest", response_model=Optional[AssessmentResultResponse])
+async def get_latest_assessment_result(
+    target_type: QuestionnaireTargetType = Query(...),
+    target_id: str = Query(...),
+    user_id: str = Depends(get_authenticated_local_user_id),
+    assessment_progress_service: AssessmentProgressService = Depends(
+        get_assessment_progress_service
+    ),
+) -> Optional[AssessmentResultResponse]:
+    return await assessment_progress_service.get_latest_assessment_result(
+        user_id=user_id,
+        target_type=target_type,
+        target_id=target_id,
+    )

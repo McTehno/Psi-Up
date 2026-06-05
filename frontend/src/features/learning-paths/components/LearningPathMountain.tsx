@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -136,48 +136,7 @@ const desktopLevelPositionPresets: Record<number, Position[]> = {
   ],
 }
 
-const tabletLevelPositionPresets: Record<number, Position[]> = {
-  1: [{ x: 44, y: 62 }],
-  2: [
-    { x: 34, y: 68 },
-    { x: 51, y: 32 },
-  ],
-  3: [
-    { x: 30, y: 70 },
-    { x: 45, y: 48 },
-    { x: 53, y: 28 },
-  ],
-  4: [
-    { x: 27, y: 73 },
-    { x: 39, y: 57 },
-    { x: 49, y: 41 },
-    { x: 54, y: 24 },
-  ],
-  5: [
-    { x: 25, y: 75 },
-    { x: 36, y: 63 },
-    { x: 46, y: 50 },
-    { x: 53, y: 36 },
-    { x: 54, y: 23 },
-  ],
-  6: [
-    { x: 23, y: 76 },
-    { x: 33, y: 66 },
-    { x: 42, y: 55 },
-    { x: 50, y: 44 },
-    { x: 55, y: 33 },
-    { x: 54, y: 21 },
-  ],
-  7: [
-    { x: 22, y: 77 },
-    { x: 31, y: 68 },
-    { x: 40, y: 58 },
-    { x: 48, y: 48 },
-    { x: 54, y: 38 },
-    { x: 56, y: 28 },
-    { x: 54, y: 19 },
-  ],
-}
+const tabletLevelPositionPresets: Record<number, Position[]> = desktopLevelPositionPresets
 
 const mobileLevelPositionPresets: Record<number, Position[]> = {
   1: [{ x: 42, y: 72 }],
@@ -279,9 +238,25 @@ const mobileParallelOffsets: Record<number, Position[]> = {
   ],
 }
 
-const desktopFinishFlagPosition: Position = { x: 74, y: 9 }
-const tabletFinishFlagPosition: Position = { x: 55, y: 7 }
+const desktopFinishFlagPosition: Position = { x: 74.5, y: 10.5 }
+const tabletFinishFlagPosition: Position = desktopFinishFlagPosition
 const mobileFinishFlagPosition: Position = { x: 54, y: 21 }
+
+const DESKTOP_BLOCK_CLASS = 'hidden min-[1500px]:block'
+const TABLET_BLOCK_CLASS = 'hidden min-[640px]:max-[1499px]:block'
+const MOBILE_BLOCK_CLASS = 'block min-[640px]:hidden'
+
+const DESKTOP_FLEX_CLASS = 'hidden min-[1500px]:flex'
+const TABLET_FLEX_CLASS = 'hidden min-[640px]:max-[1499px]:flex'
+const MOBILE_FLEX_CLASS = 'flex min-[640px]:hidden'
+
+const DESKTOP_FLAG_CLASS = 'hidden min-[1500px]:block'
+const TABLET_FLAG_CLASS = 'hidden min-[640px]:max-[1499px]:block'
+const MOBILE_FLAG_CLASS = 'block min-[640px]:hidden'
+
+const DESKTOP_DETAIL_CLASS = 'absolute z-50 hidden w-[390px] min-[1500px]:block'
+const TABLET_DETAIL_CLASS =
+  'absolute z-50 hidden w-[350px] min-[640px]:max-[1499px]:block'
 
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
@@ -905,7 +880,7 @@ export function LearningPathMountain({
   )
 
   const tabletNodeLevels = useMemo(
-    () => getPositionedNodeLevels(nodes, tabletLevelPositionPresets, 'tablet'),
+    () => getPositionedNodeLevels(nodes, tabletLevelPositionPresets, 'desktop'),
     [nodes],
   )
 
@@ -993,38 +968,38 @@ export function LearningPathMountain({
     [mobilePathSegments, mobileFinishPathSegments],
   )
 
-function renderPathSegments(segments: PathSegment[], className: string) {
-  if (segments.length === 0) {
-    return null
-  }
+  function renderPathSegments(segments: PathSegment[], className: string) {
+    if (segments.length === 0) {
+      return null
+    }
 
-  return (
-    <svg
-      className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      {segments.map((segment) => (
-        <path
-          key={`${segment.from.id}-${segment.to.id}`}
-          d={createWavyPathD(
-            segment.from,
-            segment.to,
-            segment.isParallelTransition ? 1.5 : 2,
-          )}
-          fill="none"
-          stroke="#344E41"
-          strokeWidth="3.45"
-          strokeLinecap="round"
-          strokeDasharray="1.4 1.25"
-          opacity="0.62"
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
-    </svg>
-  )
-}
+    return (
+      <svg
+        className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${className}`}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        {segments.map((segment) => (
+          <path
+            key={`${segment.from.id}-${segment.to.id}`}
+            d={createWavyPathD(
+              segment.from,
+              segment.to,
+              segment.isParallelTransition ? 1.5 : 2,
+            )}
+            fill="none"
+            stroke="#344E41"
+            strokeWidth="3.45"
+            strokeLinecap="round"
+            strokeDasharray="1.4 1.25"
+            opacity="0.62"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+    )
+  }
 
   function renderNodes(
     nodesToRender: PositionedMountainNode[],
@@ -1081,7 +1056,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
   return (
     <section
       className={[
-        'relative isolate overflow-hidden rounded-[2rem] border border-[#DED2BC] bg-[#F7F1E6] shadow-sm',
+        'relative isolate overflow-hidden rounded-[2rem] border border-[#DED2BC] bg-[#F7F1E6] shadow-sm min-[640px]:!h-auto min-[640px]:!min-h-0 min-[640px]:aspect-[1900/1000]',
         className,
       ].join(' ')}
     >
@@ -1152,63 +1127,58 @@ function renderPathSegments(segments: PathSegment[], className: string) {
           }
         `}
       </style>
-      <picture>
-        <source srcSet={mountainJourneyBgMobile} media="(max-width: 1499px)" />
-        <img
-          src={mountainJourneyBg}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center"
-          aria-hidden="true"
-        />
-      </picture>
+      <img
+        src={mountainJourneyBg}
+        alt=""
+        className="absolute inset-0 z-0 hidden h-full w-full object-cover object-center min-[640px]:block"
+      />
+
+      <img
+        src={mountainJourneyBgMobile}
+        alt=""
+        className="absolute inset-0 z-0 block h-full w-full object-cover object-top min-[640px]:hidden"
+      />
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
-
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul/ učno enoto
       </div>
 
-      {renderPathSegments(desktopAllPathSegments, 'hidden min-[1500px]:block')}
-      {renderPathSegments(
-        tabletAllPathSegments,
-        'hidden md:max-[1499px]:block',
-      )}
-      {renderPathSegments(mobileAllPathSegments, 'block md:hidden')}
+      {renderPathSegments(desktopAllPathSegments, DESKTOP_BLOCK_CLASS)}
+      {renderPathSegments(tabletAllPathSegments, TABLET_BLOCK_CLASS)}
+      {renderPathSegments(mobileAllPathSegments, MOBILE_BLOCK_CLASS)}
+
+      {renderNodes(desktopPositionedNodes, DESKTOP_FLEX_CLASS)}
+      {renderNodes(tabletPositionedNodes, TABLET_FLEX_CLASS)}
+      {renderNodes(mobilePositionedNodes, MOBILE_FLEX_CLASS)}
 
       <FinishFlag
         position={desktopFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="hidden min-[1500px]:flex"
+        className={DESKTOP_FLAG_CLASS}
       />
 
       <FinishFlag
         position={tabletFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="hidden md:max-[1499px]:flex"
+        className={TABLET_FLAG_CLASS}
       />
 
       <FinishFlag
         position={mobileFinishFlagPosition}
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
-        className="flex md:hidden"
+        className={MOBILE_FLAG_CLASS}
       />
-
-      {renderNodes(desktopPositionedNodes, 'hidden min-[1500px]:flex')}
-      {renderNodes(
-        tabletPositionedNodes,
-        'hidden md:max-[1499px]:flex',
-      )}
-      {renderNodes(mobilePositionedNodes, 'flex md:hidden')}
 
       {selectedDesktopNode && (
         <ModuleDetailBox
           node={selectedDesktopNode}
           onClose={() => setSelectedNodeId(null)}
-          className="absolute z-50 hidden w-[390px] min-[1500px]:block"
+          className={DESKTOP_DETAIL_CLASS}
           style={{
             left: `${Math.min(Math.max(selectedDesktopNode.x, 24), 76)}%`,
             top:
@@ -1227,7 +1197,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         <ModuleDetailBox
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
-          className="absolute z-50 hidden w-[350px] md:max-[1499px]:block"
+          className={TABLET_DETAIL_CLASS}
           style={{
             left: `${Math.min(Math.max(selectedTabletNode.x, 22), 78)}%`,
             top:
@@ -1243,7 +1213,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
       )}
 
       {selectedMobileNode && (
-        <div className="absolute inset-x-3 bottom-3 z-50 md:hidden">
+        <div className="absolute inset-x-3 bottom-3 z-50 min-[640px]:hidden">
           <ModuleDetailBox
             node={selectedMobileNode}
             onClose={() => setSelectedNodeId(null)}
@@ -1252,7 +1222,7 @@ function renderPathSegments(segments: PathSegment[], className: string) {
         </div>
       )}
 
-      <div className="absolute bottom-6 right-6 z-20 hidden text-right text-xs font-bold uppercase tracking-[0.24em] text-[#344E41]/75 md:block">
+      <div className="absolute bottom-6 right-6 z-20 hidden text-right text-xs font-bold uppercase tracking-[0.24em] text-[#344E41]/75 min-[640px]:block">
         {isCompleted ? 'Cilj dosežen' : 'Cilj poti'}
       </div>
     </section>

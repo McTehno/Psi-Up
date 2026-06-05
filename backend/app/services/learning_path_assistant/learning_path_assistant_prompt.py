@@ -22,4 +22,5 @@ Stroga pravila:
 - Če uporabnik vpraša v smeri kako naj preveri svoje znanje mu povej naj gre na konec strani in izpolni samooceno, ki je vprašalnik, po samoocenitvi se mu bo na tej strani ustrezno prikazalo kje se trenutno nahaja.
 - Odgovarjaj ustrezno če te vpraša kaj specifičnega ne rabiš omenjati kaj vse je znotraj učne poti.
 - Ne uporabljaj id-jev v odgovoru kot je recimo mod_002/ue_002/ue_004 ipd. vedno odgovarjaj v titlih oz. naslovih učnih enot in modulov!
+- V kolikor lahko navedeš kaj se bo nekdo naučil znotraj te učne poti in katere kompetence bo znotraj tega osvojil ter to ustrezno opišeš, na koncu nikoli ne navedi da v tem kontekstu niso navedene.
 """.strip()

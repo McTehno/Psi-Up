@@ -72,7 +72,9 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	// to the DOM when crossing a threshold (4 writes total). CSS transition
 	// on the element handles smooth interpolation on the GPU.
 	useMotionValueEvent(scrollYProgress, 'change', (v) => {
-		if (!mountainContainerRef.current) return
+		const mountainContainer = mountainContainerRef.current
+
+    if (!mountainContainer) return
 		let step = 0
 		if (v > 0.97) step = 8
 		else if (v > 0.95) step = 6
@@ -82,8 +84,8 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 		if (step !== lastBlurStepRef.current) {
 			lastBlurStepRef.current = step
 			const filterVal = step === 0 ? 'none' : `blur(${step}px)`
-			mountainContainerRef.current.style.filter = filterVal
-				; (mountainContainerRef.current.style as any).webkitFilter = filterVal
+			mountainContainer.style.filter = filterVal
+				; mountainContainer.style.setProperty('-webkit-filter', filterVal)
 		}
 	})
 
@@ -215,6 +217,8 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 }
 
 export default HomeParallaxEnvironment
+
+
 
 
 

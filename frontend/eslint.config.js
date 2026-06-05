@@ -21,7 +21,7 @@ export default defineConfig([
     rules: {
       'react-hooks/set-state-in-effect': 'warn',
       'react-hooks/refs': 'warn',
-            'react-hooks/immutability': 'warn',
+      'react-hooks/immutability': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -33,4 +33,3 @@ export default defineConfig([
     },
   },
 ])
-

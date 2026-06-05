@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import EmptyState from '../../../components/common/EmptyState';
 import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker';
 import { GoalBadge } from './GoalBadge';
@@ -44,6 +44,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const popupRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [activeNodeIdx, setActiveNodeIdx] = useState<number | null>(null);
+
+  const isContainerInView = useInView(containerRef, { once: true, margin: "-100px" });
 
 
   const safeReferences = Array.isArray(references)
@@ -389,8 +391,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 strokeWidth="5"
                 strokeLinecap="round"
                 initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
+                animate={isContainerInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
                 transition={{ 
                   pathLength: { duration: segment.duration, delay: segment.delay, ease: "linear" },
                   opacity: { duration: 0.01, delay: segment.delay } 
@@ -421,8 +422,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {isAssessmentPosition && (
                   <motion.div
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
                     className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
                   >
@@ -438,8 +438,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   data-lu-node={idx}
                   onClick={() => handleNodeClick(idx, ref.learning_unit_id)}
                   initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  animate={{ opacity: isContainerInView ? 1 : 0 }}
                   transition={{ duration: 0.8, delay: nodeDelay, ease: "easeInOut" }}
                   className={`
                     w-[56px] h-[56px] shrink-0 rounded-full flex items-center justify-center relative z-20 shadow-sm cursor-pointer
@@ -467,8 +466,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {isMobile && !isUnitCompleted && (
                   <motion.div
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.1, ease: "easeInOut" }}
                     className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300"
                   >
@@ -482,8 +480,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {!isMobile && pos.isSingle && (
                   <motion.div
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
                     className={`absolute top-[28px] ${pos.isOnRightSide ? 'left-[70px] md:left-[90px]' : 'right-[70px] md:right-[90px]'} z-0`}
                   >
@@ -525,8 +522,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                 {!isMobile && !pos.isSingle && (
                   <motion.div
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
                     className="mt-4"
                   >

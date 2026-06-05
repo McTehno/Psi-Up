@@ -32,6 +32,7 @@ export type AssessmentProgressStep = {
   status: AssessmentProgressStepStatus
   subSteps?: AssessmentProgressSubStep[]
   questionCountUntilStep?: number
+  variant?: 'module' | 'learning-unit'
 }
 
 type AssessmentProgressProps = {
@@ -120,6 +121,14 @@ function getStepPositionPercent(
 ) {
   const questionAreaPercent = getQuestionAreaPercent(showGoalFlag)
 
+  if (stepCount <= 0) {
+    return 0
+  }
+
+  if (showGoalFlag) {
+    return ((index + 1) / stepCount) * questionAreaPercent
+  }
+
   if (
     questionCount > 0 &&
     typeof step.questionCountUntilStep === 'number'
@@ -131,10 +140,6 @@ function getStepPositionPercent(
         (step.questionCountUntilStep / questionCount) * questionAreaPercent,
       ),
     )
-  }
-
-  if (stepCount <= 0) {
-    return 0
   }
 
   return ((index + 1) / stepCount) * questionAreaPercent
@@ -173,12 +178,12 @@ function AssessmentProgress({
     questions.length === safeQuestionCount
       ? questions
       : Array.from({ length: safeQuestionCount }, (_, index) => ({
-          id: `question_${index}`,
-          status:
-            index < confirmedQuestionCount
-              ? ('completed' as const)
-              : ('upcoming' as const),
-        }))
+        id: `question_${index}`,
+        status:
+          index < confirmedQuestionCount
+            ? ('completed' as const)
+            : ('upcoming' as const),
+      }))
 
   const resolvedQuestionCount = normalizedQuestions.filter((question) =>
     isResolvedQuestionStatus(question.status),
@@ -192,11 +197,11 @@ function AssessmentProgress({
   const hasQuestionProgress = safeQuestionCount > 0
   const progressPercent = hasQuestionProgress
     ? getQuestionProgressPercent(
-        safeConfirmedQuestionCount,
-        safeQuestionCount,
-        showGoalFlag,
-        isGoalReached,
-      )
+      safeConfirmedQuestionCount,
+      safeQuestionCount,
+      showGoalFlag,
+      isGoalReached,
+    )
     : getProgressPercent(completedLeafCount, totalLeafCount)
 
   const progressLabel = hasQuestionProgress
@@ -209,9 +214,8 @@ function AssessmentProgress({
 
   return (
     <section
-      className={`assessment-progress${
-        showGoalFlag ? ' assessment-progress--with-goal' : ''
-      }`}
+      className={`assessment-progress${showGoalFlag ? ' assessment-progress--with-goal' : ''
+        }`}
       aria-label={`Napredek do cilja ${targetLabel}`}
       style={
         {
@@ -225,37 +229,37 @@ function AssessmentProgress({
       </div>
 
       <div className="assessment-progress__track">
-      <div className="assessment-progress__line">
-        {hasQuestionProgress ? (
-          <div
-            className="assessment-progress__question-segments"
-            aria-hidden="true"
-          >
-            {normalizedQuestions.map((question, index) => {
-              const segmentPosition = getQuestionSegmentPercent(
-                index,
-                safeQuestionCount,
-                showGoalFlag,
-              )
+        <div className="assessment-progress__line">
+          {hasQuestionProgress ? (
+            <div
+              className="assessment-progress__question-segments"
+              aria-hidden="true"
+            >
+              {normalizedQuestions.map((question, index) => {
+                const segmentPosition = getQuestionSegmentPercent(
+                  index,
+                  safeQuestionCount,
+                  showGoalFlag,
+                )
 
-              return (
-                <span
-                  className={`assessment-progress__question-segment assessment-progress__question-segment--${question.status}`}
-                  key={question.id}
-                  style={
-                    {
-                      left: `${segmentPosition.left}%`,
-                      width: `${segmentPosition.width}%`,
-                    } as CSSProperties
-                  }
-                />
-              )
-            })}
-          </div>
-        ) : (
-          <div className="assessment-progress__fill" />
-        )}
-      </div>
+                return (
+                  <span
+                    className={`assessment-progress__question-segment assessment-progress__question-segment--${question.status}`}
+                    key={question.id}
+                    style={
+                      {
+                        left: `${segmentPosition.left}%`,
+                        width: `${segmentPosition.width}%`,
+                      } as CSSProperties
+                    }
+                  />
+                )
+              })}
+            </div>
+          ) : (
+            <div className="assessment-progress__fill" />
+          )}
+        </div>
 
         <div className="assessment-progress__steps">
           {steps.map((step, index) => {
@@ -263,11 +267,13 @@ function AssessmentProgress({
 
             return (
               <div
-                className={`assessment-progress__step assessment-progress__step--${step.status} ${
-                  isLabelBelow
+                className={`assessment-progress__step assessment-progress__step--${step.status} ${step.variant
+                    ? `assessment-progress__step--${step.variant}`
+                    : ''
+                  } ${isLabelBelow
                     ? 'assessment-progress__step--label-bottom'
                     : 'assessment-progress__step--label-top'
-                }`}
+                  }`}
                 key={step.id}
                 style={
                   {
@@ -286,11 +292,10 @@ function AssessmentProgress({
                 </span>
 
                 <span
-                  className={`assessment-progress__label ${
-                    isLabelBelow
+                  className={`assessment-progress__label ${isLabelBelow
                       ? 'assessment-progress__label--bottom'
                       : 'assessment-progress__label--top'
-                  }`}
+                    }`}
                 >
                   {step.title}
                 </span>
@@ -313,9 +318,8 @@ function AssessmentProgress({
 
         {showGoalFlag && (
           <div
-            className={`assessment-progress__flag ${
-              isGoalReached ? 'assessment-progress__flag--completed' : ''
-            }`}
+            className={`assessment-progress__flag ${isGoalReached ? 'assessment-progress__flag--completed' : ''
+              }`}
             aria-label={isGoalReached ? 'Cilj dosežen' : 'Cilj'}
           >
             ⚑

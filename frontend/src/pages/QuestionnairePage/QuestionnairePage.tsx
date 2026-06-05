@@ -2,7 +2,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import womanImage from '../../assets/woman.png'
-import {usePageTitle} from '../../hooks/usePageTitle'
+import { usePageTitle } from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
 import AssessmentContextBox, {
   type AssessmentAssistantDisplayExchange,
@@ -885,8 +885,8 @@ function QuestionnairePage() {
     Record<string, AnswerOption>
   >({})
   const [rejectedQuestionIds, setRejectedQuestionIds] = useState<Set<string>>(
-  () => new Set(),
-)
+    () => new Set(),
+  )
   const [moduleDetail, setModuleDetail] =
     useState<ModuleDetailResponse | null>(null)
   const [learningPathDetail, setLearningPathDetail] =
@@ -928,117 +928,117 @@ function QuestionnairePage() {
     ? selectedAnswers[currentQuestion.runtimeId]
     : undefined
 
-    const currentRejectedQuestionIdsPreview = useMemo(() => {
-  if (
-    phase !== 'questionnaire' ||
-    !currentQuestion ||
-    selectedAnswer?.weight !== false ||
-    targetType === 'learning_unit'
-  ) {
-    return new Set<string>()
-  }
+  const currentRejectedQuestionIdsPreview = useMemo(() => {
+    if (
+      phase !== 'questionnaire' ||
+      !currentQuestion ||
+      selectedAnswer?.weight !== false ||
+      targetType === 'learning_unit'
+    ) {
+      return new Set<string>()
+    }
 
-  return createRuntimeIdSet(
-    getQuestionIdsRejectedByCurrentNegativeAnswer({
-      currentQuestion,
-      groups: questionGroups,
-    }),
-  )
-}, [
-  currentQuestion,
-  phase,
-  questionGroups,
-  selectedAnswer?.weight,
-  targetType,
-])
-
-const questionProgress = useMemo<AssessmentProgressQuestion[]>(() => {
-  const confirmedQuestionIds =
-    phase === 'completed'
-      ? questionnaire.map((question) => question.runtimeId)
-      : visibleQuestionIds.slice(0, activeQuestionIndex)
-
-  const confirmedQuestionIdSet = createRuntimeIdSet(confirmedQuestionIds)
-
-  const rejectedQuestionIdSet = new Set([
-    ...Array.from(rejectedQuestionIds),
-    ...Array.from(currentRejectedQuestionIdsPreview),
+    return createRuntimeIdSet(
+      getQuestionIdsRejectedByCurrentNegativeAnswer({
+        currentQuestion,
+        groups: questionGroups,
+      }),
+    )
+  }, [
+    currentQuestion,
+    phase,
+    questionGroups,
+    selectedAnswer?.weight,
+    targetType,
   ])
 
-  return questionnaire.map((question) => {
-    const isActiveQuestion =
-      phase === 'questionnaire' &&
-      currentQuestion?.runtimeId === question.runtimeId
+  const questionProgress = useMemo<AssessmentProgressQuestion[]>(() => {
+    const confirmedQuestionIds =
+      phase === 'completed'
+        ? questionnaire.map((question) => question.runtimeId)
+        : visibleQuestionIds.slice(0, activeQuestionIndex)
 
-    const selectedAnswerForQuestion = selectedAnswers[question.runtimeId]
+    const confirmedQuestionIdSet = createRuntimeIdSet(confirmedQuestionIds)
 
-    if (rejectedQuestionIdSet.has(question.runtimeId)) {
-      return {
-        id: question.runtimeId,
-        status: 'rejected',
-      }
-    }
+    const rejectedQuestionIdSet = new Set([
+      ...Array.from(rejectedQuestionIds),
+      ...Array.from(currentRejectedQuestionIdsPreview),
+    ])
 
-    if (isActiveQuestion && selectedAnswerForQuestion?.weight === false) {
-      return {
-        id: question.runtimeId,
-        status: 'rejected',
-      }
-    }
+    return questionnaire.map((question) => {
+      const isActiveQuestion =
+        phase === 'questionnaire' &&
+        currentQuestion?.runtimeId === question.runtimeId
 
-    if (isActiveQuestion && selectedAnswerForQuestion?.weight === true) {
-      return {
-        id: question.runtimeId,
-        status: 'completed',
-      }
-    }
+      const selectedAnswerForQuestion = selectedAnswers[question.runtimeId]
 
-    if (confirmedQuestionIdSet.has(question.runtimeId)) {
-      if (selectedAnswerForQuestion?.weight === false) {
+      if (rejectedQuestionIdSet.has(question.runtimeId)) {
         return {
           id: question.runtimeId,
           status: 'rejected',
         }
       }
 
-      if (selectedAnswerForQuestion?.weight === true) {
+      if (isActiveQuestion && selectedAnswerForQuestion?.weight === false) {
+        return {
+          id: question.runtimeId,
+          status: 'rejected',
+        }
+      }
+
+      if (isActiveQuestion && selectedAnswerForQuestion?.weight === true) {
         return {
           id: question.runtimeId,
           status: 'completed',
         }
       }
-    }
 
-    if (isActiveQuestion) {
+      if (confirmedQuestionIdSet.has(question.runtimeId)) {
+        if (selectedAnswerForQuestion?.weight === false) {
+          return {
+            id: question.runtimeId,
+            status: 'rejected',
+          }
+        }
+
+        if (selectedAnswerForQuestion?.weight === true) {
+          return {
+            id: question.runtimeId,
+            status: 'completed',
+          }
+        }
+      }
+
+      if (isActiveQuestion) {
+        return {
+          id: question.runtimeId,
+          status: 'active',
+        }
+      }
+
       return {
         id: question.runtimeId,
-        status: 'active',
+        status: 'upcoming',
       }
-    }
+    })
+  }, [
+    activeQuestionIndex,
+    currentQuestion?.runtimeId,
+    currentRejectedQuestionIdsPreview,
+    phase,
+    questionnaire,
+    rejectedQuestionIds,
+    selectedAnswers,
+    visibleQuestionIds,
+  ])
 
-    return {
-      id: question.runtimeId,
-      status: 'upcoming',
-    }
-  })
-}, [
-  activeQuestionIndex,
-  currentQuestion?.runtimeId,
-  currentRejectedQuestionIdsPreview,
-  phase,
-  questionnaire,
-  rejectedQuestionIds,
-  selectedAnswers,
-  visibleQuestionIds,
-])
-
-const questionProgressById = useMemo(
-  () =>
-    new Map(
-      questionProgress.map((question) => [question.id, question.status] as const),
-    ),
-  [questionProgress],
-)
+  const questionProgressById = useMemo(
+    () =>
+      new Map(
+        questionProgress.map((question) => [question.id, question.status] as const),
+      ),
+    [questionProgress],
+  )
 
   const selectedGroup = useMemo<CompetencyGroup | undefined>(() => {
     if (!targetType || !targetId || !questionnaireTitle) {
@@ -1059,37 +1059,37 @@ const questionProgressById = useMemo(
   )
 
   const nextQuestion =
-  currentQuestion && selectedAnswer && targetType && targetId
-    ? selectedAnswer.weight === false && targetType !== 'learning_unit'
-      ? getNextQuestionAfterNegativeAnswer({
-        questions: questionnaire,
-        currentQuestion,
-        groups: questionGroups,
-        selectedAnswers,
-        targetType,
-        targetId,
-        confirmedQuestionIds: confirmedQuestionIdsForPreview,
-      })
-      : getNextEligibleQuestion({
-        questions: questionnaire,
-        currentQuestion,
-        groups: questionGroups,
-        selectedAnswers,
-        targetType,
-        targetId,
-        confirmedQuestionIds: confirmedQuestionIdsForPreview,
-      })
-    : null
+    currentQuestion && selectedAnswer && targetType && targetId
+      ? selectedAnswer.weight === false && targetType !== 'learning_unit'
+        ? getNextQuestionAfterNegativeAnswer({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: confirmedQuestionIdsForPreview,
+        })
+        : getNextEligibleQuestion({
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: confirmedQuestionIdsForPreview,
+        })
+      : null
 
   const skipNotice =
-  phase === 'questionnaire' &&
-    currentQuestion &&
-    selectedAnswer?.weight === false &&
-    targetType !== 'learning_unit'
-    ? nextQuestion
-      ? 'Odgovor "Ne" bo preskočil preostala vprašanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniš.'
-      : 'Odgovor "Ne" bo zaključil vprašalnik, ker ni več naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniš.'
-    : null
+    phase === 'questionnaire' &&
+      currentQuestion &&
+      selectedAnswer?.weight === false &&
+      targetType !== 'learning_unit'
+      ? nextQuestion
+        ? 'Odgovor "Ne" bo preskočil preostala vprašanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniš.'
+        : 'Odgovor "Ne" bo zaključil vprašalnik, ker ni več naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniš.'
+      : null
 
   const confirmedQuestionCount =
     phase === 'completed'
@@ -1165,9 +1165,9 @@ const questionProgressById = useMemo(
         })
         .filter((step) => step.questionCount > 0)
         .map(({ questionCount: _questionCount, ...step }) => {
-      void _questionCount
-      return step
-    })
+          void _questionCount
+          return step
+        })
 
       const unmatchedQuestions = questionnaire.filter(
         (question) => !usedQuestionIds.has(question.runtimeId),
@@ -1256,7 +1256,7 @@ const questionProgressById = useMemo(
                 return {
                   id: learningUnitId,
                   title: unitTitle,
-                   status: getLeafStatus(questionIds, questionProgressById),
+                  status: getLeafStatus(questionIds, questionProgressById),
                   questionCount: questionIds.length,
                 }
               })
@@ -1273,6 +1273,7 @@ const questionProgressById = useMemo(
                 subSteps.map((subStep) => subStep.status),
               ),
               subSteps,
+              variant: 'module' as const,
               questionCountUntilStep: getQuestionProgressPosition(
                 questionCountUntilStep,
                 questionnaire.length,
@@ -1296,9 +1297,10 @@ const questionProgressById = useMemo(
 
           return {
             id: refId || `learning_unit_${stepIndex}`,
-            label: String(stepIndex + 1),
+            label: `UE${stepIndex + 1}`,
             title: learningUnitTitle,
-             status: getLeafStatus(questionIds, questionProgressById),
+            status: getLeafStatus(questionIds, questionProgressById),
+            variant: 'learning-unit' as const,
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1308,9 +1310,9 @@ const questionProgressById = useMemo(
         })
         .filter((step) => step.questionCount > 0)
         .map(({ questionCount: _questionCount, ...step }) => {
-      void _questionCount
-      return step
-    })
+          void _questionCount
+          return step
+        })
 
       const unmatchedQuestions = questionnaire.filter(
         (question) => !usedQuestionIds.has(question.runtimeId),
@@ -1322,9 +1324,10 @@ const questionProgressById = useMemo(
 
         steps.push({
           id: 'learning_path_additional_questions',
-          label: String(steps.length + 1),
+          label: `UE${steps.length + 1}`,
+          variant: 'learning-unit',
           title: 'Dodatna vprašanja',
-           status: getLeafStatus(questionIds, questionProgressById),
+          status: getLeafStatus(questionIds, questionProgressById),
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
             questionnaire.length,
@@ -1660,9 +1663,9 @@ const questionProgressById = useMemo(
     const questionIdsRejectedByCurrentNo =
       selectedAnswer.weight === false && targetType !== 'learning_unit'
         ? getQuestionIdsRejectedByCurrentNegativeAnswer({
-            currentQuestion,
-            groups: questionGroups,
-          })
+          currentQuestion,
+          groups: questionGroups,
+        })
         : []
 
     const nextRejectedQuestionIds = new Set(rejectedQuestionIds)
@@ -1674,23 +1677,23 @@ const questionProgressById = useMemo(
     const followingQuestion =
       selectedAnswer.weight === false && targetType !== 'learning_unit'
         ? getNextQuestionAfterNegativeAnswer({
-            questions: questionnaire,
-            currentQuestion,
-            groups: questionGroups,
-            selectedAnswers,
-            targetType,
-            targetId,
-            confirmedQuestionIds: questionIdsUntilCurrent,
-          })
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: questionIdsUntilCurrent,
+        })
         : getNextEligibleQuestion({
-            questions: questionnaire,
-            currentQuestion,
-            groups: questionGroups,
-            selectedAnswers,
-            targetType,
-            targetId,
-            confirmedQuestionIds: questionIdsUntilCurrent,
-          })
+          questions: questionnaire,
+          currentQuestion,
+          groups: questionGroups,
+          selectedAnswers,
+          targetType,
+          targetId,
+          confirmedQuestionIds: questionIdsUntilCurrent,
+        })
 
     if (!followingQuestion) {
       const questionIdsToSubmit = mergeQuestionIds(

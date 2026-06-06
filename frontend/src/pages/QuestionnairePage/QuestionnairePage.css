@@ -854,6 +854,59 @@ body.questionnaire-route footer {
     font-style: italic;
   }
 
+  .assessment-assistant-visual-chat__exchange {
+  animation: assistantExchangeEnter 260ms ease-out both;
+}
+
+.assessment-assistant-bubble {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.assessment-assistant-bubble--user {
+  animation: assistantUserBubbleEnter 240ms ease-out both;
+}
+
+.assessment-assistant-bubble--assistant {
+  animation: assistantBubbleEnter 280ms ease-out both;
+}
+
+.assessment-assistant-bubble:hover {
+  transform: translateY(-1px);
+}
+
+.assessment-assistant-visual-chat__form {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.assessment-assistant-visual-chat__form:focus-within {
+  transform: translateY(-1px);
+}
+
+.assessment-assistant-visual-chat__submit {
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.assessment-assistant-visual-chat__submit:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.03);
+  background: #25442d;
+}
+
+.assessment-assistant-visual-chat__submit:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
   .assessment-assistant-visual-chat__form {
     display: flex;
     min-height: 46px;
@@ -1815,6 +1868,7 @@ body.questionnaire-route footer {
     font-size: 0.78rem;
     line-height: 1.45;
   }
+  
 
   .assessment-assistant-visual-chat__form {
     min-height: 44px;
@@ -2152,6 +2206,41 @@ body.questionnaire-route footer {
   }
 }
 
+@keyframes assistantExchangeEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes assistantUserBubbleEnter {
+  from {
+    opacity: 0;
+    transform: translateX(10px) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes assistantBubbleEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-10px) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
 /* Small mobile */
 
 @media (max-width: 420px) {
@@ -2228,5 +2317,17 @@ body.questionnaire-route footer {
 
   .journey-step:hover {
     transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assessment-assistant-visual-chat__exchange,
+  .assessment-assistant-bubble,
+  .assessment-assistant-bubble--user,
+  .assessment-assistant-bubble--assistant,
+  .assessment-assistant-visual-chat__form,
+  .assessment-assistant-visual-chat__submit {
+    animation: none;
+    transition: none;
   }
 }

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo,useRef, useState } from 'react'
 
 import { sendAssessmentAssistantMessage } from '../../../services/assessment-assistant-service'
 import type { QuestionnaireTargetType } from '../../../types/questionnaire'
@@ -158,6 +158,8 @@ function AssessmentContextBox({
     [questionId, targetId, targetType],
   )
 
+  const visualMessagesRef = useRef<HTMLDivElement | null>(null)
+
   const visibleHistory = useMemo(() => {
     if (!transientItem) {
       return history
@@ -194,6 +196,19 @@ function AssessmentContextBox({
 
     onActiveExchangeChange(toDisplayExchange(item))
   }
+
+  useEffect(() => {
+  const messagesElement = visualMessagesRef.current
+
+  if (!messagesElement) {
+    return
+  }
+
+  messagesElement.scrollTo({
+    top: messagesElement.scrollHeight,
+    behavior: 'smooth',
+  })
+}, [visibleHistory, isLoading])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -304,6 +319,7 @@ function AssessmentContextBox({
       <div className="assessment-assistant-visual-chat">
 
         <div
+  ref={visualMessagesRef}
   className={[
     'assessment-assistant-visual-chat__messages',
     visibleHistory.length > 0

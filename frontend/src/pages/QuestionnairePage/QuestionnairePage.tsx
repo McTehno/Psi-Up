@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-
+import AssessmentAssistantDrawer from '../../features/questionnaire/components/AssessmentAssistantDrawer'
 import womanImage from '../../assets/woman.png'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
@@ -1871,7 +1871,37 @@ function QuestionnairePage() {
     )
   }
 
+
+  const assistantBox =
+  targetType && targetId && currentQuestion && isChatOpen ? (
+    <AssessmentContextBox
+      userId={assessmentUserId}
+      targetType={targetType}
+      targetId={targetId}
+      learningPathId={
+        targetType === 'learning_path'
+          ? targetId
+          : currentQuestion.learning_path_id ?? ''
+      }
+      moduleId={
+        targetType === 'module'
+          ? targetId
+          : currentQuestion.module_id ?? undefined
+      }
+      learningUnitId={
+        targetType === 'learning_unit'
+          ? targetId
+          : currentQuestion.learning_unit_id ?? undefined
+      }
+      questionId={currentQuestion.id}
+      questionText={currentQuestion.question}
+      answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
+      onActiveExchangeChange={setAssistantExchange}
+    />
+  ) : null
+
   return (
+    <>
     <AssessmentLayout
       imageSrc={womanImage}
       defaultNote="Odgovorite na kratka vprašanja, da lahko pripravimo priporočilo."
@@ -1998,6 +2028,16 @@ function QuestionnairePage() {
         </>
       )}
     </AssessmentLayout>
+    <AssessmentAssistantDrawer
+      isOpen={Boolean(isChatOpen && assistantBox)}
+      onClose={() => {
+        setIsChatOpen(false)
+        setAssistantExchange(null)
+      }}
+    >
+      {assistantBox}
+    </AssessmentAssistantDrawer>
+    </>
   )
 }
 

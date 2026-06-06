@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -7,7 +7,7 @@ import EmptyState from '../../components/common/EmptyState'
 import ErrorState from '../../components/common/ErrorState'
 import LoadingState from '../../components/common/LoadingState'
 import AuthRequiredDialog from '../../components/common/AuthRequiredDialog'
-import { DetailTags } from '../../components/detail'
+import { DetailTags, QuestionnaireToast } from '../../components/detail'
 import {
   LearningPathMountain,
   LearningPathOverviewCard,
@@ -1100,6 +1100,10 @@ function LearningPathDetailPage() {
           </div>
         </section>
       </div>
+
+      {canStartQuestionnaire && !learningPathIsCompleted && (
+        <QuestionnaireToast targetType="learning_path" targetId={learningPathContentId ?? learningPathId ?? ''} />
+      )}
 
       <AuthRequiredDialog
         isOpen={progressErrorMessage === 'AUTH_REQUIRED'}

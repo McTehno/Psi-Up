@@ -1,4 +1,4 @@
-﻿import type { QuestionnaireTargetType } from './questionnaire'
+import type { QuestionnaireTargetType } from './questionnaire'
 
 export type AssessmentStatus =
 	| 'completed'
@@ -6,22 +6,29 @@ export type AssessmentStatus =
 	| 'not_started'
 
 export type LearningUnitAssessmentResult = {
-	learning_unit_id: string
+  learning_unit_id: string
+  known_topic_ids: string[]
+  missing_topic_ids: string[]
+  known_competency_codes: string[]
+  missing_competency_codes: string[]
+  is_completed_by_assessment: boolean
 
-	known_topic_ids: string[]
-	missing_topic_ids: string[]
-
-	known_competency_codes: string[]
-	missing_competency_codes: string[]
-
-	is_completed_by_assessment: boolean
+  known_question_count?: number
+  missing_question_count?: number
+  total_question_count?: number
+  question_progress?: number
 }
 
 export type ModuleAssessmentResult = {
-	module_id: string
-	status: AssessmentStatus
-	completed_learning_units: string[]
-	missing_learning_units: string[]
+  module_id: string
+  status: AssessmentStatus
+  completed_learning_units: string[]
+  missing_learning_units: string[]
+
+  known_question_count?: number
+  missing_question_count?: number
+  total_question_count?: number
+  question_progress?: number
 }
 
 export type AssessmentCurrentPositionResponse = {

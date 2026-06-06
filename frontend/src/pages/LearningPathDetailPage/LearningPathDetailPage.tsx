@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -252,6 +252,124 @@ function applyAssessmentPositionFallback(
   })
 }
 
+
+function getModuleAssessmentProgress(
+  moduleId: string,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult) {
+    return null
+  }
+
+  if (
+    assessmentResult.completed_module_ids?.includes(moduleId) ||
+    assessmentResult.skipped_modules?.includes(moduleId)
+  ) {
+    return 1
+  }
+
+  const moduleResult = assessmentResult.module_results?.find(
+    (result) => result.module_id === moduleId,
+  )
+
+  if (moduleResult) {
+    const questionProgress = getQuestionBasedProgress(moduleResult)
+
+    if (questionProgress != null) {
+      return questionProgress
+    }
+
+    if (moduleResult.status === 'completed') {
+      return 1
+    }
+
+    if (moduleResult.status === 'not_started') {
+      return 0
+    }
+  }
+
+  if (
+    assessmentResult.recommended_next_modules?.includes(moduleId) ||
+    assessmentResult.start_module_id === moduleId ||
+    assessmentResult.current_position?.current_module_id === moduleId
+  ) {
+    return 0
+  }
+
+  return null
+}
+
+function getLearningUnitAssessmentProgress(
+  learningUnitId: string,
+  assessmentResult: AssessmentResultResponse | null,
+) {
+  if (!assessmentResult) {
+    return null
+  }
+
+  if (
+    assessmentResult.completed_learning_unit_ids?.includes(learningUnitId) ||
+    assessmentResult.skipped_learning_units?.includes(learningUnitId)
+  ) {
+    return 1
+  }
+
+  const learningUnitResult = assessmentResult.learning_unit_results?.find(
+    (result) => result.learning_unit_id === learningUnitId,
+  )
+
+  if (learningUnitResult) {
+    const questionProgress = getQuestionBasedProgress(learningUnitResult)
+
+    if (questionProgress != null) {
+      return questionProgress
+    }
+
+    if (learningUnitResult.is_completed_by_assessment) {
+      return 1
+    }
+  }
+
+  if (
+    assessmentResult.recommended_next_learning_units?.includes(
+      learningUnitId,
+    ) ||
+    assessmentResult.start_learning_unit_id === learningUnitId ||
+    assessmentResult.current_position?.current_learning_unit_id ===
+      learningUnitId
+  ) {
+    return 0
+  }
+
+  return null
+}
+
+function getNodeAssessmentProgress(
+  kind: LearningPathDisplayNodeKind,
+  nodeId: string,
+  assessmentResult: AssessmentResultResponse | null,
+  allowSessionAssessmentFallback: boolean,
+) {
+  const nodeSpecificAssessmentResult = allowSessionAssessmentFallback
+    ? getSessionAssessmentResult(
+        kind === 'learning_unit' ? 'learning_unit' : 'module',
+        nodeId,
+      )
+    : null
+
+  if (kind === 'learning_unit') {
+    return (
+      getLearningUnitAssessmentProgress(nodeId, assessmentResult) ??
+      getLearningUnitAssessmentProgress(nodeId, nodeSpecificAssessmentResult)
+    )
+  }
+
+  return (
+    getModuleAssessmentProgress(nodeId, assessmentResult) ??
+    getModuleAssessmentProgress(nodeId, nodeSpecificAssessmentResult)
+  )
+}
+
 function getLearningUnitAssessmentStatus(
   learningUnitId: string,
   assessmentResult: AssessmentResultResponse | null,
@@ -443,6 +561,13 @@ function createMountainNode(params: {
     allowSessionAssessmentFallback,
   )
 
+  const nodeAssessmentProgress = getNodeAssessmentProgress(
+    kind,
+    nodeId,
+    assessmentResult,
+    allowSessionAssessmentFallback,
+  )
+
   const nodeSpecificAssessmentResult = allowSessionAssessmentFallback
     ? getSessionAssessmentResult(
       kind === 'learning_unit' ? 'learning_unit' : 'module',
@@ -473,21 +598,55 @@ function createMountainNode(params: {
         ? 'Opis učne enote trenutno ni na voljo.'
         : 'Opis modula trenutno ni na voljo.',
     ),
-
     moduleId: nodeId,
-
     nodeType: kind,
     detailPath: getNodeDetailPath(kind, nodeId),
-
     durationHours: source?.duration_hours ?? null,
     isRequired: step?.is_required ?? false,
     parallelGroup: step?.parallel_group?.trim() || null,
-
     assessmentStatus: nodeAssessmentStatus,
+    assessmentProgress: nodeAssessmentProgress,
     isAssessmentPosition: isNodeAssessmentPosition,
   }
 }
 
+type QuestionProgressResult = {
+  known_question_count?: number | null
+  missing_question_count?: number | null
+  total_question_count?: number | null
+  question_progress?: number | null
+}
+
+function normalizeAssessmentProgress(progress?: number | null) {
+  if (progress == null || Number.isNaN(progress)) {
+    return null
+  }
+
+  return Math.min(Math.max(progress, 0), 1)
+}
+
+function getQuestionBasedProgress(result?: QuestionProgressResult | null) {
+  if (!result) {
+    return null
+  }
+
+  const explicitProgress = normalizeAssessmentProgress(result.question_progress)
+
+  if (explicitProgress != null) {
+    return explicitProgress
+  }
+
+  const knownQuestionCount = result.known_question_count ?? 0
+  const totalQuestionCount =
+    result.total_question_count ??
+    knownQuestionCount + (result.missing_question_count ?? 0)
+
+  if (totalQuestionCount <= 0) {
+    return null
+  }
+
+  return normalizeAssessmentProgress(knownQuestionCount / totalQuestionCount)
+}
 
 function createMountainNodes(
   learningPath: LearningPathDetailResponse,

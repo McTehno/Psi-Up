@@ -698,7 +698,7 @@ function getMountainNodeProgressLabel(
   const percent = `${Math.round(progress * 100)}%`
 
   if (progress > 0) {
-    return `NADALJUJ ${percent}`
+    return `NADALJUJ`
   }
 
   if (isExactNextStartNode(node, nodesToRender)) {
@@ -741,10 +741,6 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   }
 
   return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
-}
-
-function isParallelAssessmentChoice(node: PositionedMountainNode) {
-  return node.parallelCount > 1 || Boolean(node.parallelGroup)
 }
 
 function MountainNodeProgressBadge({
@@ -1153,8 +1149,6 @@ export function LearningPathMountain({
         nodesToRender,
       )
       const nodeProgress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
-      const isParallelChoice =
-        node.isAssessmentPosition && isParallelAssessmentChoice(node)
       return (
         <div
           key={`${node.id}-${className}`}
@@ -1167,13 +1161,8 @@ export function LearningPathMountain({
             top: `${node.y}%`,
           }}
         >
-        {node.isAssessmentPosition && !isParallelChoice && (
-          <div className="absolute bottom-full left-1/2 z-50 mb-1 -translate-x-1/2">
-            <AssessmentPositionMarker label="" />
-          </div>
-        )}
           {node.isAssessmentPosition && (
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[14px] min-[640px]:translate-y-[16px] min-[1500px]:translate-y-[18px]">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]">
               <AssessmentPositionMarker label="" />
             </div>
           )}

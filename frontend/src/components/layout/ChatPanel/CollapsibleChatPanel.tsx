@@ -21,9 +21,11 @@ type CollapsibleChatPanelProps = {
 }
 
 export function CollapsibleChatPanel({
+  children,
   variant = 'desktop',
   className = '',
-  children,
+  title = 'AI pomočnik',
+  description,
   onExpandedChange,
 }: CollapsibleChatPanelProps) {
   const [isHovered, setIsHovered] = useState(false)
@@ -159,54 +161,54 @@ export function CollapsibleChatPanel({
         )}
 
         {isExpanded && (
-          <div className="relative z-10 flex h-full flex-col">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-3xl border border-white/50 bg-white/35 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_16px_34px_rgba(49,88,59,0.14)] backdrop-blur-2xl">
-                <Bot className="h-6 w-6" />
-              </div>
+  <div className="relative z-10 flex h-full flex-col">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-3xl border border-white/50 bg-white/35 text-[#31583b] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_16px_34px_rgba(49,88,59,0.14)] backdrop-blur-2xl">
+          <Bot className="h-5 w-5" />
+        </div>
 
-              {isLockedOpen && (
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handleClose()
-                  }}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-white/30 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/50"
-                  aria-label="Zapri chat pomočnika"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              )}
-            </div>
+        <p className="flex min-w-0 items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#31583b]">
+          <Sparkles className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{title}</span>
+        </p>
+      </div>
 
-            <div className="mt-7">
-              <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-[#31583b]">
-                <Sparkles className="h-4 w-4" />
-                LLM pomočnik
-              </p>
-            </div>
+      {isLockedOpen && (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+            handleClose()
+          }}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/30 text-[#31583b] shadow-sm backdrop-blur-xl transition hover:bg-white/50"
+          aria-label="Zapri chat pomočnika"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      )}
+    </div>
 
-            <div className="mt-8 flex min-h-[250px] cursor-text flex-col rounded-[2rem] border border-white/45 bg-white/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
-              {children ?? (
-                <>
-                  <div className="flex-1 text-base leading-8 text-[#6d665d]">
-                    Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
-                    miško.
-                  </div>
+    <div className="mt-5 flex min-h-0 flex-1 cursor-text flex-col rounded-[2rem] border border-white/45 bg-white/22 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.52),0_18px_46px_rgba(43,33,24,0.08)] backdrop-blur-2xl transition hover:border-white/70 hover:bg-white/30">
+      {children ?? (
+        <>
+          <div className="flex-1 text-base leading-8 text-[#6d665d]">
+            Klikni kamorkoli v panel, da chat ostane odprt tudi, ko umakneš
+            miško.
+          </div>
 
-                  <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
-                    <span className="flex-1">Vprašaj pomočnika ...</span>
+          <div className="mt-5 flex items-center gap-3 rounded-full border border-white/55 bg-white/45 px-5 py-4 text-base text-[#8c8378] shadow-[0_16px_36px_rgba(43,33,24,0.10)] backdrop-blur-2xl">
+            <span className="flex-1">Vprašaj pomočnika ...</span>
 
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
-                      <Send className="h-4 w-4" />
-                    </div>
-                  </div>
-                </>
-              )}
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)]">
+              <Send className="h-4 w-4" />
             </div>
           </div>
-        )}
+        </>
+      )}
+    </div>
+  </div>
+)}
       </div>
     </aside>
   )

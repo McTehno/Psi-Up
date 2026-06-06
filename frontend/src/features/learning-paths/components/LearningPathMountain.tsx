@@ -12,8 +12,8 @@ import {
   Layers3,
 } from 'lucide-react'
 
-import mountainJourneyBg from '../../../assets/mountain-journey-bg.png'
-import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.png'
+import mountainJourneyBg from '../../../assets/mountain-journey-bg.webp'
+import mountainJourneyBgMobile from '../../../assets/mountain-journey-bg_mobile.webp'
 import type { AssessmentStatus } from '../../../types/assessment'
 import AssessmentPositionMarker from '../../../components/detail/AssessmentPositionMarker'
 
@@ -1042,9 +1042,8 @@ export function LearningPathMountain({
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={`Odpri podrobnosti ${
-              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
-            } ${node.title}`}
+            aria-label={`Odpri podrobnosti ${node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+              } ${node.title}`}
           >
             {node.displayLabel}
           </button>

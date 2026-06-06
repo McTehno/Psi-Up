@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import womanImage from '../../assets/woman.png'
+import womanImage from '../../assets/woman.webp'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
 import AssessmentContextBox, {

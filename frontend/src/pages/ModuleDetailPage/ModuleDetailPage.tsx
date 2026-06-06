@@ -7,7 +7,7 @@ import {
   CircleHelp,
   ExternalLink,
 } from 'lucide-react'
-import {usePageTitle} from '../../hooks/usePageTitle'
+import { usePageTitle } from '../../hooks/usePageTitle'
 import {
   DetailActions,
   DetailHero,
@@ -185,10 +185,10 @@ function ModuleDetailPage() {
 
 
   usePageTitle(
-  moduleData?.title
-    ? `${moduleData.title} | NIDiKo`
-    : 'Modul | NIDiKo',
-)
+    moduleData?.title
+      ? `${moduleData.title} | NIDiKo`
+      : 'Modul | NIDiKo',
+  )
 
 
   const {
@@ -259,12 +259,7 @@ function ModuleDetailPage() {
   const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
-  const learningUnitCount = Math.max(
-    learningUnitReferences.length,
-    learningUnitDetails.length,
-  )
 
-  const shouldUseInlineAssistant = learningUnitCount === 1
 
   const moduleLearningUnitIds = useMemo(
     () => getLearningUnitIdsFromModule(learningUnitReferences, learningUnitDetails),
@@ -459,31 +454,13 @@ function ModuleDetailPage() {
               assessmentPositionUnitId={assessmentPositionUnitId}
             />
 
-            {!shouldUseInlineAssistant ? (
-              <div className="pointer-events-none absolute inset-y-6 right-6 z-20 hidden w-[420px] min-[1500px]:block">
-                <ModuleAssistantBox
-                  moduleId={moduleContentId}
-                  variant="desktop"
-                  className="pointer-events-auto"
-                />
-              </div>
-            ) : null}
-
-            {shouldUseInlineAssistant ? (
-              <section className="mt-8">
-                <ModuleAssistantBox
-                  moduleId={moduleContentId}
-                  variant="mobile"
-                />
-              </section>
-            ) : (
-              <section className="mt-8 min-[1500px]:hidden">
-                <ModuleAssistantBox
-                  moduleId={moduleContentId}
-                  variant="mobile"
-                />
-              </section>
-            )}
+            <section className="mt-8">
+              <ModuleAssistantBox
+                moduleId={moduleContentId}
+                variant="mobile"
+              />
+            </section>
+            
           </div>
         </DetailSection>
 

@@ -25,7 +25,6 @@ export function CollapsibleChatPanel({
   variant = 'desktop',
   className = '',
   title = 'AI pomočnik',
-  description,
   onExpandedChange,
 }: CollapsibleChatPanelProps) {
   const [isHovered, setIsHovered] = useState(false)

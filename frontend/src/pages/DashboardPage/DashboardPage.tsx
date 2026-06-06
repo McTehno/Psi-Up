@@ -146,7 +146,7 @@ export default function DashboardPage() {
 	const { progress, isLoading: isProgressLoading, error } = useDashboardProgress()
 	const [activeTab, setActiveTab] = useState<DashboardTab>('favorites')
 	const [activeModal, setActiveModal] = useState<DashboardModalType>(null)
-	usePageTitle('Profil')
+	usePageTitle('Profil | NIDiKo')
 	useEffect(() => {
 		if (!isAuthLoading && !user) {
 			navigate('/login')

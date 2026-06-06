@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo,useRef, useState } from 'react'
 
 import { sendAssessmentAssistantMessage } from '../../../services/assessment-assistant-service'
 import type { QuestionnaireTargetType } from '../../../types/questionnaire'
@@ -158,6 +158,8 @@ function AssessmentContextBox({
     [questionId, targetId, targetType],
   )
 
+  const visualMessagesRef = useRef<HTMLDivElement | null>(null)
+
   const visibleHistory = useMemo(() => {
     if (!transientItem) {
       return history
@@ -194,6 +196,19 @@ function AssessmentContextBox({
 
     onActiveExchangeChange(toDisplayExchange(item))
   }
+
+  useEffect(() => {
+  const messagesElement = visualMessagesRef.current
+
+  if (!messagesElement) {
+    return
+  }
+
+  messagesElement.scrollTo({
+    top: messagesElement.scrollHeight,
+    behavior: 'smooth',
+  })
+}, [visibleHistory, isLoading])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -277,111 +292,140 @@ function AssessmentContextBox({
       setIsLoading(false)
     }
   }
+  useEffect(() => {
+    const textarea = document.querySelector<HTMLTextAreaElement>(
+      '.assessment-assistant-visual-chat__textarea',
+    )
 
-  const activeHistoryItem =
-    visibleHistory.find((item) => item.id === activeExchangeId) ?? visibleHistory[0]
+    if (!textarea || userMessage) {
+      return
+    }
 
+    textarea.style.height = '28px'
+  }, [userMessage])
+
+ 
+  function resizeAssistantTextarea(
+    event: React.FormEvent<HTMLTextAreaElement>,
+  ) {
+    const textarea = event.currentTarget
+
+    textarea.style.height = '28px'
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 76)}px`
+  }
 
   if (variant === 'visual') {
-  return (
-    <div className="assessment-assistant-visual-chat">
-  
-      <div className="assessment-assistant-visual-chat__messages">
-        {activeHistoryItem && (
-          <>
-            <div className="assessment-assistant-bubble assessment-assistant-bubble--user">
-              <p>{activeHistoryItem.userMessage}</p>
-            </div>
+    return (
+      <div className="assessment-assistant-visual-chat">
 
-            <div className="assessment-assistant-bubble assessment-assistant-bubble--assistant">
-              <SimpleMarkdownText
-                content={activeHistoryItem.answer}
-                className={
-                  activeHistoryItem.isPending
-                    ? 'assessment-assistant-bubble__text assessment-assistant-bubble__text--pending'
-                    : 'assessment-assistant-bubble__text'
-                }
-              />
-            </div>
-          </>
-        )}
+        <div
+  ref={visualMessagesRef}
+  className={[
+    'assessment-assistant-visual-chat__messages',
+    visibleHistory.length > 0
+      ? 'assessment-assistant-visual-chat__messages--active'
+      : '',
+  ].join(' ')}
+>
+  {[...visibleHistory].slice(0, 8).reverse().map((item) => (
+    <div
+      key={item.id}
+      className="assessment-assistant-visual-chat__exchange"
+    >
+      <div className="assessment-assistant-bubble assessment-assistant-bubble--user">
+        <p>{item.userMessage}</p>
       </div>
 
-      <form
-        className="assessment-assistant-visual-chat__form"
-        onSubmit={handleSubmit}
-      >
-        <textarea
-          id="assessment-assistant-message"
-          className="assessment-assistant-visual-chat__textarea"
-          value={userMessage}
-          onChange={(event) => setUserMessage(event.target.value)}
-          placeholder="Napišite svoje vprašanje ..."
-          rows={1}
-          maxLength={1000}
-          disabled={isLoading}
+      <div className="assessment-assistant-bubble assessment-assistant-bubble--assistant">
+        <SimpleMarkdownText
+          content={item.answer}
+          className={
+            item.isPending
+              ? 'assessment-assistant-bubble__text assessment-assistant-bubble__text--pending'
+              : 'assessment-assistant-bubble__text'
+          }
         />
-
-        <button
-          type="submit"
-          className="assessment-assistant-visual-chat__submit"
-          disabled={isLoading || !userMessage.trim()}
-          aria-label="Pošlji vprašanje"
-        >
-          ➤
-        </button>
-      </form>
-
-      {error && <p className="assessment-assistant-visual-chat__error">{error}</p>}
-
-      {isHistoryOpen && (
-        <div className="assessment-assistant-history-panel">
-          <div className="assessment-assistant-history-panel__content">
-            <div className="assessment-assistant-history-panel__header">
-              <span>Zgodovina vprašanj</span>
-
-              <button type="button" onClick={() => setIsHistoryOpen(false)}>
-                Zapri
-              </button>
-            </div>
-
-            {visibleHistory.length > 0 ? (
-              <ul>
-                {[...visibleHistory].reverse().map((item) => {
-                  const isActive = item.id === activeExchangeId
-
-                  return (
-                    <li key={item.id}>
-                      <button
-                        type="button"
-                        className={
-                          isActive
-                            ? 'assessment-assistant-history-panel__item assessment-assistant-history-panel__item--active'
-                            : 'assessment-assistant-history-panel__item'
-                        }
-                        onClick={() => {
-                          handleSelectHistoryItem(item)
-                          setIsHistoryOpen(false)
-                        }}
-                      >
-                        <span>{item.userMessage}</span>
-                        <small>{isActive ? 'Prikazano' : 'Prikaži odgovor'}</small>
-                      </button>
-                    </li>
-                  )
-                })}
-              </ul>
-            ) : (
-              <p className="assessment-assistant-history-panel__empty">
-                Zgodovina je še prazna.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
-  )
-}
+  ))}
+</div>
+
+        <form
+          className="assessment-assistant-visual-chat__form"
+          onSubmit={handleSubmit}
+        >
+          <textarea
+            id="assessment-assistant-message"
+            className="assessment-assistant-visual-chat__textarea"
+            value={userMessage}
+            onChange={(event) => setUserMessage(event.target.value)}
+            onInput={resizeAssistantTextarea}
+            placeholder="Napišite svoje vprašanje ..."
+            rows={1}
+            maxLength={1000}
+            disabled={isLoading}
+          />
+
+          <button
+            type="submit"
+            className="assessment-assistant-visual-chat__submit"
+            disabled={isLoading || !userMessage.trim()}
+            aria-label="Pošlji vprašanje"
+          >
+            ➤
+          </button>
+        </form>
+
+        {error && <p className="assessment-assistant-visual-chat__error">{error}</p>}
+
+        {isHistoryOpen && (
+          <div className="assessment-assistant-history-panel">
+            <div className="assessment-assistant-history-panel__content">
+              <div className="assessment-assistant-history-panel__header">
+                <span>Zgodovina vprašanj</span>
+
+                <button type="button" onClick={() => setIsHistoryOpen(false)}>
+                  Zapri
+                </button>
+              </div>
+
+              {visibleHistory.length > 0 ? (
+                <ul>
+                  {[...visibleHistory].reverse().map((item) => {
+                    const isActive = item.id === activeExchangeId
+
+                    return (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          className={
+                            isActive
+                              ? 'assessment-assistant-history-panel__item assessment-assistant-history-panel__item--active'
+                              : 'assessment-assistant-history-panel__item'
+                          }
+                          onClick={() => {
+                            handleSelectHistoryItem(item)
+                            setIsHistoryOpen(false)
+                          }}
+                        >
+                          <span>{item.userMessage}</span>
+                          <small>{isActive ? 'Prikazano' : 'Prikaži odgovor'}</small>
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              ) : (
+                <p className="assessment-assistant-history-panel__empty">
+                  Zgodovina je še prazna.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="context-box assessment-assistant-box">

@@ -205,15 +205,15 @@ function isAssessmentPositionModule(
     return false
   }
 
+  if (assessmentResult.recommended_next_modules?.includes(moduleId)) {
+    return true
+  }
+
   if (assessmentResult.current_position?.current_module_id) {
     return assessmentResult.current_position.current_module_id === moduleId
   }
 
-  if (assessmentResult.start_module_id) {
-    return assessmentResult.start_module_id === moduleId
-  }
-
-  return assessmentResult.recommended_next_modules?.[0] === moduleId
+  return assessmentResult.start_module_id === moduleId
 }
 
 function applyAssessmentPositionFallback(
@@ -224,28 +224,32 @@ function applyAssessmentPositionFallback(
     return nodes
   }
 
-  const alreadyHasPosition = nodes.some((node) => node.isAssessmentPosition)
-
-  if (alreadyHasPosition) {
-    return nodes
-  }
+  const explicitPositionNode = nodes.find((node) => node.isAssessmentPosition)
 
   const firstUnfinishedNode = nodes.find(
     (node) => node.assessmentStatus !== 'completed',
   )
 
-  if (!firstUnfinishedNode) {
+  const targetOrder = explicitPositionNode?.order ?? firstUnfinishedNode?.order
+
+  if (targetOrder === undefined) {
     return nodes
   }
 
-  return nodes.map((node) =>
-    node.id === firstUnfinishedNode.id
-      ? {
-        ...node,
-        isAssessmentPosition: true,
-      }
-      : node,
-  )
+  return nodes.map((node) => {
+    const isAvailableChoice =
+      node.order === targetOrder && node.assessmentStatus !== 'completed'
+
+    if (!isAvailableChoice) {
+      return node
+    }
+
+    return {
+      ...node,
+      assessmentStatus: node.assessmentStatus ?? 'not_started',
+      isAssessmentPosition: true,
+    }
+  })
 }
 
 function getLearningUnitAssessmentStatus(
@@ -374,18 +378,17 @@ function isAssessmentPositionLearningUnit(
     return false
   }
 
+  if (assessmentResult.recommended_next_learning_units?.includes(learningUnitId)) {
+    return true
+  }
+
   if (assessmentResult.current_position?.current_learning_unit_id) {
     return (
-      assessmentResult.current_position.current_learning_unit_id ===
-      learningUnitId
+      assessmentResult.current_position.current_learning_unit_id === learningUnitId
     )
   }
 
-  if (assessmentResult.start_learning_unit_id) {
-    return assessmentResult.start_learning_unit_id === learningUnitId
-  }
-
-  return assessmentResult.recommended_next_learning_units?.[0] === learningUnitId
+  return assessmentResult.start_learning_unit_id === learningUnitId
 }
 
 function getNodeAssessmentStatus(

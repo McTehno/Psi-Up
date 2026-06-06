@@ -648,11 +648,13 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
 }
 
 function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
-  if (node.isAssessmentPosition) {
-    return 'Tukaj se nahajaš'
+  if (!node.isAssessmentPosition) {
+    return null
   }
 
-  return null
+  return node.parallelCount > 1
+    ? 'Izberi enega od modulov/enot'
+    : 'Tukaj se nahajaš'
 }
 
 function MountainActions({

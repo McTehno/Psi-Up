@@ -278,20 +278,18 @@ function AssessmentContextBox({
     }
   }
   useEffect(() => {
-  const textarea = document.querySelector<HTMLTextAreaElement>(
-    '.assessment-assistant-visual-chat__textarea',
-  )
+    const textarea = document.querySelector<HTMLTextAreaElement>(
+      '.assessment-assistant-visual-chat__textarea',
+    )
 
-  if (!textarea || userMessage) {
-    return
-  }
+    if (!textarea || userMessage) {
+      return
+    }
 
-  textarea.style.height = '28px'
-}, [userMessage])
+    textarea.style.height = '28px'
+  }, [userMessage])
 
-  const activeHistoryItem =
-    visibleHistory.find((item) => item.id === activeExchangeId) ?? visibleHistory[0]
-
+ 
   function resizeAssistantTextarea(
     event: React.FormEvent<HTMLTextAreaElement>,
   ) {
@@ -313,25 +311,28 @@ function AssessmentContextBox({
       : '',
   ].join(' ')}
 >
-          {activeHistoryItem && (
-            <>
-              <div className="assessment-assistant-bubble assessment-assistant-bubble--user">
-                <p>{activeHistoryItem.userMessage}</p>
-              </div>
+  {[...visibleHistory].slice(0, 8).reverse().map((item) => (
+    <div
+      key={item.id}
+      className="assessment-assistant-visual-chat__exchange"
+    >
+      <div className="assessment-assistant-bubble assessment-assistant-bubble--user">
+        <p>{item.userMessage}</p>
+      </div>
 
-              <div className="assessment-assistant-bubble assessment-assistant-bubble--assistant">
-                <SimpleMarkdownText
-                  content={activeHistoryItem.answer}
-                  className={
-                    activeHistoryItem.isPending
-                      ? 'assessment-assistant-bubble__text assessment-assistant-bubble__text--pending'
-                      : 'assessment-assistant-bubble__text'
-                  }
-                />
-              </div>
-            </>
-          )}
-        </div>
+      <div className="assessment-assistant-bubble assessment-assistant-bubble--assistant">
+        <SimpleMarkdownText
+          content={item.answer}
+          className={
+            item.isPending
+              ? 'assessment-assistant-bubble__text assessment-assistant-bubble__text--pending'
+              : 'assessment-assistant-bubble__text'
+          }
+        />
+      </div>
+    </div>
+  ))}
+</div>
 
         <form
           className="assessment-assistant-visual-chat__form"

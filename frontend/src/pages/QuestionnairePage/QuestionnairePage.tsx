@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import AssessmentAssistantDrawer from '../../features/questionnaire/components/AssessmentAssistantDrawer'
+
 import womanImage from '../../assets/woman.png'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
@@ -1900,143 +1900,142 @@ function QuestionnairePage() {
     />
   ) : null
 
+  const desktopAssistantPanel =
+    targetType && targetId && currentQuestion ? (
+      <AssessmentContextBox
+        variant="visual"
+        userId={assessmentUserId}
+        targetType={targetType}
+        targetId={targetId}
+        learningPathId={
+          targetType === 'learning_path'
+            ? targetId
+            : currentQuestion.learning_path_id ?? ''
+        }
+        moduleId={
+          targetType === 'module'
+            ? targetId
+            : currentQuestion.module_id ?? undefined
+        }
+        learningUnitId={
+          targetType === 'learning_unit'
+            ? targetId
+            : currentQuestion.learning_unit_id ?? undefined
+        }
+        questionId={currentQuestion.id}
+        questionText={currentQuestion.question}
+        answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
+        onActiveExchangeChange={setAssistantExchange}
+      />
+    ) : null
+
+
   return (
     <>
-    <AssessmentLayout
-      imageSrc={womanImage}
-      defaultNote="Odgovorite na kratka vprašanja, da lahko pripravimo priporočilo."
-      phase={phase}
-      selectedGroup={selectedGroup}
-      currentQuestion={currentQuestion}
-      selectedAnswer={selectedAnswer}
-      assistantExchange={assistantExchange}
-    >
-      <AssessmentHeader
-        label={currentLabel}
-        currentQuestion={currentQuestion ?? null}
-        isVoiceSupportDisabled={phase !== 'questionnaire'}
-      />
-
-      <AssessmentIntro title={currentTitle} description={currentDescription} />
-
-      {targetType && (
-        <AssessmentProgress
-          targetLabel={getTargetTypeLabel(targetType)}
-          steps={assessmentProgress.steps}
-          completedLeafCount={assessmentProgress.completedLeafCount}
-          totalLeafCount={assessmentProgress.totalLeafCount}
-          isGoalReached={isLearningPathGoalReached}
-          questionCount={questionnaire.length}
-          confirmedQuestionCount={confirmedQuestionCount}
-          questions={questionProgress}
-          showGoalFlag={targetType === 'learning_path'}
+      <AssessmentLayout
+        imageSrc={womanImage}
+        defaultNote="Odgovorite na kratka vprašanja, da lahko pripravimo priporočilo."
+        phase={phase}
+        selectedGroup={selectedGroup}
+        currentQuestion={currentQuestion}
+        selectedAnswer={selectedAnswer}
+        assistantExchange={assistantExchange}
+        assistantPanel={desktopAssistantPanel}
+      >
+        <AssessmentHeader
+          label={currentLabel}
+          currentQuestion={currentQuestion ?? null}
+          isVoiceSupportDisabled={phase !== 'questionnaire'}
         />
-      )}
 
-      {phase === 'questionnaire' && currentQuestion && (
-        <>
-          <QuestionnaireQuestion
-            question={currentQuestion}
-            selectedAnswer={selectedAnswer}
-            onSelectAnswer={handleSelectAnswer}
+        <AssessmentIntro title={currentTitle} description={currentDescription} />
+
+        {targetType && (
+          <AssessmentProgress
+            targetLabel={getTargetTypeLabel(targetType)}
+            steps={assessmentProgress.steps}
+            completedLeafCount={assessmentProgress.completedLeafCount}
+            totalLeafCount={assessmentProgress.totalLeafCount}
+            isGoalReached={isLearningPathGoalReached}
+            questionCount={questionnaire.length}
+            confirmedQuestionCount={confirmedQuestionCount}
+            questions={questionProgress}
+            showGoalFlag={targetType === 'learning_path'}
           />
+        )}
 
-          {skipNotice && (
-            <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              {skipNotice}
-            </p>
-          )}
-
-          <AssessmentActions
-            canGoPrevious={canGoPrevious}
-            canGoNext={canGoNext}
-            onPrevious={goToPreviousStep}
-            onNext={goToNextStep}
-            nextLabel={nextButtonLabel}
-          />
-        </>
-      )}
-
-      {phase === 'completed' && (
-        <>
-          <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-[#31583b]">
-              Odlično, cilj je dosežen.
-            </h2>
-            <p className="mt-3 text-slate-700">
-              Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
-              Preusmeritev na podrobnosti se bo izvedla samodejno.
-            </p>
-          </section>
-
-          <AssessmentActions
-            canGoPrevious={canGoPrevious}
-            canGoNext={false}
-            onPrevious={goToPreviousStep}
-            onNext={goToNextStep}
-            nextLabel="Zaključeno"
-          />
-        </>
-      )}
-
-      {targetType && targetId  && currentQuestion && (
-        <>
-          <button
-            type="button"
-            onClick={() => {
-              setIsChatOpen((value) => {
-                const nextValue = !value
-
-                if (!nextValue) {
-                  setAssistantExchange(null)
-                }
-
-                return nextValue
-              })
-            }}
-            className="mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
-          >
-            {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
-          </button>
-
-          {isChatOpen && (
-            <AssessmentContextBox
-              userId={userId}
-              targetType={targetType}
-              targetId={targetId}
-              learningPathId={
-                targetType === 'learning_path'
-                  ? targetId
-                  : currentQuestion.learning_path_id ?? ''
-              }
-              moduleId={
-                targetType === 'module'
-                  ? targetId
-                  : currentQuestion.module_id ?? undefined
-              }
-              learningUnitId={
-                targetType === 'learning_unit'
-                  ? targetId
-                  : currentQuestion.learning_unit_id ?? undefined
-              }
-              questionId={currentQuestion.id}
-              questionText={currentQuestion.question}
-              answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
-              onActiveExchangeChange={setAssistantExchange}
+        {phase === 'questionnaire' && currentQuestion && (
+          <>
+            <QuestionnaireQuestion
+              question={currentQuestion}
+              selectedAnswer={selectedAnswer}
+              onSelectAnswer={handleSelectAnswer}
             />
-          )}
-        </>
-      )}
-    </AssessmentLayout>
-    <AssessmentAssistantDrawer
-      isOpen={Boolean(isChatOpen && assistantBox)}
-      onClose={() => {
-        setIsChatOpen(false)
-        setAssistantExchange(null)
-      }}
-    >
-      {assistantBox}
-    </AssessmentAssistantDrawer>
+
+            {skipNotice && (
+              <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                {skipNotice}
+              </p>
+            )}
+
+            <AssessmentActions
+              canGoPrevious={canGoPrevious}
+              canGoNext={canGoNext}
+              onPrevious={goToPreviousStep}
+              onNext={goToNextStep}
+              nextLabel={nextButtonLabel}
+            />
+          </>
+        )}
+
+        {phase === 'completed' && (
+          <>
+            <section className="mt-6 rounded-3xl bg-white/80 p-6 shadow-sm">
+              <h2 className="text-xl font-bold text-[#31583b]">
+                Odlično, cilj je dosežen.
+              </h2>
+              <p className="mt-3 text-slate-700">
+                Vprašalnik kaže, da trenutno že obvladate celotno učno pot.
+                Preusmeritev na podrobnosti se bo izvedla samodejno.
+              </p>
+            </section>
+
+            <AssessmentActions
+              canGoPrevious={canGoPrevious}
+              canGoNext={false}
+              onPrevious={goToPreviousStep}
+              onNext={goToNextStep}
+              nextLabel="Zaključeno"
+            />
+          </>
+        )}
+
+        {targetType && targetId && currentQuestion && (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setIsChatOpen((value) => {
+                  const nextValue = !value
+
+                  if (!nextValue) {
+                    setAssistantExchange(null)
+                  }
+
+                  return nextValue
+                })
+              }}
+              className="assessment-assistant-mobile-toggle mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
+            >
+              {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
+            </button>
+
+            <div className="assessment-assistant-inline">
+              {assistantBox}
+            </div>
+          </>
+        )}
+      </AssessmentLayout>
     </>
   )
 }

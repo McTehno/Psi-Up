@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Award,
@@ -21,6 +21,7 @@ import {
   DetailRecommendationCarousel,
   DetailSection,
   DetailTags,
+  QuestionnaireToast,
 } from '../../components/detail'
 import { appStyles } from '../../design'
 import type {
@@ -529,6 +530,10 @@ function LearningUnitDetailPage() {
           </div>
         </div>
       </section>
+
+      {canStartQuestionnaire && !localIsCompleted && (
+        <QuestionnaireToast targetType="learning_unit" targetId={learningUnitContentId} />
+      )}
     </DetailPageShell>
   )
 }

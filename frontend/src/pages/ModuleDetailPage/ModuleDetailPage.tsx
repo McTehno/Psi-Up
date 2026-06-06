@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Circle,
@@ -16,6 +16,7 @@ import {
   DetailRecommendationCarousel,
   DetailSection,
   DetailTags,
+  QuestionnaireToast,
 } from '../../components/detail'
 import LoadingState from '../../components/common/LoadingState'
 import ErrorState from '../../components/common/ErrorState'
@@ -535,6 +536,10 @@ function ModuleDetailPage() {
           </div>
         </section>
       </div>
+
+      {canStartQuestionnaire && !localIsCompleted && (
+        <QuestionnaireToast targetType="module" targetId={moduleContentId} />
+      )}
     </DetailPageShell>
   )
 }

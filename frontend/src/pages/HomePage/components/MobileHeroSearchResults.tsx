@@ -1,4 +1,4 @@
-﻿import {
+import {
     ArrowRight as ArrowRightIcon,
     Circle as CircleIcon,
     CircleDot as DotIcon,

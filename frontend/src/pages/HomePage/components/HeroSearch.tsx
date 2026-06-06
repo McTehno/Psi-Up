@@ -1,4 +1,4 @@
-﻿import { Search as SearchIcon, X as XIcon } from 'lucide-react'
+import { Search as SearchIcon, X as XIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import type { SearchResult, SearchContentType } from '../../../types/search'
@@ -58,7 +58,6 @@ function HeroSearch({
 							onClick={() => {
 								setIsSearchActive(false)
 								setSearchQuery('')
-								setSearchResults([])
 							}}
 							className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#706b60] transition hover:text-[#111111]"
 							aria-label="Zapri iskanje"

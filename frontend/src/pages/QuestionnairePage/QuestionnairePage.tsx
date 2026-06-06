@@ -448,7 +448,6 @@ function getCompetencyCodes(question: QuestionnaireItem) {
   return Array.isArray(competencyCodes) ? competencyCodes : []
 }
 
-
 function getQuestionFallbackSource(
   question: QuestionnaireItem,
 ): QuestionnaireQuestionSource {

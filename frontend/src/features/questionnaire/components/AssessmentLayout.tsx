@@ -91,30 +91,20 @@ function AssessmentLayout({
               )}
 
               {phase === 'questionnaire' && assistantExchange && (
-                <div
-                  className="assistant-note__assistant-answer"
-                  aria-live="polite"
-                >
-                  <span className="assistant-note__section-label">
-                    Vaše vprašanje
-                  </span>
-                  <p className="assistant-note__user-question">
-                    {assistantExchange.userMessage}
-                  </p>
-
-                  <span className="assistant-note__section-label">
-                    Asistentka je odgovorila:
-                  </span>
-                  <SimpleMarkdownText
-                    content={assistantExchange.answer}
-                    className={
-                      assistantExchange.isPending
-                        ? 'assistant-note__answer assistant-note__answer--pending'
-                        : 'assistant-note__answer'
-                    }
-                  />
-                </div>
-              )}
+  <div
+    className="assistant-note__assistant-answer"
+    aria-live="polite"
+  >
+    <SimpleMarkdownText
+      content={assistantExchange.answer}
+      className={
+        assistantExchange.isPending
+          ? 'assistant-note__answer assistant-note__answer--pending'
+          : 'assistant-note__answer'
+      }
+    />
+  </div>
+)}
 
               {phase === 'questionnaire' && !assistantExchange && (
                 <>

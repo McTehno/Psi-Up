@@ -1179,8 +1179,8 @@ function QuestionnairePage() {
       selectedAnswer?.weight === false &&
       targetType !== 'learning_unit'
       ? nextQuestion
-        ? 'Odgovor "Ne" bo preskočil preostala vprašanja trenutne vsebine in nadaljeval pri naslednji vzporedni vsebini. Z gumbom Nazaj lahko odgovor spremeniš.'
-        : 'Odgovor "Ne" bo zaključil vprašalnik, ker ni več naslednje vzporedne vsebine. Z gumbom Nazaj lahko odgovor spremeniš.'
+        ? 'Nadaljevali bomo z vprašanji, ki se bolje ujemajo z vašim trenutnim znanjem.'
+        : 'Vprašalnik lahko zdaj zaključite.'
       : null
 
   const confirmedQuestionCount =
@@ -1879,6 +1879,7 @@ function QuestionnairePage() {
       selectedGroup={selectedGroup}
       currentQuestion={currentQuestion}
       selectedAnswer={selectedAnswer}
+      assistantExchange={assistantExchange}
     >
       <AssessmentHeader
         label={currentLabel}
@@ -1948,7 +1949,7 @@ function QuestionnairePage() {
         </>
       )}
 
-      {targetType && targetId && userId && currentQuestion && (
+      {targetType && targetId  && currentQuestion && (
         <>
           <button
             type="button"
@@ -1967,17 +1968,6 @@ function QuestionnairePage() {
           >
             {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
           </button>
-
-          {assistantExchange && (
-            <section className="mt-4 rounded-3xl bg-white/90 p-5 shadow-sm">
-              <p className="text-sm font-semibold text-[#31583b]">
-                Asistentka je odgovorila:
-              </p>
-              <p className="mt-2 whitespace-pre-line text-sm text-slate-700">
-                {assistantExchange.answer}
-              </p>
-            </section>
-          )}
 
           {isChatOpen && (
             <AssessmentContextBox

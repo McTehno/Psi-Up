@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 type DetailSectionProps = {
 	title: string
@@ -14,7 +14,7 @@ function DetailSection({
 	children,
 }: DetailSectionProps) {
 	return (
-		<section className="overflow-hidden rounded-[28px] border border-[#eadfce]/80 bg-[#fffdf8]/68 p-6 shadow-[0_16px_42px_rgba(84,59,33,0.08)] backdrop-blur-xl sm:p-7 lg:p-8 sm:mb-8 lg:mb-8">
+		<section className="overflow-hidden rounded-[28px] border border-[#eadfce]/80 bg-[#fffdf8]/68 p-6 shadow-[0_16px_42px_rgba(84,59,33,0.08)] backdrop-blur-xl sm:p-7 lg:p-8 mb-8">
 			<div className="mb-7">
 				{eyebrow && (
 					<p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[#6f7b63]">

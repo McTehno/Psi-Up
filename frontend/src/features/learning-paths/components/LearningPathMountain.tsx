@@ -27,8 +27,8 @@ export type LearningPathMountainNode = {
   isRequired?: boolean
   parallelGroup?: string | null
   assessmentStatus?: AssessmentStatus | null
+  assessmentProgress?: number | null
   isAssessmentPosition?: boolean
-
   nodeType?: 'module' | 'learning_unit'
   detailPath?: string
 }
@@ -631,6 +631,40 @@ function ModuleDetailBox({
   )
 }
 
+function normalizeAssessmentProgress(progress?: number | null) {
+  if (progress == null || Number.isNaN(progress)) {
+    return null
+  }
+
+  return Math.min(Math.max(progress, 0), 1)
+}
+
+function getMountainNodeProgressStyle(node: PositionedMountainNode) {
+  const progress = normalizeAssessmentProgress(node.assessmentProgress)
+
+  if (
+    progress == null ||
+    progress <= 0 ||
+    node.assessmentStatus === 'completed'
+  ) {
+    return null
+  }
+
+  return {
+    width: `${progress * 100}%`,
+  } satisfies CSSProperties
+}
+
+function formatAssessmentProgressPercent(progress?: number | null) {
+  const normalizedProgress = normalizeAssessmentProgress(progress)
+
+  if (normalizedProgress == null) {
+    return null
+  }
+
+  return `${Math.round(normalizedProgress * 100)}%`
+}
+
 function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   if (node.isAssessmentPosition) {
     return 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
@@ -641,18 +675,36 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   }
 
   if (node.assessmentStatus === 'partially_completed') {
-    return 'border-[#f2c879] bg-[#fff8ee] text-[#8a5a17] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
+    return 'border-[#f2c879] bg-[#fff8ee] text-[#344E41] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
   }
 
   return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
 }
 
-function getMountainNodeAssessmentLabel(node: PositionedMountainNode) {
-  if (node.isAssessmentPosition) {
-    return 'Tukaj se nahajaš'
+function isParallelAssessmentChoice(node: PositionedMountainNode) {
+  return node.parallelCount > 1 || Boolean(node.parallelGroup)
+}
+
+function getMountainNodeParallelActionLabel(node: PositionedMountainNode) {
+  if (!node.isAssessmentPosition || !isParallelAssessmentChoice(node)) {
+    return null
   }
 
-  return null
+  const progress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+
+  return progress > 0 ? 'Nadaljuj' : 'Prični'
+}
+
+function MountainAssessmentActionMarker({
+  label,
+}: {
+  label: string
+}) {
+  return (
+    <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#DED2BC] bg-white/95 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.16)] backdrop-blur">
+      {label}
+    </div>
+  )
 }
 
 function MountainActions({
@@ -880,7 +932,7 @@ export function LearningPathMountain({
   )
 
   const tabletNodeLevels = useMemo(
-    () => getPositionedNodeLevels(nodes, tabletLevelPositionPresets, 'desktop'),
+    () => getPositionedNodeLevels(nodes, tabletLevelPositionPresets, 'tablet'),
     [nodes],
   )
 
@@ -1009,13 +1061,19 @@ export function LearningPathMountain({
       const isSelected = selectedNodeId === node.id
       const hasParallelLabel = node.parallelCount > 1
       const nodeAssessmentClassName = getMountainNodeAssessmentClassName(node)
-      const nodeAssessmentLabel = getMountainNodeAssessmentLabel(node)
+      const isParallelChoice =
+        node.isAssessmentPosition && isParallelAssessmentChoice(node)
+      const nodeParallelActionLabel = getMountainNodeParallelActionLabel(node)
+      const nodeProgressStyle = getMountainNodeProgressStyle(node)
+      const progressPercent = formatAssessmentProgressPercent(
+        node.assessmentProgress,
+      )
 
       return (
         <div
-          key={node.id}
+          key={`${node.id}-${className}`}
           className={[
-            'absolute z-30 -translate-x-1/2 -translate-y-1/2',
+            'absolute z-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2',
             className,
           ].join(' ')}
           style={{
@@ -1023,18 +1081,21 @@ export function LearningPathMountain({
             top: `${node.y}%`,
           }}
         >
-          {nodeAssessmentLabel && (
-            <AssessmentPositionMarker
-              label={nodeAssessmentLabel}
-              className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
-            />
-          )}
+       {node.isAssessmentPosition && !isParallelChoice && (
+          <div className="translate-y-6">
+            <AssessmentPositionMarker label="" />
+          </div>
+        )}
+
+        {nodeParallelActionLabel && (
+          <MountainAssessmentActionMarker label={nodeParallelActionLabel} />
+        )}
 
           <button
             type="button"
             onClick={() => setSelectedNodeId(node.id)}
             className={[
-              'flex h-12 w-12 items-center justify-center rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
+              'relative isolate flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
               hasParallelLabel
                 ? 'text-[0.78rem] min-[1500px]:text-sm'
                 : 'text-base min-[1500px]:text-lg',
@@ -1042,10 +1103,27 @@ export function LearningPathMountain({
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={`Odpri podrobnosti ${node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
-              } ${node.title}`}
+            aria-label={[
+              `Odpri podrobnosti ${
+                node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+              } ${node.title}`,
+              progressPercent ? `opravljeno ${progressPercent}` : null,
+            ]
+              .filter(Boolean)
+              .join(', ')}
+            title={progressPercent ? `Opravljeno ${progressPercent}` : undefined}
           >
-            {node.displayLabel}
+            {nodeProgressStyle && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-0 left-0 z-0 bg-[#31583b] transition-[width] duration-500 ease-out"
+                style={nodeProgressStyle}
+              />
+            )}
+
+            <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(255,255,255,0.55)]">
+              {node.displayLabel}
+            </span>
           </button>
         </div>
       )

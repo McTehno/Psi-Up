@@ -34,6 +34,11 @@ class LearningUnitAssessmentResult(BaseModel):
 
     is_completed_by_assessment: bool = False
 
+    known_question_count: int = 0
+    missing_question_count: int = 0
+    total_question_count: int = 0
+    question_progress: float = 0.0
+
 
 class ModuleAssessmentResult(BaseModel):
     """
@@ -47,6 +52,11 @@ class ModuleAssessmentResult(BaseModel):
     status: AssessmentStatus = AssessmentStatus.NOT_STARTED
     completed_learning_units: List[str] = Field(default_factory=list)
     missing_learning_units: List[str] = Field(default_factory=list)
+
+    known_question_count: int = 0
+    missing_question_count: int = 0
+    total_question_count: int = 0
+    question_progress: float = 0.0
 
 
 class AssessmentCurrentPositionResponse(BaseModel):

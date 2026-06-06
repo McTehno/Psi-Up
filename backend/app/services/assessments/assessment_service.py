@@ -93,6 +93,41 @@ class AssessmentService:
 
         return " ".join(question.strip().lower().split())
 
+    def _normalize_step_type(
+        self,
+        value: Any,
+    ) -> str:
+        return self._get_string_value(value).lower().replace("-", "_")
+
+    def _get_learning_path_step_type(
+        self,
+        step: Dict[str, Any],
+    ) -> str:
+        step_type = self._normalize_step_type(step.get("step_type") or step.get("type"))
+
+        if step_type:
+            return step_type
+
+        if step.get("learning_unit_id"):
+            return "learning_unit"
+
+        if step.get("module_id") or step.get("ref_id"):
+            return "module"
+
+        return ""
+
+    def _get_learning_path_step_ref_id(
+        self,
+        step: Dict[str, Any],
+        step_type: str,
+    ) -> str:
+        if step_type in {"learning_unit", "unit"}:
+            return self._get_string_value(
+                step.get("learning_unit_id") or step.get("ref_id")
+            )
+
+        return self._get_string_value(step.get("module_id") or step.get("ref_id"))
+
     def _add_unique(
         self,
         target: List[str],
@@ -105,6 +140,17 @@ class AssessmentService:
         for value in values:
             if value not in target:
                 target.append(value)
+
+    def _calculate_question_progress(
+        self,
+        known_question_count: int,
+        total_question_count: int,
+    ) -> float:
+        if total_question_count <= 0:
+            return 0.0
+
+        progress = known_question_count / total_question_count
+        return max(0.0, min(progress, 1.0))
 
     def _deduplicate_learning_unit_results(
         self,
@@ -238,10 +284,6 @@ class AssessmentService:
         self,
         content_topics: List[Any],
     ) -> List[str]:
-        """
-        Vrne vse topic_id-je iz content_topics.
-        """
-
         topic_ids: List[str] = []
 
         for topic in self._get_list_value(content_topics):
@@ -256,10 +298,6 @@ class AssessmentService:
         self,
         content_topics: List[Any],
     ) -> List[str]:
-        """
-        Vrne vse competency kode iz content_topics.
-        """
-
         competency_codes: List[str] = []
 
         for topic in self._get_list_value(content_topics):
@@ -269,7 +307,7 @@ class AssessmentService:
             )
 
         return competency_codes
-
+    
     async def evaluate_answers(
         self,
         user_id: str,
@@ -365,8 +403,8 @@ class AssessmentService:
         completed_step_ids: List[str] = []
 
         for step in steps:
-            step_type = step.get("type")
-            ref_id = step.get("ref_id")
+            step_type = self._get_learning_path_step_type(step)
+            ref_id = self._get_learning_path_step_ref_id(step, step_type)
 
             if not ref_id:
                 continue
@@ -423,7 +461,7 @@ class AssessmentService:
                                 start_learning_unit_id
                             )
 
-            elif step_type == "learning_unit":
+            elif step_type in {"learning_unit", "unit"}:
                 step_result = await self._evaluate_learning_unit(
                     user_id=user_id,
                     learning_unit_id=ref_id,
@@ -490,7 +528,7 @@ class AssessmentService:
         learning_unit_results = self._deduplicate_learning_unit_results(
             learning_unit_results
         )
-        
+
         return {
             "user_id": user_id,
             "target_type": QuestionnaireTargetType.LEARNING_PATH,
@@ -545,6 +583,10 @@ class AssessmentService:
         known_competency_codes: List[str] = []
         missing_competency_codes: List[str] = []
 
+        known_question_count = 0
+        missing_question_count = 0
+        total_question_count = 0
+
         start_learning_unit_id: Optional[str] = None
 
         for learning_unit_reference in learning_unit_references:
@@ -562,6 +604,19 @@ class AssessmentService:
 
             unit_results = unit_result.get("learning_unit_results", [])
             learning_unit_results.extend(unit_results)
+
+            if unit_results:
+                unit_assessment_result = unit_results[0]
+
+                known_question_count += int(
+                    unit_assessment_result.get("known_question_count") or 0
+                )
+                missing_question_count += int(
+                    unit_assessment_result.get("missing_question_count") or 0
+                )
+                total_question_count += int(
+                    unit_assessment_result.get("total_question_count") or 0
+                )
 
             self._add_unique(
                 known_competency_codes,
@@ -631,6 +686,15 @@ class AssessmentService:
             skipped_modules = []
             summary = f"Uporabnik naj začne modul {module_id} od začetka."
 
+        question_progress = (
+            1.0
+            if required_completed and total_question_count == 0
+            else self._calculate_question_progress(
+                known_question_count,
+                total_question_count,
+            )
+        )
+
         return {
             "user_id": user_id,
             "target_type": QuestionnaireTargetType.MODULE,
@@ -650,6 +714,10 @@ class AssessmentService:
                     "status": status,
                     "completed_learning_units": completed_learning_units,
                     "missing_learning_units": missing_learning_units,
+                    "known_question_count": known_question_count,
+                    "missing_question_count": missing_question_count,
+                    "total_question_count": total_question_count,
+                    "question_progress": question_progress,
                 }
             ],
             "summary": summary,
@@ -700,55 +768,20 @@ class AssessmentService:
         known_competency_codes: List[str] = []
         missing_competency_codes: List[str] = []
 
-        all_topic_ids = self._get_all_topic_ids(content_topics)
-        all_competency_codes = self._get_all_topic_competency_codes(content_topics)
-        '''
-        if use_progressive_logic and questions:
-            primary_question = questions[0]
-            primary_answer = self._get_answer_for_question(
-                question=primary_question,
-                answer_maps=answer_maps,
-            )
+        known_question_count = 0
+        missing_question_count = 0
+        total_question_count = 0
 
-            if primary_answer is False:
-                missing_topic_ids = all_topic_ids
-                missing_competency_codes = all_competency_codes
-
-                return {
-                    "user_id": user_id,
-                    "target_type": QuestionnaireTargetType.LEARNING_UNIT,
-                    "target_id": learning_unit_id,
-                    "start_module_id": None,
-                    "start_learning_unit_id": learning_unit_id,
-                    "skipped_modules": [],
-                    "skipped_learning_units": [],
-                    "recommended_next_modules": [],
-                    "recommended_next_learning_units": [learning_unit_id],
-                    "known_competency_codes": [],
-                    "missing_competency_codes": missing_competency_codes,
-                    "learning_unit_results": [
-                        {
-                            "learning_unit_id": learning_unit_id,
-                            "known_topic_ids": [],
-                            "missing_topic_ids": missing_topic_ids,
-                            "known_competency_codes": [],
-                            "missing_competency_codes": missing_competency_codes,
-                            "is_completed_by_assessment": False,
-                        }
-                    ],
-                    "module_results": [],
-                    "summary": f"Uporabniku priporočamo učno enoto {learning_unit_id}.",
-                }
-        '''
         for question in questions:
             topic_id = self._get_string_value(
                 question.get("related_topic_id")
             )
+
             competency_codes = self._get_string_list_value(
                 question.get("related_competency_codes")
             )
 
-            if not topic_id:
+            if not topic_id and not competency_codes:
                 continue
 
             answer_value = self._get_answer_for_question(
@@ -756,11 +789,21 @@ class AssessmentService:
                 answer_maps=answer_maps,
             )
 
+            total_question_count += 1
+
             if answer_value is True:
-                self._add_unique(known_topic_ids, [topic_id])
+                known_question_count += 1
+
+                if topic_id:
+                    self._add_unique(known_topic_ids, [topic_id])
+
                 self._add_unique(known_competency_codes, competency_codes)
             else:
-                self._add_unique(missing_topic_ids, [topic_id])
+                missing_question_count += 1
+
+                if topic_id:
+                    self._add_unique(missing_topic_ids, [topic_id])
+
                 self._add_unique(missing_competency_codes, competency_codes)
 
         for topic in content_topics:
@@ -796,6 +839,15 @@ class AssessmentService:
             skipped_learning_units = []
             recommended_next_learning_units = [learning_unit_id]
 
+        question_progress = (
+            1.0
+            if is_completed_by_assessment and total_question_count == 0
+            else self._calculate_question_progress(
+                known_question_count,
+                total_question_count,
+            )
+        )
+
         return {
             "user_id": user_id,
             "target_type": QuestionnaireTargetType.LEARNING_UNIT,
@@ -816,6 +868,10 @@ class AssessmentService:
                     "known_competency_codes": known_competency_codes,
                     "missing_competency_codes": missing_competency_codes,
                     "is_completed_by_assessment": is_completed_by_assessment,
+                    "known_question_count": known_question_count,
+                    "missing_question_count": missing_question_count,
+                    "total_question_count": total_question_count,
+                    "question_progress": question_progress,
                 }
             ],
             "module_results": [],

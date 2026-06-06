@@ -62,7 +62,7 @@ export function CollapsibleChatPanel({
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#31583b]">
                 <Sparkles className="h-3.5 w-3.5" />
-                LLM pomočnik
+                AI pomočnik
               </p>
             </div>
 
@@ -151,7 +151,7 @@ export function CollapsibleChatPanel({
             </div>
 
             <span className="rotate-180 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.2em] [writing-mode:vertical-rl]">
-              LLM pomočnik
+              AI pomočnik
             </span>
 
             <ChevronLeft className="h-5 w-5" />
@@ -183,7 +183,7 @@ export function CollapsibleChatPanel({
             <div className="mt-7">
               <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-[#31583b]">
                 <Sparkles className="h-4 w-4" />
-                LLM pomočnik
+                AI pomočnik
               </p>
             </div>
 

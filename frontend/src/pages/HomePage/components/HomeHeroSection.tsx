@@ -33,7 +33,6 @@ function HomeHeroSection() {
 					toggleFilter={toggleFilter}
 					searchQuery={searchQuery}
 					setSearchQuery={setSearchQuery}
-					setSearchResults={setSearchResults}
 				/>
 
 				<MobileHeroSearchResults

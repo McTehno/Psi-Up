@@ -11,7 +11,6 @@ type HeroSearchProps = {
 	toggleFilter: (filter: SearchContentType) => void
 	searchQuery: string
 	setSearchQuery: (query: string) => void
-	setSearchResults: (results: SearchResult[]) => void
 }
 
 function HeroSearch({
@@ -21,7 +20,6 @@ function HeroSearch({
 	toggleFilter,
 	searchQuery,
 	setSearchQuery,
-	setSearchResults,
 }: HeroSearchProps) {
 	return (
 		<motion.div

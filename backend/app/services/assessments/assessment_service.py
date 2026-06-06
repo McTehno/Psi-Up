@@ -284,10 +284,6 @@ class AssessmentService:
         self,
         content_topics: List[Any],
     ) -> List[str]:
-        """
-        Vrne vse topic_id-je iz content_topics.
-        """
-
         topic_ids: List[str] = []
 
         for topic in self._get_list_value(content_topics):
@@ -302,10 +298,6 @@ class AssessmentService:
         self,
         content_topics: List[Any],
     ) -> List[str]:
-        """
-        Vrne vse competency kode iz content_topics.
-        """
-
         competency_codes: List[str] = []
 
         for topic in self._get_list_value(content_topics):
@@ -315,7 +307,7 @@ class AssessmentService:
             )
 
         return competency_codes
-
+    
     async def evaluate_answers(
         self,
         user_id: str,
@@ -685,7 +677,7 @@ class AssessmentService:
             status = AssessmentStatus.COMPLETED
             skipped_modules = [module_id]
             summary = f"Uporabnik je glede na odgovore pokril modul {module_id}."
-        elif completed_learning_units or known_question_count > 0:
+        elif completed_learning_units:
             status = AssessmentStatus.PARTIALLY_COMPLETED
             skipped_modules = []
             summary = f"Uporabnik je delno pokril modul {module_id}."
@@ -834,10 +826,7 @@ class AssessmentService:
             if code not in known_competency_codes
         ]
 
-        if total_question_count > 0:
-            is_completed_by_assessment = missing_question_count == 0
-        else:
-            is_completed_by_assessment = bool(content_topics) and len(missing_topic_ids) == 0
+        is_completed_by_assessment = bool(content_topics) and len(missing_topic_ids) == 0
 
         start_learning_unit_id = None if is_completed_by_assessment else learning_unit_id
 

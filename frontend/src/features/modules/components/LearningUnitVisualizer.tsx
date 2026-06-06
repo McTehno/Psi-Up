@@ -424,7 +424,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.2, ease: "easeInOut" }}
-                    className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2"
+                    className="absolute top-2 left-1/2 -translate-x-1/2 scale-[1.15]"
                   >
                     <AssessmentPositionMarker
                       label="Tukaj se nahajaš"

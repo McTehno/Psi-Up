@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../services/supabase-client'
 import { Toast } from '../../features/auth'
-import loginBgImage from '../../assets/login-background-mountains.jpeg'
+import loginBgImage from '../../assets/login-background-mountains.webp'
 import { usePageTitle } from '../../hooks/usePageTitle'
 export default function UpdatePasswordPage() {
   const navigate = useNavigate()
@@ -64,7 +64,7 @@ export default function UpdatePasswordPage() {
         navigate('/login', { replace: true })
       }, 2000)
     } catch (err: unknown) {
-    setToastMessage(translateAuthError(err instanceof Error ? err.message : ''))
+      setToastMessage(translateAuthError(err instanceof Error ? err.message : ''))
     } finally {
       setIsLoading(false)
     }

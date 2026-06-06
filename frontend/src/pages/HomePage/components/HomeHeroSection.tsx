@@ -16,7 +16,6 @@ function HomeHeroSection() {
 		searchQuery,
 		setSearchQuery,
 		searchResults,
-		setSearchResults,
 		isSearching,
 	} = useGlobalSearch()
 
@@ -33,7 +32,6 @@ function HomeHeroSection() {
 					toggleFilter={toggleFilter}
 					searchQuery={searchQuery}
 					setSearchQuery={setSearchQuery}
-					setSearchResults={setSearchResults}
 				/>
 
 				<MobileHeroSearchResults

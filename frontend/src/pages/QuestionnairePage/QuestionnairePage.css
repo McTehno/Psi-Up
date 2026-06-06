@@ -1341,7 +1341,7 @@ body.questionnaire-route footer {
       rgba(255, 250, 242, 0.08),
       rgba(255, 250, 242, 0.32)
     ),
-    url('../../assets/mountain-journey-bg.png');
+    url('../../assets/mountain-journey-bg.webp');
   background-size: cover;
   background-position: center 18%;
   border: 1px solid rgba(47, 74, 49, 0.12);

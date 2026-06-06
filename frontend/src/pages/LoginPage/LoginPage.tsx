@@ -13,10 +13,10 @@ import {
   ForgotPasswordForm,
 } from '../../features/auth'
 
-import {usePageTitle} from '../../hooks/usePageTitle'
+import { usePageTitle } from '../../hooks/usePageTitle'
 // Using relative path to the image as it is now in src/assets
-import loginBgImage from '../../assets/login-background-mountains.jpeg'
-import registerBgImage from '../../assets/register-background-mountains.jpeg'
+import loginBgImage from '../../assets/login-background-mountains.webp'
+import registerBgImage from '../../assets/register-background-mountains.webp'
 
 export default function LoginPage() {
   usePageTitle('NIDiKo')
@@ -88,7 +88,7 @@ export default function LoginPage() {
       // On success
       navigate(from, { replace: true })
     } catch (err: unknown) {
-    const translated = translateAuthError(err instanceof Error ? err.message : '')
+      const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false)
@@ -110,7 +110,7 @@ export default function LoginPage() {
       // Note: You don't need to navigate() here. 
       // OAuth will physically redirect the user away from your app to Google, and then back.
     } catch (err: unknown) {
-    const translated = translateAuthError(err instanceof Error ? err.message : '')
+      const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false);
@@ -128,7 +128,7 @@ export default function LoginPage() {
         redirectTo: `${window.location.origin}/update-password`,
       })
       if (error) throw error
-      
+
       // Since our toast component handles both success and error by variant,
       // currently the variant is hardcoded to "error" in LoginPage.
       // We might need to handle success variant or just show it as error variant 
@@ -136,7 +136,7 @@ export default function LoginPage() {
       setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.')
       setIsForgotPassword(false)
     } catch (err: unknown) {
-    const translated = translateAuthError(err instanceof Error ? err.message : '')
+      const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
     } finally {
       setIsLoading(false)

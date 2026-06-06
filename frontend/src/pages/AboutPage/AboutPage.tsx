@@ -1,5 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react'
-import aboutMountains from '../../assets/AboutUsPage/about-mountains.png'
+import aboutMountains from '../../assets/AboutUsPage/about-mountains.webp'
 import { usePageTitle } from '../../hooks/usePageTitle'
 const workPackages = [
 	'Analiza potreb',
@@ -300,9 +300,8 @@ const AboutPage = () => {
 								<div
 									className="h-full rounded-full bg-[#31583b] transition-all duration-[850ms] ease-out"
 									style={{
-										width: `${
-											(activeTimelineStep / (workPackages.length - 1)) * 100
-										}%`,
+										width: `${(activeTimelineStep / (workPackages.length - 1)) * 100
+											}%`,
 									}}
 								/>
 							</div>
@@ -345,9 +344,8 @@ const AboutPage = () => {
 								<div
 									className="w-full origin-top rounded-full bg-[#31583b] transition-all duration-[850ms] ease-out"
 									style={{
-										height: `${
-											(activeTimelineStep / (workPackages.length - 1)) * 100
-										}%`,
+										height: `${(activeTimelineStep / (workPackages.length - 1)) * 100
+											}%`,
 									}}
 								/>
 							</div>

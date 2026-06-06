@@ -639,32 +639,6 @@ function normalizeAssessmentProgress(progress?: number | null) {
   return Math.min(Math.max(progress, 0), 1)
 }
 
-function getMountainNodeProgressStyle(node: PositionedMountainNode) {
-  const progress = normalizeAssessmentProgress(node.assessmentProgress)
-
-  if (
-    progress == null ||
-    progress <= 0 ||
-    node.assessmentStatus === 'completed'
-  ) {
-    return null
-  }
-
-  return {
-    width: `${progress * 100}%`,
-  } satisfies CSSProperties
-}
-
-function formatAssessmentProgressPercent(progress?: number | null) {
-  const normalizedProgress = normalizeAssessmentProgress(progress)
-
-  if (normalizedProgress == null) {
-    return null
-  }
-
-  return `${Math.round(normalizedProgress * 100)}%`
-}
-
 function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   if (node.isAssessmentPosition) {
     return 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
@@ -675,7 +649,7 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   }
 
   if (node.assessmentStatus === 'partially_completed') {
-    return 'border-[#f2c879] bg-[#fff8ee] text-[#344E41] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
+    return 'border-[#f2c879] bg-[#fff8ee] text-[#8a5a17] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
   }
 
   return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
@@ -1064,10 +1038,6 @@ export function LearningPathMountain({
       const isParallelChoice =
         node.isAssessmentPosition && isParallelAssessmentChoice(node)
       const nodeParallelActionLabel = getMountainNodeParallelActionLabel(node)
-      const nodeProgressStyle = getMountainNodeProgressStyle(node)
-      const progressPercent = formatAssessmentProgressPercent(
-        node.assessmentProgress,
-      )
 
       return (
         <div
@@ -1103,24 +1073,10 @@ export function LearningPathMountain({
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={[
-              `Odpri podrobnosti ${
-                node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
-              } ${node.title}`,
-              progressPercent ? `opravljeno ${progressPercent}` : null,
-            ]
-              .filter(Boolean)
-              .join(', ')}
-            title={progressPercent ? `Opravljeno ${progressPercent}` : undefined}
-          >
-            {nodeProgressStyle && (
-              <span
-                aria-hidden="true"
-                className="absolute inset-y-0 left-0 z-0 bg-[#31583b] transition-[width] duration-500 ease-out"
-                style={nodeProgressStyle}
-              />
-            )}
-
+            aria-label={`Odpri podrobnosti ${
+              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+            } ${node.title}`}
+            >
             <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(255,255,255,0.55)]">
               {node.displayLabel}
             </span>

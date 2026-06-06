@@ -305,7 +305,14 @@ function AssessmentContextBox({
     return (
       <div className="assessment-assistant-visual-chat">
 
-        <div className="assessment-assistant-visual-chat__messages">
+        <div
+  className={[
+    'assessment-assistant-visual-chat__messages',
+    visibleHistory.length > 0
+      ? 'assessment-assistant-visual-chat__messages--active'
+      : '',
+  ].join(' ')}
+>
           {activeHistoryItem && (
             <>
               <div className="assessment-assistant-bubble assessment-assistant-bubble--user">

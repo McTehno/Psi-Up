@@ -1095,10 +1095,10 @@ export function LearningPathMountain({
             type="button"
             onClick={() => setSelectedNodeId(node.id)}
             className={[
-              'relative isolate flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
+              'relative isolate flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[480px]:h-9 min-[480px]:w-9 min-[640px]:h-10 min-[640px]:w-10 min-[1024px]:h-11 min-[1024px]:w-11 min-[1500px]:h-14 min-[1500px]:w-14',
               hasParallelLabel
-                ? 'text-[0.78rem] min-[1500px]:text-sm'
-                : 'text-base min-[1500px]:text-lg',
+                ? 'text-[0.58rem] min-[480px]:text-[0.64rem] min-[640px]:text-[0.7rem] min-[1024px]:text-xs min-[1500px]:text-sm'
+                : 'text-xs min-[480px]:text-[0.82rem] min-[640px]:text-sm min-[1024px]:text-base min-[1500px]:text-lg',
               nodeAssessmentClassName,
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}

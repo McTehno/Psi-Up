@@ -1,5 +1,5 @@
 ﻿import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
-
+import type { ReactNode } from 'react'
 type Competency = {
   competency_id: string
   title?: string
@@ -38,6 +38,7 @@ type AssessmentLayoutProps = {
   currentQuestion?: QuestionnaireItem
   selectedAnswer?: AnswerOption
   assistantExchange?: AssistantExchange | null
+  assistantPanel?: ReactNode
   children: React.ReactNode
 }
 
@@ -50,14 +51,26 @@ function AssessmentLayout({
   selectedAnswer,
   assistantExchange,
   children,
+  assistantPanel,
 }: AssessmentLayoutProps) {
   const selectedCompetencies = selectedGroup?.competencies ?? []
 
   return (
     <main className="assessment-page">
       <div className="assessment-panel">
-        <aside className="assessment-visual">
+        <aside
+          className={
+            assistantPanel
+              ? 'assessment-visual assessment-visual--with-chat'
+              : 'assessment-visual'
+          }
+        >
           <img className="woman-image" src={imageSrc} alt="Asistentka" />
+          {assistantPanel && (
+  <div className="assessment-visual-chat-layer">
+    {assistantPanel}
+  </div>
+)}
 
           <div className="assistant-note">
             <div className="assistant-note__icon" aria-hidden="true">
@@ -95,16 +108,6 @@ function AssessmentLayout({
                   className="assistant-note__assistant-answer"
                   aria-live="polite"
                 >
-                  <span className="assistant-note__section-label">
-                    Vaše vprašanje
-                  </span>
-                  <p className="assistant-note__user-question">
-                    {assistantExchange.userMessage}
-                  </p>
-
-                  <span className="assistant-note__section-label">
-                    Asistentka je odgovorila:
-                  </span>
                   <SimpleMarkdownText
                     content={assistantExchange.answer}
                     className={
@@ -147,6 +150,10 @@ function AssessmentLayout({
               )}
             </div>
           </div>
+
+
+
+
         </aside>
 
         <section className="assessment-content">{children}</section>

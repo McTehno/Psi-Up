@@ -1,4 +1,4 @@
-﻿import {useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 
 import { sendAssessmentAssistantMessage } from '../../../services/assessment-assistant-service'
 import type { QuestionnaireTargetType } from '../../../types/questionnaire'
@@ -28,6 +28,7 @@ type AssessmentContextBoxProps = {
   questionId: string
   questionText: string
   answerOptions?: string[]
+  variant?: 'inline' | 'visual'
   onActiveExchangeChange: (
     exchange: AssessmentAssistantDisplayExchange | null,
   ) => void
@@ -139,6 +140,7 @@ function AssessmentContextBox({
   questionId,
   questionText,
   answerOptions = ['Da', 'Ne'],
+  variant = 'inline',
   onActiveExchangeChange,
 }: AssessmentContextBoxProps) {
   const [sessionId, setSessionId] = useState<string | undefined>()
@@ -150,7 +152,7 @@ function AssessmentContextBox({
   const [isLoading, setIsLoading] = useState(false)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const storageKey = useMemo(
     () => createStorageKey(targetType, targetId, questionId),
     [questionId, targetId, targetType],
@@ -177,25 +179,19 @@ function AssessmentContextBox({
     setSessionId(latestItem?.sessionId)
     setUserMessage('')
     setError(null)
-    setStatusMessage(
-      latestItem
-        ? 'Zadnji odgovor za to vprašanje je prikazan pri asistentki oziroma spodaj na manjšem zaslonu.'
-        : null,
-    )
+
     onActiveExchangeChange(latestItem ? toDisplayExchange(latestItem) : null)
   }, [onActiveExchangeChange, storageKey])
 
   function handleSelectHistoryItem(item: AssessmentAssistantHistoryItem) {
     setActiveExchangeId(item.id)
-
+    setUserMessage(item.userMessage)
     if (item.sessionId) {
       setSessionId(item.sessionId)
     }
 
     setError(null)
-    setStatusMessage(
-      'Izbrani odgovor je prikazan pri asistentki oziroma razprt spodaj na manjšem zaslonu.',
-    )
+
     onActiveExchangeChange(toDisplayExchange(item))
   }
 
@@ -222,9 +218,6 @@ function AssessmentContextBox({
       setError(null)
       setTransientItem(pendingItem)
       setActiveExchangeId(pendingItem.id)
-      setStatusMessage(
-        'Vprašanje je poslano. Odgovor se bo prikazal pri asistentki oziroma spodaj na manjšem zaslonu.',
-      )
       onActiveExchangeChange(toDisplayExchange(pendingItem))
 
       const response = await sendAssessmentAssistantMessage({
@@ -259,17 +252,14 @@ function AssessmentContextBox({
       setSessionId(response.session_id)
       setActiveExchangeId(savedItem.id)
       setUserMessage('')
-      setStatusMessage(
-        'Odgovor je prikazan pri asistentki. Na manjšem zaslonu je razprt spodaj v seznamu.',
-      )
+
       onActiveExchangeChange(toDisplayExchange(savedItem))
     } catch (error) {
       console.error(error)
 
+
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Asistentka trenutno ne more odgovoriti. Poskusite znova.'
+        'Asistentka trenutno ne more pripraviti odgovora. Poskusite znova čez nekaj trenutkov.'
 
       const errorItem: AssessmentAssistantHistoryItem = {
         ...pendingItem,
@@ -288,56 +278,128 @@ function AssessmentContextBox({
     }
   }
 
+  const activeHistoryItem =
+    visibleHistory.find((item) => item.id === activeExchangeId) ?? visibleHistory[0]
+
+
+  if (variant === 'visual') {
+  return (
+    <div className="assessment-assistant-visual-chat">
+  
+      <div className="assessment-assistant-visual-chat__messages">
+        {activeHistoryItem && (
+          <>
+            <div className="assessment-assistant-bubble assessment-assistant-bubble--user">
+              <p>{activeHistoryItem.userMessage}</p>
+            </div>
+
+            <div className="assessment-assistant-bubble assessment-assistant-bubble--assistant">
+              <SimpleMarkdownText
+                content={activeHistoryItem.answer}
+                className={
+                  activeHistoryItem.isPending
+                    ? 'assessment-assistant-bubble__text assessment-assistant-bubble__text--pending'
+                    : 'assessment-assistant-bubble__text'
+                }
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      <form
+        className="assessment-assistant-visual-chat__form"
+        onSubmit={handleSubmit}
+      >
+        <textarea
+          id="assessment-assistant-message"
+          className="assessment-assistant-visual-chat__textarea"
+          value={userMessage}
+          onChange={(event) => setUserMessage(event.target.value)}
+          placeholder="Napišite svoje vprašanje ..."
+          rows={1}
+          maxLength={1000}
+          disabled={isLoading}
+        />
+
+        <button
+          type="submit"
+          className="assessment-assistant-visual-chat__submit"
+          disabled={isLoading || !userMessage.trim()}
+          aria-label="Pošlji vprašanje"
+        >
+          ➤
+        </button>
+      </form>
+
+      {error && <p className="assessment-assistant-visual-chat__error">{error}</p>}
+
+      {isHistoryOpen && (
+        <div className="assessment-assistant-history-panel">
+          <div className="assessment-assistant-history-panel__content">
+            <div className="assessment-assistant-history-panel__header">
+              <span>Zgodovina vprašanj</span>
+
+              <button type="button" onClick={() => setIsHistoryOpen(false)}>
+                Zapri
+              </button>
+            </div>
+
+            {visibleHistory.length > 0 ? (
+              <ul>
+                {[...visibleHistory].reverse().map((item) => {
+                  const isActive = item.id === activeExchangeId
+
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className={
+                          isActive
+                            ? 'assessment-assistant-history-panel__item assessment-assistant-history-panel__item--active'
+                            : 'assessment-assistant-history-panel__item'
+                        }
+                        onClick={() => {
+                          handleSelectHistoryItem(item)
+                          setIsHistoryOpen(false)
+                        }}
+                      >
+                        <span>{item.userMessage}</span>
+                        <small>{isActive ? 'Prikazano' : 'Prikaži odgovor'}</small>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <p className="assessment-assistant-history-panel__empty">
+                Zgodovina je še prazna.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
   return (
     <div className="context-box assessment-assistant-box">
+
       <div className="assessment-assistant-box__header">
         <span className="assessment-assistant-box__eyebrow">Tekstovna pomoč</span>
         <label htmlFor="assessment-assistant-message">
           Vprašajte asistentko za pomoč pri razumevanju vprašanja
         </label>
-        <p>
-          Odgovor se na večjem zaslonu prikaže pri asistentki, na manjšem pa
-          spodaj v seznamu. Izbira Da/Ne se ob tem ne spremeni.
-        </p>
       </div>
-
-      <form className="assessment-assistant-form" onSubmit={handleSubmit}>
-        <textarea
-          id="assessment-assistant-message"
-          className="assessment-assistant-textarea"
-          value={userMessage}
-          onChange={(event) => setUserMessage(event.target.value)}
-          placeholder="Npr. Kaj to vprašanje pomeni?"
-          rows={3}
-          maxLength={1000}
-          disabled={isLoading}
-        />
-
-        <div className="assessment-assistant-form__actions">
-          <span>
-            {isLoading
-              ? 'Asistentka pripravlja odgovor ...'
-              : 'Vprašajte samo o trenutnem vprašanju.'}
-          </span>
-          <button type="submit" disabled={isLoading || !userMessage.trim()}>
-            {isLoading ? 'Pošiljam ...' : 'Vprašaj'}
-          </button>
-        </div>
-      </form>
-
-      {statusMessage && (
-        <p className="assessment-assistant-status">{statusMessage}</p>
-      )}
-
-      {error && <p className="assessment-assistant-error">{error}</p>}
 
       {visibleHistory.length > 0 && (
         <div className="assessment-assistant-history">
           <div className="assessment-assistant-history__header">
-            Vaša vprašanja v tej seji
+            Vaša vprašanja:
           </div>
           <ul>
-            {visibleHistory.map((item) => {
+            {[...visibleHistory].reverse().map((item) => {
               const isActive = item.id === activeExchangeId
 
               return (
@@ -384,6 +446,38 @@ function AssessmentContextBox({
           </ul>
         </div>
       )}
+
+      <form className="assessment-assistant-form" onSubmit={handleSubmit}>
+        <textarea
+          id="assessment-assistant-message"
+          className="assessment-assistant-textarea"
+          value={userMessage}
+          onChange={(event) => setUserMessage(event.target.value)}
+          placeholder="Npr. Kaj to vprašanje pomeni?"
+          rows={3}
+          maxLength={1000}
+          disabled={isLoading}
+        />
+
+        <div className="assessment-assistant-form__actions">
+          <span>
+            {isLoading
+              ? 'Asistentka pripravlja odgovor ...'
+              : 'Pomoč pri trenutnem vprašanju'}
+          </span>
+          <button type="submit" disabled={isLoading || !userMessage.trim()}>
+            {isLoading ? 'Pošiljam ...' : 'Vprašaj'}
+          </button>
+        </div>
+      </form>
+
+      {statusMessage && (
+        <p className="assessment-assistant-status">{statusMessage}</p>
+      )}
+
+      {error && <p className="assessment-assistant-error">{error}</p>}
+
+
     </div>
   )
 }

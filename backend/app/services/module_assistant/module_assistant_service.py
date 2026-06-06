@@ -169,11 +169,8 @@ class ModuleAssistantService:
                 if prerequisites is None:
                     prerequisites = unit.get("prerequisites")
 
-                unit_competencies = self._competency_values(unit)
-                content_topics = self._list_values(
-                    unit,
-                    ["content_topics", "topics", "learning_topics"],
-                )
+                unit_competencies = self._unit_competency_values(unit)
+                content_topics = self._content_topic_values(unit)
                 questions = self._self_assessment_question_values(unit)
 
                 lines.append("")
@@ -192,17 +189,34 @@ class ModuleAssistantService:
                 if keywords:
                     lines.append(f"   - ključne besede: {', '.join(keywords)}")
 
+                content_topics = self._content_topic_values(unit)
                 if content_topics:
-                    lines.append(f"   - vsebinske teme: {', '.join(content_topics)}")
+                    lines.append(f"   - vsebinske teme: {'; '.join(content_topics)}")
 
-                content_summary = self._pick_text(
+                unit_competencies = self._unit_competency_values(unit)
+                if unit_competencies:
+                    lines.append("   - digitalne kompetence / spretnosti:")
+                    for competency in unit_competencies:
+                        lines.append(f"     - {competency}")
+                        competency_map.setdefault(competency, []).append(
+                            f"učna enota: {unit_title}"
+                        )
+
+                content_summary = self._first_value(
                     unit,
-                    ["content_summary", "content", "body", "learning_content"],
-                    "",
+                    [
+                        "content_summary",
+                        "contentSummary",
+                        "summary",
+                        "description",
+                        "content",
+                        "body",
+                        "text",
+                    ],
                 )
                 if content_summary:
                     lines.append(
-                        f"   - vsebinski povzetek: {self._truncate(content_summary, 900)}"
+                        f"   - vsebinski povzetek: {self._truncate(str(content_summary), 900)}"
                     )
 
                 if unit_competencies:
@@ -462,6 +476,124 @@ Odgovori samo na podlagi zgornjega konteksta.
                 "learning_outcomes",
             ],
         )
+    
+    def _unit_competency_values(self, document: Dict[str, Any]) -> List[str]:
+        return self._unique([
+            *self._list_values(
+                document,
+                [
+                    "acquired_competencies",
+                    "acquiredCompetencies",
+                    "skills",
+                    "competencies",
+                    "digital_competencies",
+                    "digitalCompetencies",
+                    "learning_outcomes",
+                ],
+            ),
+            *self._digcomp_competency_values(document),
+            *self._content_topic_competency_values(document),
+        ])
+
+
+    def _digcomp_competency_values(self, document: Dict[str, Any]) -> List[str]:
+        competencies = self._as_list(document.get("digcomp_competencies"))
+        values: List[str] = []
+
+        for competency in competencies:
+            if isinstance(competency, str) and competency.strip():
+                values.append(competency.strip())
+                continue
+
+            if not isinstance(competency, dict):
+                continue
+
+            code = self._first_value(competency, ["code", "id", "_id"])
+            title = self._first_value(competency, ["title", "name", "label"])
+            description = self._first_value(competency, ["description", "summary"])
+            area = self._first_value(competency, ["area", "domain", "digcomp_area"])
+            level = self._first_value(competency, ["level", "proficiency_level"])
+
+            header_parts: List[str] = []
+            if code:
+                header_parts.append(str(code))
+            if title:
+                header_parts.append(str(title))
+
+            text = " - ".join(header_parts) if header_parts else "Neimenovana digitalna kompetenca"
+
+            meta: List[str] = []
+            if area:
+                meta.append(f"področje: {area}")
+            if level:
+                meta.append(f"raven: {level}")
+
+            if meta:
+                text = f"{text} [{'; '.join(meta)}]"
+
+            if description:
+                text = f"{text}: {self._truncate(str(description), 360)}"
+
+            values.append(text)
+
+        return self._unique(values)
+
+
+    def _content_topic_values(self, document: Dict[str, Any]) -> List[str]:
+        topics = (
+            self._as_list(document.get("content_topics"))
+            or self._as_list(document.get("topics"))
+            or self._as_list(document.get("learning_topics"))
+        )
+
+        values: List[str] = []
+
+        for topic in topics:
+            if isinstance(topic, str) and topic.strip():
+                values.append(topic.strip())
+                continue
+
+            if not isinstance(topic, dict):
+                continue
+
+            title = self._first_value(topic, ["title", "name", "label"])
+            topic_id = self._first_value(topic, ["id", "_id"])
+            competencies = self._list_values(
+                topic,
+                ["related_competency_codes", "competencies", "digital_competencies"],
+            )
+
+            if title and competencies:
+                values.append(
+                    f"{title} [id: {topic_id or 'ni navedeno'}, povezane kompetence: {', '.join(competencies)}]"
+                )
+            elif title:
+                values.append(f"{title} [id: {topic_id or 'ni navedeno'}]")
+
+        return self._unique(values)
+
+
+    def _content_topic_competency_values(self, document: Dict[str, Any]) -> List[str]:
+        topics = (
+            self._as_list(document.get("content_topics"))
+            or self._as_list(document.get("topics"))
+            or self._as_list(document.get("learning_topics"))
+        )
+
+        values: List[str] = []
+
+        for topic in topics:
+            if not isinstance(topic, dict):
+                continue
+
+            values.extend(
+                self._list_values(
+                    topic,
+                    ["related_competency_codes", "competencies", "digital_competencies"],
+                )
+            )
+
+        return self._unique(values)    
 
     def _self_assessment_question_values(
         self,

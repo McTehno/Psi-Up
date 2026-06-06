@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Circle,
@@ -184,7 +184,13 @@ function ModuleDetailPage() {
     useState<boolean | null>(null)
 
 
-  usePageTitle(moduleData ? `Modul - ${moduleData.title}` : 'Nalaganje modula...')  
+  usePageTitle(
+  moduleData?.title
+    ? `${moduleData.title} | NIDiKo`
+    : 'Modul | NIDiKo',
+)
+
+
   const {
     isFavorite,
     isSaved,

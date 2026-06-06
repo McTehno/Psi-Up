@@ -19,7 +19,7 @@ import loginBgImage from '../../assets/login-background-mountains.webp'
 import registerBgImage from '../../assets/register-background-mountains.webp'
 
 export default function LoginPage() {
-  usePageTitle('NIDiKo')
+  
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -28,7 +28,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(location.pathname === '/register')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
+  
+  const pageTitle = isForgotPassword
+  ? 'Pozabljeno geslo | NIDiKo'
+  : isRegister
+    ? 'Registracija | NIDiKo'
+    : 'Prijava | NIDiKo'
 
+usePageTitle(pageTitle)
   // Slovenian translations for common Supabase auth errors, this is unfortunately not an option through supabase :(
   function translateAuthError(msg: string): string {
     const translations: Record<string, string> = {

@@ -966,7 +966,7 @@ function QuestionnairePage() {
   const assessmentUserId = useMemo(() => getAssessmentUserId(userId), [userId])
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
-  usePageTitle("Vprašalnik")
+ 
   const [phase, setPhase] = useState<AssessmentPhase>('questionnaire')
   const [questionnaireTitle, setQuestionnaireTitle] = useState('')
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([])
@@ -989,6 +989,13 @@ function QuestionnairePage() {
   const [assistantExchange, setAssistantExchange] =
     useState<AssessmentAssistantDisplayExchange | null>(null)
 
+     usePageTitle(
+  phase === 'completed'
+    ? 'Rezultat vprašalnika | NIDiKo'
+    : questionnaireTitle
+      ? `${questionnaireTitle} | NIDiKo`
+      : 'Vprašalnik | NIDiKo',
+)
   useEffect(() => {
     document.body.classList.add('questionnaire-route')
 

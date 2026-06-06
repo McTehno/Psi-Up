@@ -11,7 +11,7 @@ import { usePageTitle } from '../../hooks/usePageTitle';
 export default function SearchPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    usePageTitle('NIDiKo');
+    usePageTitle('Iskanje | NIDiKo');
 
     // Uporabimo debounce na query stringu, da ne requestamo ob vsakem pritisku na tipko
     const initialQuery = searchParams.get('q') || '';

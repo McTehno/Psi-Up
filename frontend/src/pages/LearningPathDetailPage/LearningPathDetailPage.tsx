@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -924,7 +924,11 @@ function LearningPathDetailPage() {
   const [isCompletedByAssessment, setIsCompletedByAssessment] = useState(false)
 
 
-  usePageTitle("Učna pot - " + (learningPath?.title ?? 'Nalaganje...'))
+  usePageTitle(
+  learningPath?.title
+    ? `${learningPath.title} | NIDiKo`
+    : 'Učna pot | NIDiKo',
+)
 
   const learningPathContentId = useMemo(() => {
     if (!learningPath) {

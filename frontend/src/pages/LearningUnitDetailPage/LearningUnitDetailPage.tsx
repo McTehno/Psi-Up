@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Award,
@@ -244,7 +244,11 @@ function LearningUnitDetailPage() {
   const [localIsCompleted, setLocalIsCompleted] = useState(false)
   const [manualCompletionOverride, setManualCompletionOverride] =
     useState<boolean | null>(null)
-  usePageTitle(learningUnit ? `Učna enota - ${learningUnit.title}` : 'Nalaganje učne enote...')
+  usePageTitle(
+  learningUnit?.title
+    ? `${learningUnit.title} | NIDiKo`
+    : 'Učna enota | NIDiKo',
+)
 
   const {
     isFavorite,

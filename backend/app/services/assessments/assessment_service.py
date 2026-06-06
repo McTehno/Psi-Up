@@ -280,6 +280,42 @@ class AssessmentService:
 
         return self._get_string_list_value(topic.get("related_competency_codes"))
 
+    def _get_all_topic_ids(
+        self,
+        content_topics: List[Any],
+    ) -> List[str]:
+        """
+        Vrne vse topic_id-je iz content_topics.
+        """
+
+        topic_ids: List[str] = []
+
+        for topic in self._get_list_value(content_topics):
+            topic_id = self._get_topic_id_from_topic(topic)
+
+            if topic_id and topic_id not in topic_ids:
+                topic_ids.append(topic_id)
+
+        return topic_ids
+
+    def _get_all_topic_competency_codes(
+        self,
+        content_topics: List[Any],
+    ) -> List[str]:
+        """
+        Vrne vse competency kode iz content_topics.
+        """
+
+        competency_codes: List[str] = []
+
+        for topic in self._get_list_value(content_topics):
+            self._add_unique(
+                competency_codes,
+                self._get_topic_competency_codes(topic),
+            )
+
+        return competency_codes
+
     async def evaluate_answers(
         self,
         user_id: str,

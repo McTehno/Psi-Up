@@ -1081,8 +1081,10 @@ export function LearningPathMountain({
             top: `${node.y}%`,
           }}
         >
-        {node.isAssessmentPosition && !isParallelChoice && (
-          <AssessmentPositionMarker label="" />
+       {node.isAssessmentPosition && !isParallelChoice && (
+          <div className="translate-y-6">
+            <AssessmentPositionMarker label="" />
+          </div>
         )}
 
         {nodeParallelActionLabel && (

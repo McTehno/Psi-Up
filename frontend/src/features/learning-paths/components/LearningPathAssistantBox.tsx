@@ -1,10 +1,8 @@
-﻿import { useEffect, useMemo, useState, type JSX } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type FormEvent, type JSX } from 'react'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
-import {
-  sendLearningPathAssistantMessage,
-} from '../../../services/learning-path-assistant-service'
+import { sendLearningPathAssistantMessage } from '../../../services/learning-path-assistant-service'
 
 type AssistantExchange = {
   id: string
@@ -141,6 +139,8 @@ function LearningPathAssistantBox({
   variant = 'desktop',
   className = '',
 }: LearningPathAssistantBoxProps) {
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null)
+  const latestQuestionRef = useRef<HTMLDivElement | null>(null)
   const storageKey = useMemo(
     () => `learning-path-assistant:${learningPathId}`,
     [learningPathId],
@@ -150,18 +150,11 @@ function LearningPathAssistantBox({
     readStoredState(storageKey),
   )
   const [inputValue, setInputValue] = useState('')
-  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const selectedMessage =
-    state.messages.find((message) => message.id === selectedMessageId) ??
-    state.messages[state.messages.length - 1] ??
-    null
-
   useEffect(() => {
     setState(readStoredState(storageKey))
-    setSelectedMessageId(null)
     setErrorMessage(null)
     setInputValue('')
   }, [storageKey])
@@ -170,7 +163,25 @@ function LearningPathAssistantBox({
     writeStoredState(storageKey, state)
   }, [state, storageKey])
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (!state.messages.length) {
+      return
+    }
+
+    const container = messagesContainerRef.current
+    const latestQuestion = latestQuestionRef.current
+
+    if (!container || !latestQuestion) {
+      return
+    }
+
+    container.scrollTo({
+      top: latestQuestion.offsetTop - container.offsetTop - 12,
+      behavior: 'smooth',
+    })
+  }, [state.messages.length])
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const question = inputValue.trim()
@@ -201,7 +212,7 @@ function LearningPathAssistantBox({
         sessionId: response.session_id,
         messages: [...currentState.messages, newMessage],
       }))
-      setSelectedMessageId(newMessage.id)
+
       setInputValue('')
     } catch (error) {
       setErrorMessage(
@@ -220,72 +231,83 @@ function LearningPathAssistantBox({
   }
 
   return (
-    <CollapsibleChatPanel
-      variant={variant}
-      className={className}
-    >
-      <div className="flex min-h-[220px] flex-1 flex-col">
-        {state.messages.length === 0 ? (
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Predlagana vprašanja
-            </p>
+    <CollapsibleChatPanel variant={variant} className={className} title="LLM pomočnik">
+      <div
+        className={
+          variant === 'mobile'
+            ? 'flex h-[min(520px,calc(100vh-220px))] min-h-[360px] flex-col'
+            : 'flex min-h-0 flex-1 flex-col'
+        }
+      >
 
-            <div className="mt-3 flex flex-col gap-2">
-              {suggestedQuestions.map((question) => (
-                <button
-                  key={question}
-                  type="button"
-                  onClick={() => handleSuggestedQuestion(question)}
-                  className="rounded-2xl border border-[#c8b79b]/70 bg-white/35 px-4 py-2 text-left text-sm font-semibold text-[#31583b] transition hover:border-[#b39b78]/80 hover:bg-white/55 hover:shadow-sm"
-                >
-                  {question}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
-              Pretekla vprašanja
-            </p>
-
-            <div className="mt-2 flex max-h-28 flex-col gap-2 overflow-y-auto pr-1">
-              {state.messages.map((message) => {
-                const isSelected = selectedMessage?.id === message.id
-
-                return (
-                  <button
-                    key={message.id}
-                    type="button"
-                    onClick={() => setSelectedMessageId(message.id)}
-                    className={`rounded-2xl border px-3 py-2 text-left text-sm transition ${isSelected
-                        ? 'border-[#b39b78]/85 bg-white/60 text-[#2b2118] shadow-sm'
-                        : 'border-[#c8b79b]/70 bg-white/30 text-[#31583b] hover:border-[#b39b78]/80 hover:bg-white/50 hover:shadow-sm'
-                      }`}
-                  >
-                    {message.question}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        <div className="mt-4 min-h-[120px] flex-1 overflow-y-auto rounded-[1.5rem] border border-[#c8b79b]/70 bg-white/24 p-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl transition hover:border-[#b39b78]/80">
-          {selectedMessage ? (
+        <div
+          ref={messagesContainerRef}
+          className="learning-path-assistant-scroll mt-4 min-h-0 flex-1 overflow-y-auto rounded-[1.5rem] border border-[#c8b79b]/70 bg-white/24 p-4 pb-6 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl transition hover:border-[#b39b78]/80"
+        >
+          {state.messages.length === 0 ? (
             <div>
-              <p className="mb-3 text-sm font-bold text-[#2b2118]">
-                {selectedMessage.question}
+              <p className="text-sm leading-6 text-[#5f6652]">
+                Tukaj se bo prikazal pogovor s pomočnikom. Odgovarjal bo samo na podlagi
+                podatkov te učne poti.
               </p>
 
-              <AssistantMarkdownText content={selectedMessage.answer} />
+              <div className="mt-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#31583b]">
+                  Predlagana vprašanja
+                </p>
+
+                <div className="mt-3 flex flex-col gap-2">
+                  {suggestedQuestions.map((question) => (
+                    <button
+                      key={question}
+                      type="button"
+                      onClick={() => handleSuggestedQuestion(question)}
+                      className="group cursor-pointer rounded-2xl border border-[#cfc2ad]/80 bg-[#fffdf8]/55 px-4 py-2.5 text-left text-sm font-semibold text-[#31583b] shadow-[0_8px_20px_rgba(57,47,35,0.05)] transition duration-200 hover:-translate-y-0.5 hover:border-[#9fb18f]/90 hover:bg-[#f2f8f1]/80 hover:text-[#274a31] hover:shadow-[0_12px_26px_rgba(49,88,59,0.12)] active:translate-y-0"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#7f9a72] transition group-hover:scale-125 group-hover:bg-[#31583b]" />
+                        <span>{question}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
-            <p className="text-sm leading-6 text-[#5f6652]">
-              Tukaj se bo prikazal odgovor pomočnika. Odgovarjal bo samo na podlagi
-              podatkov te učne poti.
-            </p>
+            <div className="flex flex-col gap-4">
+              {state.messages.map((message, index) => {
+                const isLatestMessage = index === state.messages.length - 1
+
+                return (
+                  <div key={message.id} className="flex flex-col gap-3">
+                    <div
+                      ref={isLatestMessage ? latestQuestionRef : null}
+                      className="flex justify-end"
+                    >
+                      <div className="max-w-[86%] animate-[fadeIn_0.22s_ease-out] rounded-[1.25rem] rounded-br-md bg-[#31583b] px-4 py-3 text-sm font-medium leading-6 text-white shadow-[0_10px_24px_rgba(49,88,59,0.18)]">
+                        {message.question}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-start">
+                      <div className="max-w-[92%] animate-[fadeIn_0.22s_ease-out] rounded-[1.25rem] rounded-bl-md border border-[#ded5c6]/80 bg-[#fffdf8]/70 px-4 py-3 shadow-[0_12px_28px_rgba(57,47,35,0.08)]">
+                        <AssistantMarkdownText content={message.answer} />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+
+              {isLoading ? (
+                <div className="flex justify-start">
+                  <div className="rounded-[1.25rem] rounded-bl-md border border-[#ded5c6]/80 bg-[#fffdf8]/70 px-4 py-3 text-sm font-semibold text-[#5f6652] shadow-[0_12px_28px_rgba(57,47,35,0.08)]">
+                    Pomočnik razmišlja ...
+                  </div>
+                </div>
+              ) : null}
+
+
+            </div>
           )}
         </div>
 
@@ -295,29 +317,30 @@ function LearningPathAssistantBox({
           </p>
         ) : null}
 
-        <form onSubmit={handleSubmit} className="mt-4">
+        <form onSubmit={handleSubmit} className="mt-4 shrink-0">
           <label htmlFor="learning-path-assistant-question" className="sr-only">
             Vprašanje za pomočnika
           </label>
 
-          <textarea
-            id="learning-path-assistant-question"
-            value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
-            placeholder="Npr. Katere digitalne kompetence razvijam?"
-            rows={3}
-            className="w-full resize-none rounded-[1.5rem] border border-[#b8a486]/80 bg-white/45 px-4 py-3 text-sm leading-6 text-[#2b2118] outline-none transition placeholder:text-[#8c8378] focus:border-[#9f8664] focus:bg-white/60 focus:ring-4 focus:ring-white/30"
-            disabled={isLoading}
-          />
-
-          <button
-            type="submit"
-            disabled={isLoading || inputValue.trim().length === 0 || !learningPathId}
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#31583b] px-5 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(49,88,59,0.24)] transition hover:-translate-y-0.5 hover:bg-[#274a31] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
-          >
-            {isLoading ? 'Pomočnik razmišlja...' : 'Pošlji vprašanje'}
-            <Send className="h-4 w-4" />
-          </button>
+          <div className="flex items-end gap-2 rounded-[1.5rem] border border-[#b8a486]/80 bg-white/45 p-2 transition focus-within:border-[#31583b] focus-within:bg-white/65 focus-within:ring-4 focus-within:ring-[#31583b]/10">
+            <textarea
+              id="learning-path-assistant-question"
+              value={inputValue}
+              onChange={(event) => setInputValue(event.target.value)}
+              placeholder="Vprašaj pomočnika ..."
+              rows={1}
+              className="min-h-[40px] max-h-[96px] flex-1 resize-none border-0 bg-transparent px-3 py-2 text-sm leading-5 text-[#2b2118] outline-none placeholder:text-[#8c8378] disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || inputValue.trim().length === 0 || !learningPathId}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#31583b] text-white shadow-[0_10px_24px_rgba(49,88,59,0.22)] transition hover:-translate-y-0.5 hover:bg-[#274a31] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+              aria-label="Pošlji vprašanje"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
         </form>
       </div>
     </CollapsibleChatPanel>
@@ -325,4 +348,3 @@ function LearningPathAssistantBox({
 }
 
 export default LearningPathAssistantBox
-

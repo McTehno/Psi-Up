@@ -663,6 +663,70 @@ function getSortedStatsNodes(nodes: LearningPathMountainNode[]) {
   })
 }
 
+type LearningPathStatsNextStepItem = {
+  id: string
+  badge: string
+  kindLabel: string
+  title: string
+}
+
+function getStatsNodeKindLabel(node: LearningPathMountainNode) {
+  return node.nodeType === 'learning_unit' ? 'Učna enota' : 'Modul'
+}
+
+function sortStatsLevelNodes(nodes: LearningPathMountainNode[]) {
+  return nodes.slice().sort((firstNode, secondNode) => {
+    const firstParallelGroup = firstNode.parallelGroup ?? ''
+    const secondParallelGroup = secondNode.parallelGroup ?? ''
+
+    if (firstParallelGroup !== secondParallelGroup) {
+      return firstParallelGroup.localeCompare(secondParallelGroup, 'sl')
+    }
+
+    return firstNode.title.localeCompare(secondNode.title, 'sl')
+  })
+}
+
+function getCurrentIncompleteStatsLevel(nodes: LearningPathMountainNode[]) {
+  const levels = new Map<number, LearningPathMountainNode[]>()
+
+  nodes.forEach((node) => {
+    const existingLevel = levels.get(node.order) ?? []
+    existingLevel.push(node)
+    levels.set(node.order, existingLevel)
+  })
+
+  return (
+    Array.from(levels.entries())
+      .sort(([firstOrder], [secondOrder]) => firstOrder - secondOrder)
+      .map(([, levelNodes]) => sortStatsLevelNodes(levelNodes))
+      .find((levelNodes) => levelNodes.some((node) => !isStatsNodeCompleted(node))) ??
+    []
+  )
+}
+
+function getStatsNextStepItems(levelNodes: LearningPathMountainNode[]) {
+  const sortedLevelNodes = sortStatsLevelNodes(levelNodes)
+  const isParallelLevel = sortedLevelNodes.length > 1
+
+  const items = sortedLevelNodes
+    .map((node, index) => ({ node, index }))
+    .filter(({ node }) => !isStatsNodeCompleted(node))
+    .map(({ node, index }) => ({
+      id: node.id,
+      badge: isParallelLevel
+        ? `${node.order}${PARALLEL_LABELS[index] ?? index + 1}`
+        : String(node.order),
+      kindLabel: getStatsNodeKindLabel(node),
+      title: node.title,
+    }))
+
+  return {
+    items,
+    isParallelLevel,
+  }
+}
+
 function getQuestionAnswerStats(
   nodes: LearningPathMountainNode[],
   isFullyCompleted: boolean,
@@ -712,6 +776,8 @@ function getLearningPathStats(
       questionPercent: 0,
       nextStepLabel: 'Naslednji korak',
       nextStepTitle: 'Koraki učne poti še niso pripravljeni.',
+      nextStepItems: [] as LearningPathStatsNextStepItem[],
+      nextStepIsParallel: false,
       isFullyCompleted: false,
     }
   }
@@ -736,6 +802,8 @@ function getLearningPathStats(
       ...questionStats,
       nextStepLabel: 'Zaključeno',
       nextStepTitle: 'Učna pot je uspešno zaključena.',
+      nextStepItems: [] as LearningPathStatsNextStepItem[],
+      nextStepIsParallel: false,
       isFullyCompleted: true,
     }
   }
@@ -747,23 +815,44 @@ function getLearningPathStats(
       ...questionStats,
       nextStepLabel: 'Naslednji korak',
       nextStepTitle: 'Izpolni vprašalnik',
+      nextStepItems: [] as LearningPathStatsNextStepItem[],
+      nextStepIsParallel: false,
       isFullyCompleted: false,
     }
   }
 
-  const nextNode =
-    sortedNodes.find(
-      (node) => node.isAssessmentPosition && !isStatsNodeCompleted(node),
-    ) ?? sortedNodes.find((node) => !isStatsNodeCompleted(node))
+  const currentLevelNodes = getCurrentIncompleteStatsLevel(sortedNodes)
+  const { items: nextStepItems, isParallelLevel: nextStepIsParallel } =
+    getStatsNextStepItems(currentLevelNodes)
 
-  const nextNodeProgress = nextNode ? getStatsNodeProgress(nextNode) : 0
+  const hasStartedCurrentLevel = currentLevelNodes.some(
+    (node) => !isStatsNodeCompleted(node) && getStatsNodeProgress(node) > 0,
+  )
+
+  const nextStepLabel =
+    nextStepIsParallel && nextStepItems.length > 1
+      ? hasStartedCurrentLevel
+        ? 'Nadaljuj z vzporednimi koraki'
+        : 'Vzporedni koraki'
+      : hasStartedCurrentLevel
+        ? 'Nadaljuj z'
+        : 'Naslednji korak'
+
+  const nextStepTitle =
+    nextStepItems.length === 0
+      ? 'Naslednji korak še ni določen.'
+      : nextStepItems.length === 1
+        ? nextStepItems[0].title
+        : `${nextStepItems.length} možnosti za nadaljevanje`
 
   return {
     completedCount,
     totalCount,
     ...questionStats,
-    nextStepLabel: nextNodeProgress > 0 ? 'Nadaljuj z' : 'Naslednji korak',
-    nextStepTitle: nextNode?.title ?? 'Naslednji korak še ni določen.',
+    nextStepLabel,
+    nextStepTitle,
+    nextStepItems,
+    nextStepIsParallel,
     isFullyCompleted: false,
   }
 }
@@ -839,15 +928,55 @@ function LearningPathProgressStats({
           style={{ width: `${stats.questionPercent}%` }}
         />
       </div>
-
       <div className="mt-2.5 rounded-xl border border-[#eadfce]/80 bg-[#f8f3e8]/80 p-2.5 min-[1500px]:mt-3 min-[1500px]:rounded-2xl min-[1500px]:p-3">
         <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
           {stats.nextStepLabel}
         </p>
 
-        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-base">
-          {stats.nextStepTitle}
-        </p>
+        {stats.nextStepItems.length > 1 ? (
+          <ul className="mt-2 space-y-1.5">
+            {stats.nextStepItems.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-start gap-2 rounded-xl border border-[#eadfce]/70 bg-white/65 px-2.5 py-2"
+              >
+                <span className="mt-0.5 flex h-6 min-w-8 items-center justify-center rounded-full bg-[#31583b] px-2 text-[0.65rem] font-black text-[#fffdf8]">
+                  {item.badge}
+                </span>
+
+                <span className="min-w-0">
+                  <span className="block text-[0.56rem] font-bold uppercase tracking-[0.16em] text-[#6f7f58]">
+                    {item.kindLabel}
+                  </span>
+
+                  <span className="line-clamp-2 block text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-sm">
+                    {item.title}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : stats.nextStepItems.length === 1 && stats.nextStepIsParallel ? (
+          <div className="mt-2 flex items-start gap-2 rounded-xl border border-[#eadfce]/70 bg-white/65 px-2.5 py-2">
+            <span className="mt-0.5 flex h-6 min-w-8 items-center justify-center rounded-full bg-[#31583b] px-2 text-[0.65rem] font-black text-[#fffdf8]">
+              {stats.nextStepItems[0].badge}
+            </span>
+
+            <span className="min-w-0">
+              <span className="block text-[0.56rem] font-bold uppercase tracking-[0.16em] text-[#6f7f58]">
+                {stats.nextStepItems[0].kindLabel}
+              </span>
+
+              <span className="line-clamp-2 block text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-sm">
+                {stats.nextStepItems[0].title}
+              </span>
+            </span>
+          </div>
+        ) : (
+          <p className="mt-1 line-clamp-2 text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-base">
+            {stats.nextStepTitle}
+          </p>
+        )}
       </div>
     </section>
   )
@@ -909,14 +1038,12 @@ function getMountainNodeProgressLabel(
     return null
   }
 
-  const percent = `${Math.round(progress * 100)}%`
-
   if (progress > 0) {
     return `NADALJUJ`
   }
 
   if (isExactNextStartNode(node, nodesToRender)) {
-    return `PRIČNI ${percent}`
+    return `PRIČNI`
   }
 
   return null

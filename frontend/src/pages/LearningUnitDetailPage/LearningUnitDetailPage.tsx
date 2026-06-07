@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Award,
@@ -254,6 +254,7 @@ function LearningUnitDetailPage() {
     isFavorite,
     isSaved,
     isCompleted,
+    userProgress,
   } = useUserProgressState({
     contentId: learningUnit?._id,
     contentType: 'learning_unit',
@@ -318,6 +319,19 @@ function LearningUnitDetailPage() {
     navigate(`/assessment?target_type=learning_unit&target_id=${learningUnitId}`)
   }
 
+  const hasStartedQuestionnaire = useMemo(() => {
+    if (assessmentResult) return true
+    if (
+      userProgress?.questionnaire_answers?.some(
+        (qa) => qa.target_type === 'learning_unit' && qa.target_id === learningUnitId
+      )
+    ) {
+      return true
+    }
+    return false
+  }, [assessmentResult, userProgress, learningUnitId])
+
+
   if (isLoading) {
     return (
       <DetailPageShell>
@@ -350,6 +364,7 @@ function LearningUnitDetailPage() {
   const basicInfoFields = getBasicInfoFields(detail.extraFields)
   const canUseContentActions = Boolean(detail.id)
   const canStartQuestionnaire = hasSelfAssessmentQuestions(learningUnit)
+
   const recommendedModuleItems = learningUnit.recommended_modules.map((module) => ({
     id: module._id,
     title: module.title,
@@ -535,7 +550,7 @@ function LearningUnitDetailPage() {
         </div>
       </section>
 
-      {canStartQuestionnaire && !localIsCompleted && (
+      {canStartQuestionnaire && !localIsCompleted && !hasStartedQuestionnaire && (
         <QuestionnaireToast targetType="learning_unit" targetId={learningUnitContentId} />
       )}
     </DetailPageShell>

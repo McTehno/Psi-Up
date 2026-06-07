@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Circle,
@@ -195,6 +195,7 @@ function ModuleDetailPage() {
     isFavorite,
     isSaved,
     isCompleted,
+    userProgress,
   } = useUserProgressState({
     contentId: moduleData?._id,
     contentType: 'module',
@@ -256,6 +257,7 @@ function ModuleDetailPage() {
       setAssessmentResult(null)
     }
   }, [moduleId])
+
   const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
 
@@ -318,6 +320,19 @@ function ModuleDetailPage() {
     navigate(`/assessment?target_type=module&target_id=${moduleId}`)
   }
 
+  const hasStartedQuestionnaire = useMemo(() => {
+    if (assessmentResult) return true
+    if (
+      userProgress?.questionnaire_answers?.some(
+        (qa) => qa.target_type === 'module' && qa.target_id === moduleId
+      )
+    ) {
+      return true
+    }
+    return false
+  }, [assessmentResult, userProgress, moduleId])
+
+
   if (loading) {
     return (
       <DetailPageShell>
@@ -344,6 +359,7 @@ function ModuleDetailPage() {
       </DetailPageShell>
     )
   }
+
 
   const detail = normalizeDetailContent(moduleData, 'Neimenovan modul')
   const moduleContentId = moduleData._id ?? detail.id ?? moduleId ?? ''
@@ -520,7 +536,7 @@ function ModuleDetailPage() {
         </section>
       </div>
 
-      {canStartQuestionnaire && !localIsCompleted && (
+      {canStartQuestionnaire && !localIsCompleted && !hasStartedQuestionnaire && (
         <QuestionnaireToast targetType="module" targetId={moduleContentId} />
       )}
     </DetailPageShell>

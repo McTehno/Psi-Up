@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-
+import { CollapsibleChatPanel } from '../../components/layout/ChatPanel/CollapsibleChatPanel'
 import womanImage from '../../assets/woman.webp'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import AssessmentActions from '../../features/questionnaire/components/AssessmentActions'
@@ -966,7 +966,7 @@ function QuestionnairePage() {
   const assessmentUserId = useMemo(() => getAssessmentUserId(userId), [userId])
   const targetType = normalizeTargetType(searchParams.get('target_type'))
   const targetId = searchParams.get('target_id')
- 
+
   const [phase, setPhase] = useState<AssessmentPhase>('questionnaire')
   const [questionnaireTitle, setQuestionnaireTitle] = useState('')
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([])
@@ -985,17 +985,17 @@ function QuestionnairePage() {
   const [isLoadingQuestionnaire, setIsLoadingQuestionnaire] = useState(true)
   const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isChatOpen, setIsChatOpen] = useState(false)
+
   const [assistantExchange, setAssistantExchange] =
     useState<AssessmentAssistantDisplayExchange | null>(null)
 
-     usePageTitle(
-  phase === 'completed'
-    ? 'Rezultat vprašalnika | NIDiKo'
-    : questionnaireTitle
-      ? `${questionnaireTitle} | NIDiKo`
-      : 'Vprašalnik | NIDiKo',
-)
+  usePageTitle(
+    phase === 'completed'
+      ? 'Rezultat vprašalnika | NIDiKo'
+      : questionnaireTitle
+        ? `${questionnaireTitle} | NIDiKo`
+        : 'Vprašalnik | NIDiKo',
+  )
   useEffect(() => {
     document.body.classList.add('questionnaire-route')
 
@@ -1877,28 +1877,48 @@ function QuestionnairePage() {
     )
   }
 
+  const currentQuestionSource = currentQuestion?.sources?.[0]
 
-  const assistantBox =
-  targetType && targetId && currentQuestion && isChatOpen ? (
+const assistantLearningPathId =
+  (targetType === 'learning_path'
+    ? targetId
+    : currentQuestion?.learning_path_id ??
+      currentQuestionSource?.learning_path_id ??
+      '') || ''
+
+const assistantModuleId =
+  (targetType === 'module'
+    ? targetId
+    : currentQuestion?.module_id ??
+      currentQuestionSource?.module_id ??
+      undefined) || undefined
+
+const assistantLearningUnitId =
+  (targetType === 'learning_unit'
+    ? targetId
+    : currentQuestion?.learning_unit_id ??
+      currentQuestionSource?.learning_unit_id ??
+      undefined) || undefined
+
+const canRenderAssistantBox =
+  Boolean(targetType) &&
+  Boolean(targetId) &&
+  Boolean(currentQuestion) &&
+  Boolean(
+    assistantLearningPathId ||
+      assistantModuleId ||
+      assistantLearningUnitId,
+  )
+
+ const assistantBox =
+  canRenderAssistantBox && targetType && targetId && currentQuestion ? (
     <AssessmentContextBox
       userId={assessmentUserId}
       targetType={targetType}
       targetId={targetId}
-      learningPathId={
-        targetType === 'learning_path'
-          ? targetId
-          : currentQuestion.learning_path_id ?? ''
-      }
-      moduleId={
-        targetType === 'module'
-          ? targetId
-          : currentQuestion.module_id ?? undefined
-      }
-      learningUnitId={
-        targetType === 'learning_unit'
-          ? targetId
-          : currentQuestion.learning_unit_id ?? undefined
-      }
+      learningPathId={assistantLearningPathId}
+      moduleId={assistantModuleId}
+      learningUnitId={assistantLearningUnitId}
       questionId={currentQuestion.id}
       questionText={currentQuestion.question}
       answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
@@ -2017,29 +2037,20 @@ function QuestionnairePage() {
         )}
 
         {targetType && targetId && currentQuestion && (
-          <>
-            <button
-              type="button"
-              onClick={() => {
-                setIsChatOpen((value) => {
-                  const nextValue = !value
-
-                  if (!nextValue) {
-                    setAssistantExchange(null)
-                  }
-
-                  return nextValue
-                })
+          <div className="assessment-assistant-inline mt-6 md:hidden">
+            <CollapsibleChatPanel
+              variant="mobile"
+              title="AI pomočnik"
+              onExpandedChange={(isExpanded) => {
+                
+                if (!isExpanded) {
+                  setAssistantExchange(null)
+                }
               }}
-              className="assessment-assistant-mobile-toggle mt-6 rounded-full bg-[#31583b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25442d]"
             >
-              {isChatOpen ? 'Skrij pomočnika' : 'Vprašaj pomočnika'}
-            </button>
-
-            <div className="assessment-assistant-inline">
               {assistantBox}
-            </div>
-          </>
+            </CollapsibleChatPanel>
+          </div>
         )}
       </AssessmentLayout>
     </>

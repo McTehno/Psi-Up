@@ -105,11 +105,9 @@ function getQuestionStatusById(questions: AssessmentProgressQuestion[]) {
   return new Map(questions.map((question) => [question.id, question.status]))
 }
 
-function getStepPositionPercent(
-  step: AssessmentProgressStep,
+function getEvenStepPositionPercent(
   index: number,
   stepCount: number,
-  questionCount: number,
   showGoalFlag: boolean,
 ) {
   const questionAreaPercent = getQuestionAreaPercent(showGoalFlag)
@@ -118,22 +116,8 @@ function getStepPositionPercent(
     return 0
   }
 
-  if (
-    questionCount > 0 &&
-    typeof step.questionCountUntilStep === 'number'
-  ) {
-    return Math.min(
-      questionAreaPercent,
-      Math.max(
-        0,
-        (step.questionCountUntilStep / questionCount) * questionAreaPercent,
-      ),
-    )
-  }
-
   return ((index + 1) / stepCount) * questionAreaPercent
 }
-
 function buildVisualQuestionSegments({
   steps,
   questions,
@@ -154,11 +138,9 @@ function buildVisualQuestionSegments({
   let previousStepPosition = 0
 
   steps.forEach((step, stepIndex) => {
-    const stepPosition = getStepPositionPercent(
-      step,
+    const stepPosition = getEvenStepPositionPercent(
       stepIndex,
       steps.length,
-      questionCount,
       showGoalFlag,
     )
 
@@ -358,11 +340,9 @@ function AssessmentProgress({
                 key={step.id}
                 style={
                   {
-                    left: `${getStepPositionPercent(
-                      step,
+                    left: `${getEvenStepPositionPercent(
                       index,
                       steps.length,
-                      safeQuestionCount,
                       showGoalFlag,
                     )}%`,
                   } as CSSProperties
@@ -391,8 +371,8 @@ function AssessmentProgress({
                 </span>
                 <span
                   className={`assessment-progress__tooltip ${activeTooltipStepId === step.id
-                      ? 'assessment-progress__tooltip--visible'
-                      : ''
+                    ? 'assessment-progress__tooltip--visible'
+                    : ''
                     }`}
                   role="tooltip"
                 >

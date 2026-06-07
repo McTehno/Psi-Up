@@ -31,6 +31,8 @@ export type LearningPathMountainNode = {
   isAssessmentPosition?: boolean
   nodeType?: 'module' | 'learning_unit'
   detailPath?: string
+  questionYesCount?: number | null
+  questionTotalCount?: number | null
 }
 
 type PositionedMountainNode = LearningPathMountainNode & {
@@ -256,7 +258,7 @@ const MOBILE_FLAG_CLASS = 'block min-[640px]:hidden'
 
 const DESKTOP_DETAIL_CLASS = 'absolute z-50 hidden w-[390px] min-[1500px]:block'
 const TABLET_DETAIL_CLASS =
-  'absolute z-50 hidden w-[350px] min-[640px]:max-[1499px]:block'
+  'absolute z-[90] hidden w-[240px] max-h-[calc(100%-2rem)] overflow-y-auto min-[640px]:max-[1499px]:block min-[900px]:w-[240px] min-[1200px]:w-[240px]'
 
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
@@ -276,6 +278,14 @@ function formatModuleDuration(durationHours?: number | null) {
   }
 
   return `${durationHours} ur`
+}
+
+function getTabletDetailStyle(): CSSProperties {
+  return {
+    left: '68%',
+    top: '52%',
+    transform: 'translate(-50%, -50%)',
+  }
 }
 
 function getSortedVisibleNodes(nodes: LearningPathMountainNode[]) {
@@ -546,17 +556,7 @@ function ModuleDetailBox({
   style?: CSSProperties
 }) {
   const isLearningUnit = node.nodeType === 'learning_unit'
-
   const kindLabel = isLearningUnit ? 'Učna enota' : 'Modul'
-
-  const descriptionFallback = isLearningUnit
-    ? 'Opis učne enote še ni dodan.'
-    : 'Opis modula še ni dodan.'
-
-  const detailsLabel = isLearningUnit
-    ? 'Podrobnosti učne enote'
-    : 'Podrobnosti modula'
-
   const detailPath =
     node.detailPath ??
     (isLearningUnit
@@ -566,18 +566,18 @@ function ModuleDetailBox({
   return (
     <article
       className={[
-        'rounded-[28px] border border-[#DED2BC] bg-[#fffdf8] p-6 shadow-[0_18px_45px_rgba(49,88,59,0.13)]',
+        'rounded-[18px] border border-[#DED2BC] bg-[#fffdf8] p-3.5 shadow-[0_18px_45px_rgba(49,88,59,0.13)] min-[1500px]:rounded-[24px] min-[1500px]:p-5',
         className,
       ].join(' ')}
       style={style}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--color-brown-500)]">
+          <p className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-[var(--color-brown-500)]">
             {kindLabel} {node.displayLabel}
           </p>
 
-          <h3 className="mt-3 font-serif text-3xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
+          <h3 className="mt-2 font-serif text-2xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)] min-[1500px]:text-3xl">
             {node.title}
           </h3>
         </div>
@@ -585,47 +585,36 @@ function ModuleDetailBox({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
           aria-label="Zapri podrobnosti"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
-      <p className="mt-5 text-base leading-7 text-[var(--color-brown-600)]">
-        {node.description || descriptionFallback}
-      </p>
-
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-[#f6efdf] px-3.5 py-1.5 text-xs font-bold text-[var(--color-brown-700)] min-[1500px]:px-4 min-[1500px]:py-2 min-[1500px]:text-sm">
           {formatModuleDuration(node.durationHours)}
         </span>
 
-        {node.parallelCount > 1 && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Vzporedna učna enota' : 'Vzporedni modul'}
-          </span>
-        )}
-
-        {node.isRequired && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Obvezna učna enota' : 'Obvezen modul'}
-          </span>
-        )}
-
-        {node.parallelGroup && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            Skupina {node.parallelGroup}
-          </span>
-        )}
+        <span
+          className={[
+            'rounded-full px-3.5 py-1.5 text-xs font-bold min-[1500px]:px-4 min-[1500px]:py-2 min-[1500px]:text-sm',
+            node.isRequired
+              ? 'bg-[#eaf2e5] text-[#31583b]'
+              : 'bg-[#f3ead8] text-[var(--color-brown-700)]',
+          ].join(' ')}
+        >
+          {node.isRequired ? 'Obvezno' : 'Izbirno'}
+        </span>
       </div>
 
       <Link
         to={detailPath}
-        className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#31583b] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
+        className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-[#31583b] px-4 py-2 text-xs font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
       >
-        {detailsLabel}
-        <ArrowRight className="h-4 w-4" />
+        Podrobnosti
+        <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </article>
   )
@@ -639,30 +628,301 @@ function normalizeAssessmentProgress(progress?: number | null) {
   return Math.min(Math.max(progress, 0), 1)
 }
 
-function getMountainNodeProgressStyle(node: PositionedMountainNode) {
-  const progress = normalizeAssessmentProgress(node.assessmentProgress)
+function normalizeQuestionCount(value?: number | null) {
+  const numericValue = Number(value ?? 0)
 
-  if (
-    progress == null ||
-    progress <= 0 ||
-    node.assessmentStatus === 'completed'
-  ) {
-    return null
+  if (!Number.isFinite(numericValue)) {
+    return 0
   }
 
-  return {
-    width: `${progress * 100}%`,
-  } satisfies CSSProperties
+  return Math.max(Math.round(numericValue), 0)
 }
 
-function formatAssessmentProgressPercent(progress?: number | null) {
-  const normalizedProgress = normalizeAssessmentProgress(progress)
+function isStatsNodeCompleted(node: LearningPathMountainNode) {
+  return (
+    node.assessmentStatus === 'completed' ||
+    normalizeAssessmentProgress(node.assessmentProgress) === 1
+  )
+}
 
-  if (normalizedProgress == null) {
+function getStatsNodeProgress(node: LearningPathMountainNode) {
+  if (isStatsNodeCompleted(node)) {
+    return 1
+  }
+
+  return normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+}
+
+function getSortedStatsNodes(nodes: LearningPathMountainNode[]) {
+  return nodes.slice().sort((firstNode, secondNode) => {
+    if (firstNode.order !== secondNode.order) {
+      return firstNode.order - secondNode.order
+    }
+
+    return firstNode.title.localeCompare(secondNode.title, 'sl')
+  })
+}
+
+function getQuestionAnswerStats(
+  nodes: LearningPathMountainNode[],
+  isFullyCompleted: boolean,
+) {
+  const totalQuestionCount = nodes.reduce(
+    (sum, node) => sum + normalizeQuestionCount(node.questionTotalCount),
+    0,
+  )
+
+  const rawYesQuestionCount = nodes.reduce(
+    (sum, node) => sum + normalizeQuestionCount(node.questionYesCount),
+    0,
+  )
+
+  const yesQuestionCount =
+    isFullyCompleted && totalQuestionCount > 0
+      ? totalQuestionCount
+      : Math.min(rawYesQuestionCount, totalQuestionCount)
+
+  const questionPercent =
+    totalQuestionCount > 0
+      ? Math.round((yesQuestionCount / totalQuestionCount) * 100)
+      : isFullyCompleted
+        ? 100
+        : 0
+
+  return {
+    yesQuestionCount,
+    totalQuestionCount,
+    questionPercent,
+  }
+}
+
+function getLearningPathStats(
+  nodes: LearningPathMountainNode[],
+  isCompleted: boolean,
+) {
+  const sortedNodes = getSortedStatsNodes(nodes)
+  const totalCount = sortedNodes.length
+
+  if (totalCount === 0) {
+    return {
+      completedCount: 0,
+      totalCount: 0,
+      yesQuestionCount: 0,
+      totalQuestionCount: 0,
+      questionPercent: 0,
+      nextStepLabel: 'Naslednji korak',
+      nextStepTitle: 'Koraki učne poti še niso pripravljeni.',
+      isFullyCompleted: false,
+    }
+  }
+
+  const completedCount = isCompleted
+    ? totalCount
+    : sortedNodes.filter(isStatsNodeCompleted).length
+
+  const isFullyCompleted = completedCount === totalCount
+
+  const questionStats = getQuestionAnswerStats(sortedNodes, isFullyCompleted)
+
+  if (isFullyCompleted) {
+    return {
+      completedCount: totalCount,
+      totalCount,
+      ...questionStats,
+      nextStepLabel: 'Zaključeno',
+      nextStepTitle: 'Učna pot je uspešno zaključena.',
+      isFullyCompleted: true,
+    }
+  }
+
+  const nextNode =
+    sortedNodes.find(
+      (node) => node.isAssessmentPosition && !isStatsNodeCompleted(node),
+    ) ?? sortedNodes.find((node) => !isStatsNodeCompleted(node))
+
+  const nextNodeProgress = nextNode ? getStatsNodeProgress(nextNode) : 0
+
+  return {
+    completedCount,
+    totalCount,
+    ...questionStats,
+    nextStepLabel: nextNodeProgress > 0 ? 'Nadaljuj z' : 'Naslednji korak',
+    nextStepTitle: nextNode?.title ?? 'Naslednji korak še ni določen.',
+    isFullyCompleted: false,
+  }
+}
+
+function LearningPathProgressStats({
+  nodes,
+  isCompleted,
+}: {
+  nodes: LearningPathMountainNode[]
+  isCompleted: boolean
+}) {
+  const stats = getLearningPathStats(nodes, isCompleted)
+
+  const questionPercentLabel =
+    stats.totalQuestionCount > 0 || stats.isFullyCompleted
+      ? `${stats.questionPercent}%`
+      : '—'
+
+  const questionRatioLabel =
+    stats.totalQuestionCount > 0
+      ? `${stats.yesQuestionCount}/${stats.totalQuestionCount} vprašanj`
+      : stats.isFullyCompleted
+        ? 'Učna pot zaključena'
+        : 'Vprašanja še niso rešena'
+
+  return (
+    <section
+      className="absolute left-4 top-4 z-20 hidden w-[280px] rounded-[1.35rem] border border-[#eadfce]/90 bg-[#fffdf8]/95 p-3 text-[#344E41] shadow-[0_18px_45px_rgba(49,88,59,0.12)] backdrop-blur-md min-[875px]:block min-[1024px]:w-[300px] min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:w-[420px] min-[1500px]:rounded-[1.6rem] min-[1500px]:p-4"
+      aria-label="Statistika učne poti"
+    >
+      <div className="mb-2 min-[1500px]:mb-3">
+        <p className="text-[0.58rem] font-bold uppercase tracking-[0.24em] text-[#6f7f58] min-[1500px]:text-[0.68rem] min-[1500px]:tracking-[0.28em]">
+          Napredek
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-[#eadfce]/80 bg-white/80 p-2.5 shadow-[0_8px_22px_rgba(49,88,59,0.06)] min-[1500px]:rounded-2xl min-[1500px]:p-3">
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+            Končano
+          </p>
+
+          <p className="mt-1 text-xl font-black text-[#24382d] min-[1500px]:text-2xl">
+            {stats.completedCount}/{stats.totalCount}
+          </p>
+
+          <p className="mt-0.5 text-[0.62rem] font-semibold text-[#6f7f58] min-[1500px]:mt-1 min-[1500px]:text-[0.7rem]">
+            modulov / enot
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-[#eadfce]/80 bg-white/80 p-2.5 shadow-[0_8px_22px_rgba(49,88,59,0.06)] min-[1500px]:rounded-2xl min-[1500px]:p-3">
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+            Odstotek DA
+          </p>
+
+          <p className="mt-1 text-xl font-black text-[#24382d] min-[1500px]:text-2xl">
+            {questionPercentLabel}
+          </p>
+
+          <p className="mt-0.5 text-[0.62rem] font-semibold text-[#6f7f58] min-[1500px]:mt-1 min-[1500px]:text-[0.7rem]">
+            {questionRatioLabel}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2.5 overflow-hidden rounded-full bg-[#efe7d8] min-[1500px]:mt-3">
+        <div
+          className={[
+            'h-1.5 rounded-full transition-all duration-500 min-[1500px]:h-2',
+            stats.isFullyCompleted ? 'bg-[#31583b]' : 'bg-[#d08a34]',
+          ].join(' ')}
+          style={{ width: `${stats.questionPercent}%` }}
+        />
+      </div>
+
+      <div className="mt-2.5 rounded-xl border border-[#eadfce]/80 bg-[#f8f3e8]/80 p-2.5 min-[1500px]:mt-3 min-[1500px]:rounded-2xl min-[1500px]:p-3">
+        <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+          {stats.nextStepLabel}
+        </p>
+
+        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-base">
+          {stats.nextStepTitle}
+        </p>
+      </div>
+    </section>
+  )
+}
+
+function isMountainNodeCompleted(node: PositionedMountainNode) {
+  return (
+    node.assessmentStatus === 'completed' ||
+    normalizeAssessmentProgress(node.assessmentProgress) === 1
+  )
+}
+
+function isPreviousLevelCompleted(
+  node: PositionedMountainNode,
+  nodesToRender: PositionedMountainNode[],
+) {
+  const previousOrders = nodesToRender
+    .map((candidateNode) => candidateNode.order)
+    .filter((order) => order < node.order)
+    .sort((firstOrder, secondOrder) => firstOrder - secondOrder)
+
+  const previousOrder = previousOrders.at(-1)
+
+  if (previousOrder === undefined) {
+    return true
+  }
+
+  const previousLevelNodes = nodesToRender.filter(
+    (candidateNode) => candidateNode.order === previousOrder,
+  )
+
+  return previousLevelNodes.every(isMountainNodeCompleted)
+}
+
+function isExactNextStartNode(
+  node: PositionedMountainNode,
+  nodesToRender: PositionedMountainNode[],
+) {
+  const progress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+
+  return (
+    node.isAssessmentPosition === true &&
+    progress <= 0 &&
+    isPreviousLevelCompleted(node, nodesToRender)
+  )
+}
+
+function getMountainNodeProgressLabel(
+  node: PositionedMountainNode,
+  nodesToRender: PositionedMountainNode[],
+) {
+  const progress = normalizeAssessmentProgress(node.assessmentProgress)
+
+  if (node.assessmentStatus === 'completed' || progress === 1) {
+    return '✓100%'
+  }
+
+  if (progress == null) {
     return null
   }
 
-  return `${Math.round(normalizedProgress * 100)}%`
+  const percent = `${Math.round(progress * 100)}%`
+
+  if (progress > 0) {
+    return `NADALJUJ`
+  }
+
+  if (isExactNextStartNode(node, nodesToRender)) {
+    return `PRIČNI ${percent}`
+  }
+
+  return null
+}
+
+type MountainNodeProgressBadgeVariant = 'completed' | 'start' | 'progress'
+
+function getMountainNodeProgressBadgeVariant(
+  node: PositionedMountainNode,
+  nodesToRender: PositionedMountainNode[],
+): MountainNodeProgressBadgeVariant {
+  const progress = normalizeAssessmentProgress(node.assessmentProgress)
+
+  if (node.assessmentStatus === 'completed' || progress === 1) {
+    return 'completed'
+  }
+
+  if (isExactNextStartNode(node, nodesToRender)) {
+    return 'start'
+  }
+
+  return 'progress'
 }
 
 function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
@@ -675,34 +935,54 @@ function getMountainNodeAssessmentClassName(node: PositionedMountainNode) {
   }
 
   if (node.assessmentStatus === 'partially_completed') {
-    return 'border-[#f2c879] bg-[#fff8ee] text-[#344E41] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
+    return 'border-[#f2c879] bg-[#fff8ee] text-[#8a5a17] shadow-[0_12px_28px_rgba(208,138,52,0.14)]'
   }
 
   return 'border-[#eadfce] bg-[#fffdf8] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.08)]'
 }
 
-function isParallelAssessmentChoice(node: PositionedMountainNode) {
-  return node.parallelCount > 1 || Boolean(node.parallelGroup)
-}
-
-function getMountainNodeParallelActionLabel(node: PositionedMountainNode) {
-  if (!node.isAssessmentPosition || !isParallelAssessmentChoice(node)) {
-    return null
-  }
-
-  const progress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
-
-  return progress > 0 ? 'Nadaljuj' : 'Prični'
-}
-
-function MountainAssessmentActionMarker({
+function MountainNodeProgressBadge({
   label,
+  variant,
+  progress,
 }: {
   label: string
+  variant: MountainNodeProgressBadgeVariant
+  progress: number
 }) {
+  const progressBarWidth = `${Math.min(Math.max(progress, 0), 1) * 100}%`
+
   return (
-    <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#DED2BC] bg-white/95 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#344E41] shadow-[0_10px_24px_rgba(49,88,59,0.16)] backdrop-blur">
-      {label}
+    <div
+      className={[
+        'pointer-events-none absolute left-1/2 top-full z-50 mt-1 -translate-x-1/2 overflow-hidden whitespace-nowrap rounded-full border text-[0.5rem] font-extrabold uppercase leading-none tracking-[0.08em] shadow-[0_8px_18px_rgba(49,88,59,0.12)] backdrop-blur',
+        'min-[640px]:mt-1.5 min-[640px]:text-[0.56rem]',
+        'min-[1500px]:mt-2 min-[1500px]:text-[0.64rem]',
+        variant === 'completed'
+          ? 'border-[#b7d7bd] bg-[#31583b] text-[#fffdf8]'
+          : '',
+        variant === 'start'
+          ? 'border-[#d08a34]/40 bg-white/94 text-[#8a5a17]'
+          : '',
+        variant === 'progress'
+          ? 'border-[#DED2BC] bg-white/94 text-[#344E41]'
+          : '',
+      ].join(' ')}
+    >
+      {variant !== 'completed' && (
+        <span
+          aria-hidden="true"
+          className={[
+            'absolute inset-y-0 left-0 z-0 transition-[width] duration-500 ease-out',
+            variant === 'start' ? 'bg-[#d08a34]/30' : 'bg-[#d08a34]/42',
+          ].join(' ')}
+          style={{ width: progressBarWidth }}
+        />
+      )}
+
+      <span className="relative z-10 block px-2 py-1 min-[1500px]:px-2.5">
+        {label}
+      </span>
     </div>
   )
 }
@@ -1061,19 +1341,17 @@ export function LearningPathMountain({
       const isSelected = selectedNodeId === node.id
       const hasParallelLabel = node.parallelCount > 1
       const nodeAssessmentClassName = getMountainNodeAssessmentClassName(node)
-      const isParallelChoice =
-        node.isAssessmentPosition && isParallelAssessmentChoice(node)
-      const nodeParallelActionLabel = getMountainNodeParallelActionLabel(node)
-      const nodeProgressStyle = getMountainNodeProgressStyle(node)
-      const progressPercent = formatAssessmentProgressPercent(
-        node.assessmentProgress,
+      const nodeProgressLabel = getMountainNodeProgressLabel(node, nodesToRender)
+      const nodeProgressBadgeVariant = getMountainNodeProgressBadgeVariant(
+        node,
+        nodesToRender,
       )
-
+      const nodeProgress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
       return (
         <div
           key={`${node.id}-${className}`}
           className={[
-            'absolute z-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2',
+            'absolute z-40 -translate-x-1/2 -translate-y-1/2 items-center justify-center',
             className,
           ].join(' ')}
           style={{
@@ -1081,50 +1359,38 @@ export function LearningPathMountain({
             top: `${node.y}%`,
           }}
         >
-       {node.isAssessmentPosition && !isParallelChoice && (
-          <div className="translate-y-6">
-            <AssessmentPositionMarker label="" />
-          </div>
-        )}
-
-        {nodeParallelActionLabel && (
-          <MountainAssessmentActionMarker label={nodeParallelActionLabel} />
-        )}
-
+          {node.isAssessmentPosition && (
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]">
+              <AssessmentPositionMarker label="" />
+            </div>
+          )}
           <button
             type="button"
             onClick={() => setSelectedNodeId(node.id)}
             className={[
-              'relative isolate flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[1500px]:h-14 min-[1500px]:w-14',
+              'relative isolate flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full border-2 font-bold transition duration-200 hover:scale-105 focus:outline-none focus-visible:ring-4 min-[480px]:h-9 min-[480px]:w-9 min-[640px]:h-10 min-[640px]:w-10 min-[1024px]:h-11 min-[1024px]:w-11 min-[1500px]:h-14 min-[1500px]:w-14',
               hasParallelLabel
-                ? 'text-[0.78rem] min-[1500px]:text-sm'
-                : 'text-base min-[1500px]:text-lg',
+                ? 'text-[0.58rem] min-[480px]:text-[0.64rem] min-[640px]:text-[0.7rem] min-[1024px]:text-xs min-[1500px]:text-sm'
+                : 'text-xs min-[480px]:text-[0.82rem] min-[640px]:text-sm min-[1024px]:text-base min-[1500px]:text-lg',
               nodeAssessmentClassName,
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={[
-              `Odpri podrobnosti ${
-                node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
-              } ${node.title}`,
-              progressPercent ? `opravljeno ${progressPercent}` : null,
-            ]
-              .filter(Boolean)
-              .join(', ')}
-            title={progressPercent ? `Opravljeno ${progressPercent}` : undefined}
-          >
-            {nodeProgressStyle && (
-              <span
-                aria-hidden="true"
-                className="absolute inset-y-0 left-0 z-0 bg-[#31583b] transition-[width] duration-500 ease-out"
-                style={nodeProgressStyle}
-              />
-            )}
-
+            aria-label={`Odpri podrobnosti ${
+              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+            } ${node.title}`}
+            >
             <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(255,255,255,0.55)]">
               {node.displayLabel}
             </span>
           </button>
+          {nodeProgressLabel && (
+            <MountainNodeProgressBadge
+              label={nodeProgressLabel}
+              variant={nodeProgressBadgeVariant}
+              progress={nodeProgress}
+            />
+          )}
         </div>
       )
     })
@@ -1218,6 +1484,8 @@ export function LearningPathMountain({
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
 
+      <LearningPathProgressStats nodes={nodes} isCompleted={isCompleted} />
+
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul/ učno enoto
       </div>
@@ -1275,17 +1543,7 @@ export function LearningPathMountain({
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
           className={TABLET_DETAIL_CLASS}
-          style={{
-            left: `${Math.min(Math.max(selectedTabletNode.x, 22), 78)}%`,
-            top:
-              selectedTabletNode.y > 50
-                ? `calc(${selectedTabletNode.y}% - 1rem)`
-                : `calc(${selectedTabletNode.y}% + 4rem)`,
-            transform:
-              selectedTabletNode.y > 50
-                ? 'translate(-50%, -100%)'
-                : 'translate(-50%, 0)',
-          }}
+          style={getTabletDetailStyle()}
         />
       )}
 

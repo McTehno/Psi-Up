@@ -258,7 +258,7 @@ const MOBILE_FLAG_CLASS = 'block min-[640px]:hidden'
 
 const DESKTOP_DETAIL_CLASS = 'absolute z-50 hidden w-[390px] min-[1500px]:block'
 const TABLET_DETAIL_CLASS =
-  'absolute z-50 hidden w-[350px] min-[640px]:max-[1499px]:block'
+  'absolute z-[90] hidden w-[240px] max-h-[calc(100%-2rem)] overflow-y-auto min-[640px]:max-[1499px]:block min-[900px]:w-[240px] min-[1200px]:w-[240px]'
 
 function formatModuleDuration(durationHours?: number | null) {
   if (durationHours == null) {
@@ -278,6 +278,14 @@ function formatModuleDuration(durationHours?: number | null) {
   }
 
   return `${durationHours} ur`
+}
+
+function getTabletDetailStyle(): CSSProperties {
+  return {
+    left: '68%',
+    top: '52%',
+    transform: 'translate(-50%, -50%)',
+  }
 }
 
 function getSortedVisibleNodes(nodes: LearningPathMountainNode[]) {
@@ -548,17 +556,7 @@ function ModuleDetailBox({
   style?: CSSProperties
 }) {
   const isLearningUnit = node.nodeType === 'learning_unit'
-
   const kindLabel = isLearningUnit ? 'Učna enota' : 'Modul'
-
-  const descriptionFallback = isLearningUnit
-    ? 'Opis učne enote še ni dodan.'
-    : 'Opis modula še ni dodan.'
-
-  const detailsLabel = isLearningUnit
-    ? 'Podrobnosti učne enote'
-    : 'Podrobnosti modula'
-
   const detailPath =
     node.detailPath ??
     (isLearningUnit
@@ -568,18 +566,18 @@ function ModuleDetailBox({
   return (
     <article
       className={[
-        'rounded-[28px] border border-[#DED2BC] bg-[#fffdf8] p-6 shadow-[0_18px_45px_rgba(49,88,59,0.13)]',
+        'rounded-[18px] border border-[#DED2BC] bg-[#fffdf8] p-3.5 shadow-[0_18px_45px_rgba(49,88,59,0.13)] min-[1500px]:rounded-[24px] min-[1500px]:p-5',
         className,
       ].join(' ')}
       style={style}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--color-brown-500)]">
+          <p className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-[var(--color-brown-500)]">
             {kindLabel} {node.displayLabel}
           </p>
 
-          <h3 className="mt-3 font-serif text-3xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)]">
+          <h3 className="mt-2 font-serif text-2xl leading-tight tracking-[-0.03em] text-[var(--color-brown-900)] min-[1500px]:text-3xl">
             {node.title}
           </h3>
         </div>
@@ -587,47 +585,36 @@ function ModuleDetailBox({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#DED2BC] bg-[#fffdf8] text-[var(--color-brown-900)] transition hover:-translate-y-0.5 hover:bg-[#f6efdf]"
           aria-label="Zapri podrobnosti"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
-      <p className="mt-5 text-base leading-7 text-[var(--color-brown-600)]">
-        {node.description || descriptionFallback}
-      </p>
-
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-[#f6efdf] px-3.5 py-1.5 text-xs font-bold text-[var(--color-brown-700)] min-[1500px]:px-4 min-[1500px]:py-2 min-[1500px]:text-sm">
           {formatModuleDuration(node.durationHours)}
         </span>
 
-        {node.parallelCount > 1 && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Vzporedna učna enota' : 'Vzporedni modul'}
-          </span>
-        )}
-
-        {node.isRequired && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            {isLearningUnit ? 'Obvezna učna enota' : 'Obvezen modul'}
-          </span>
-        )}
-
-        {node.parallelGroup && (
-          <span className="rounded-full bg-[#f6efdf] px-4 py-2 text-sm font-bold text-[var(--color-brown-700)]">
-            Skupina {node.parallelGroup}
-          </span>
-        )}
+        <span
+          className={[
+            'rounded-full px-3.5 py-1.5 text-xs font-bold min-[1500px]:px-4 min-[1500px]:py-2 min-[1500px]:text-sm',
+            node.isRequired
+              ? 'bg-[#eaf2e5] text-[#31583b]'
+              : 'bg-[#f3ead8] text-[var(--color-brown-700)]',
+          ].join(' ')}
+        >
+          {node.isRequired ? 'Obvezno' : 'Izbirno'}
+        </span>
       </div>
 
       <Link
         to={detailPath}
-        className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#31583b] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
+        className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-[#31583b] px-4 py-2 text-xs font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
       >
-        {detailsLabel}
-        <ArrowRight className="h-4 w-4" />
+        Podrobnosti
+        <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </article>
   )
@@ -1556,17 +1543,7 @@ export function LearningPathMountain({
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
           className={TABLET_DETAIL_CLASS}
-          style={{
-            left: `${Math.min(Math.max(selectedTabletNode.x, 22), 78)}%`,
-            top:
-              selectedTabletNode.y > 50
-                ? `calc(${selectedTabletNode.y}% - 1rem)`
-                : `calc(${selectedTabletNode.y}% + 4rem)`,
-            transform:
-              selectedTabletNode.y > 50
-                ? 'translate(-50%, -100%)'
-                : 'translate(-50%, 0)',
-          }}
+          style={getTabletDetailStyle()}
         />
       )}
 

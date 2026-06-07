@@ -535,6 +535,30 @@ function getNodeAssessmentStatus(
   )
 }
 
+function getNodeQuestionProgressResult(
+  kind: LearningPathDisplayNodeKind,
+  nodeId: string,
+  assessmentResult: AssessmentResultResponse | null,
+): QuestionProgressResult | null {
+  if (!assessmentResult) {
+    return null
+  }
+
+  if (kind === 'learning_unit') {
+    return (
+      assessmentResult.learning_unit_results?.find(
+        (result) => result.learning_unit_id === nodeId,
+      ) ?? null
+    )
+  }
+
+  return (
+    assessmentResult.module_results?.find(
+      (result) => result.module_id === nodeId,
+    ) ?? null
+  )
+}
+
 function createMountainNode(params: {
   kind: LearningPathDisplayNodeKind
   nodeId: string
@@ -575,6 +599,10 @@ function createMountainNode(params: {
     )
     : null
 
+    const nodeQuestionProgressResult =
+      getNodeQuestionProgressResult(kind, nodeId, assessmentResult) ??
+      getNodeQuestionProgressResult(kind, nodeId, nodeSpecificAssessmentResult)
+
   const isNodeAssessmentPosition =
     nodeAssessmentStatus !== 'completed' &&
     (kind === 'learning_unit'
@@ -588,9 +616,7 @@ function createMountainNode(params: {
     order,
     title: getTextOrFallback(
       source?.title,
-      kind === 'learning_unit'
-        ? 'Neimenovana učna enota'
-        : 'Neimenovan modul',
+      kind === 'learning_unit' ? 'Neimenovana učna enota' : 'Neimenovan modul',
     ),
     description: getTextOrFallback(
       source?.short_description,
@@ -606,6 +632,8 @@ function createMountainNode(params: {
     parallelGroup: step?.parallel_group?.trim() || null,
     assessmentStatus: nodeAssessmentStatus,
     assessmentProgress: nodeAssessmentProgress,
+    questionYesCount: nodeQuestionProgressResult?.known_question_count ?? null,
+    questionTotalCount: nodeQuestionProgressResult?.total_question_count ?? null,
     isAssessmentPosition: isNodeAssessmentPosition,
   }
 }

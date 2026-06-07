@@ -31,6 +31,8 @@ export type LearningPathMountainNode = {
   isAssessmentPosition?: boolean
   nodeType?: 'module' | 'learning_unit'
   detailPath?: string
+  questionYesCount?: number | null
+  questionTotalCount?: number | null
 }
 
 type PositionedMountainNode = LearningPathMountainNode & {
@@ -637,6 +639,215 @@ function normalizeAssessmentProgress(progress?: number | null) {
   }
 
   return Math.min(Math.max(progress, 0), 1)
+}
+
+function normalizeQuestionCount(value?: number | null) {
+  const numericValue = Number(value ?? 0)
+
+  if (!Number.isFinite(numericValue)) {
+    return 0
+  }
+
+  return Math.max(Math.round(numericValue), 0)
+}
+
+function isStatsNodeCompleted(node: LearningPathMountainNode) {
+  return (
+    node.assessmentStatus === 'completed' ||
+    normalizeAssessmentProgress(node.assessmentProgress) === 1
+  )
+}
+
+function getStatsNodeProgress(node: LearningPathMountainNode) {
+  if (isStatsNodeCompleted(node)) {
+    return 1
+  }
+
+  return normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+}
+
+function getSortedStatsNodes(nodes: LearningPathMountainNode[]) {
+  return nodes.slice().sort((firstNode, secondNode) => {
+    if (firstNode.order !== secondNode.order) {
+      return firstNode.order - secondNode.order
+    }
+
+    return firstNode.title.localeCompare(secondNode.title, 'sl')
+  })
+}
+
+function getQuestionAnswerStats(
+  nodes: LearningPathMountainNode[],
+  isFullyCompleted: boolean,
+) {
+  const totalQuestionCount = nodes.reduce(
+    (sum, node) => sum + normalizeQuestionCount(node.questionTotalCount),
+    0,
+  )
+
+  const rawYesQuestionCount = nodes.reduce(
+    (sum, node) => sum + normalizeQuestionCount(node.questionYesCount),
+    0,
+  )
+
+  const yesQuestionCount =
+    isFullyCompleted && totalQuestionCount > 0
+      ? totalQuestionCount
+      : Math.min(rawYesQuestionCount, totalQuestionCount)
+
+  const questionPercent =
+    totalQuestionCount > 0
+      ? Math.round((yesQuestionCount / totalQuestionCount) * 100)
+      : isFullyCompleted
+        ? 100
+        : 0
+
+  return {
+    yesQuestionCount,
+    totalQuestionCount,
+    questionPercent,
+  }
+}
+
+function getLearningPathStats(
+  nodes: LearningPathMountainNode[],
+  isCompleted: boolean,
+) {
+  const sortedNodes = getSortedStatsNodes(nodes)
+  const totalCount = sortedNodes.length
+
+  if (totalCount === 0) {
+    return {
+      completedCount: 0,
+      totalCount: 0,
+      yesQuestionCount: 0,
+      totalQuestionCount: 0,
+      questionPercent: 0,
+      nextStepLabel: 'Naslednji korak',
+      nextStepTitle: 'Koraki učne poti še niso pripravljeni.',
+      isFullyCompleted: false,
+    }
+  }
+
+  const completedCount = isCompleted
+    ? totalCount
+    : sortedNodes.filter(isStatsNodeCompleted).length
+
+  const isFullyCompleted = completedCount === totalCount
+
+  const questionStats = getQuestionAnswerStats(sortedNodes, isFullyCompleted)
+
+  if (isFullyCompleted) {
+    return {
+      completedCount: totalCount,
+      totalCount,
+      ...questionStats,
+      nextStepLabel: 'Zaključeno',
+      nextStepTitle: 'Učna pot je uspešno zaključena.',
+      isFullyCompleted: true,
+    }
+  }
+
+  const nextNode =
+    sortedNodes.find(
+      (node) => node.isAssessmentPosition && !isStatsNodeCompleted(node),
+    ) ?? sortedNodes.find((node) => !isStatsNodeCompleted(node))
+
+  const nextNodeProgress = nextNode ? getStatsNodeProgress(nextNode) : 0
+
+  return {
+    completedCount,
+    totalCount,
+    ...questionStats,
+    nextStepLabel: nextNodeProgress > 0 ? 'Nadaljuj z' : 'Naslednji korak',
+    nextStepTitle: nextNode?.title ?? 'Naslednji korak še ni določen.',
+    isFullyCompleted: false,
+  }
+}
+
+function LearningPathProgressStats({
+  nodes,
+  isCompleted,
+}: {
+  nodes: LearningPathMountainNode[]
+  isCompleted: boolean
+}) {
+  const stats = getLearningPathStats(nodes, isCompleted)
+
+  const questionPercentLabel =
+    stats.totalQuestionCount > 0 || stats.isFullyCompleted
+      ? `${stats.questionPercent}%`
+      : '—'
+
+  const questionRatioLabel =
+    stats.totalQuestionCount > 0
+      ? `${stats.yesQuestionCount}/${stats.totalQuestionCount} vprašanj`
+      : stats.isFullyCompleted
+        ? 'Učna pot zaključena'
+        : 'Vprašanja še niso rešena'
+
+  return (
+    <section
+      className="absolute left-4 top-4 z-20 hidden w-[280px] rounded-[1.35rem] border border-[#eadfce]/90 bg-[#fffdf8]/95 p-3 text-[#344E41] shadow-[0_18px_45px_rgba(49,88,59,0.12)] backdrop-blur-md min-[875px]:block min-[1024px]:w-[300px] min-[1500px]:left-8 min-[1500px]:top-8 min-[1500px]:w-[420px] min-[1500px]:rounded-[1.6rem] min-[1500px]:p-4"
+      aria-label="Statistika učne poti"
+    >
+      <div className="mb-2 min-[1500px]:mb-3">
+        <p className="text-[0.58rem] font-bold uppercase tracking-[0.24em] text-[#6f7f58] min-[1500px]:text-[0.68rem] min-[1500px]:tracking-[0.28em]">
+          Napredek
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-[#eadfce]/80 bg-white/80 p-2.5 shadow-[0_8px_22px_rgba(49,88,59,0.06)] min-[1500px]:rounded-2xl min-[1500px]:p-3">
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+            Končano
+          </p>
+
+          <p className="mt-1 text-xl font-black text-[#24382d] min-[1500px]:text-2xl">
+            {stats.completedCount}/{stats.totalCount}
+          </p>
+
+          <p className="mt-0.5 text-[0.62rem] font-semibold text-[#6f7f58] min-[1500px]:mt-1 min-[1500px]:text-[0.7rem]">
+            modulov / enot
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-[#eadfce]/80 bg-white/80 p-2.5 shadow-[0_8px_22px_rgba(49,88,59,0.06)] min-[1500px]:rounded-2xl min-[1500px]:p-3">
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+            Odstotek DA
+          </p>
+
+          <p className="mt-1 text-xl font-black text-[#24382d] min-[1500px]:text-2xl">
+            {questionPercentLabel}
+          </p>
+
+          <p className="mt-0.5 text-[0.62rem] font-semibold text-[#6f7f58] min-[1500px]:mt-1 min-[1500px]:text-[0.7rem]">
+            {questionRatioLabel}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2.5 overflow-hidden rounded-full bg-[#efe7d8] min-[1500px]:mt-3">
+        <div
+          className={[
+            'h-1.5 rounded-full transition-all duration-500 min-[1500px]:h-2',
+            stats.isFullyCompleted ? 'bg-[#31583b]' : 'bg-[#d08a34]',
+          ].join(' ')}
+          style={{ width: `${stats.questionPercent}%` }}
+        />
+      </div>
+
+      <div className="mt-2.5 rounded-xl border border-[#eadfce]/80 bg-[#f8f3e8]/80 p-2.5 min-[1500px]:mt-3 min-[1500px]:rounded-2xl min-[1500px]:p-3">
+        <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
+          {stats.nextStepLabel}
+        </p>
+
+        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-snug text-[#24382d] min-[1500px]:text-base">
+          {stats.nextStepTitle}
+        </p>
+      </div>
+    </section>
+  )
 }
 
 function isMountainNodeCompleted(node: PositionedMountainNode) {
@@ -1285,6 +1496,8 @@ export function LearningPathMountain({
       />
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
+
+      <LearningPathProgressStats nodes={nodes} isCompleted={isCompleted} />
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul/ učno enoto

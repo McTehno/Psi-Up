@@ -71,6 +71,14 @@ body {
     linear-gradient(180deg, #fffdf8, #fff6eb);
   background-attachment: fixed;
 }
+.assessment-assistant-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.assessment-assistant-scroll::-webkit-scrollbar {
+  display: none;
+}
 
 #root {
   min-height: 100vh;

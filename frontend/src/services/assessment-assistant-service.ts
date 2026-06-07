@@ -1,14 +1,14 @@
 ﻿import { apiPost } from './api-client'
 
-export type AssessmentAssistantMessageRequest = {
+type AssessmentAssistantMessageRequest = {
   sessionId?: string
   userId?: string
-  learningPathId: string
+  learningPathId?: string
   moduleId?: string
   learningUnitId?: string
   questionId: string
   questionText: string
-  answerOptions?: string[]
+  answerOptions: string[]
   userMessage: string
 }
 

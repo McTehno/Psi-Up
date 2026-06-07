@@ -256,25 +256,48 @@ function AssessmentProgress({
     Math.max(0, resolvedQuestionCount),
   )
 
+  const areAllQuestionsCompleted =
+    safeQuestionCount > 0 &&
+    normalizedQuestions.every((question) => question.status === 'completed')
+
+  const hasReachedVisualGoal = showGoalFlag && (isGoalReached || areAllQuestionsCompleted)
+
   const hasQuestionProgress = safeQuestionCount > 0
+
+
   const progressPercent = hasQuestionProgress
     ? getQuestionProgressPercent(
       safeConfirmedQuestionCount,
       safeQuestionCount,
       showGoalFlag,
-      isGoalReached,
+      hasReachedVisualGoal,
     )
     : getProgressPercent(completedLeafCount, totalLeafCount)
 
 
   const visualQuestionSegments = hasQuestionProgress
-    ? buildVisualQuestionSegments({
-      steps,
-      questions: normalizedQuestions,
-      questionCount: safeQuestionCount,
-      showGoalFlag,
-    })
+    ? [
+      ...buildVisualQuestionSegments({
+        steps,
+        questions: normalizedQuestions,
+        questionCount: safeQuestionCount,
+        showGoalFlag,
+      }),
+      ...(hasReachedVisualGoal
+        ? [
+          {
+            id: 'goal_completed_segment',
+            status: 'completed' as const,
+            left: getQuestionAreaPercent(showGoalFlag),
+            width: 100 - getQuestionAreaPercent(showGoalFlag),
+          },
+        ]
+        : []),
+    ]
     : []
+
+
+
   const progressLabel = hasQuestionProgress
     ? `${safeConfirmedQuestionCount}/${safeQuestionCount}`
     : `${completedLeafCount}/${totalLeafCount}`
@@ -397,9 +420,9 @@ function AssessmentProgress({
 
         {showGoalFlag && (
           <div
-            className={`assessment-progress__flag ${isGoalReached ? 'assessment-progress__flag--completed' : ''
+            className={`assessment-progress__flag ${hasReachedVisualGoal ? 'assessment-progress__flag--completed' : ''
               }`}
-            aria-label={isGoalReached ? 'Cilj dosežen' : 'Cilj'}
+            aria-label={hasReachedVisualGoal ? 'Cilj dosežen' : 'Cilj'}
           >
             ⚑
           </div>

@@ -724,6 +724,11 @@ function getLearningPathStats(
 
   const questionStats = getQuestionAnswerStats(sortedNodes, isFullyCompleted)
 
+  const shouldPromptQuestionnaire =
+    !isCompleted &&
+    completedCount === 0 &&
+    questionStats.totalQuestionCount === 0
+
   if (isFullyCompleted) {
     return {
       completedCount: totalCount,
@@ -732,6 +737,17 @@ function getLearningPathStats(
       nextStepLabel: 'Zaključeno',
       nextStepTitle: 'Učna pot je uspešno zaključena.',
       isFullyCompleted: true,
+    }
+  }
+
+  if (shouldPromptQuestionnaire) {
+    return {
+      completedCount,
+      totalCount,
+      ...questionStats,
+      nextStepLabel: 'Naslednji korak',
+      nextStepTitle: 'Izpolni vprašalnik',
+      isFullyCompleted: false,
     }
   }
 
@@ -771,7 +787,7 @@ function LearningPathProgressStats({
       ? `${stats.yesQuestionCount}/${stats.totalQuestionCount} vprašanj`
       : stats.isFullyCompleted
         ? 'Učna pot zaključena'
-        : 'Vprašanja še niso rešena'
+        : 'Še ni odgovorov'
 
   return (
     <section
@@ -801,7 +817,7 @@ function LearningPathProgressStats({
 
         <div className="rounded-xl border border-[#eadfce]/80 bg-white/80 p-2.5 shadow-[0_8px_22px_rgba(49,88,59,0.06)] min-[1500px]:rounded-2xl min-[1500px]:p-3">
           <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[#6f7f58] min-[1500px]:text-[0.64rem] min-[1500px]:tracking-[0.2em]">
-            Odstotek DA
+            Potrjeno znanje
           </p>
 
           <p className="mt-1 text-xl font-black text-[#24382d] min-[1500px]:text-2xl">

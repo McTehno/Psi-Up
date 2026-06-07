@@ -813,12 +813,43 @@ function getOrderedItems<T extends { order?: number | null }>(items: T[]) {
   return [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 }
 
-function getQuestionIdsByLearningUnit(
-  questionnaire: QuestionnaireItem[],
-  learningUnitId: string,
-) {
+function getQuestionIdsForProgressStep({
+  questionnaire,
+  learningPathId,
+  moduleId,
+  learningUnitId,
+}: {
+  questionnaire: QuestionnaireItem[]
+  learningPathId?: string | null
+  moduleId?: string | null
+  learningUnitId: string
+}) {
   return questionnaire
-    .filter((question) => question.learning_unit_id === learningUnitId)
+    .filter((question) =>
+      getQuestionSources(question).some((source) => {
+        if (source.learning_unit_id !== learningUnitId) {
+          return false
+        }
+
+        if (
+          learningPathId &&
+          source.learning_path_id &&
+          source.learning_path_id !== learningPathId
+        ) {
+          return false
+        }
+
+        if (moduleId === null) {
+          return !source.module_id
+        }
+
+        if (moduleId) {
+          return !source.module_id || source.module_id === moduleId
+        }
+
+        return true
+      }),
+    )
     .map((question) => question.runtimeId)
 }
 
@@ -1207,6 +1238,7 @@ function QuestionnairePage() {
             label: String(index + 1),
             title: `Vprašanje ${index + 1}`,
             status: getLeafStatus([question.runtimeId], questionProgressById),
+            questionIds: [question.runtimeId],
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1232,10 +1264,11 @@ function QuestionnairePage() {
         .map((learningUnitReference, unitIndex) => {
           const learningUnitId = getLearningUnitReferenceId(learningUnitReference)
 
-          const questionIds = getQuestionIdsByLearningUnit(
+          const questionIds = getQuestionIdsForProgressStep({
             questionnaire,
+            moduleId: getBackendEntityId(moduleDetail),
             learningUnitId,
-          )
+          })
 
           for (const questionId of questionIds) {
             usedQuestionIds.add(questionId)
@@ -1254,6 +1287,7 @@ function QuestionnairePage() {
             label: String(unitIndex + 1),
             title: unitTitle,
             status: getLeafStatus(questionIds, questionProgressById),
+            questionIds,
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1280,6 +1314,7 @@ function QuestionnairePage() {
           label: String(steps.length + 1),
           title: 'Dodatna vprašanja',
           status: getLeafStatus(questionIds, questionProgressById),
+          questionIds,
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
             questionnaire.length,
@@ -1328,22 +1363,27 @@ function QuestionnairePage() {
               : []
 
             let moduleQuestionCount = 0
+            const moduleQuestionIds: string[] = []
 
             const subSteps = learningUnits
               .map((learningUnitReference, unitIndex) => {
                 const learningUnitId =
                   getLearningUnitReferenceId(learningUnitReference)
 
-                const questionIds = getQuestionIdsByLearningUnit(
+                const questionIds = getQuestionIdsForProgressStep({
                   questionnaire,
+                  learningPathId: getBackendEntityId(learningPathDetail),
+                  moduleId: refId,
                   learningUnitId,
-                )
+                })
 
                 for (const questionId of questionIds) {
                   usedQuestionIds.add(questionId)
                 }
 
                 moduleQuestionCount += questionIds.length
+
+                moduleQuestionIds.push(...questionIds)
 
                 const unitTitle =
                   moduleItem?.learning_unit_details?.find(
@@ -1372,6 +1412,7 @@ function QuestionnairePage() {
               ),
               subSteps,
               variant: 'module' as const,
+              questionIds: moduleQuestionIds,
               questionCountUntilStep: getQuestionProgressPosition(
                 questionCountUntilStep,
                 questionnaire.length,
@@ -1380,7 +1421,12 @@ function QuestionnairePage() {
             }
           }
 
-          const questionIds = getQuestionIdsByLearningUnit(questionnaire, refId)
+          const questionIds = getQuestionIdsForProgressStep({
+            questionnaire,
+            learningPathId: getBackendEntityId(learningPathDetail),
+            moduleId: null,
+            learningUnitId: refId,
+          })
 
           for (const questionId of questionIds) {
             usedQuestionIds.add(questionId)
@@ -1399,6 +1445,7 @@ function QuestionnairePage() {
             title: learningUnitTitle,
             status: getLeafStatus(questionIds, questionProgressById),
             variant: 'learning-unit' as const,
+            questionIds,
             questionCountUntilStep: getQuestionProgressPosition(
               questionCountUntilStep,
               questionnaire.length,
@@ -1426,6 +1473,7 @@ function QuestionnairePage() {
           variant: 'learning-unit',
           title: 'Dodatna vprašanja',
           status: getLeafStatus(questionIds, questionProgressById),
+          questionIds,
           questionCountUntilStep: getQuestionProgressPosition(
             questionCountUntilStep,
             questionnaire.length,
@@ -1879,52 +1927,52 @@ function QuestionnairePage() {
 
   const currentQuestionSource = currentQuestion?.sources?.[0]
 
-const assistantLearningPathId =
-  (targetType === 'learning_path'
-    ? targetId
-    : currentQuestion?.learning_path_id ??
+  const assistantLearningPathId =
+    (targetType === 'learning_path'
+      ? targetId
+      : currentQuestion?.learning_path_id ??
       currentQuestionSource?.learning_path_id ??
       '') || ''
 
-const assistantModuleId =
-  (targetType === 'module'
-    ? targetId
-    : currentQuestion?.module_id ??
+  const assistantModuleId =
+    (targetType === 'module'
+      ? targetId
+      : currentQuestion?.module_id ??
       currentQuestionSource?.module_id ??
       undefined) || undefined
 
-const assistantLearningUnitId =
-  (targetType === 'learning_unit'
-    ? targetId
-    : currentQuestion?.learning_unit_id ??
+  const assistantLearningUnitId =
+    (targetType === 'learning_unit'
+      ? targetId
+      : currentQuestion?.learning_unit_id ??
       currentQuestionSource?.learning_unit_id ??
       undefined) || undefined
 
-const canRenderAssistantBox =
-  Boolean(targetType) &&
-  Boolean(targetId) &&
-  Boolean(currentQuestion) &&
-  Boolean(
-    assistantLearningPathId ||
+  const canRenderAssistantBox =
+    Boolean(targetType) &&
+    Boolean(targetId) &&
+    Boolean(currentQuestion) &&
+    Boolean(
+      assistantLearningPathId ||
       assistantModuleId ||
       assistantLearningUnitId,
-  )
+    )
 
- const assistantBox =
-  canRenderAssistantBox && targetType && targetId && currentQuestion ? (
-    <AssessmentContextBox
-      userId={assessmentUserId}
-      targetType={targetType}
-      targetId={targetId}
-      learningPathId={assistantLearningPathId}
-      moduleId={assistantModuleId}
-      learningUnitId={assistantLearningUnitId}
-      questionId={currentQuestion.id}
-      questionText={currentQuestion.question}
-      answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
-      onActiveExchangeChange={setAssistantExchange}
-    />
-  ) : null
+  const assistantBox =
+    canRenderAssistantBox && targetType && targetId && currentQuestion ? (
+      <AssessmentContextBox
+        userId={assessmentUserId}
+        targetType={targetType}
+        targetId={targetId}
+        learningPathId={assistantLearningPathId}
+        moduleId={assistantModuleId}
+        learningUnitId={assistantLearningUnitId}
+        questionId={currentQuestion.id}
+        questionText={currentQuestion.question}
+        answerOptions={currentQuestion.answers.map((answer) => answer.answer)}
+        onActiveExchangeChange={setAssistantExchange}
+      />
+    ) : null
 
   const desktopAssistantPanel =
     targetType && targetId && currentQuestion ? (
@@ -2042,7 +2090,7 @@ const canRenderAssistantBox =
               variant="mobile"
               title="AI pomočnik"
               onExpandedChange={(isExpanded) => {
-                
+
                 if (!isExpanded) {
                   setAssistantExchange(null)
                 }

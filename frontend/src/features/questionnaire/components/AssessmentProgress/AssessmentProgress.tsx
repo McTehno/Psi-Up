@@ -1,4 +1,5 @@
-﻿import { useState, type CSSProperties } from 'react'
+﻿// AssessmentProgress.tsx
+import { useState, type CSSProperties } from 'react'
 import './AssessmentProgress.css'
 
 export type AssessmentProgressStepStatus =
@@ -32,6 +33,7 @@ export type AssessmentProgressStep = {
   status: AssessmentProgressStepStatus
   subSteps?: AssessmentProgressSubStep[]
   questionCountUntilStep?: number
+  questionIds?: string[]
   variant?: 'module' | 'learning-unit'
 }
 
@@ -45,6 +47,12 @@ type AssessmentProgressProps = {
   confirmedQuestionCount?: number
   showGoalFlag?: boolean
   questions?: AssessmentProgressQuestion[]
+}
+type VisualQuestionSegment = {
+  id: string
+  status: AssessmentProgressQuestionStatus
+  left: number
+  width: number
 }
 
 const confettiPieces = Array.from({ length: 18 }, (_, index) => index)
@@ -88,28 +96,13 @@ function getQuestionProgressPercent(
   )
 }
 
-function getQuestionSegmentPercent(
-  index: number,
-  questionCount: number,
-  showGoalFlag: boolean,
-) {
-  if (questionCount <= 0) {
-    return {
-      left: 0,
-      width: 0,
-    }
-  }
-
-  const questionAreaPercent = getQuestionAreaPercent(showGoalFlag)
-
-  return {
-    left: (index / questionCount) * questionAreaPercent,
-    width: questionAreaPercent / questionCount,
-  }
-}
 
 function isResolvedQuestionStatus(status: AssessmentProgressQuestionStatus) {
   return status === 'completed' || status === 'rejected'
+}
+
+function getQuestionStatusById(questions: AssessmentProgressQuestion[]) {
+  return new Map(questions.map((question) => [question.id, question.status]))
 }
 
 function getStepPositionPercent(
@@ -123,10 +116,6 @@ function getStepPositionPercent(
 
   if (stepCount <= 0) {
     return 0
-  }
-
-  if (showGoalFlag) {
-    return ((index + 1) / stepCount) * questionAreaPercent
   }
 
   if (
@@ -143,6 +132,93 @@ function getStepPositionPercent(
   }
 
   return ((index + 1) / stepCount) * questionAreaPercent
+}
+
+function buildVisualQuestionSegments({
+  steps,
+  questions,
+  questionCount,
+  showGoalFlag,
+}: {
+  steps: AssessmentProgressStep[]
+  questions: AssessmentProgressQuestion[]
+  questionCount: number
+  showGoalFlag: boolean
+}): VisualQuestionSegment[] {
+  if (questionCount <= 0 || steps.length === 0) {
+    return []
+  }
+
+  const questionStatusById = getQuestionStatusById(questions)
+  const visualSegments: VisualQuestionSegment[] = []
+  let previousStepPosition = 0
+
+  steps.forEach((step, stepIndex) => {
+    const stepPosition = getStepPositionPercent(
+      step,
+      stepIndex,
+      steps.length,
+      questionCount,
+      showGoalFlag,
+    )
+
+    const segmentStart = previousStepPosition
+    const segmentEnd = Math.max(segmentStart, stepPosition)
+    const segmentWidth = segmentEnd - segmentStart
+    const stepQuestionIds = step.questionIds ?? []
+
+    if (segmentWidth <= 0 || stepQuestionIds.length === 0) {
+      previousStepPosition = stepPosition
+      return
+    }
+
+    const firstRejectedIndex = stepQuestionIds.findIndex(
+      (questionId) => questionStatusById.get(questionId) === 'rejected',
+    )
+
+    const questionWidth = segmentWidth / stepQuestionIds.length
+
+    stepQuestionIds.forEach((questionId, questionIndex) => {
+      const questionStatus = questionStatusById.get(questionId) ?? 'upcoming'
+
+      if (firstRejectedIndex !== -1 && questionIndex > firstRejectedIndex) {
+        return
+      }
+
+      if (firstRejectedIndex !== -1 && questionIndex === firstRejectedIndex) {
+        visualSegments.push({
+          id: `${step.id}_${questionId}_rejected_remainder`,
+          status: 'rejected',
+          left: segmentStart + questionIndex * questionWidth,
+          width: segmentEnd - (segmentStart + questionIndex * questionWidth),
+        })
+
+        return
+      }
+
+      if (questionStatus === 'completed') {
+        visualSegments.push({
+          id: `${step.id}_${questionId}_completed`,
+          status: 'completed',
+          left: segmentStart + questionIndex * questionWidth,
+          width: questionWidth,
+        })
+      }
+
+      if (questionStatus === 'rejected') {
+        visualSegments.push({
+          id: `${step.id}_${questionId}_rejected`,
+          status: 'rejected',
+          left: segmentStart + questionIndex * questionWidth,
+          width: questionWidth,
+        })
+      }
+    })
+
+    previousStepPosition = stepPosition
+  })
+
+  return visualSegments
 }
 
 function getStepMarker(step: AssessmentProgressStep, index: number) {
@@ -208,6 +284,15 @@ function AssessmentProgress({
     )
     : getProgressPercent(completedLeafCount, totalLeafCount)
 
+
+  const visualQuestionSegments = hasQuestionProgress
+    ? buildVisualQuestionSegments({
+      steps,
+      questions: normalizedQuestions,
+      questionCount: safeQuestionCount,
+      showGoalFlag,
+    })
+    : []
   const progressLabel = hasQuestionProgress
     ? `${safeConfirmedQuestionCount}/${safeQuestionCount}`
     : `${completedLeafCount}/${totalLeafCount}`
@@ -239,26 +324,18 @@ function AssessmentProgress({
               className="assessment-progress__question-segments"
               aria-hidden="true"
             >
-              {normalizedQuestions.map((question, index) => {
-                const segmentPosition = getQuestionSegmentPercent(
-                  index,
-                  safeQuestionCount,
-                  showGoalFlag,
-                )
-
-                return (
-                  <span
-                    className={`assessment-progress__question-segment assessment-progress__question-segment--${question.status}`}
-                    key={question.id}
-                    style={
-                      {
-                        left: `${segmentPosition.left}%`,
-                        width: `${segmentPosition.width}%`,
-                      } as CSSProperties
-                    }
-                  />
-                )
-              })}
+              {visualQuestionSegments.map((segment) => (
+                <span
+                  className={`assessment-progress__question-segment assessment-progress__question-segment--${segment.status}`}
+                  key={segment.id}
+                  style={
+                    {
+                      left: `${segment.left}%`,
+                      width: `${segment.width}%`,
+                    } as CSSProperties
+                  }
+                />
+              ))}
             </div>
           ) : (
             <div className="assessment-progress__fill" />
@@ -306,22 +383,21 @@ function AssessmentProgress({
                 </button>
                 <span
                   className={`assessment-progress__label ${isLabelBelow
-                      ? 'assessment-progress__label--bottom'
-                      : 'assessment-progress__label--top'
+                    ? 'assessment-progress__label--bottom'
+                    : 'assessment-progress__label--top'
                     }`}
                 >
                   {step.title}
                 </span>
                 <span
-  className={`assessment-progress__tooltip ${
-    activeTooltipStepId === step.id
-      ? 'assessment-progress__tooltip--visible'
-      : ''
-  }`}
-  role="tooltip"
->
-  {step.title}
-</span>
+                  className={`assessment-progress__tooltip ${activeTooltipStepId === step.id
+                      ? 'assessment-progress__tooltip--visible'
+                      : ''
+                    }`}
+                  role="tooltip"
+                >
+                  {step.title}
+                </span>
 
                 {step.subSteps && step.subSteps.length > 0 && (
                   <span className="assessment-progress__substeps">

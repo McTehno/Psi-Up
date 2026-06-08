@@ -48,26 +48,7 @@ Možne funkcionalnosti:
 - povezovanje iskalnega niza z učnimi potmi, moduli in učnimi enotami.
 
 ---
-
-## 3. Uporabniška nadzorna plošča
-
-Prijavljenemu uporabniku bi lahko dodali osebno nadzorno ploščo.
-
-Namen nadzorne plošče je, da uporabnik na enem mestu vidi svoj napredek in pomembne vsebine.
-
-Možni prikazi:
-
-- shranjene učne poti,
-- priljubljeni moduli in učne enote,
-- dokončane vsebine,
-- trenutna pozicija v učni poti,
-- zadnji rezultat vprašalnika,
-- priporočeni naslednji koraki.
-
-S tem bi uporabnik lažje nadaljeval učenje in imel boljši pregled nad svojim napredkom.
-
----
-## 4. Administracija učnih vsebin
+## 3. Administracija učnih vsebin
 
 V prihodnje bi bilo mogoče dodati administracijski del za urejanje učnih vsebin.
 
@@ -84,7 +65,7 @@ S tem bi bilo upravljanje vsebin lažje in manj odvisno od ročnega urejanja pod
 
 ---
 
-## 5. Izboljšanje AI pomočnika
+## 4. Izboljšanje AI pomočnika
 
 AI pomočnika bi bilo mogoče dodatno izboljšati.
 
@@ -96,7 +77,7 @@ Možne izboljšave:
 
 ---
 
-## 6. Povzetek
+## 5. Povzetek
 
 Nadaljnji razvoj aplikacije NIDiKo bi se lahko osredotočil predvsem na razširitev vprašalnika, AI iskanje in uporabniško nadzorno ploščo.
 

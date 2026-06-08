@@ -1,6 +1,6 @@
-# Frontend Contribution Guide — Psi-Up
+# Frontend Contribution Guide — NIDiKo
 
-Ta dokument določa pravila za razvoj frontenda projekta **Psi-Up**.
+Ta dokument določa pravila za razvoj frontenda projekta **NIDiKo**.
 
 Namen dokumenta je, da lahko vsi člani ekipe in tudi LLM orodja delajo konsistentno, brez podvajanja kode, brez nepotrebnih merge konfliktov in brez spreminjanja obstoječega delovanja aplikacije brez dogovora.
 

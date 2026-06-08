@@ -1,318 +1,372 @@
 # Pravila poimenovanja in pisanja kode
 
-Ta dokument opisuje osnovna pravila poimenovanja, organizacije in pisanja kode v projektu **NIDiKo**.
-
-Namen dokumenta je zagotoviti, da je koda dosledna, razumljiva in lažja za vzdrževanje.
-
----
-
-## 1. Splošna pravila
-
-- Imena map, datotek, komponent, funkcij in spremenljivk v kodi pišemo v angleščini.
-- Dokumentacija projekta pišemo trenutno v slovenščini.
-- Imena so jasna, razumljiva in povezana z domeno projekta.
-- Poimenovanje mora biti dosledno skozi celoten projekt.
-- Nepotrebnih okrajšav se izogibamo.
-- Za enake pojme vedno uporabljamo enake izraze.
-- Ne dodajamo nove strukture, če že obstaja ustrezna mapa, komponenta, servis ali tip.
+Ta dokument določa skupna pravila za poimenovanje in pisanje kode v projektu **NIDiKo**.
+Namen dokumenta je, da frontend in backend del uporabljata enoten, razumljiv in dosleden slog. 
 
 ---
 
-## 2. Poimenovanje map
+## Kazalo
 
-Mape pišemo z malimi črkami.
-
-Če je ime sestavljeno iz več besed, uporabimo vezaj.
-
-Primer:
-
-```text
-learning-paths/
-questionnaire/
-recommendations/
-digital-competencies/
-```
-
-Na frontendu so večji sklopi organizirani po namenu:
-
-```text
-pages/
-features/
-components/
-services/
-types/
-```
-
-Na backendu so sklopi ločeni po odgovornosti:
-
-```text
-routers/
-schemas/
-services/
-repositories/
-database/
-core/
-```
+- [1. Namen dokumenta](#1-namen-dokumenta)
+- [2. Splošna pravila](#2-splošna-pravila)
+- [3. Pravila za frontend](#3-pravila-za-frontend)
+  - [3.1 Frontend mape](#31-frontend-mape)
+  - [3.2 Frontend datoteke](#32-frontend-datoteke)
+  - [3.3 React komponente](#33-react-komponente)
+  - [3.4 Funkcije in spremenljivke](#34-funkcije-in-spremenljivke)
+  - [3.5 Services](#35-services)
+  - [3.6 Types](#36-types)
+  - [3.7 CSS in Tailwind](#37-css-in-tailwind)
+  - [3.8 Frontend komentarji](#38-frontend-komentarji)
+- [4. Pravila za backend](#4-pravila-za-backend)
+  - [4.1 Backend mape](#41-backend-mape)
+  - [4.2 Backend datoteke](#42-backend-datoteke)
+  - [4.3 Razredi](#43-razredi)
+  - [4.4 Funkcije in spremenljivke](#44-funkcije-in-spremenljivke)
+  - [4.5 API datoteke](#45-api-datoteke)
+  - [4.6 Service datoteke](#46-service-datoteke)
+  - [4.7 Repository datoteke](#47-repository-datoteke)
+  - [4.8 Schema datoteke](#48-schema-datoteke)
+  - [4.9 Backend komentarji in docstringi](#49-backend-komentarji-in-docstringi)
+- [5. Pravila za dokumentacijo](#5-pravila-za-dokumentacijo)
+- [6. Primeri dobrega in slabega poimenovanja](#6-primeri-dobrega-in-slabega-poimenovanja)
+- [7. Povezani dokumenti](#7-povezani-dokumenti)
 
 ---
 
-## 3. Poimenovanje datotek na frontendu
+## 1. Namen dokumenta
 
-React komponente pišemo v **PascalCase**.
+Ta dokument določa osnovna pravila za pisanje in poimenovanje kode v projektu **NIDiKo**.
 
-Primer:
+Uporablja se za:
 
-```text
-LearningPathView.tsx
-QuestionnaireForm.tsx
-ModuleCard.tsx
-LearningUnitList.tsx
-```
+- poimenovanje map,
+- poimenovanje datotek,
+- poimenovanje komponent,
+- poimenovanje razredov,
+- poimenovanje funkcij,
+- poimenovanje spremenljivk,
+- pisanje komentarjev,
+- pisanje dokumentacije.
 
-Pomožne TypeScript datoteke pišemo z malimi črkami in vezaji.
+Za podrobnejša pravila razvoja pogledaj tudi:
 
-Primer:
-
-```text
-api-client.ts
-constants.ts
-questionnaire-service.ts
-recommendation-service.ts
-```
-
-Datoteke za tipe so jasne in vezane na domeno.
-
-Primer:
-
-```text
-learning-path-types.ts
-module-types.ts
-user-progress-types.ts
-```
+- [Frontend Contribution Guide](../frontend/CONTRIBUTING.md)
+- [Backend Contribution Guide](../backend/CONTRIBUTING.md)
 
 ---
 
-## 4. Poimenovanje datotek na backendu
+## 2. Splošna pravila
 
-Python datoteke pišemo z malimi črkami in podčrtaji.
+V kodi uporabljamo angleška imena.
 
-Primer:
+Dokumentacija je lahko napisana v slovenščini.
+
+Pravila:
+
+- imena naj bodo jasna in razumljiva,
+- imena naj opisujejo namen,
+- ne uporabljamo nepotrebnih okrajšav,
+- za isti pojem vedno uporabljamo isti izraz,
+- ne mešamo slovenskih in angleških imen v kodi,
+- imena naj sledijo domeni projekta.
+
+Pravilno:
 
 ```text
-recommendation_service.py
-learning_path_service.py
-database_config.py
+learning_path
+learning_unit
+questionnaire
+assessment
+user_progress
 ```
 
-Datoteke naj jasno pokažejo svojo odgovornost:
+Napačno:
 
 ```text
-learning_path_router.py
-learning_path_schema.py
-learning_path_service.py
-learning_path_repository.py
+ucna_pot
+enota
+vprasalnikData
+progressPodatki
 ```
+
+Dovoljena izjema so besedila, ki jih vidi uporabnik, na primer UI labeli, opisi, napake in dokumentacija.
 
 ---
 
-## 5. Poimenovanje spremenljivk in funkcij
+## 3. Pravila za frontend
 
-V React/TypeScript uporabljamo **camelCase**.
+Za podrobnejša frontend pravila glej:
 
-Primer:
+[Frontend Contribution Guide](../frontend/CONTRIBUTING.md)
 
-```text
-selectedLearningPath
-getLearningPath()
-submitQuestionnaire()
-```
+Frontend uporablja:
 
-V Pythonu uporabljamo **snake_case**.
-
-Primer:
-
-```text
-selected_learning_path
-get_learning_path()
-submit_questionnaire()
-```
-
-Konstante pišemo z velikimi črkami.
-
-Primer:
-
-```text
-API_BASE_URL
-DEFAULT_PAGE_SIZE
-GUEST_ASSESSMENT_USER_ID_KEY
-```
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
 
 ---
 
-## 6. Poimenovanje React komponent
+### 3.1 Frontend mape
 
-React komponente pišemo v **PascalCase**.
-
-Primer:
-
-```text
-LearningUnitList.tsx
-```
-
-Ime komponente jasno pove, kaj komponenta prikazuje ali dela.
-
-Dobri primeri:
-
-```text
-LearningPathCard
-QuestionnaireProgress
-AssessmentResultSummary
-DetailActions
-```
-
-Manj primerni primeri:
-
-```text
-Box
-Data
-Component1
-NewCard
-```
-
----
-
-## 7. Pravila za frontend kodo
-
-API klici so zapisani v mapi:
-
-```text
-src/services/
-```
-
-Tipi podatkov so zapisani v mapi:
-
-```text
-src/types/
-```
-
-Komponente, ki se uporabljajo na več mestih, so v:
-
-```text
-src/components/
-```
-
-Funkcionalnosti, ki pripadajo določenemu sklopu, so v:
-
-```text
-src/features/
-```
-
-Strani so v:
+Route-level strani so v:
 
 ```text
 src/pages/
 ```
 
-Pri dodajanju nove kode najprej preverimo, ali že obstaja ustrezen servis, tip, komponenta ali helper.
-
-Ne podvajamo:
-
-- API klicev,
-- tipov,
-- loading/error/empty prikazov,
-- detail komponent,
-- logike za iskanje,
-- logike za vprašalnik,
-- logike za uporabniški napredek.
-
----
-
-## 8. Pravila za backend kodo
-
-Backend je razdeljen po odgovornostih.
-
-### Routerji
-
-Routerji skrbijo za API endpoint.
-
-Primer:
+Feature-specific koda je v:
 
 ```text
-learning_paths.py
-modules.py
-users.py
+src/features/
 ```
 
-Router ne sme vsebovati preveč poslovne logike. Poslovna logika je v servisih.
-
-### Sheme
-
-Sheme skrbijo za validacijo requestov in response podatkov.
-
-Primer:
+Reusable komponente so v:
 
 ```text
-learning_path_schema.py
-module_schema.py
-user_schema.py
+src/components/
 ```
 
-### Servisi
-
-Servisi vsebujejo glavno poslovno logiko.
-
-Primer:
+API klici so v:
 
 ```text
-learning_path_service.py
-assessment_service.py
-user_service.py
+src/services/
 ```
 
-### Repozitoriji
-
-Repozitoriji skrbijo za komunikacijo s podatkovno bazo.
-
-Primer:
+Backend request/response tipi so v:
 
 ```text
-learning_path_repository.py
-module_repository.py
-user_repository.py
+src/types/
+```
+
+Feature mape pišemo v `kebab-case`.
+
+Primeri:
+
+```text
+learning-paths
+learning-units
+questionnaire
+search
+assistant
+```
+
+Page mape pišemo v `PascalCase`.
+
+Primeri:
+
+```text
+HomePage
+SearchPage
+QuestionnairePage
+LearningPathDetailPage
+ModuleDetailPage
+LearningUnitDetailPage
 ```
 
 ---
 
-## 9. Pravila za API klice
+### 3.2 Frontend datoteke
 
-Frontend ne kliče backenda neposredno iz komponent, če za to obstaja servis.
+React page datoteke pišemo v `PascalCase`.
 
-Namesto tega:
+Primer:
 
 ```text
-komponenta → service → api-client → backend
+HomePage.tsx
+SearchPage.tsx
+QuestionnairePage.tsx
+LearningUnitDetailPage.tsx
 ```
 
-To omogoča boljšo organizacijo kode in lažje popravljanje API klicev.
+Večje reusable komponente imajo svojo mapo in `index.ts`.
 
-Primer poimenovanja servisov:
+Primer:
+
+```text
+DetailHero/
+├── DetailHero.tsx
+└── index.ts
+```
+
+Pomožne TypeScript datoteke pišemo v `kebab-case`.
+
+Primer:
+
+```text
+api-client.ts
+search-service.ts
+learning-path-service.ts
+user-progress-service.ts
+```
+
+Vsaka page mapa naj ima `index.ts`.
+
+Primer:
+
+```ts
+export { default } from './HomePage'
+```
+
+---
+
+### 3.3 React komponente
+
+React komponente pišemo v `PascalCase`.
+
+Pravilno:
+
+```tsx
+LearningUnitCard
+QuestionnaireForm
+DetailHero
+AssistantChat
+```
+
+Napačno:
+
+```tsx
+learningUnitCard
+questionnaire_form
+detailhero
+assistant-chat
+```
+
+Komponente naj imajo jasen namen.
+
+Če je komponenta reusable, spada v:
+
+```text
+src/components/
+```
+
+Če je vezana samo na en feature, spada v:
+
+```text
+src/features/<feature-name>/components/
+```
+
+---
+
+### 3.4 Funkcije in spremenljivke
+
+V TypeScript/React uporabljamo `camelCase`.
+
+Primeri:
+
+```ts
+selectedLearningPath
+currentQuestion
+isLoading
+hasError
+getLearningUnitDetail()
+submitQuestionnaire()
+```
+
+Boolean spremenljivke naj se začnejo z izrazom, ki jasno kaže, da gre za stanje.
+
+Primeri:
+
+```ts
+isLoading
+isCompleted
+hasError
+canContinue
+shouldShowResults
+```
+
+Napačno:
+
+```ts
+loadingStatusThing
+flag
+data2
+resultFinalMaybe
+```
+
+---
+
+### 3.5 Services
+
+Frontend API klici so v:
+
+```text
+src/services/
+```
+
+Service datoteke pišemo v `kebab-case` in jih končamo z `-service.ts`.
+
+Primeri:
 
 ```text
 learning-path-service.ts
-module-service.ts
+learning-unit-service.ts
+questionnaire-service.ts
 assessment-service.ts
 user-progress-service.ts
 ```
 
+Funkcije v services naj jasno povedo, kateri API klic izvajajo.
+
+Primeri:
+
+```ts
+getLearningPathDetail()
+getModuleQuestionnaire()
+submitAssessmentAnswers()
+saveUserProgress()
+```
+
+Komponente ne smejo direktno klicati `fetch`, če za to obstaja service funkcija.
+
 ---
 
-## 10. Pravila za stiliziranje
+### 3.6 Types
 
-Za stiliziranje uporabljamo Tailwind CSS.
+Backend request/response tipi so v:
 
-Pri oblikovanju uporabljamo obstoječe barve in vizualni slog projekta.
+```text
+src/types/
+```
 
-Prednost imajo barve iz oblikovalskega sistema projekta, na primer:
+Type datoteke pišemo v `kebab-case`.
+
+Primeri:
+
+```text
+learning-path.ts
+learning-unit.ts
+user-progress.ts
+questionnaire.ts
+assessment.ts
+```
+
+Type in interface imena pišemo v `PascalCase`.
+
+Primeri:
+
+```ts
+LearningPathResponse
+LearningUnitResponse
+QuestionnaireResponse
+AssessmentResultResponse
+UserProgressResponse
+```
+
+Ne definiramo istega tipa na več mestih.
+
+Če backend spremeni response strukturo, je treba preveriti tudi ustrezne tipe na frontendu.
+
+---
+
+### 3.7 CSS in Tailwind
+
+Projekt uporablja Tailwind CSS.
+
+Uporabljamo obstoječe barvne skupine:
 
 ```text
 sand
@@ -321,105 +375,501 @@ forest
 terracotta
 ```
 
-Ne dodajamo naključnih novih barv, če za to ni jasnega razloga.
+Pravila:
 
-Pri spremembah uporabniškega vmesnika pazimo, da ne spreminjamo obstoječega izgleda, postavitve ali logike, če to ni namen naloge.
+- ne uvajamo naključnih novih barv brez dogovora,
+- ne podvajamo obstoječih style rešitev,
+- reusable komponente naj uporabljajo konsistentne className vzorce,
+- ne spreminjamo obstoječega izgleda strani, če je cilj samo refactor strukture.
 
----
+CSS datoteke, kjer obstajajo, naj bodo poimenovane enako kot komponenta ali stran.
 
-## 11. Komentarji v kodi
-
-Komentarje uporabljamo samo tam, kjer pojasnijo pomembno logiko ali odločitev.
-
-Komentar razloži, zakaj nekaj obstaja, ne samo kaj dela posamezna vrstica.
-
-Dober primer:
-
-```python
-# Uporabimo prerequisites, ker predstavljajo glavni vir resnice za dostopnost učnih enot.
-```
-
-Manj primeren primer:
-
-```python
-# Nastavi spremenljivko na true.
-```
-
----
-
-## 12. Okoljske spremenljivke
-
-Občutljivih podatkov ne zapisujemo neposredno v kodo.
-
-Za lokalne nastavitve uporabljamo datoteke:
+Primer:
 
 ```text
-backend/.env
-frontend/.env
-```
-
-V Git dodamo samo predloge:
-
-```text
-backend/.env.example
-frontend/.env.example
+QuestionnairePage.css
 ```
 
 ---
 
-## 13. Commit sporočila
+### 3.8 Frontend komentarji
 
-Commit sporočila so kratka, jasna in zapisana v slovenščini.
+Komentarji naj se uporabljajo samo takrat, ko pojasnijo pomembno odločitev ali manj očitno logiko.
+
+Ne dodajamo komentarjev, ki samo ponovijo, kaj koda očitno dela.
+
+Dobro:
+
+```ts
+// Gostujoč uporabnik dobi začasni ID, da lahko rezultat vprašalnika ostane vezan na trenutno sejo.
+```
+
+Slabo:
+
+```ts
+// Nastavi loading na true
+setIsLoading(true)
+```
+
+---
+
+## 4. Pravila za backend
+
+Za podrobnejša backend pravila glej:
+
+[Backend Contribution Guide](../backend/CONTRIBUTING.md)
+
+Backend uporablja:
+
+- Python
+- FastAPI
+- Pydantic
+- MongoDB
+- Pytest
+
+---
+
+### 4.1 Backend mape
+
+Backend koda je v:
+
+```text
+backend/app/
+```
+
+Glavne mape:
+
+```text
+app/api/
+app/services/
+app/repositories/
+app/schemas/
+app/core/
+app/database/
+```
+
+Pravila:
+
+- `app/api` vsebuje FastAPI endpoint-e,
+- `app/services` vsebuje poslovno logiko,
+- `app/repositories` vsebuje dostop do MongoDB,
+- `app/schemas` vsebuje Pydantic modele,
+- `app/core` vsebuje skupno varnostno in sistemsko logiko,
+- `app/database` vsebuje povezavo z bazo.
+
+Mape pišemo z malimi črkami.
+
+Če je ime sestavljeno iz več besed, v Python backend delu uporabljamo `snake_case`.
 
 Primeri:
 
 ```text
-Dodana dokumentacija tehnoloskega sklada
-Posodobljen podatkovni model
-Izboljsan prikaz uporabniskega napredka
-Dodana predloga okoljskih spremenljivk
+user_progress
+learning_paths
+learning_units
+assessment_assistant
 ```
 
-Commit opisuje dejansko spremembo.
+---
 
-Manj primerni primeri:
+### 4.2 Backend datoteke
+
+Python datoteke pišemo v `snake_case`.
+
+Primeri:
 
 ```text
-fix
-spremembe
-test
-update
+learning_path_service.py
+learning_unit_repository.py
+user_progress_schema.py
+assessment_assistant_prompt.py
+```
+
+Napačno:
+
+```text
+LearningPathService.py
+learning-path-service.py
+userProgressSchema.py
+```
+
+Datoteka naj že z imenom pove, kateremu sloju pripada.
+
+Primeri:
+
+```text
+module_service.py
+module_repository.py
+module_schema.py
+module_assistant_prompt.py
 ```
 
 ---
 
-## 14. Preverjanje pred commitom
+### 4.3 Razredi
 
-Pred commitom preverimo:
+Python razrede pišemo v `PascalCase`.
 
-- ali se projekt zažene,
-- ali ni dodanih občutljivih podatkov,
-- ali so imena datotek in funkcij dosledna,
-- ali ni podvojene kode,
-- ali so povezave v dokumentaciji pravilne,
-- ali sprememba ne pokvari obstoječe funkcionalnosti.
+Primeri:
 
-Za frontend je priporočljivo preveriti:
-
-```bash
-npm run build
+```python
+LearningPathService
+LearningUnitRepository
+UserProgressService
+QuestionnaireResponse
+AssessmentResultResponse
 ```
 
-Za backend je priporočljivo preveriti teste, če so pripravljeni:
+Razred naj ima ime, ki jasno kaže njegovo odgovornost.
 
-```bash
-pytest
+Pravilno:
+
+```python
+class LearningPathService:
+    ...
+```
+
+Napačno:
+
+```python
+class Manager:
+    ...
 ```
 
 ---
 
-## 15. Povzetek
+### 4.4 Funkcije in spremenljivke
 
-Glavno pravilo projekta NIDiKo je doslednost.
+Python funkcije in spremenljivke pišemo v `snake_case`.
 
-Koda je organizirana, poimenovanja so jasna, občutljivi podatki ostanejo izven repozitorija, nova funkcionalnost pa se doda na mesto, ki ustreza obstoječi arhitekturi projekta.
+Primeri:
+
+```python
+get_learning_path_by_id
+get_user_progress
+completed_learning_unit_ids
+current_module_id
+```
+
+Boolean spremenljivke naj jasno kažejo pomen.
+
+Primeri:
+
+```python
+is_completed
+has_access
+should_update_progress
+```
+
+Napačno:
+
+```python
+flag
+data2
+checkThing
+```
+
+---
+
+### 4.5 API datoteke
+
+API datoteke so v:
+
+```text
+app/api/
+```
+
+Poimenovane so po domeni.
+
+Primeri:
+
+```text
+learning_paths.py
+modules.py
+learning_units.py
+questionnaires.py
+assessments.py
+user_progress.py
+search.py
+```
+
+Pravila:
+
+- API datoteka naj vsebuje endpoint-e za eno domeno,
+- ime naj bo jasno povezano z URL področjem,
+- v API datoteki ne pišemo glavne poslovne logike,
+- API datoteka naj kliče ustrezen service.
+
+---
+
+### 4.6 Service datoteke
+
+Service datoteke se končajo z:
+
+```text
+_service.py
+```
+
+Primeri:
+
+```text
+learning_path_service.py
+module_service.py
+learning_unit_service.py
+questionnaire_service.py
+assessment_service.py
+user_progress_service.py
+```
+
+Service razredi se pišejo v `PascalCase`.
+
+Primeri:
+
+```python
+LearningPathService
+ModuleService
+LearningUnitService
+QuestionnaireService
+AssessmentService
+UserProgressService
+```
+
+Service funkcije in metode naj jasno povedo, kaj naredijo.
+
+Primeri:
+
+```python
+get_learning_path_detail
+generate_questionnaire
+evaluate_answers
+update_current_position
+```
+
+---
+
+### 4.7 Repository datoteke
+
+Repository datoteke se končajo z:
+
+```text
+_repository.py
+```
+
+Primeri:
+
+```text
+learning_path_repository.py
+module_repository.py
+learning_unit_repository.py
+user_repository.py
+user_progress_repository.py
+```
+
+Repository razredi se pišejo v `PascalCase`.
+
+Primeri:
+
+```python
+LearningPathRepository
+ModuleRepository
+LearningUnitRepository
+UserRepository
+UserProgressRepository
+```
+
+Repository metode naj opisujejo dostop do podatkov.
+
+Primeri:
+
+```python
+get_by_id
+get_all
+create
+update_by_id
+delete_by_id
+```
+
+---
+
+### 4.8 Schema datoteke
+
+Schema datoteke se končajo z:
+
+```text
+_schema.py
+```
+
+Primeri:
+
+```text
+learning_path_schema.py
+module_schema.py
+learning_unit_schema.py
+questionnaire_schema.py
+assessment_schema.py
+user_progress_schema.py
+```
+
+Pydantic modeli se pišejo v `PascalCase`.
+
+Request modeli naj se končajo z:
+
+```text
+Request
+```
+
+Response modeli naj se končajo z:
+
+```text
+Response
+```
+
+Primeri:
+
+```python
+UserCreateRequest
+UserUpdateRequest
+UserResponse
+QuestionnaireSubmitRequest
+AssessmentResultResponse
+```
+
+---
+
+### 4.9 Backend komentarji in docstringi
+
+Komentarje v backend kodi pišemo v slovenščini.
+
+Komentarji naj pojasnijo:
+
+- pomembno odločitev,
+- manj očitno logiko,
+- razlog za določeno implementacijo,
+- posebno pravilo domene.
+
+Dobro:
+
+```python
+# Napredek uporabnika hranimo ločeno od profila, ker se pogosteje spreminja.
+```
+
+Slabo:
+
+```python
+# Pridobi uporabnika
+def get_user():
+    ...
+```
+
+Docstringi so priporočeni pri:
+
+- service metodah z več koraki,
+- repository metodah z manj očitnimi MongoDB poizvedbami,
+- API dependency funkcijah,
+- validacijskih funkcijah.
+
+---
+
+## 5. Pravila za dokumentacijo
+
+Dokumentacija je lahko napisana v slovenščini.
+
+Datoteke v `docs/` naj imajo številko in kratek opis v `kebab-case`.
+
+Primeri:
+
+```text
+01-pregled-projekta.md
+02-tehnoloski-sklad.md
+10-pravila-poimenovanja-in-pisanje-kode.md
+```
+
+Pravila:
+
+- naslov dokumenta naj jasno pove namen,
+- vsebina naj bo strukturirana s headingi,
+- ne podvajamo preveč vsebine iz drugih dokumentov,
+- kjer je smiselno, dodamo povezave do povezanih dokumentov,
+- tehnična imena map, datotek in endpointov pišemo v code blokih ali z backticki.
+
+Primer:
+
+```md
+Za podrobnejša backend pravila glej [Backend Contribution Guide](../backend/CONTRIBUTING.md).
+```
+
+---
+
+## 6. Primeri dobrega in slabega poimenovanja
+
+### Frontend
+
+Dobro:
+
+```text
+LearningUnitDetailPage.tsx
+learning-unit-service.ts
+user-progress.ts
+AssistantChat
+getLearningUnitDetail()
+```
+
+Slabo:
+
+```text
+page2.tsx
+helper.ts
+data.ts
+chatthing
+getData()
+```
+
+---
+
+### Backend
+
+Dobro:
+
+```text
+learning_unit_service.py
+user_progress_repository.py
+questionnaire_schema.py
+assessment_assistant_prompt.py
+```
+
+Slabo:
+
+```text
+service.py
+repo.py
+schemas2.py
+promptFinal.py
+```
+
+Dobro:
+
+```python
+get_learning_unit_by_id
+evaluate_answers
+update_current_position
+```
+
+Slabo:
+
+```python
+do_stuff
+handle_data
+process
+```
+
+---
+
+## 7. Povezani dokumenti
+
+Za podrobnejša pravila razvoja glej:
+
+- [Frontend Contribution Guide](../frontend/CONTRIBUTING.md)
+- [Backend Contribution Guide](../backend/CONTRIBUTING.md)
+- [Glavni README](../README.md)
+
+Ta dokument se uporablja kot skupni dogovor za poimenovanje in pisanje kode v projektu **NIDiKo**.

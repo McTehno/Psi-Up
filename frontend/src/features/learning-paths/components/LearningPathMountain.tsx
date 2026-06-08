@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef, useId } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, useInView } from 'framer-motion'
 import {
   ArrowRight,
   Bookmark,
@@ -41,6 +42,7 @@ type PositionedMountainNode = LearningPathMountainNode & {
   displayLabel: string
   parallelIndex: number
   parallelCount: number
+  levelIndex: number
 }
 
 type LearningPathMountainProps = {
@@ -72,6 +74,7 @@ type PathSegment = {
   from: PathPoint
   to: PathPoint
   isParallelTransition?: boolean
+  levelIndex: number
 }
 
 type LayoutVariant = 'mobile' | 'tablet' | 'desktop'
@@ -396,6 +399,7 @@ function getPositionedNodeLevels(
         displayLabel,
         parallelIndex,
         parallelCount,
+        levelIndex,
       }
     })
   })
@@ -420,6 +424,7 @@ function createPathSegments(levels: PositionedMountainNode[][]): PathSegment[] {
             from: fromNode,
             to: toNode,
             isParallelTransition,
+            levelIndex,
           })
         })
       })
@@ -434,6 +439,7 @@ function createPathSegments(levels: PositionedMountainNode[][]): PathSegment[] {
         from: fromNode,
         to: matchingNode,
         isParallelTransition,
+        levelIndex,
       })
     })
   }
@@ -447,6 +453,7 @@ function createFinishPathSegments(
 ): PathSegment[] {
   const lastLevel = levels[levels.length - 1] ?? []
   const isParallelTransition = lastLevel.length > 1
+  const levelIndex = Math.max(0, levels.length - 1)
 
   return lastLevel.map((node) => ({
     from: node,
@@ -456,6 +463,7 @@ function createFinishPathSegments(
       y: finishPosition.y,
     },
     isParallelTransition,
+    levelIndex,
   }))
 }
 
@@ -464,11 +472,15 @@ function FinishFlag({
   isCompleted,
   celebrationKey = 0,
   className = '',
+  delay = 0,
+  isContainerInView = true,
 }: {
   position: Position
   isCompleted: boolean
   celebrationKey?: number
   className?: string
+  delay?: number
+  isContainerInView?: boolean
 }) {
   const [showConfetti, setShowConfetti] = useState(false)
 
@@ -494,7 +506,7 @@ function FinishFlag({
   }, [celebrationKey, isCompleted])
 
   return (
-    <div
+    <motion.div
       className={[
         'absolute z-30 -translate-x-1/2 -translate-y-1/2',
         className,
@@ -503,6 +515,9 @@ function FinishFlag({
         left: `${position.x}%`,
         top: `${position.y}%`,
       }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={isContainerInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.5, delay, ease: "easeOut" }}
       aria-label="Zaključek poti"
     >
       <div
@@ -540,7 +555,7 @@ function FinishFlag({
 
         <Flag className="h-7 w-7" />
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -1332,9 +1347,12 @@ export function LearningPathMountain({
   celebrateCompletedOnMount = false,
   className = '',
 }: LearningPathMountainProps) {
+  const componentId = useId().replace(/:/g, '')
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [completionCelebrationKey, setCompletionCelebrationKey] = useState(0)
   const previousIsCompletedRef = useRef(isCompleted)
+  const containerRef = useRef<HTMLElement>(null)
+  const isContainerInView = useInView(containerRef, { once: true, margin: "-100px" })
 
   useEffect(() => {
     const wasCompleted = previousIsCompletedRef.current
@@ -1455,23 +1473,46 @@ export function LearningPathMountain({
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        {segments.map((segment) => (
-          <path
-            key={`${segment.from.id}-${segment.to.id}`}
-            d={createWavyPathD(
-              segment.from,
-              segment.to,
-              segment.isParallelTransition ? 1.5 : 2,
-            )}
-            fill="none"
-            stroke="#344E41"
-            strokeWidth="3.45"
-            strokeLinecap="round"
-            strokeDasharray="1.4 1.25"
-            opacity="0.62"
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
+        {segments.map((segment) => {
+          const delay = segment.levelIndex * 0.8;
+          const maskId = `mask-${componentId}-${segment.from.id}-${segment.to.id}`;
+          const pathD = createWavyPathD(
+            segment.from,
+            segment.to,
+            segment.isParallelTransition ? 1.5 : 2,
+          );
+
+          return (
+            <g key={`${segment.from.id}-${segment.to.id}`}>
+              <defs>
+                <mask id={maskId}>
+                  <motion.path
+                    d={pathD}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="10"
+                    strokeLinecap="butt"
+                    initial={{ pathLength: 0 }}
+                    animate={isContainerInView ? { pathLength: 1 } : { pathLength: 0 }}
+                    transition={{
+                      pathLength: { duration: 0.8, delay, ease: "linear" }
+                    }}
+                  />
+                </mask>
+              </defs>
+              <path
+                d={pathD}
+                fill="none"
+                stroke="#344E41"
+                strokeWidth="3.45"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+                opacity="0.62"
+                mask={`url(#${maskId})`}
+              />
+            </g>
+          )
+        })}
       </svg>
     )
   }
@@ -1490,8 +1531,10 @@ export function LearningPathMountain({
         nodesToRender,
       )
       const nodeProgress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+      const nodeDelay = node.levelIndex * 0.8;
+
       return (
-        <div
+        <motion.div
           key={`${node.id}-${className}`}
           className={[
             'absolute z-40 -translate-x-1/2 -translate-y-1/2 items-center justify-center',
@@ -1501,11 +1544,19 @@ export function LearningPathMountain({
             left: `${node.x}%`,
             top: `${node.y}%`,
           }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={isContainerInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.5, delay: nodeDelay, ease: "easeOut" }}
         >
           {node.isAssessmentPosition && (
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]">
+            <motion.div 
+               className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]"
+               initial={{ opacity: 0, y: 10 }}
+               animate={isContainerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+               transition={{ duration: 0.5, delay: nodeDelay + 0.3, ease: "easeOut" }}
+            >
               <AssessmentPositionMarker label="" />
-            </div>
+            </motion.div>
           )}
           <button
             type="button"
@@ -1534,13 +1585,14 @@ export function LearningPathMountain({
               progress={nodeProgress}
             />
           )}
-        </div>
+        </motion.div>
       )
     })
   }
 
   return (
     <section
+      ref={containerRef}
       className={[
         'relative isolate overflow-hidden rounded-[2rem] border border-[#DED2BC] bg-[#F7F1E6] shadow-sm min-[640px]:!h-auto min-[640px]:!min-h-0 min-[640px]:aspect-[1900/1000]',
         className,
@@ -1646,6 +1698,8 @@ export function LearningPathMountain({
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
         className={DESKTOP_FLAG_CLASS}
+        delay={desktopNodeLevels.length * 0.8}
+        isContainerInView={isContainerInView}
       />
 
       <FinishFlag
@@ -1653,6 +1707,8 @@ export function LearningPathMountain({
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
         className={TABLET_FLAG_CLASS}
+        delay={tabletNodeLevels.length * 0.8}
+        isContainerInView={isContainerInView}
       />
 
       <FinishFlag
@@ -1660,6 +1716,8 @@ export function LearningPathMountain({
         isCompleted={isCompleted}
         celebrationKey={completionCelebrationKey}
         className={MOBILE_FLAG_CLASS}
+        delay={mobileNodeLevels.length * 0.8}
+        isContainerInView={isContainerInView}
       />
 
       {selectedDesktopNode && (

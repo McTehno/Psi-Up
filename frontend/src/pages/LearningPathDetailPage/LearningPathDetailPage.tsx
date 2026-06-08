@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -972,10 +972,23 @@ function LearningPathDetailPage() {
     isFavorite: initialIsFavorite,
     isSaved: initialIsSaved,
     isCompleted: initialIsCompleted,
+    userProgress,
   } = useUserProgressState({
     contentId: learningPathContentId,
     contentType: 'learning_path',
   })
+
+  const hasStartedQuestionnaire = useMemo(() => {
+    if (assessmentResult) return true
+    if (
+      userProgress?.questionnaire_answers?.some(
+        (qa) => qa.target_type === 'learning_path' && qa.target_id === (learningPathContentId ?? learningPathId)
+      )
+    ) {
+      return true
+    }
+    return false
+  }, [assessmentResult, userProgress, learningPathContentId, learningPathId])
 
   const {
     isFavorite: progressIsFavorite,
@@ -1295,7 +1308,7 @@ function LearningPathDetailPage() {
         </section>
       </div>
 
-      {canStartQuestionnaire && !learningPathIsCompleted && (
+      {canStartQuestionnaire && !learningPathIsCompleted && !hasStartedQuestionnaire && (
         <QuestionnaireToast targetType="learning_path" targetId={learningPathContentId ?? learningPathId ?? ''} />
       )}
 

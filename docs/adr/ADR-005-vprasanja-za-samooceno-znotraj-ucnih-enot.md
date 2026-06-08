@@ -2,138 +2,76 @@
 
 ## Status
 
-**Sprejeto**
-
----
+Sprejeto
 
 ## Kontekst
 
-Projekt **Psi-Up** uporablja vprašalnike za ugotavljanje uporabnikovega predznanja. Na podlagi odgovorov sistem določi:
+Aplikacija NIDiKo uporablja vprašalnik za oceno uporabnikovega trenutnega znanja. Na podlagi odgovorov sistem lažje določi, katera učna pot, modul ali učna enota je za uporabnika primerna.
 
-- katere spretnosti uporabnik že obvlada,
-- katere spretnosti mu manjkajo,
-- katere učne enote lahko preskoči,
-- pri kateri učni enoti ali modulu naj začne.
+Vprašanja za samooceno so vsebinsko povezana s konkretnim znanjem, ki ga uporabnik razvija znotraj učnih enot. Učna enota predstavlja najmanjši del učne strukture, zato je naravno mesto za vprašanja, ki preverjajo razumevanje posamezne teme, koncepta ali spretnosti.
 
-Vprašanja za samooceno so neposredno povezana z učnimi enotami, ker je učna enota najmanjši del učne vsebine. Vsaka učna enota vsebuje določene spretnosti, ki jih uporabnik razvija, zato je smiselno, da so vprašanja za preverjanje teh spretnosti zapisana neposredno znotraj učne enote.
+Sistem mora omogočati, da se vprašalnik lahko pripravi za različne nivoje:
 
----
+* za posamezno učno enoto,
+* za modul,
+* za celotno učno pot.
+
+Zato je bilo treba določiti, kje bodo vprašanja shranjena, da jih bo mogoče ponovno uporabiti pri različnih vrstah vprašalnikov.
 
 ## Odločitev
 
-Vprašanja za samooceno se shranjujejo znotraj dokumenta učne enote.
+Vprašanja za samooceno se hranijo znotraj učnih enot.
 
-Primer strukture učne enote:
+Vsaka učna enota lahko vsebuje seznam vprašanj, ki so vezana na njeno vsebino. Ta vprašanja predstavljajo osnovni vir za generiranje vprašalnikov.
 
-```json
-{
-  "_id": "ue_005",
-  "title": "Osnove Excela",
-  "short_description": "Uvod v uporabo Excela in osnovno delo s preglednicami.",
-  "duration_min": 45,
-  "keywords": ["Excel", "preglednice", "podatki"],
-  "skills": [
-    "Razumevanje in učinkovita uporaba programskega vmesnika",
-    "Vnašanje, urejanje in hramba podatkov"
-  ],
-  "self_assessment_questions": [
-    {
-      "id": "q_ue_005_001",
-      "question": "Znam uporabljati osnovni programski vmesnik Excela.",
-      "type": "yes_no",
-      "related_skill": "Razumevanje in učinkovita uporaba programskega vmesnika"
-    }
-  ]
-}
-```
+Ko uporabnik izpolnjuje vprašalnik za posamezno učno enoto, sistem uporabi vprašanja iz te učne enote.
 
-Vsako vprašanje vsebuje:
+Ko uporabnik izpolnjuje vprašalnik za modul, sistem zbere vprašanja iz učnih enot, ki pripadajo temu modulu.
 
-- `id`,
-- `question`,
-- `type`,
-- `related_skill`.
+Ko uporabnik izpolnjuje vprašalnik za učno pot, sistem zbere vprašanja iz učnih enot, ki pripadajo modulom znotraj te učne poti.
 
-Polje `related_skill` poveže vprašanje s spretnostjo, ki jo uporabnik ocenjuje.
-
----
-
-## Uporaba v vprašalnikih
-
-Vprašalnik za eno učno enoto uporabi vprašanja iz te učne enote.
-
-Vprašalnik za modul zbere vprašanja iz vseh učnih enot znotraj modula.
-
-Vprašalnik za učno pot zbere vprašanja iz vseh učnih enot, ki pripadajo modulom v tej učni poti.
-
-Trenutna logika je:
-
-```text
-learning_path → modules → learning_units → self_assessment_questions
-```
-
----
-
-## Uporaba v assessment logiki
-
-Pri obdelavi odgovorov sistem uporablja povezavo med vprašanjem in spretnostjo.
-
-Osnovna interpretacija je:
-
-```text
-answer = true  → uporabnik spretnost zna
-answer = false → uporabniku spretnost manjka
-```
-
-Če so vsa vprašanja določene učne enote odgovorjena z `true`, se učna enota šteje kot pokrita glede na samooceno.
-
-Če ima učna enota vsaj eno vprašanje odgovorjeno z `false`, sistem uporabniku priporoči to učno enoto oziroma jo določi kot začetno točko.
-
----
+S tem vprašanja ostanejo povezana z najmanjšo vsebinsko enoto, hkrati pa jih je mogoče sestaviti v širše vprašalnike za module in učne poti.
 
 ## Posledice
 
 ### Prednosti
 
-- Vprašanja so neposredno povezana z učno enoto.
-- Podatkovni model ostane pregleden in enostaven za razumevanje.
-- Ni potrebna dodatna kolekcija za vprašanja v trenutni verziji sistema.
-- Generiranje vprašalnikov je enostavno, ker backend bere vprašanja iz učnih enot.
-- Assessment logika lahko neposredno poveže odgovore s spretnostmi.
-- Učno enoto je mogoče samostojno uporabiti za vprašalnik, assessment in prikaz vsebine.
-- Struktura je primerna za trenutno fazo projekta in za manjše število vprašanj.
+* Vprašanja so neposredno povezana z vsebino učne enote.
+* Ista vprašanja se lahko uporabijo pri vprašalniku za učno enoto, modul ali učno pot.
+* Učne enote ostanejo glavni vir konkretnega znanja in preverjanja razumevanja.
+* Lažje je dodajati, urejati ali odstranjevati vprašanja skupaj z vsebino učne enote.
+* Sistem lahko generira širše vprašalnike z združevanjem vprašanj iz več učnih enot.
+* Struktura je skladna z osnovnim modelom: učna pot → modul → učna enota.
 
 ### Slabosti / omejitve
 
-- Vprašanja so vezana na učno enoto, zato je ponovno uporabljanje istih vprašanj med več učnimi enotami manj neposredno.
-- Če bo sistem kasneje potreboval kompleksnejše tipe vprašanj, bo morda potrebna ločena kolekcija za vprašanja.
-
----
+* Pri vprašalniku za celotno učno pot se lahko zbere veliko vprašanj, če ima pot veliko modulov in učnih enot.
+* Potrebna je dodatna logika za izbiro, omejevanje ali razvrščanje vprašanj, če jih je preveč.
+* Kakovost vprašalnika je odvisna od kakovosti vprašanj, zapisanih v posameznih učnih enotah.
 
 ## Alternativne možnosti
 
-### Ločena kolekcija za vprašanja
+### Ločena zbirka vprašanj
 
-Vprašanja bi lahko bila shranjena v ločeni kolekciji, na primer `questions`. To bi omogočilo večjo fleksibilnost, ponovno uporabo vprašanj in lažje urejanje večjih količin vprašanj.
+Vprašanja bi lahko bila shranjena v ločeni zbirki in povezana z učnimi enotami prek ID-jev.
 
-Za trenutno verzijo sistema bi to povečalo kompleksnost, ker bi bilo treba dodatno povezovati vprašanja z učnimi enotami.
+Ta možnost ni bila izbrana, ker bi za trenutno strukturo projekta dodala več kompleksnosti. Ker so vprašanja neposredno vezana na vsebino učne enote, je bolj pregledno, da so shranjena skupaj z njo.
 
-### Vprašanja na nivoju modula
+### Vprašanja na ravni modulov
 
-Vprašanja bi lahko bila shranjena na nivoju modula. To bi poenostavilo vprašalnik za modul, vendar bi bilo težje natančno določiti, katera učna enota pokriva manjkajočo spretnost.
+Vprašanja bi lahko bila shranjena neposredno znotraj modulov.
 
-### Vprašanja na nivoju učne poti
+Ta možnost ni bila izbrana, ker je modul širši vsebinski sklop. Vprašanja so običajno bolj natančno vezana na posamezne teme in spretnosti, ki so predstavljene v učnih enotah.
 
-Vprašanja bi lahko bila shranjena na nivoju učne poti. To bi omogočilo krajši začetni vprašalnik za celotno učno pot, vendar bi zmanjšalo natančnost pri določanju začetne učne enote.
+### Vprašanja na ravni učnih poti
 
----
+Vprašanja bi lahko bila shranjena neposredno znotraj učnih poti.
 
-## Končna odločitev
+Ta možnost ni bila izbrana, ker je učna pot najširši nivo strukture. Tak pristop bi otežil ponovno uporabo vprašanj pri modulih in učnih enotah ter zmanjšal povezavo med vprašanjem in konkretno vsebino.
 
-Vprašanja za samooceno se v trenutni verziji sistema shranjujejo znotraj učnih enot v polju `self_assessment_questions`.
+## Povezani dokumenti
 
-Ta odločitev omogoča jasno povezavo med spretnostmi, vprašanji, assessment logiko in priporočeno začetno točko uporabnika.
-
-Če bo sistem kasneje potreboval večje število vprašanj, kompleksnejše tipe vprašanj ali ponovno uporabo vprašanj med različnimi učnimi enotami, se lahko uvede ločena kolekcija za vprašanja.
-
-Ta odločitev ostane veljavna za trenutno verzijo sistema.
+* [Arhitektura sistema](../03-arhitektura.md)
+* [Podatkovni model](../05-podatkovni-model.md)
+* [API endpointi](../06-api-endpointi.md)
+* [ADR-006: Shranjevanje uporabniškega napredka znotraj uporabniškega profila](ADR-006-shranjevanje-napredka-znotraj-uporabniskega-profila.md)

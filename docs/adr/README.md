@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Ta mapa vsebuje ADR dokumente oziroma zapise arhitekturnih odločitev za projekt Psi-Up.
+Ta mapa vsebuje ADR dokumente oziroma zapise arhitekturnih odločitev za projekt NIDiKo.
 
 ADR dokumenti opisujejo pomembne tehnične in arhitekturne odločitve, ki vplivajo na strukturo, razvoj in vzdrževanje aplikacije. Namen ADR-jev je, da ekipa ne dokumentira samo tega, kaj je bilo narejeno, ampak tudi zakaj je bila določena odločitev sprejeta.
 

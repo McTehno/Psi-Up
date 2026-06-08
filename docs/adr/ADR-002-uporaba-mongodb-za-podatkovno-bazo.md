@@ -2,115 +2,83 @@
 
 ## Status
 
-**Sprejeto**
-
----
+Sprejeto
 
 ## Kontekst
 
-Projekt **Psi-Up** potrebuje podatkovno bazo za shranjevanje učnih vsebin, uporabnikov in njihovega napredka.
+Aplikacija NIDiKo potrebuje podatkovno bazo za shranjevanje učnih vsebin, uporabnikov, uporabniškega napredka in podatkov, ki podpirajo delovanje vprašalnikov, priporočil ter glasovne pomoči.
 
-Sistem trenutno uporablja naslednje glavne tipe podatkov:
+Podatkovni model aplikacije vsebuje več vrst dokumentov:
 
-- učne poti,
-- module,
-- učne enote,
-- vprašanja za samooceno,
-- uporabniške profile,
-- napredek uporabnika.
+* učne poti,
+* module,
+* učne enote,
+* uporabnike,
+* uporabniški napredek znotraj uporabniškega profila,
+* odgovore vprašalnika,
+* podatke za predpomnjenje glasovne pomoči.
 
-Podatki v projektu imajo hierarhično in dokumentno strukturo. Na primer:
+Stranka je pri projektu poudarila potrebo po razširljivosti podatkovnega modela. Prav tako je bilo predvideno, da bo ekipa podatke prejemala oziroma pripravljala v JSON obliki. Ker podatki niso nujno imeli vedno popolnoma enake strukture in ker se lahko atributi učnih vsebin skozi razvoj spreminjajo, je bila potrebna podatkovna baza, ki dobro podpira fleksibilne dokumente.
 
-- učna pot vsebuje seznam modulov,
-- modul vsebuje seznam učnih enot,
-- učna enota vsebuje seznam spretnosti in vprašanj za samooceno,
-- uporabniški napredek vsebuje več seznamov shranjenih, priljubljenih in dokončanih vsebin.
-
-Zato je bilo smiselno uporabiti podatkovno bazo, ki dobro podpira dokumentni model in fleksibilno strukturo podatkov.
-
----
+Struktura učnih vsebin se lahko skozi razvoj spreminja. Učne enote lahko vsebujejo različna polja, vprašanja za samooceno, povezave z dodatnimi metapodatki in druge podatke, ki podpirajo prikaz ter delovanje vprašalnika. Zaradi tega je bila potrebna podatkovna baza, ki omogoča dovolj prilagodljiv podatkovni model.
 
 ## Odločitev
 
-Za podatkovno bazo se uporabi **MongoDB**.
+Za glavno podatkovno bazo aplikacije se uporablja **MongoDB Atlas**.
 
-MongoDB se uporablja za shranjevanje glavnih kolekcij:
+MongoDB je dokumentna podatkovna baza, zato omogoča shranjevanje podatkov v obliki dokumentov, ki so naravno podobni JSON strukturi, uporabljeni v aplikaciji.
 
-```text
-learning_units
-modules
-learning_paths
-users
-user_progress
-```
+Aplikacija uporablja MongoDB za shranjevanje glavnih podatkov sistema, kot so učne poti, moduli, učne enote, uporabniki in podatki, povezani z uporabniškim napredkom.
 
-Backend z MongoDB komunicira prek **PyMongo** knjižnice.
-
-Povezava z bazo je ločena v datoteki:
-
-```text
-backend/app/database/mongodb.py
-```
-
-Dostop do posameznih kolekcij je organiziran v repository sloju:
-
-```text
-backend/app/repositories/
-```
-
-Primeri repository datotek:
-
-```text
-learning_unit_repository.py
-module_repository.py
-learning_path_repository.py
-user_repository.py
-user_progress/
-```
-
----
+Backend komunicira z MongoDB prek repository sloja. API endpointi in service sloj ne dostopajo neposredno do podatkovne baze, ampak uporabljajo repository komponente. S tem ostane dostop do podatkov ločen od poslovne logike aplikacije.
 
 ## Posledice
 
 ### Prednosti
 
-- MongoDB dobro podpira dokumentno strukturo podatkov.
-- Učne poti, moduli in učne enote se lahko shranjujejo v obliki, ki je blizu JSON strukturi.
-- Podatkovni model je fleksibilen in ga je mogoče razširjati brez zahtevnih migracij.
-- Učna enota lahko neposredno vsebuje spretnosti in vprašanja za samooceno.
-- `user_progress` lahko hrani več seznamov podatkov znotraj enega dokumenta.
-- JSON datoteke iz razvojne faze je enostavno uvoziti v MongoDB Compass.
-- MongoDB Atlas omogoča uporabo baze v oblaku.
-- MongoDB Compass omogoča lažji pregled, uvoz in ročno preverjanje podatkov.
+* MongoDB dobro podpira dokumentno strukturo podatkov.
+* Podatkovni model je prilagodljiv za učne vsebine, ki se lahko širijo z dodatnimi polji.
+* Struktura dokumentov je blizu JSON obliki, ki jo uporablja frontend in backend.
+* MongoDB Atlas omogoča uporabo oblačne podatkovne baze brez lokalnega vzdrževanja strežnika.
+* Učne vsebine, uporabniki in napredek se lahko hranijo v preglednih dokumentih.
+* Repozitorijski sloj omogoča, da je dostop do MongoDB ločen od poslovne logike.
+* Rešitev se dobro ujema z referenčnim pristopom med učnimi potmi, moduli in učnimi enotami.
+* Rešitev podpira razširljivost, ki jo je stranka zahtevala pri podatkovnem modelu.
 
 ### Slabosti / omejitve
 
-- MongoDB ne zagotavlja enakih relacijskih omejitev kot SQL baze.
-- Backend mora sam preverjati, ali reference med podatki obstajajo.
-- Če bo podatkovni model kasneje zahteval veliko kompleksnih relacij, bo potrebna dodatna previdnost pri načrtovanju poizvedb.
-
----
+* MongoDB ne zagotavlja enakega relacijskega modela kot klasične SQL podatkovne baze.
+* Povezave med dokumenti je treba upravljati na aplikacijskem nivoju.
+* Pri referencah med dokumenti je treba paziti na konsistentnost podatkov.
+* Pri kompleksnih poizvedbah je lahko potrebna dodatna logika v backendu.
+* Razvijalci morajo dobro razumeti strukturo dokumentov, da ne pride do nekonsistentnega podatkovnega modela.
 
 ## Alternativne možnosti
 
-### PostgreSQL
+### Relacijska podatkovna baza
 
-PostgreSQL bi bil primeren za strogo relacijski podatkovni model. Omogoča močne relacije, tuje ključe in strukturirane poizvedbe. Vendar bi bil za trenutno dokumentno strukturo učnih poti, modulov, učnih enot in vprašanj manj neposreden, saj bi bilo treba podatke razdeliti v več tabel.
+Možna bi bila uporaba relacijske podatkovne baze, na primer PostgreSQL ali MySQL.
 
-### MySQL
+Ta možnost ni bila izbrana, ker je podatkovni model aplikacije dokumentno usmerjen in se lahko med razvojem spreminja. Relacijska baza bi zahtevala strožjo shemo in več povezovalnih tabel za učne poti, module, učne enote, vprašanja in uporabniški napredek.
 
-MySQL bi bil prav tako primeren za relacijski model, vendar ima podobne omejitve kot PostgreSQL glede fleksibilnosti dokumentnih struktur. Za trenutno fazo projekta bi zahteval več dodatnega modeliranja relacij.
+Ker so bili podatki predvideni v JSON obliki in ker ni bilo nujno, da imajo vsi dokumenti vedno enake atribute, bi relacijski model zahteval več prilagajanja, dodatnih tabel in migracij ob spremembah podatkovnega modela.
 
-### Shranjevanje v JSON datotekah
+### Lokalna JSON datoteka
 
-JSON datoteke so bile primerne za začetno načrtovanje podatkovnega modela in pripravo testnih podatkov. Niso pa primerne kot glavna podatkovna baza, ker ne omogočajo varnega večuporabniškega dostopa, iskanja, posodabljanja in dolgoročnega shranjevanja podatkov.
+V začetni fazi bi bilo mogoče podatke hraniti samo v lokalnih JSON datotekah.
 
----
+Ta možnost ni bila izbrana kot glavna rešitev, ker ne omogoča zanesljivega trajnega shranjevanja uporabniških podatkov, uporabniškega napredka in dinamičnih sprememb. JSON datoteke so lahko uporabne za začetne podatke, testiranje ali uvoz podatkov, niso pa primerne kot glavna podatkovna baza aplikacije.
 
-## Končna odločitev
+### Lokalna MongoDB instanca
 
-Za podatkovno bazo projekta Psi-Up se uporablja **MongoDB**, ker se dobro ujema z dokumentno strukturo podatkov in omogoča fleksibilno shranjevanje učnih poti, modulov, učnih enot ter napredka uporabnika.
+Namesto MongoDB Atlas bi lahko uporabljali lokalno MongoDB instanco.
 
-MongoDB je primeren za trenutno fazo projekta, ker omogoča enostaven uvoz JSON podatkov, pregled prek MongoDB Compass in povezavo z backendom prek PyMongo.
+Ta možnost ni bila izbrana kot glavna rešitev, ker MongoDB Atlas poenostavi skupinski razvoj in omogoča, da ekipa uporablja skupno oblačno podatkovno bazo. Lokalna instanca bi bila lahko uporabna za testiranje, vendar bi zahtevala dodatno usklajevanje okolij med člani ekipe.
 
-Ta odločitev ostane veljavna za trenutno verzijo sistema.
+## Povezani dokumenti
+
+* [Arhitektura sistema](../03-arhitektura.md)
+* [Podatkovni model](../05-podatkovni-model.md)
+* [Backend README](../../backend/README.md)
+* [ADR-003: Plastna struktura backenda](ADR-003-plastna-struktura-backenda.md)
+* [ADR-004: Uporaba referenčnega pristopa med učnimi vsebinami v MongoDB](ADR-004-uporaba-referencnega-pristopa-med-ucnimi-vsebinami-v-mongodb.md)

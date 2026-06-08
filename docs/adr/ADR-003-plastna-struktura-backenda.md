@@ -2,195 +2,84 @@
 
 ## Status
 
-**Sprejeto**
-
----
+Sprejeto
 
 ## Kontekst
 
-Backend projekta **Psi-Up** vsebuje več različnih vrst logike:
+Backend aplikacije NIDiKo je zgrajen z uporabo FastAPI. Backend ne skrbi samo za sprejemanje HTTP zahtev, ampak tudi za poslovno logiko, validacijo, dostop do podatkovne baze, uporabniški napredek, vprašalnike, priporočila in povezave z zunanjimi storitvami.
 
-- API endpoint-e za komunikacijo s frontend aplikacijo,
-- poslovno logiko za učne poti, module, učne enote in vprašalnike,
-- dostop do MongoDB podatkovne baze,
-- validacijo vhodnih in izhodnih podatkov,
-- obdelavo odgovorov iz vprašalnika,
-- shranjevanje napredka uporabnika.
+Če bi bila vsa logika zapisana neposredno v API endpointih, bi koda hitro postala težje berljiva, težje testirljiva in težje vzdrževana. Prav tako bi bilo težje ločiti odgovornosti med sprejemom zahteve, obdelavo podatkov, poslovnimi pravili in dostopom do MongoDB.
 
-Če bi bila vsa logika zapisana neposredno v API endpointih, bi backend hitro postal nepregleden in težje vzdrževan. Prav tako bi bilo težje testirati posamezne dele sistema in kasneje dodajati nove funkcionalnosti.
-
-Zato je bilo treba določiti jasno strukturo backenda, kjer ima vsak sloj svojo odgovornost.
-
----
+Zato je bila sprejeta odločitev, da backend uporablja plastno strukturo.
 
 ## Odločitev
 
-Backend je organiziran v plastno strukturo.
+Backend uporablja plastno arhitekturo, kjer ima vsak sloj svojo odgovornost.
 
-Glavni sloji so:
-
-```text
-api
-services
-repositories
-schemas
-database
-```
-
-Struktura se nahaja v mapi:
+Osnovni tok je:
 
 ```text
-backend/app/
+API → Service → Repository → Database
 ```
 
-### API sloj
+Pomen glavnih slojev:
 
-API sloj se nahaja v:
+* `app/api` vsebuje FastAPI endpoint-e in sprejema HTTP zahteve,
+* `app/services` vsebuje poslovno logiko aplikacije,
+* `app/repositories` vsebuje dostop do podatkovne baze,
+* `app/database` vsebuje povezavo z MongoDB,
+* `app/schemas` vsebuje Pydantic modele za vhodne in izhodne podatke,
+* `app/core` vsebuje skupno sistemsko logiko, kot sta varnost in obravnava napak.
 
-```text
-backend/app/api/
-```
+API sloj ne vsebuje kompleksne poslovne logike. Njegova naloga je, da sprejme zahtevo, uporabi ustrezne request/response sheme, pokliče service sloj in vrne odgovor.
 
-Ta sloj je odgovoren za:
+Service sloj vsebuje glavno poslovno logiko. Tukaj se izvajajo pravila aplikacije, povezovanje več repositoryjev, priprava vprašalnikov, ocenjevanje odgovorov, priporočila, uporabniški napredek in povezovanje z zunanjimi storitvami.
 
-- definiranje endpointov,
-- sprejem requestov iz frontenda,
-- klic ustreznega service sloja,
-- vračanje response podatkov,
-- osnovno obravnavo napak.
+Repository sloj je odgovoren za komunikacijo s podatkovno bazo. API in service sloj ne dostopata neposredno do MongoDB, ampak uporabljata repository komponente.
 
-Primeri API datotek:
-
-```text
-learning_units.py
-modules.py
-learning_paths.py
-questionnaires.py
-assessments.py
-users.py
-user_progress.py
-search.py
-```
-
-### Service sloj
-
-Service sloj se nahaja v:
-
-```text
-backend/app/services/
-```
-
-Ta sloj vsebuje poslovno logiko aplikacije.
-
-Primeri:
-
-- določanje dostopnih modulov glede na predpogoje,
-- določanje dostopnih učnih enot glede na predpogoje,
-- generiranje vprašalnikov,
-- obdelava odgovorov iz vprašalnika,
-- določanje začetne točke uporabnika,
-- shranjevanje napredka uporabnika,
-- validacija podatkov pred zapisovanjem.
-
-### Repository sloj
-
-Repository sloj se nahaja v:
-
-```text
-backend/app/repositories/
-```
-
-Ta sloj je odgovoren za dostop do MongoDB kolekcij.
-
-Repository sloj omogoča, da service sloj ne dela neposredno z MongoDB poizvedbami, ampak uporablja metode, kot so:
-
-- `get_learning_unit_by_id`,
-- `get_module_by_id`,
-- `get_learning_path_by_id`,
-- `search_learning_units`,
-- `get_progress_by_user_id`.
-
-### Schema sloj
-
-Schema sloj se nahaja v:
-
-```text
-backend/app/schemas/
-```
-
-Ta sloj vsebuje Pydantic sheme za:
-
-- request body,
-- response modele,
-- validacijo podatkov,
-- enotno strukturo podatkov med backendom in frontend aplikacijo.
-
-### Database sloj
-
-Database sloj se nahaja v:
-
-```text
-backend/app/database/
-```
-
-Ta sloj vsebuje povezavo z MongoDB podatkovno bazo.
-
-Trenutno je povezava definirana v:
-
-```text
-backend/app/database/mongodb.py
-```
-
----
+Schema sloj določa obliko podatkov, ki jih backend sprejme in vrne. S tem je komunikacija med frontend in backend delom bolj predvidljiva.
 
 ## Posledice
 
 ### Prednosti
 
-- Koda je bolj pregledna in lažje razumljiva.
-- Vsak sloj ima jasno odgovornost.
-- API endpointi ostanejo krajši in ne vsebujejo neposredne poslovne logike.
-- Poslovna logika je ločena od dostopa do baze.
-- Repository sloj omogoča lažje spreminjanje načina dostopa do podatkov.
-- Pydantic sheme omogočajo bolj jasno komunikacijo med frontend in backend delom.
-- Struktura omogoča lažje dodajanje novih funkcionalnosti.
-- Testiranje posameznih delov sistema je lažje, ker so odgovornosti ločene.
+* Koda je bolj pregledna, ker so odgovornosti ločene po slojih.
+* Poslovna logika ni zapisana neposredno v API endpointih.
+* Dostop do podatkovne baze je ločen v repository sloju.
+* Service sloj je lažje testirati neodvisno od API endpointov.
+* Repository sloj je lažje testirati ločeno od poslovne logike.
+* Pydantic sheme omogočajo jasno obliko requestov in responseov.
+* Struktura omogoča lažje dodajanje novih funkcionalnosti.
+* Arhitektura je bolj skladna s produkcijskim načinom razvoja kot ena sama monolitna datoteka z vso logiko.
 
 ### Slabosti / omejitve
 
-- Za manjše funkcionalnosti je potrebnih več datotek.
-- Ekipa mora razumeti, v kateri sloj spada določena logika.
-- Če se struktura ne uporablja dosledno, lahko pride do podvajanja kode.
-- Dependency povezave med repository, service in API slojem lahko postanejo daljše.
-
----
+* Za manjše funkcionalnosti je potrebnih več datotek.
+* Razvijalec mora razumeti, v kateri sloj spada posamezna logika.
 
 ## Alternativne možnosti
 
-### Vsa logika neposredno v API endpointih
+### Logika neposredno v API endpointih
 
-Ta možnost bi bila hitrejša na začetku, vendar bi backend postal težje vzdrževan. API datoteke bi vsebovale preveč logike, MongoDB poizvedb in validacije.
+Vsa logika bi lahko bila zapisana neposredno v FastAPI endpointih.
 
-### Ločitev samo na API in database sloj
+Ta možnost ni bila izbrana, ker bi endpointi hitro postali preveliki in težko vzdrževani. Prav tako bi bilo težje testirati poslovno logiko ločeno od HTTP sloja.
 
-Ta možnost bi bila enostavnejša, vendar ne bi dovolj jasno ločila poslovne logike od dostopa do podatkov.
+### Neposreden dostop do MongoDB iz service sloja
 
-### Uporaba več ločenih mikroservisov
+Service sloj bi lahko neposredno komuniciral z MongoDB.
 
-Mikroservisna arhitektura bi bila za trenutno fazo projekta preveč kompleksna. Sistem trenutno še ne potrebuje ločenih storitev za učne vsebine, uporabnike, assessment in priporočila.
+Ta možnost ni bila izbrana, ker bi se poslovna logika mešala z logiko dostopa do podatkov. Repository sloj omogoča jasnejšo ločitev in lažje testiranje dostopa do baze.
 
----
+### Ena skupna datoteka za posamezno funkcionalnost
 
-## Končna odločitev
+Za vsako funkcionalnost bi lahko obstajala ena datoteka, ki vsebuje endpoint, validacijo, poslovno logiko in dostop do podatkov.
 
-Backend projekta Psi-Up uporablja plastno strukturo z ločenimi sloji:
+Ta možnost ni bila izbrana, ker bi bila na začetku enostavna, kasneje pa bi se težje vzdrževala in širila.
 
-- `api`,
-- `services`,
-- `repositories`,
-- `schemas`,
-- `database`.
+## Povezani dokumenti
 
-Ta odločitev omogoča bolj pregledno organizacijo kode, lažje vzdrževanje in boljšo pripravljenost za kasnejše razširitve sistema.
-
-Ta odločitev ostane veljavna za trenutno verzijo sistema.
+* [Arhitektura sistema](../03-arhitektura.md)
+* [Backend README](../../backend/README.md)
+* [Pravila poimenovanja in pisanja kode](../10-pravila-poimenovanja-in-pisanje-kode.md)
+* [ADR-004: Uporaba referenčnega pristopa med učnimi vsebinami v MongoDB](ADR-004-uporaba-referencnega-pristopa-med-ucnimi-vsebinami-v-mongodb.md)

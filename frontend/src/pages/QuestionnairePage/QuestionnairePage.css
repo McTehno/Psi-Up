@@ -1765,7 +1765,7 @@ body.questionnaire-route footer {
   }
 
   .assessment-step {
-    align-items: flex-start;
+    align-items: center;
     font-size: 15px;
     line-height: 1.4;
   }
@@ -1904,7 +1904,7 @@ body.questionnaire-route footer {
 
   .assessment-panel {
     display: block;
-    min-height: calc(100svh - 24px);
+    min-height: auto;
     overflow: hidden;
     border: 1px solid #ded5c6;
     border-radius: 22px;
@@ -1916,7 +1916,7 @@ body.questionnaire-route footer {
   }
 
   .assessment-content {
-    min-height: calc(100svh - 24px);
+    min-height: auto;
     padding: 22px;
     overflow-y: visible;
   }
@@ -1928,7 +1928,7 @@ body.questionnaire-route footer {
   }
 
   .assessment-step {
-    align-items: flex-start;
+    align-items: center;
     font-size: 14px;
     line-height: 1.4;
   }
@@ -2249,12 +2249,12 @@ body.questionnaire-route footer {
   }
 
   .assessment-panel {
-    min-height: calc(100svh - 20px);
+    min-height: auto;
     border-radius: 20px;
   }
 
   .assessment-content {
-    min-height: calc(100svh - 20px);
+    min-height: auto;
     padding: 18px;
   }
 

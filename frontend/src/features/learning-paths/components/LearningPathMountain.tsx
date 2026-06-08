@@ -1461,7 +1461,7 @@ export function LearningPathMountain({
     [mobilePathSegments, mobileFinishPathSegments],
   )
 
-  function renderPathSegments(segments: PathSegment[], className: string) {
+  function renderPathSegments(segments: PathSegment[], className: string, variant: string) {
     if (segments.length === 0) {
       return null
     }
@@ -1475,7 +1475,7 @@ export function LearningPathMountain({
       >
         {segments.map((segment) => {
           const delay = segment.levelIndex * 0.8;
-          const maskId = `mask-${componentId}-${segment.from.id}-${segment.to.id}`;
+          const maskId = `mask-${variant}-${componentId}-${segment.from.id}-${segment.to.id}`;
           const pathD = createWavyPathD(
             segment.from,
             segment.to,
@@ -1685,9 +1685,9 @@ export function LearningPathMountain({
         Klikni modul/ učno enoto
       </div>
 
-      {renderPathSegments(desktopAllPathSegments, DESKTOP_BLOCK_CLASS)}
-      {renderPathSegments(tabletAllPathSegments, TABLET_BLOCK_CLASS)}
-      {renderPathSegments(mobileAllPathSegments, MOBILE_BLOCK_CLASS)}
+      {renderPathSegments(desktopAllPathSegments, DESKTOP_BLOCK_CLASS, 'desktop')}
+      {renderPathSegments(tabletAllPathSegments, TABLET_BLOCK_CLASS, 'tablet')}
+      {renderPathSegments(mobileAllPathSegments, MOBILE_BLOCK_CLASS, 'mobile')}
 
       {renderNodes(desktopPositionedNodes, DESKTOP_FLEX_CLASS)}
       {renderNodes(tabletPositionedNodes, TABLET_FLEX_CLASS)}

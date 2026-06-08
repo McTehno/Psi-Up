@@ -4,8 +4,8 @@
   useRef,
   useState,
   type FormEvent,
-  type JSX,
 } from 'react'
+import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
@@ -66,79 +66,6 @@ function writeStoredState(storageKey: string, state: StoredAssistantState) {
   }
 
   window.sessionStorage.setItem(storageKey, JSON.stringify(state))
-}
-
-function InlineMarkdownText({ text }: { text: string }) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g)
-
-  return (
-    <>
-      {parts.map((part, index) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return (
-            <strong key={`${part}-${index}`} className="font-bold text-[#2b2118]">
-              {part.slice(2, -2)}
-            </strong>
-          )
-        }
-
-        return <span key={`${part}-${index}`}>{part}</span>
-      })}
-    </>
-  )
-}
-
-function AssistantMarkdownText({ content }: { content: string }) {
-  const lines = content.split(/\r?\n/)
-  const elements: JSX.Element[] = []
-  let listItems: string[] = []
-
-  function flushList() {
-    if (listItems.length === 0) {
-      return
-    }
-
-    elements.push(
-      <ul
-        key={`list-${elements.length}`}
-        className="my-2 list-disc space-y-1 pl-5 text-sm leading-6 text-[#5f6652]"
-      >
-        {listItems.map((item, index) => (
-          <li key={`${item}-${index}`}>
-            <InlineMarkdownText text={item} />
-          </li>
-        ))}
-      </ul>,
-    )
-
-    listItems = []
-  }
-
-  lines.forEach((line, index) => {
-    const trimmedLine = line.trim()
-
-    if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ')) {
-      listItems.push(trimmedLine.slice(2).trim())
-      return
-    }
-
-    flushList()
-
-    if (!trimmedLine) {
-      elements.push(<div key={`space-${index}`} className="h-2" />)
-      return
-    }
-
-    elements.push(
-      <p key={`${trimmedLine}-${index}`} className="text-sm leading-6 text-[#5f6652]">
-        <InlineMarkdownText text={trimmedLine} />
-      </p>,
-    )
-  })
-
-  flushList()
-
-  return <div>{elements}</div>
 }
 
 function ModuleAssistantBox({
@@ -295,9 +222,10 @@ function ModuleAssistantBox({
                     </div>
 
                     <div className="flex justify-start">
-                      <div className="max-w-[92%] animate-[fadeIn_0.22s_ease-out] rounded-[1.25rem] rounded-bl-md border border-[#ded5c6]/80 bg-[#fffdf8]/70 px-4 py-3 shadow-[0_12px_28px_rgba(57,47,35,0.08)]">
-                        <AssistantMarkdownText content={message.answer} />
-                      </div>
+                      <SimpleMarkdownText
+                        content={message.answer}
+                        className="text-sm leading-6 text-[#5f6652]"
+                      />
                     </div>
                   </div>
                 )

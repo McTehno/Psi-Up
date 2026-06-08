@@ -1,4 +1,5 @@
-﻿import type { AssistantMessage as AssistantMessageType } from '../../types'
+﻿import SimpleMarkdownText from '../../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+import type { AssistantMessage as AssistantMessageType } from '../../types'
 
 type AssistantMessageProps = {
   message: AssistantMessageType
@@ -15,10 +16,13 @@ function AssistantMessage({ message }: AssistantMessageProps) {
           : 'mr-8 bg-sand-100 text-brown-800'
       }`}
     >
-      {message.content}
+      {isUser ? (
+        <span className="whitespace-pre-wrap">{message.content}</span>
+      ) : (
+        <SimpleMarkdownText content={message.content} />
+      )}
     </article>
   )
 }
 
 export default AssistantMessage
-

@@ -643,16 +643,6 @@ function normalizeAssessmentProgress(progress?: number | null) {
   return Math.min(Math.max(progress, 0), 1)
 }
 
-function normalizeQuestionCount(value?: number | null) {
-  const numericValue = Number(value ?? 0)
-
-  if (!Number.isFinite(numericValue)) {
-    return 0
-  }
-
-  return Math.max(Math.round(numericValue), 0)
-}
-
 function isStatsNodeCompleted(node: LearningPathMountainNode) {
   return (
     node.assessmentStatus === 'completed' ||
@@ -746,38 +736,28 @@ function getQuestionAnswerStats(
   nodes: LearningPathMountainNode[],
   isFullyCompleted: boolean,
 ) {
-  const totalQuestionCount = nodes.reduce(
-    (sum, node) => sum + normalizeQuestionCount(node.questionTotalCount),
+  const totalCount = nodes.length
+
+  const totalProgress = nodes.reduce(
+    (sum, node) => sum + getStatsNodeProgress(node),
     0,
   )
-
-  const rawYesQuestionCount = nodes.reduce(
-    (sum, node) => sum + normalizeQuestionCount(node.questionYesCount),
-    0,
-  )
-
-  const yesQuestionCount =
-    isFullyCompleted && totalQuestionCount > 0
-      ? totalQuestionCount
-      : Math.min(rawYesQuestionCount, totalQuestionCount)
 
   const questionPercent =
-    totalQuestionCount > 0
-      ? Math.round((yesQuestionCount / totalQuestionCount) * 100)
+    totalCount > 0
+      ? Math.round((totalProgress / totalCount) * 100)
       : isFullyCompleted
         ? 100
         : 0
 
   return {
-    yesQuestionCount,
-    totalQuestionCount,
     questionPercent,
+    hasStarted: totalProgress > 0,
   }
 }
 
 function getLearningPathStats(
   nodes: LearningPathMountainNode[],
-  isCompleted: boolean,
 ) {
   const sortedNodes = getSortedStatsNodes(nodes)
   const totalCount = sortedNodes.length
@@ -786,9 +766,8 @@ function getLearningPathStats(
     return {
       completedCount: 0,
       totalCount: 0,
-      yesQuestionCount: 0,
-      totalQuestionCount: 0,
       questionPercent: 0,
+      hasStarted: false,
       nextStepLabel: 'Naslednji korak',
       nextStepTitle: 'Koraki učne poti še niso pripravljeni.',
       nextStepItems: [] as LearningPathStatsNextStepItem[],
@@ -797,18 +776,16 @@ function getLearningPathStats(
     }
   }
 
-  const completedCount = isCompleted
-    ? totalCount
-    : sortedNodes.filter(isStatsNodeCompleted).length
+  const completedCount = sortedNodes.filter(isStatsNodeCompleted).length
 
   const isFullyCompleted = completedCount === totalCount
 
   const questionStats = getQuestionAnswerStats(sortedNodes, isFullyCompleted)
 
   const shouldPromptQuestionnaire =
-    !isCompleted &&
+    !isFullyCompleted &&
     completedCount === 0 &&
-    questionStats.totalQuestionCount === 0
+    !questionStats.hasStarted
 
   if (isFullyCompleted) {
     return {
@@ -874,21 +851,19 @@ function getLearningPathStats(
 
 function LearningPathProgressStats({
   nodes,
-  isCompleted,
 }: {
   nodes: LearningPathMountainNode[]
-  isCompleted: boolean
 }) {
-  const stats = getLearningPathStats(nodes, isCompleted)
+  const stats = getLearningPathStats(nodes)
 
   const questionPercentLabel =
-    stats.totalQuestionCount > 0 || stats.isFullyCompleted
+    stats.hasStarted || stats.isFullyCompleted
       ? `${stats.questionPercent}%`
       : '—'
 
   const questionRatioLabel =
-    stats.totalQuestionCount > 0
-      ? `${stats.yesQuestionCount}/${stats.totalQuestionCount} vprašanj`
+    stats.hasStarted
+      ? `skupnega napredka`
       : stats.isFullyCompleted
         ? 'Učna pot zaključena'
         : 'Še ni odgovorov'
@@ -1679,7 +1654,7 @@ export function LearningPathMountain({
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#fffdf8]/45 via-[#fffdf8]/20 to-[#fffdf8]/10" />
 
-      <LearningPathProgressStats nodes={nodes} isCompleted={isCompleted} />
+      <LearningPathProgressStats nodes={nodes} />
 
       <div className="absolute right-20 top-24 z-30 hidden rounded-full bg-white/80 px-5 py-2 text-xs font-bold uppercase tracking-[0.26em] text-[#344E41] shadow-sm backdrop-blur min-[1500px]:block">
         Klikni modul/ učno enoto

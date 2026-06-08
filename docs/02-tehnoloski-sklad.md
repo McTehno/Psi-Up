@@ -81,6 +81,10 @@ Za prijavo in registracijo uporabnikov se uporablja **Supabase Auth**. Backend u
 
 Frontend uporabnika prijavi prek Supabase. Backend nato na podlagi JWT tokena preveri, ali ima uporabnik dostop do zaščitenih podatkov, kot so shranjene vsebine, priljubljene vsebine, dokončane vsebine in trenutna pozicija.
 
+Več o tej arhitekturni odločitvi je zapisano v dokumentu:
+
+- [ADR-010: Uporaba Supabase Auth](adr\ADR-010-uporaba-supabase-auth-za-avtentikacijo.md)
+
 ---
 
 ## 6. AI pomočnik in glasovna pomoč

@@ -31,7 +31,7 @@ Za priporočeni zagon zadostujeta Git in Docker Desktop. Node.js in Python sta p
 Repozitorij najprej kloniramo lokalno:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/McTehno/NIDiKo.git
 cd NIDiKo
 ```
 

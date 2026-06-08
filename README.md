@@ -1,170 +1,330 @@
-# NIDiKo
+<p align="center">
+  <img src="docs/assets/logo/nidiko-logo.svg" alt="NIDiKo logo" width="150" />
+</p>
 
-## 1. Vizija projekta
-Vizija projekta je razviti pregleden in uporabniku prijazen priporočilni sistem, ki posamezniku pomaga izbrati ustrezno učno pot za razvoj digitalnih kompetenc. Sistem na podlagi uporabnikovega predznanja, ciljev in odgovorov v vprašalniku predlaga smiselno strukturirano učno pot, sestavljeno iz modulov in pripadajočih učnih enot.
+<h1 align="center">NIDiKo</h1>
 
-Aplikacija uporabniku omogoča jasen vpogled v trenutno stanje, priporočene naslednje korake in končni cilj, ki ga želi doseči. Učne poti so povezane s kompetencami po standardu DigComp, kar omogoča boljše razumevanje, katere digitalne kompetence uporabnik razvija in na kateri ravni.
+<p align="center">
+  Spletna aplikacija za usmerjanje uporabnikov pri razvoju digitalnih kompetenc.
+</p>
 
-Rešitev naslavlja problem nepreglednosti pri izbiri izobraževalnih vsebin. Namesto ročnega iskanja posameznih učnih enot sistem uporabniku predlaga primerno pot, ki upošteva njegovo izhodiščno znanje, želje in izbran cilj.
+<p align="center">
+  <a href="#vizija-in-namen-projekta">
+    <img src="https://img.shields.io/badge/Vizija-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Vizija" />
+  </a>
+  <a href="#funkcionalnosti">
+    <img src="https://img.shields.io/badge/Funkcionalnosti-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Funkcionalnosti" />
+  </a>
+  <a href="#zaslonski-prikazi">
+    <img src="https://img.shields.io/badge/Prikazi-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zaslonski prikazi" />
+  </a>
+  <a href="#namestitev-in-lokalni-zagon">
+    <img src="https://img.shields.io/badge/Zagon-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zagon" />
+  </a>
+  <a href="#tehnoloski-sklad">
+    <img src="https://img.shields.io/badge/Tehnologije-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Tehnologije" />
+  </a>
+  <a href="#arhitektura">
+    <img src="https://img.shields.io/badge/Arhitektura-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Arhitektura" />
+  </a>
+  <a href="#struktura-projekta">
+    <img src="https://img.shields.io/badge/Struktura-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Struktura" />
+  </a>
+  <a href="#delujoca-resitev">
+    <img src="https://img.shields.io/badge/Delujoča_rešitev-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Delujoča rešitev" />
+  </a>
+  <a href="#dokumentacija">
+    <img src="https://img.shields.io/badge/Dokumentacija-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Dokumentacija" />
+  </a>
+</p>
 
-## 2. Namen projekta
-Namen projekta je izdelati priporočilni sistem, ki uporabniku na podlagi vprašalnika predlaga ustrezne module in učne enote za doseganje želene ravni digitalnih kompetenc.
+---
 
-Sistem je namenjen različnim skupinam uporabnikov, kot so študenti, zaposleni, profesorji, starejši uporabniki, podjetja in posamezniki brez osnovnega digitalnega znanja.
-## 3. Glavne funkcionalnosti
-- določanje uporabnikovega trenutnega znanja,
-- izbira oziroma prepoznavanje želenih kompetenc,
-- priporočanje ustrezne učne poti,
-- prikaz modulov in učnih enot,
-- grafični prikaz učne poti,
-- prikaz napredovanja od začetnega stanja do končnega cilja.
+## Vizija in namen projekta
 
-## 4. Tehnološki sklad
+Vizija projekta je razviti pregleden in uporabniku prijazen priporočilni sistem, ki posamezniku pomaga izbrati ustrezno učno pot za razvoj digitalnih kompetenc. NIDiKo uporabnika vodi od začetne samoocene do priporočene učne poti, sestavljene iz modulov in učnih enot.
 
-Projekt je razdeljen na frontend, backend in podatkovno bazo. Spodaj so navedene glavne tehnologije in verzije, ki se trenutno uporabljajo v projektu.
+Aplikacija uporabniku omogoča vpogled v trenutno znanje, priporočene naslednje korake in napredek proti izbranemu cilju. Učne poti so povezane s standardom DigComp, zato uporabnik lažje razume, katera digitalna znanja razvija in na kateri ravni.
 
-### 4.1 Frontend
+Rešitev naslavlja problem nepreglednosti pri izbiri izobraževalnih vsebin. Namesto ročnega iskanja posameznih učnih enot sistem predlaga smiselno pot, ki upošteva uporabnikovo izhodiščno znanje, cilje in odgovore v vprašalniku.
 
-| Tehnologija | Verzija | Namen |
-|---|---:|---|
-| React | 19.2.6 | Izdelava uporabniškega vmesnika |
-| React DOM | 19.2.6 | Prikaz React komponent v brskalniku |
-| React Router DOM | 7.15.1 | Usmerjanje med stranmi na frontendu |
-| TypeScript | 6.0.2 | Tipizacija frontend kode |
-| Vite | 8.0.12 | Razvojno okolje in build orodje |
-| Tailwind CSS | 4.3.0 | Stiliziranje uporabniškega vmesnika |
-| Lucide React | 1.16.0 | Ikone v uporabniškem vmesniku |
-| ESLint | 10.3.0 | Preverjanje kakovosti frontend kode |
+Sistem je namenjen študentom, zaposlenim, profesorjem, starejšim uporabnikom, podjetjem in posameznikom brez osnovnega digitalnega znanja, ki želijo razvijati digitalne kompetence ali lažje izbrati ustrezno učno smer.
 
-### 4.2 Backend
+<a id="funkcionalnosti"></a>
 
-| Tehnologija | Verzija | Namen |
-|---|---:|---|
-| Python | 3.13 | Backend programski jezik |
-| FastAPI | 0.136.1 | Izdelava REST API endpointov |
-| Uvicorn | 0.46.0 | Zagon FastAPI aplikacije |
-| Pydantic | 2.13.4 | Validacija requestov in response sheme |
-| PyMongo | 4.17.0 | Povezava z MongoDB |
-| email-validator | 2.3.0 | Validacija email naslovov v Pydantic shemah |
+## Ključne funkcionalnosti
 
-### 4.3 Podatkovna baza
+- strukturiran pregled učnih poti, modulov in učnih enot,
+- samoocenjevalni vprašalnik za določanje izhodiščnega znanja,
+- glasovna pomoč pri vprašalniku za bolj dostopno in uporabniku prijazno izpolnjevanje,
+- priporočanje primerne učne poti oziroma naslednjega koraka,
+- prikaz rezultatov samoocene in napredka skozi učno strukturo,
+- shranjevanje, označevanje priljubljenih in zaključevanje učnih vsebin,
+- spremljanje trenutne pozicije uporabnika znotraj učne poti,
+- iskanje po učnih poteh, modulih in učnih enotah,
+- kontekstualni AI pomočnik za podporo pri razumevanju vprašanj in učnih vsebin,
+- odziven uporabniški vmesnik za namizje, tablico in telefon.
 
-| Tehnologija | Verzija | Namen |
-|---|---:|---|
-| MongoDB Atlas | cloud storitev | Glavna podatkovna baza |
-| MongoDB Compass | lokalno orodje | Pregled in uvoz podatkov v MongoDB |
-| JSON | / | Začetni podatki za uvoz v MongoDB |
 
-## 5. Struktura projekta
+## Zaslonski prikazi
 
-```text
-psi-up/
-├── README.md                 // glavni README za celoten projekt
-├── backend/
-│   ├── README.md             // README za backend
-│   ├── app/
-│   ├── data/mongodb/
-│   ├── requirements.txt
-│   └── .env
-├── frontend/
-│   ├── README.md             // README za frontend
-│   ├── src/
-│   ├── package.json
-│   └── .env
-└── docs/
-    ├── besednjak.md
-    └── podatkovni-model.md
+Spodaj so prikazani reprezentativni deli uporabniškega vmesnika.
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/zacetna-stran.png" alt="Začetna stran" width="280" />
+      <br />
+      <sub>Začetna stran</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/iskanje-na-zacetni-strani.png" alt="Iskanje" width="280" />
+      <br />
+      <sub>Iskanje</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/o-nas.png" alt="O nas" width="280" />
+      <br />
+      <sub>O nas</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/ucna-pot-trenutna-pozicija.png" alt="Učna pot" width="280" />
+      <br />
+      <sub>Učna pot</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/modul-trenutna-pozicija.png" alt="Modul" width="280" />
+      <br />
+      <sub>Modul</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/ucna-enota.png" alt="Učna enota" width="280" />
+      <br />
+      <sub>Učna enota</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/vprasalnik.png" alt="Vprašalnik" width="280" />
+      <br />
+      <sub>Vprašalnik</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/vprasalnik-ai-pomocnik-ne.png" alt="Vprašalnik z AI pomočnikom" width="280" />
+      <br />
+      <sub>Vprašalnik z AI pomočnikom</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/screenshots/desktop/chat-na-podrobnostni-strani.png" alt="Chat na podrobnostni strani" width="280" />
+      <br />
+      <sub>Chat na podrobnostni strani</sub>
+    </td>
+  </tr>
+</table>
+
+Več zaslonskih prikazov je zbranih v dokumentu [zaslonski-prikazi.md](docs/zaslonski-prikazi.md).
+
+<a id="namestitev-in-lokalni-zagon"></a>
+
+## Namestitev in lokalni zagon
+
+Priporočen način lokalnega zagona projekta je z uporabo **Dockerja**, saj naenkrat zažene frontend in backend okolje ter zmanjša potrebo po ročni konfiguraciji posameznih delov aplikacije.
+
+### Predpogoji
+
+Za zagon projekta z Dockerjem potrebuješ:
+
+- nameščen **Docker Desktop**,
+- delujoč **Docker Compose**,
+- pripravljeni okoljski datoteki za frontend in backend,
+
+### Zagon z Dockerjem
+
+Pred prvim zagonom pripravi okoljske datoteke na podlagi primerov:
+
+```powershell
+copy backend\.env.example backend\.env
+copy frontend\.env.example frontend\.env
 ```
 
-## 6. Pravila poimenovanja in pisanja kode
-### 6.1 Splošna pravila
+Nato po potrebi dopolni vrednosti v `.env` datotekah.
 
-- Imena map, datotek, komponent, funkcij in spremenljivk v kodi pišemo v angleščini.
-- Dokumentacija projekta je lahko zapisana v slovenščini.
-- Imena naj bodo jasna, razumljiva in povezana z domeno projekta.
-- Poimenovanje mora biti dosledno skozi celoten projekt.
-- Nepotrebnih okrajšav se izogibamo.
-- Za enake pojme vedno uporabljamo enake izraze.
+Za razvojni zagon uporabi:
 
-### 6.2 Poimenovanje map
-
-Mape pišemo z malimi črkami.
-
-Če je ime sestavljeno iz več besed, uporabimo vezaj.
-
-Primer:
-```text
-learning-paths/
-questionnaire/
-recommendations/
-digital-competencies/
+```powershell
+docker compose -f docker-compose.dev.yml up --build
 ```
 
-### 6.3 Poimenovanje datotek na frontendu
+Po uspešnem zagonu sta glavna dela aplikacije dostopna na:
 
-- React komponente pišemo v PascalCase.
-Primer:
-```text
-LearningPathView.tsx
-QuestionnaireForm.tsx
-ModuleCard.tsx
-LearningUnitList.tsx
-```
-- Pomožne TypeScript datoteke pišemo z malimi črkami in vezaji.
+- frontend: [http://localhost:5173](http://localhost:5173)
+- backend API: [http://localhost:8000](http://localhost:8000)
+- backend dokumentacija: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-Primer:
-```text
-api-client.ts
-constants.ts
-questionnaire-service.ts
-recommendation-service.ts
+Za ustavitev razvojnega okolja uporabi:
+
+```powershell
+docker compose -f docker-compose.dev.yml down
 ```
 
-### 6.4 Poimenovanje datotek na backendu
+### Alternativni ročni zagon
 
-- Python datoteke pišemo z malimi črkami in podčrtaji.
-Primer:
+Projekt je mogoče zagnati tudi ročno, ločeno za frontend in backend, če želi razvijalec posamezen del aplikacije zagnati brez Dockerja.
+
+Podrobna navodila za ročni zagon, pripravo okolja in lokalno konfiguracijo so zapisana v dokumentu:
+
+[Vzpostavitev razvojnega okolja](docs/04-vzpostavitev-razvojnega-okolja.md)
+
+
+<a id="tehnoloski-sklad"></a>
+## Tehnološki sklad
+
+Projekt je razdeljen na frontend, backend in podatkovno bazo. Za razvoj, zagon in povezovanje delov sistema se uporabljajo naslednje tehnologije:
+
+| Del sistema | Tehnologije |
+|---|---|
+| Frontend | React, TypeScript, Vite, Tailwind CSS |
+| Backend | Python, FastAPI, Pydantic |
+| Testiranje | Pytest |
+| Podatkovna baza | MongoDB Atlas |
+| Avtentikacija | Supabase Auth, JWT |
+| Zagon in namestitev | Docker, Docker Compose |
+| AI podpora | Kontekstualni AI pomočnik |
+
+Podrobnejši pregled uporabljenih tehnologij, verzij in njihove vloge v projektu je zapisan v dokumentu [tehnoloski-sklad.md](docs/tehnoloski-sklad.md).
+
+
+
+## Arhitektura
+
+![Arhitektura sistema](docs/assets/arhitektura/arhitektura-sistema.png)
+
+
+Podrobnejši opis arhitekture je zapisan v dokumentu [arhitektura.md](docs/03-arhitektura.md).
+
+
+## Struktura projekta
+
 ```text
-recommendation_service.py
-learning_path_service.py
-database_config.py
+NIDiKo/
+├── README.md                         # krovni opis projekta, tehnologij, arhitekture in zagona
+├── docker-compose.dev.yml            # razvojni zagon aplikacije z Dockerjem
+├── docker-compose.prod.yml           # produkcijski zagon aplikacije z Dockerjem
+├── .github/
+│   └── workflows/                    # GitHub Actions za CI in namestitev
+│       ├── ci.yml                    # preverjanje kode ob spremembah
+│       └── staging-deploy.yml        # namestitev oziroma deploy na staging okolje
+│
+├── frontend/                         # React aplikacija za uporabniški vmesnik
+│   ├── public/                       # javne statične datoteke
+│   ├── src/                          # izvorna koda frontenda
+│   │   ├── app/                      # router, root layout in osnovna konfiguracija aplikacije
+│   │   ├── components/               # skupne reusable komponente
+│   │   ├── contexts/                 # React context providerji in globalna stanja
+│   │   ├── features/                 # funkcionalni sklopi aplikacije
+│   │   ├── hooks/                    # skupni custom React hooki
+│   │   ├── pages/                    # route-level strani
+│   │   ├── services/                 # API komunikacija z backendom in zunanjimi storitvami
+│   │   ├── types/                    # TypeScript tipi za backend podatke
+│   │   └── utils/                    # pomožne funkcije
+│   ├── .env.example                  # primer frontend okoljskih spremenljivk brez skrivnosti
+│   ├── package.json                 
+│   ├── vite.config.ts                
+│   ├── Dockerfile                    # produkcijska Docker konfiguracija za frontend
+│   ├── Dockerfile.dev                # razvojna Docker konfiguracija za frontend
+│   ├── README.md                     
+│   └── CONTRIBUTING.md               # pravila za razvoj frontenda
+│
+├── backend/                          # FastAPI aplikacija za backend logiko
+│   ├── app/                          # glavna backend aplikacija
+│   │   ├── api/                      # REST API endpointi
+│   │   ├── core/                     # varnost, avtentikacija in skupna obravnava napak
+│   │   ├── database/                 # povezava z MongoDB
+│   │   ├── repositories/             # dostop do podatkovne baze
+│   │   ├── schemas/                  # Pydantic request/response modeli
+│   │   └── services/                 # poslovna logika aplikacije
+│   ├── data/                         # začetni in testni JSON podatki
+│   ├── tests/                        # avtomatski backend testi
+│   │   ├── api/                      # testi API endpointov
+│   │   ├── data/                     # testi začetnih oziroma testnih JSON podatkov
+│   │   ├── repositories/             # testi dostopa do podatkov
+│   │   ├── schemas/                  # testi Pydantic shem
+│   │   └── services/                 # testi poslovne logike
+│   ├── .env.example                  # primer backend okoljskih spremenljivk brez skrivnosti
+│   ├── requirements.txt              # Python odvisnosti
+│   ├── pytest.ini                    # konfiguracija za pytest
+│   ├── Dockerfile                    # Docker konfiguracija za backend
+│   ├── README.md                     # podrobnejša backend dokumentacija
+│   └── CONTRIBUTING.md               # pravila za razvoj backenda
+│
+└── docs/                             # projektna in tehnična dokumentacija
+    ├── adr/                          # Architecture Decision Records
+    │   └── README.md                 # seznam in pravila za ADR dokumente
+    ├── assets/                       # slike, diagrami, logo in zaslonski prikazi
+    │   ├── arhitektura/              # arhitekturni diagrami
+    │   ├── logo/                     
+    │   └── screenshots/              
+    ├── 01-pregled-projekta.md        
+    ├── 02-tehnoloski-sklad.md        
+    ├── 03-arhitektura.md             # podrobnejša arhitektura sistema
+    ├── 04-vzpostavitev-razvojnega-okolja.md
+    ├── 05-podatkovni-model.md
+    ├── 06-api-endpointi.md
+    ├── 07-uporabniski-tokovi.md
+    ├── 08-zaslonski-prikazi.md
+    ├── 09-besednjak.md
+    ├── 10-pravila-poimenovanja-in-pisanje-kode.md
+    ├── 11-ai-strategija.md
+    ├── 12-testiranje.md
+    ├── 13-nadaljnji-razvoj.md
+    └── 14-logika-vprasalnika.md
 ```
-### 6.5 Poimenovanje spremenljivk in funkcij
+Za podrobnejši pregled posameznih delov glej:
 
-- V React/TypeScript uporabljamo *camelCase*.
-  
-Primer:
+- [Frontend README](frontend/README.md)
+- [Backend README](backend/README.md)
+- [Arhitektura sistema](docs/03-arhitektura.md)
+- [Pravila poimenovanja in pisanja kode](docs/10-pravila-poimenovanja-in-pisanje-kode.md)
 
-```text
-selectedCompetency
-getLearningPath()
-submitQuestionnaire()
-```
+<a id="delujoca-resitev"></a>
+## Delujoča rešitev
 
-- V Pythonu uporabljamo *snake_case*.
+Delujoča različica aplikacije je trenutno dostopna na:
 
-Primer:
-```text
-selected_competency
-get_learning_path()
-submit_questionnaire()
-```
+[http://46.225.17.135](http://46.225.17.135)
 
-### 6.6 Poimenovanje React komponent
+## Nadaljnji razvoj
 
-- React komponente pišemo v *PascalCase*.
+Načrtovane nadgradnje vključujejo izboljšanje priporočilnega sistema, razširitev analitike uporabniškega napredka in boljšo podporo za upravljanje učnih vsebin.
 
-Primer:
-```text
-LearningUnitList.tsx
-```
+Več je opisano v dokumentu [nadaljnji-razvoj.md](docs/nadaljnji-razvoj.md).
 
-### 6.7 Komentarji v kodi
 
-Komentarje uporabljamo samo tam, kjer pojasnijo pomembno logiko ali odločitev.
+## Dokumentacija
 
-Dober primer:
-```text
-# V začetni različici sistem vrne eno priporočeno učno pot na podlagi izbrane kompetence.
-```
+Dodatna projektna dokumentacija je razdeljena po posameznih tematskih sklopih:
 
+- [Pregled projekta](docs/01-pregled-projekta.md)
+- [Tehnološki sklad](docs/02-tehnoloski-sklad.md)
+- [Arhitektura](docs/03-arhitektura.md)
+- [Arhitekturne odločitve](docs/adr/README.md)
+- [Vzpostavitev razvojnega okolja](docs/04-vzpostavitev-razvojnega-okolja.md)
+- [Podatkovni model](docs/05-podatkovni-model.md)
+- [API endpointi](docs/06-api-endpointi.md)
+- [Uporabniški tokovi](docs/07-uporabniski-tokovi.md)
+- [Logika vprašalnika](docs/14-logika-vprasalnika.md)
+- [Zaslonski prikazi](docs/08-zaslonski-prikazi.md)
+- [Besednjak](docs/09-besednjak.md)
+- [Pravila poimenovanja in pisanja kode](docs/10-pravila-poimenovanja-in-pisanje-kode.md)
+- [AI strategija](docs/11-ai-strategija.md)
+- [Testiranje](docs/12-testiranje.md)
+- [Nadaljnji razvoj](docs/13-nadaljnji-razvoj.md)
+
+
+## Kontakt in podpora
+
+Za vprašanja o projektu, tehnično podporo ali prijavo napak nas lahko kontaktirate na:
+
+**E-mail:** TODO@TODO.si

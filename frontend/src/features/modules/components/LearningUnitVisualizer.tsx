@@ -442,7 +442,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                   transition={{ duration: 0.8, delay: nodeDelay, ease: "easeInOut" }}
                   className={`
                     w-[56px] h-[56px] shrink-0 rounded-full flex items-center justify-center relative z-20 shadow-sm cursor-pointer
-                    transition-all duration-300
+                    transition-[background-color,border-color,color,box-shadow,ring,transform] duration-300
                     ${isNodeActive
                       ? 'ring-4 ring-[#C98A43]/60 scale-110'
                       : 'hover:ring-8'}
@@ -468,7 +468,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: isContainerInView ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: nodeDelay + 0.1, ease: "easeInOut" }}
-                    className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none transition-all duration-300"
+                    className="mt-2.5 flex flex-col items-center justify-center px-3 py-2 rounded-[14px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border border-[#eadfce] bg-white/95 text-center w-[140px] pointer-events-none"
                   >
                     <h4 className="text-[11px] font-bold leading-snug line-clamp-2 text-[#4a392b]">
                       {normalizedDetail.title}

@@ -160,5 +160,6 @@ Odgovori kot asistentka na strani. Pomagaj razumeti trenutno vprašanje, vendar 
         return " ".join((value or "").split())
 
     def _clean_generated_text(self, value: Optional[str]) -> str:
-        cleaned = self._normalize_text(value or "")
-        return cleaned.strip('"').strip()
+        cleaned = (value or "").replace("\r\n", "\n").replace("\r", "\n")
+        cleaned = "\n".join(line.rstrip() for line in cleaned.split("\n"))
+        return cleaned.strip().strip('"').strip()

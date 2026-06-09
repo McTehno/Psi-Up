@@ -4,6 +4,10 @@ Ta dokument vsebuje reprezentativne zaslonske prikaze aplikacije **NIDiKo**.
 
 Namen dokumenta je prikazati glavne dele uporabniškega vmesnika na namiznem, tabličnem in mobilnem prikazu. Zaslonski prikazi služijo kot vizualna predstavitev delujoče rešitve in prikazujejo, kako je aplikacija prilagojena različnim napravam.
 
+<p align="center">
+  <img src="assets/nidiko_device_mockup.png" alt="NIDiKo prikaz na različnih napravah" width="820" />
+</p>
+
 ---
 
 ## Pregled vsebine
@@ -118,7 +122,7 @@ Stran **O nas** predstavi projekt, namen aplikacije in širši kontekst razvoja 
 ### Namizni prikaz
 
 <p align="center">
-  <img src="assets/screenshots/desktop/o-nas.png" alt="O nas - namizni prikaz" width="720" />
+  <img src="assets/screenshots/desktop/stran-o-nas-desktop-front.png" alt="O nas - namizni prikaz" width="720" />
 </p>
 
 ### Prikaz na tablici in mobilni napravi
@@ -153,10 +157,10 @@ Prijava in registracija omogočata dostop do osebnih funkcionalnosti aplikacije.
   </tr>
   <tr>
     <td align="center">
-      <img src="assets/screenshots/desktop/prijava.png" alt="Prijava" width="520" />
+      <img src="assets/screenshots/desktop/prijava-desktop-front.png" alt="Prijava" width="520" />
     </td>
     <td align="center">
-      <img src="assets/screenshots/desktop/registracija.png" alt="Registracija" width="520" />
+      <img src="assets/screenshots/desktop/registracija-desktop-front.png" alt="Registracija" width="520" />
     </td>
   </tr>
 </table>
@@ -205,7 +209,13 @@ Stran podrobnosti modula prikazuje opis modula, povezane učne enote in napredek
 ### Namizni prikaz
 
 <p align="center">
-  <img src="assets/screenshots/desktop/modul-detail.png" alt="Modul - namizni prikaz" width="720" />
+  <img src="assets/screenshots/desktop/modul-podrobnosti-desktop-front.png" alt="Modul - namizni prikaz" width="720" />
+</p>
+
+### Dodatni namizni prikaz
+
+<p align="center">
+  <img src="assets/screenshots/desktop/modul-detail2.png" alt="Modul - dodatni namizni prikaz" width="720" />
 </p>
 
 ### Prikaz na tablici in mobilni napravi
@@ -236,22 +246,28 @@ Stran podrobnosti učne enote prikazuje opis, teme, kompetence, podatke o izvedb
 ### Namizni prikaz
 
 <p align="center">
-  <img src="assets/screenshots/desktop/ucna-enota-detail.png" alt="Učna enota - namizni prikaz" width="720" />
+  <img src="assets/screenshots/desktop/ucna-enota-desktop-front.png" alt="Učna enota - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
+### Prikaz na tablici
+
+<p align="center">
+  <img src="assets/screenshots/tablet/ucna-enota-detail.png" alt="Učna enota - tablični prikaz" width="420" />
+</p>
+
+### Prikaz na mobilni napravi
 
 <table>
   <tr>
-    <th>Tablični prikaz</th>
     <th>Mobilni prikaz</th>
+    <th>Dodatni mobilni prikaz</th>
   </tr>
   <tr>
     <td align="center">
-      <img src="assets/screenshots/tablet/ucna-enota-detail.png" alt="Učna enota - tablični prikaz" width="420" />
+      <img src="assets/screenshots/mobile/ucna-enota-detai.png" alt="Učna enota - mobilni prikaz" width="250" />
     </td>
     <td align="center">
-      <img src="assets/screenshots/mobile/ucna-enota-detai.png" alt="Učna enota - mobilni prikaz" width="260" />
+      <img src="assets/screenshots/mobile/ucna-enota-detai2.png" alt="Učna enota - dodatni mobilni prikaz" width="250" />
     </td>
   </tr>
 </table>
@@ -279,7 +295,7 @@ Vprašalnik uporabniku omogoča samooceno trenutnega znanja. Trenutna različica
   </tr>
   <tr>
     <td align="center">
-      <img src="assets/screenshots/tablet/vprasalnik.png" alt="Vprašalnik - tablični prikaz" width="420" />
+      <img src="assets/screenshots/tablet/vprasalnik-tablet.png" alt="Vprašalnik - tablični prikaz" width="420" />
     </td>
     <td align="center">
       <img src="assets/screenshots/mobile/vprasalnik.png" alt="Vprašalnik - mobilni prikaz" width="260" />
@@ -298,7 +314,7 @@ Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma na
 ### Namizni prikaz
 
 <p align="center">
-  <img src="assets/screenshots/desktop/ezultat-vprasalnika.png" alt="Rezultat vprašalnika - namizni prikaz" width="720" />
+  <img src="assets/screenshots/desktop/rezultat-vprasalnika-modul-desktop-front.png" alt="Rezultat vprašalnika - namizni prikaz" width="720" />
 </p>
 
 ### Prikaz na tablici in mobilni napravi
@@ -326,6 +342,8 @@ Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma na
 
 AI pomočnik uporabniku pomaga razumeti učno vsebino ali vprašanje v vprašalniku. Namenjen je dodatni podpori pri učenju in omogoča bolj interaktivno razumevanje vsebin.
 
+### Namizni prikaz
+
 <table>
   <tr>
     <th>AI pomočnik na strani podrobnosti</th>
@@ -337,6 +355,23 @@ AI pomočnik uporabniku pomaga razumeti učno vsebino ali vprašanje v vprašaln
     </td>
     <td align="center">
       <img src="assets/screenshots/desktop/ai-pomocnik-vprasalnik.png" alt="AI pomočnik pri vprašalniku" width="520" />
+    </td>
+  </tr>
+</table>
+
+### Prikaz na tablici in mobilni napravi
+
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/ai-pomocnik-detail.png" alt="AI pomočnik - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/ai-pomocnik-vprasalnik.png" alt="AI pomočnik - mobilni prikaz" width="260" />
     </td>
   </tr>
 </table>
@@ -360,6 +395,12 @@ docs/assets/screenshots/
 ├── desktop/
 ├── tablet/
 └── mobile/
+```
+
+Uvodni prikaz naprav je shranjen v datoteki:
+
+```text
+docs/assets/nidiko_device_mockup.png
 ```
 
 Pri dodajanju novih slik je priporočljivo uporabljati dosledno poimenovanje z malimi črkami, brez šumnikov in s pomišljaji med besedami.

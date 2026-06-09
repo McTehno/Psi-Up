@@ -67,63 +67,17 @@ Podrobnejši opis projekta je zapisan v dokumentu [Pregled projekta](docs/01-pre
 
 ## Zaslonski prikazi
 
-Spodaj so prikazani reprezentativni deli uporabniškega vmesnika.
+Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NIDiKo na različnih napravah.
 
-<table>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/zacetna-stran.png" alt="Začetna stran" width="280" />
-      <br />
-      <sub>Začetna stran</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/iskanje-na-zacetni-strani.png" alt="Iskanje" width="280" />
-      <br />
-      <sub>Iskanje</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/o-nas.png" alt="O nas" width="280" />
-      <br />
-      <sub>O nas</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/ucna-pot-trenutna-pozicija.png" alt="Učna pot" width="280" />
-      <br />
-      <sub>Učna pot</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/modul-trenutna-pozicija.png" alt="Modul" width="280" />
-      <br />
-      <sub>Modul</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/ucna-enota.png" alt="Učna enota" width="280" />
-      <br />
-      <sub>Učna enota</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/vprasalnik.png" alt="Vprašalnik" width="280" />
-      <br />
-      <sub>Vprašalnik</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/vprasalnik-ai-pomocnik-ne.png" alt="Vprašalnik z AI pomočnikom" width="280" />
-      <br />
-      <sub>Vprašalnik z AI pomočnikom</sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshots/desktop/chat-na-podrobnostni-strani.png" alt="Chat na podrobnostni strani" width="280" />
-      <br />
-      <sub>Chat na podrobnostni strani</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="docs/assets/nidiko_device_mockup.png" alt="NIDiKo aplikacija na različnih napravah" width="900" />
+</p>
 
-Več zaslonskih prikazov je zbranih v dokumentu [zaslonski-prikazi.md](docs/zaslonski-prikazi.md).
+<p align="center">
+  <sub>Prikaz odzivnega uporabniškega vmesnika aplikacije NIDiKo.</sub>
+</p>
+
+Več zaslonskih prikazov je zbranih v dokumentu [08-zaslonski-prikazi.md](docs/08-zaslonski-prikazi.md).
 
 <a id="namestitev-in-lokalni-zagon"></a>
 

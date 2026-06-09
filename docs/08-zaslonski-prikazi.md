@@ -2,176 +2,372 @@
 
 Ta dokument vsebuje reprezentativne zaslonske prikaze aplikacije **NIDiKo**.
 
-Namen dokumenta je prikazati glavne dele uporabniškega vmesnika na namiznem, tabličnem in mobilnem prikazu.
+Namen dokumenta je prikazati glavne dele uporabniškega vmesnika na namiznem, tabličnem in mobilnem prikazu. Zaslonski prikazi služijo kot vizualna predstavitev delujoče rešitve in prikazujejo, kako je aplikacija prilagojena različnim napravam.
+
+---
+
+## Pregled vsebine
+
+<p align="center">
+  <a href="#1-začetna-stran">
+    <img src="https://img.shields.io/badge/Začetna_stran-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Začetna stran" />
+  </a>
+  <a href="#2-iskanje">
+    <img src="https://img.shields.io/badge/Iskanje-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Iskanje" />
+  </a>
+  <a href="#3-stran-o-nas">
+    <img src="https://img.shields.io/badge/O_nas-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="O nas" />
+  </a>
+  <a href="#4-prijava-in-registracija">
+    <img src="https://img.shields.io/badge/Prijava-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Prijava" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="#5-stran-podrobnosti-učne-poti">
+    <img src="https://img.shields.io/badge/Učne_poti-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Učne poti" />
+  </a>
+  <a href="#6-stran-podrobnosti-modula">
+    <img src="https://img.shields.io/badge/Moduli-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Moduli" />
+  </a>
+  <a href="#7-stran-podrobnosti-učne-enote">
+    <img src="https://img.shields.io/badge/Učne_enote-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Učne enote" />
+  </a>
+  <a href="#8-vprašalnik">
+    <img src="https://img.shields.io/badge/Vprašalnik-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Vprašalnik" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="#9-rezultat-vprašalnika">
+    <img src="https://img.shields.io/badge/Rezultat-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="Rezultat vprašalnika" />
+  </a>
+  <a href="#10-ai-pomočnik">
+    <img src="https://img.shields.io/badge/AI_pomočnik-F7EFE3?style=for-the-badge&labelColor=FBF6EC&color=EAD6B8" alt="AI pomočnik" />
+  </a>
+</p>
 
 ---
 
 ## 1. Začetna stran
 
-Začetna stran uporabniku predstavi namen aplikacije in omogoča začetek raziskovanja učnih vsebin.
+Začetna stran uporabniku predstavi namen aplikacije **NIDiKo** in ga usmeri k raziskovanju učnih poti, modulov in učnih enot. Poudarek je na jasnem uvodnem sporočilu, pregledni strukturi vsebin in vizualno prijaznem prvem stiku z aplikacijo.
 
 ### Namizni prikaz
 
-![Začetna stran - namizni prikaz](assets/screenshots/desktop/zacetna-stran.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/zacetna-stran.png" alt="Začetna stran - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Začetna stran - tablični prikaz](assets/screenshots/tablet/zacetna-stran.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/zacetna-stran.png" alt="Začetna stran - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/zacetna-stran.png" alt="Začetna stran - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Začetna stran - mobilni prikaz](assets/screenshots/mobile/zacetna-stran.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 2. Iskanje
 
-Iskanje uporabniku omogoča hitro odkrivanje učnih poti, modulov in učnih enot.
+Iskanje uporabniku omogoča hitro odkrivanje učnih poti, modulov in učnih enot. Namenjeno je hitremu dostopu do relevantnih vsebin in podpira pregledno raziskovanje aplikacije.
 
 ### Namizni prikaz
 
-![Iskanje - namizni prikaz](assets/screenshots/desktop/iskanje.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/iskanje.png" alt="Iskanje - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Iskanje - tablični prikaz](assets/screenshots/tablet/iskanje.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/iskanje.png" alt="Iskanje - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/iskanje.png" alt="Iskanje - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Iskanje - mobilni prikaz](assets/screenshots/mobile/iskanje.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 3. Stran O nas
 
-Stran »O nas« predstavi projekt, namen aplikacije in širši kontekst razvoja digitalnih kompetenc.
+Stran **O nas** predstavi projekt, namen aplikacije in širši kontekst razvoja digitalnih kompetenc. Uporabniku pomaga razumeti, zakaj aplikacija obstaja in katero težavo rešuje.
 
 ### Namizni prikaz
 
-![O nas - namizni prikaz](assets/screenshots/desktop/o-nas.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/o-nas.png" alt="O nas - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![O nas - tablični prikaz](assets/screenshots/tablet/o-nas.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/o-nas.png" alt="O nas - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/o-nas.png" alt="O nas - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![O nas - mobilni prikaz](assets/screenshots/mobile/o-nas.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 4. Prijava in registracija
 
-Prijava in registracija omogočata uporabniku dostop do osebnih funkcionalnosti, kot so shranjevanje vsebin, priljubljene vsebine, dokončane vsebine in spremljanje napredka.
+Prijava in registracija omogočata dostop do osebnih funkcionalnosti aplikacije. Prijavljen uporabnik lahko shranjuje vsebine, označuje priljubljene vsebine, zaključuje učne enote in spremlja svoj napredek.
 
-### Prijava
+<table>
+  <tr>
+    <th>Prijava</th>
+    <th>Registracija</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/desktop/prijava.png" alt="Prijava" width="520" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/desktop/registracija.png" alt="Registracija" width="520" />
+    </td>
+  </tr>
+</table>
 
-![Prijava](assets/screenshots/desktop/prijava.png)
-
-### Registracija
-
-![Registracija](assets/screenshots/desktop/registracija.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 5. Stran podrobnosti učne poti
 
-Stran podrobnosti učne poti prikazuje opis učne poti, njeno strukturo, povezane module ali učne enote ter akcije za prijavljenega uporabnika.
+Stran podrobnosti učne poti prikazuje opis učne poti, njeno strukturo, povezane module in osnovne informacije, ki uporabniku pomagajo razumeti širšo smer učenja.
+
+Na tej strani lahko uporabnik vidi, kaj učna pot vključuje, komu je namenjena in kako se posamezni moduli povezujejo v smiselno zaporedje.
 
 ### Namizni prikaz
 
-![Učna pot - namizni prikaz](assets/screenshots/desktop/ucna-pot-detail.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/ucna-pot-detail.png" alt="Učna pot - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Učna pot - tablični prikaz](assets/screenshots/tablet/ucna-pot-detail.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/ucna-pot-detail.png" alt="Učna pot - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/ucna-pot-detail.png" alt="Učna pot - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Učna pot - mobilni prikaz](assets/screenshots/mobile/ucna-pot-detail.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 6. Stran podrobnosti modula
 
-Stran podrobnosti modula prikazuje opis modula, povezane učne enote in napredek znotraj modula.
+Stran podrobnosti modula prikazuje opis modula, povezane učne enote in napredek znotraj izbranega sklopa. Modul predstavlja manjši, zaokrožen del učne poti.
 
 ### Namizni prikaz
 
-![Modul - namizni prikaz](assets/screenshots/desktop/modul-detail.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/modul-detail.png" alt="Modul - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Modul - tablični prikaz](assets/screenshots/tablet/modul-detail.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/modul-detail.png" alt="Modul - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/modul-detail.png" alt="Modul - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Modul - mobilni prikaz](assets/screenshots/mobile/modul-detail.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 7. Stran podrobnosti učne enote
 
-Stran podrobnosti učne enote prikazuje opis, teme, kompetence, podatke o izvedbi in dodatno podporo uporabniku.
+Stran podrobnosti učne enote prikazuje opis, teme, kompetence, podatke o izvedbi in dodatno podporo uporabniku. Učna enota je najmanjši del učne strukture in je namenjena konkretnemu delu znanja ali aktivnosti.
 
 ### Namizni prikaz
 
-![Učna enota - namizni prikaz](assets/screenshots/desktop/ucna-enota-detail.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/ucna-enota-detail.png" alt="Učna enota - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Učna enota - tablični prikaz](assets/screenshots/tablet/ucna-enota-detail.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/ucna-enota-detail.png" alt="Učna enota - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/ucna-enota-detai.png" alt="Učna enota - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Učna enota - mobilni prikaz](assets/screenshots/mobile/ucna-enota-detail.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 8. Vprašalnik
 
-Vprašalnik uporabniku omogoča samooceno trenutnega znanja. Trenutno temelji na vprašanjih tipa DA/NE.
+Vprašalnik uporabniku omogoča samooceno trenutnega znanja. Trenutna različica temelji na vprašanjih tipa **DA/NE**, s katerimi sistem oceni, katere vsebine uporabnik že pozna in kje je smiselno nadaljevati.
 
 ### Namizni prikaz
 
-![Vprašalnik - namizni prikaz](assets/screenshots/desktop/vprasalnik.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/vprasalnik.png" alt="Vprašalnik - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Vprašalnik - tablični prikaz](assets/screenshots/tablet/vprasalnik.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/vprasalnik.png" alt="Vprašalnik - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/vprasalnik.png" alt="Vprašalnik - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Vprašalnik - mobilni prikaz](assets/screenshots/mobile/vprasalnik.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 9. Rezultat vprašalnika
 
-Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma naslednji korak.
+Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma naslednji korak. Namen tega prikaza je uporabniku dati jasno smer nadaljnjega učenja.
 
 ### Namizni prikaz
 
-![Rezultat vprašalnika - namizni prikaz](assets/screenshots/desktop/rezultat-vprasalnika.png)
+<p align="center">
+  <img src="assets/screenshots/desktop/ezultat-vprasalnika.png" alt="Rezultat vprašalnika - namizni prikaz" width="720" />
+</p>
 
-### Tablični prikaz
+### Prikaz na tablici in mobilni napravi
 
-![Rezultat vprašalnika - tablični prikaz](assets/screenshots/tablet/rezultat-vprasalnika.png)
+<table>
+  <tr>
+    <th>Tablični prikaz</th>
+    <th>Mobilni prikaz</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tablet/rezultat-vprasalnika.png" alt="Rezultat vprašalnika - tablični prikaz" width="420" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/mobile/rezultat-vprasalnika.png" alt="Rezultat vprašalnika - mobilni prikaz" width="260" />
+    </td>
+  </tr>
+</table>
 
-### Mobilni prikaz
-
-![Rezultat vprašalnika - mobilni prikaz](assets/screenshots/mobile/rezultat-vprasalnika.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
 ---
 
 ## 10. AI pomočnik
 
-AI pomočnik uporabniku pomaga razumeti učno vsebino ali vprašanje v vprašalniku.
+AI pomočnik uporabniku pomaga razumeti učno vsebino ali vprašanje v vprašalniku. Namenjen je dodatni podpori pri učenju in omogoča bolj interaktivno razumevanje vsebin.
 
-### AI pomočnik na strani podrobnosti
+<table>
+  <tr>
+    <th>AI pomočnik na strani podrobnosti</th>
+    <th>AI pomočnik pri vprašalniku</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/desktop/ai-pomocnik-detail.png" alt="AI pomočnik na strani podrobnosti" width="520" />
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/desktop/ai-pomocnik-vprasalnik.png" alt="AI pomočnik pri vprašalniku" width="520" />
+    </td>
+  </tr>
+</table>
 
-![AI pomočnik na strani podrobnosti](assets/screenshots/desktop/ai-pomocnik-detail.png)
+[Nazaj na pregled vsebine](#pregled-vsebine)
 
-### AI pomočnik pri vprašalniku
+---
 
-![AI pomočnik pri vprašalniku](assets/screenshots/desktop/ai-pomocnik-vprasalnik.png)
+## Opomba o datotekah
+
+Zaslonski prikazi so shranjeni v mapi:
+
+```text
+docs/assets/screenshots/
+```
+
+Struktura je razdeljena glede na napravo:
+
+```text
+docs/assets/screenshots/
+├── desktop/
+├── tablet/
+└── mobile/
+```
+
+Pri dodajanju novih slik je priporočljivo uporabljati dosledno poimenovanje z malimi črkami, brez šumnikov in s pomišljaji med besedami.
+
+Primeri:
+
+```text
+rezultat-vprasalnika.png
+ucna-enota-detail.png
+zacetna-stran.png
+```

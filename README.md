@@ -77,7 +77,7 @@ Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NID
   <sub>Prikaz odzivnega uporabniškega vmesnika aplikacije NIDiKo.</sub>
 </p>
 
-Več zaslonskih prikazov je zbranih v dokumentu [zaslonski-prikazi.md](docs/zaslonski-prikazi.md).
+Več zaslonskih prikazov je zbranih v dokumentu [08-zaslonski-prikazi.md](docs/08-zaslonski-prikazi.md).
 
 <a id="namestitev-in-lokalni-zagon"></a>
 

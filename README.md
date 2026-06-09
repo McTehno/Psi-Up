@@ -214,44 +214,21 @@ NIDiKo/
 ├── docker-compose.prod.yml           # produkcijski zagon aplikacije z Dockerjem
 ├── .github/
 │   └── workflows/                    # GitHub Actions za CI in namestitev
-│       ├── ci.yml                    # preverjanje kode ob spremembah
-│       └── staging-deploy.yml        # namestitev oziroma deploy na staging okolje
 │
 ├── frontend/                         # React aplikacija za uporabniški vmesnik
 │   ├── public/                       # javne statične datoteke
 │   ├── src/                          # izvorna koda frontenda
-│   │   ├── app/                      # router, root layout in osnovna konfiguracija aplikacije
-│   │   ├── components/               # skupne reusable komponente
-│   │   ├── contexts/                 # React context providerji in globalna stanja
-│   │   ├── features/                 # funkcionalni sklopi aplikacije
-│   │   ├── hooks/                    # skupni custom React hooki
-│   │   ├── pages/                    # route-level strani
-│   │   ├── services/                 # API komunikacija z backendom in zunanjimi storitvami
-│   │   ├── types/                    # TypeScript tipi za backend podatke
-│   │   └── utils/                    # pomožne funkcije
 │   ├── .env.example                  # primer frontend okoljskih spremenljivk brez skrivnosti
-│   ├── package.json                 
-│   ├── vite.config.ts                
+│   ├── package.json                  # frontend odvisnosti in npm skripte
 │   ├── Dockerfile                    # produkcijska Docker konfiguracija za frontend
 │   ├── Dockerfile.dev                # razvojna Docker konfiguracija za frontend
-│   ├── README.md                     
+│   ├── README.md                     # podrobnejša frontend dokumentacija
 │   └── CONTRIBUTING.md               # pravila za razvoj frontenda
 │
 ├── backend/                          # FastAPI aplikacija za backend logiko
 │   ├── app/                          # glavna backend aplikacija
-│   │   ├── api/                      # REST API endpointi
-│   │   ├── core/                     # varnost, avtentikacija in skupna obravnava napak
-│   │   ├── database/                 # povezava z MongoDB
-│   │   ├── repositories/             # dostop do podatkovne baze
-│   │   ├── schemas/                  # Pydantic request/response modeli
-│   │   └── services/                 # poslovna logika aplikacije
 │   ├── data/                         # začetni in testni JSON podatki
 │   ├── tests/                        # avtomatski backend testi
-│   │   ├── api/                      # testi API endpointov
-│   │   ├── data/                     # testi začetnih oziroma testnih JSON podatkov
-│   │   ├── repositories/             # testi dostopa do podatkov
-│   │   ├── schemas/                  # testi Pydantic shem
-│   │   └── services/                 # testi poslovne logike
 │   ├── .env.example                  # primer backend okoljskih spremenljivk brez skrivnosti
 │   ├── requirements.txt              # Python odvisnosti
 │   ├── pytest.ini                    # konfiguracija za pytest
@@ -260,26 +237,9 @@ NIDiKo/
 │   └── CONTRIBUTING.md               # pravila za razvoj backenda
 │
 └── docs/                             # projektna in tehnična dokumentacija
-    ├── adr/                          # Architecture Decision Records
-    │   └── README.md                 # seznam in pravila za ADR dokumente
+    ├── adr/                          # arhitekturne odločitve projekta
     ├── assets/                       # slike, diagrami, logo in zaslonski prikazi
-    │   ├── arhitektura/              # arhitekturni diagrami
-    │   ├── logo/                     
-    │   └── screenshots/              
-    ├── 01-pregled-projekta.md        
-    ├── 02-tehnoloski-sklad.md        
-    ├── 03-arhitektura.md             # podrobnejša arhitektura sistema
-    ├── 04-vzpostavitev-razvojnega-okolja.md
-    ├── 05-podatkovni-model.md
-    ├── 06-api-endpointi.md
-    ├── 07-uporabniski-tokovi.md
-    ├── 08-zaslonski-prikazi.md
-    ├── 09-besednjak.md
-    ├── 10-pravila-poimenovanja-in-pisanje-kode.md
-    ├── 11-ai-strategija.md
-    ├── 12-testiranje.md
-    ├── 13-nadaljnji-razvoj.md
-    └── 14-logika-vprasalnika.md
+    └── *.md                          # celotna podrobna dokumentacija
 ```
 Za podrobnejši pregled posameznih delov glej:
 
@@ -323,8 +283,3 @@ Dodatna projektna dokumentacija je razdeljena po posameznih tematskih sklopih:
 - [Nadaljnji razvoj](docs/13-nadaljnji-razvoj.md)
 
 
-## Kontakt in podpora
-
-Za vprašanja o projektu, tehnično podporo ali prijavo napak nas lahko kontaktirate na:
-
-**E-mail:** TODO@TODO.si

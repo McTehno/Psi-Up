@@ -91,7 +91,9 @@ Glasovna pomoč je posebna funkcionalnost sistema, namenjena bolj dostopnemu izp
 
 Pri predpomnjenju se shrani tako originalno vprašanje iz vprašalnika kot tudi besedilo, ki je bilo dejansko predvajano uporabniku.
 
-![Glasovna pomoč](assets/arhitektura/glasovna-pomoc.png)
+<p align="center">
+  <img src="assets/arhitektura/glasovna-pomoc.png" alt="Glasovna pomoč" width="650" height="1500"/>
+</p>
 
 
 Več o arhitekturni odločitvi za predpomnjenje glasovne pomoči je zapisano v dokumentu:

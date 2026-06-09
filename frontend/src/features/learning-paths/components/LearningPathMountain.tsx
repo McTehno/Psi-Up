@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef, useId } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView } from 'framer-motion'
+import { AnimatePresence, motion, useInView } from 'framer-motion'
 import {
   ArrowRight,
   Bookmark,
@@ -1316,6 +1316,46 @@ function createWavyPathD(
     .join(' ')
 }
 
+const detailBoxTransition = {
+  duration: 1.5,
+  ease: [0.22, 1, 0.36, 1],
+} as const
+
+function AnimatedModuleDetailBox({
+  node,
+  onClose,
+  containerClassName = '',
+  containerStyle,
+  boxClassName = '',
+}: {
+  node: PositionedMountainNode
+  onClose: () => void
+  containerClassName?: string
+  containerStyle?: CSSProperties
+  boxClassName?: string
+}) {
+  return (
+    <div className={containerClassName} style={containerStyle}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={node.id}
+          className="w-full"
+          initial={{ opacity: 0, y: 32, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.98 }}
+          transition={detailBoxTransition}
+        >
+          <ModuleDetailBox
+            node={node}
+            onClose={onClose}
+            className={boxClassName}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}
+
 export function LearningPathMountain({
   nodes,
   isCompleted = false,
@@ -1696,11 +1736,11 @@ export function LearningPathMountain({
       />
 
       {selectedDesktopNode && (
-        <ModuleDetailBox
+        <AnimatedModuleDetailBox
           node={selectedDesktopNode}
           onClose={() => setSelectedNodeId(null)}
-          className={DESKTOP_DETAIL_CLASS}
-          style={{
+          containerClassName={DESKTOP_DETAIL_CLASS}
+          containerStyle={{
             left: `${Math.min(Math.max(selectedDesktopNode.x, 24), 76)}%`,
             top:
               selectedDesktopNode.y > 44
@@ -1715,20 +1755,20 @@ export function LearningPathMountain({
       )}
 
       {selectedTabletNode && (
-        <ModuleDetailBox
+        <AnimatedModuleDetailBox
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
-          className={TABLET_DETAIL_CLASS}
-          style={getTabletDetailStyle()}
+          containerClassName={TABLET_DETAIL_CLASS}
+          containerStyle={getTabletDetailStyle()}
         />
       )}
 
       {selectedMobileNode && (
         <div className="absolute inset-x-3 bottom-3 z-50 min-[640px]:hidden">
-          <ModuleDetailBox
+          <AnimatedModuleDetailBox
             node={selectedMobileNode}
             onClose={() => setSelectedNodeId(null)}
-            className="max-h-[72vh] overflow-y-auto"
+            boxClassName="max-h-[72vh] overflow-y-auto"
           />
         </div>
       )}

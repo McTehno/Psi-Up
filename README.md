@@ -70,7 +70,7 @@ Podrobnejši opis projekta je zapisan v dokumentu [Pregled projekta](docs/01-pre
 Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NIDiKo na različnih napravah.
 
 <p align="center">
-  <img src="docs/assets/nidiko-device-mockup.png" alt="NIDiKo aplikacija na različnih napravah" width="900" />
+  <img src="docs/assets/nidiko_device_mockup.png" alt="NIDiKo aplikacija na različnih napravah" width="900" />
 </p>
 
 <p align="center">

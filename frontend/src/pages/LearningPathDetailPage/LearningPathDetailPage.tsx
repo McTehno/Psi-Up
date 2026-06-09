@@ -1220,8 +1220,8 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <div className="relative min-[1500px]:h-[calc(100vh-7.5rem)] min-[1500px]:min-h-[720px]">
-          <div>
+        <div className="relative h-[560px] min-[480px]:h-[640px] min-[640px]:h-auto min-[640px]:aspect-[1900/1000] min-[1500px]:aspect-auto min-[1500px]:h-[calc(100vh-7.5rem)] min-[1500px]:min-h-[720px]">
+          <div className="h-full min-[640px]:h-auto">
             {hasMountainNodes ? (
               <LearningPathMountain
                 nodes={mountainNodes}

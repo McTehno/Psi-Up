@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
+import type { AssessmentResultResponse, LearningUnitAssessmentResult } from '../../../types/assessment';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import EmptyState from '../../../components/common/EmptyState';
@@ -30,7 +31,7 @@ interface LearningUnitVisualizerProps {
   completedUnitIds?: string[];
   moduleId?: string;
   assessmentPositionUnitId?: string | null;
-  assessmentResult?: any | null; // using any to avoid importing AssessmentResultResponse if not strictly necessary, or we can import it.
+  assessmentResult?: AssessmentResultResponse | null;
 }
 
 export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
@@ -289,7 +290,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
 
   if (!isActiveCompleted && activeRef && assessmentResult?.learning_unit_results) {
     const luResult = assessmentResult.learning_unit_results.find(
-      (r: any) => r.learning_unit_id === activeRef.learning_unit_id
+      (r: LearningUnitAssessmentResult) => r.learning_unit_id === activeRef.learning_unit_id
     );
     if (luResult) {
       if (luResult.question_progress != null && luResult.question_progress >= 1) {
@@ -436,7 +437,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
               progress = 1;
             } else if (assessmentResult?.learning_unit_results) {
               const luResult = assessmentResult.learning_unit_results.find(
-                (r: any) => r.learning_unit_id === ref.learning_unit_id
+                (r: LearningUnitAssessmentResult) => r.learning_unit_id === ref.learning_unit_id
               );
               if (luResult) {
                 if (luResult.question_progress != null) {

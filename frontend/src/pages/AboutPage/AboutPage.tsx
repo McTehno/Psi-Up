@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import aboutMountains from '../../assets/AboutUsPage/about-mountains.webp'
 import { usePageTitle } from '../../hooks/usePageTitle'
 const workPackages = [
@@ -28,6 +28,8 @@ const AboutPage = () => {
 	usePageTitle('O nas | NIDiKo')
 
 	useEffect(() => {
+		window.scrollTo(0, 0)
+		
 		let animationFrameId = 0
 
 		const handleScroll = () => {

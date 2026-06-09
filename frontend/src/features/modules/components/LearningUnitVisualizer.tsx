@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LearningUnitReferenceResponse, LearningUnitResponse } from '../../../types/learning-unit';
+import type { AssessmentResultResponse, LearningUnitAssessmentResult } from '../../../types/assessment';
 import { BookOpen, Check, ArrowRight, X } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import EmptyState from '../../../components/common/EmptyState';
@@ -30,6 +31,7 @@ interface LearningUnitVisualizerProps {
   completedUnitIds?: string[];
   moduleId?: string;
   assessmentPositionUnitId?: string | null;
+  assessmentResult?: AssessmentResultResponse | null;
 }
 
 export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
@@ -37,7 +39,8 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   details = [],
   completedUnitIds = [],
   moduleId,
-  assessmentPositionUnitId
+  assessmentPositionUnitId,
+  assessmentResult
 }) => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -281,9 +284,24 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     )
     : null
 
-  const isActiveCompleted = activeRef
+  let isActiveCompleted = activeRef
     ? safeCompletedUnitIds.includes(activeRef.learning_unit_id)
-      : false
+    : false
+
+  if (!isActiveCompleted && activeRef && assessmentResult?.learning_unit_results) {
+    const luResult = assessmentResult.learning_unit_results.find(
+      (r: LearningUnitAssessmentResult) => r.learning_unit_id === activeRef.learning_unit_id
+    );
+    if (luResult) {
+      if (luResult.question_progress != null && luResult.question_progress >= 1) {
+        isActiveCompleted = true;
+      } else if (luResult.total_question_count && luResult.total_question_count > 0) {
+        if ((luResult.known_question_count || 0) / luResult.total_question_count >= 1) {
+          isActiveCompleted = true;
+        }
+      }
+    }
+  }
 
   // Compute mobile popup position (clamped to container bounds)
   const getPopupStyle = (): React.CSSProperties => {
@@ -413,6 +431,27 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const isAssessmentPosition = assessmentPositionUnitId === ref.learning_unit_id;
             const nodeDelay = (pos.rowIndex + 1) * DRAW_DURATION;
 
+            // Calculate progress
+            let progress = 0;
+            if (isUnitCompleted) {
+              progress = 1;
+            } else if (assessmentResult?.learning_unit_results) {
+              const luResult = assessmentResult.learning_unit_results.find(
+                (r: LearningUnitAssessmentResult) => r.learning_unit_id === ref.learning_unit_id
+              );
+              if (luResult) {
+                if (luResult.question_progress != null) {
+                  progress = Math.min(Math.max(luResult.question_progress, 0), 1);
+                } else if (luResult.total_question_count && luResult.total_question_count > 0) {
+                  progress = Math.min(Math.max((luResult.known_question_count || 0) / luResult.total_question_count, 0), 1);
+                }
+              }
+            }
+
+            const effectiveIsUnitCompleted = isUnitCompleted || progress >= 1;
+            const showPercentage = progress > 0 && progress < 1;
+            const percentageText = `${Math.round(progress * 100)}%`;
+
             return (
               <div
                 key={`${ref.learning_unit_id}-${idx}`}
@@ -448,22 +487,30 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                       : 'hover:ring-8'}
                     ${isAssessmentPosition
                       ? 'border-[#d08a34] bg-[#d08a34] text-white shadow-[0_16px_34px_rgba(208,138,52,0.28)]'
-                      : isUnitCompleted
+                      : effectiveIsUnitCompleted
                         ? 'bg-[#31583b] border border-[#31583b] hover:ring-[#31583b]/30 scale-105'
                         : 'bg-[#F2EDE1] border-[1.5px] border-[#DECFB3] hover:ring-[#EACE9B]/40 hover:scale-105 hover:bg-white'}
                   `}
                 >
                   {isAssessmentPosition ? (
-                    <BookOpen className="w-6 h-6 text-white" strokeWidth={2} />
-                  ) : isUnitCompleted ? (
+                    showPercentage ? (
+                      <span className="text-white font-bold text-sm leading-none">{percentageText}</span>
+                    ) : effectiveIsUnitCompleted ? (
+                      <Check className="w-6 h-6 text-white" strokeWidth={3} />
+                    ) : (
+                      <BookOpen className="w-6 h-6 text-white" strokeWidth={2} />
+                    )
+                  ) : effectiveIsUnitCompleted ? (
                     <Check className="w-6 h-6 text-white" strokeWidth={3} />
+                  ) : showPercentage ? (
+                    <span className="text-[#5c4d3c] font-bold text-sm leading-none">{percentageText}</span>
                   ) : (
                     <BookOpen className="w-6 h-6 text-[#5c4d3c]" strokeWidth={2} />
                   )}
                 </motion.button>
 
                 {/* Mobile Node Label */}
-                {isMobile && !isUnitCompleted && (
+                {isMobile && !effectiveIsUnitCompleted && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: isContainerInView ? 1 : 0 }}
@@ -487,17 +534,17 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <button
                       type="button"
                       onClick={() => handleUnitClick(ref.learning_unit_id)}
-                      className={`-translate-y-1/2 w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-[calc(50%+4px)] cursor-pointer flex flex-col group/card ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                      className={`-translate-y-1/2 w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-[calc(50%+4px)] cursor-pointer flex flex-col group/card ${effectiveIsUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
                     >
                       <div className={`uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2 w-full ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
                         Stopnja {ref.order}
                       </div>
 
                       <div className={`w-full flex items-start gap-2 ${pos.isOnRightSide ? 'justify-between' : 'justify-between flex-row-reverse'}`}>
-                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
+                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${effectiveIsUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
                           {normalizedDetail.title}
                         </h4>
-                        {isUnitCompleted ? (
+                        {effectiveIsUnitCompleted ? (
                           <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
                             <Check className="w-3 h-3 text-white" strokeWidth={3} />
                           </div>
@@ -506,12 +553,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                         )}
                       </div>
                       {normalizedDetail.description && (
-                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
+                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed w-full ${effectiveIsUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'} ${pos.isOnRightSide ? 'text-left' : 'text-right'}`}>
                           {normalizedDetail.description || 'Opis učne enote trenutno ni na voljo.'}
                         </p>
                       )}
                       {!ref.is_required && (
-                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'} ${pos.isOnRightSide ? 'self-start' : 'self-end'}`}>
+                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold ${effectiveIsUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'} ${pos.isOnRightSide ? 'self-start' : 'self-end'}`}>
                           Izbirno
                         </span>
                       )}
@@ -529,17 +576,17 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                     <button
                       type="button"
                       onClick={() => handleUnitClick(ref.learning_unit_id)}
-                      className={`w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer flex flex-col group/card text-left ${isUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
+                      className={`w-[240px] md:w-[260px] backdrop-blur-md p-4 rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer flex flex-col group/card text-left ${effectiveIsUnitCompleted ? 'bg-[#f4f7f5]/95 border-[#31583b] hover:border-[#31583b]' : 'bg-white/95 border-[#DECFB3] hover:border-[#C98A43]/50'}`}
                     >
                       <div className="uppercase tracking-[0.2em] text-[#86968B] text-[10px] font-bold opacity-90 mb-2">
                         Stopnja {ref.order}
                       </div>
 
                       <div className="w-full flex items-start justify-between gap-2">
-                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${isUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
+                        <h4 className={`font-serif text-[1.1rem] font-bold leading-tight mb-1 transition-colors ${effectiveIsUnitCompleted ? 'text-[#31583b]' : 'text-[#5c3724] group-hover/card:text-[#C98A43]'}`}>
                           {normalizedDetail.title}
                         </h4>
-                        {isUnitCompleted ? (
+                        {effectiveIsUnitCompleted ? (
                           <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#31583b] flex items-center justify-center">
                             <Check className="w-3 h-3 text-white" strokeWidth={3} />
                           </div>
@@ -548,12 +595,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
                         )}
                       </div>
                       {normalizedDetail.description && (
-                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed ${isUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
+                        <p className={`text-xs line-clamp-2 mt-1.5 leading-relaxed ${effectiveIsUnitCompleted ? 'text-[#4a6b53]' : 'text-[#64594c]'}`}>
                           {normalizedDetail.description}
                         </p>
                       )}
                       {!ref.is_required && (
-                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold self-start ${isUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'}`}>
+                        <span className={`mt-3 inline-block px-2 py-1 border rounded text-[9px] uppercase font-bold self-start ${effectiveIsUnitCompleted ? 'bg-[#e9f2eb] border-[#31583b]/30 text-[#31583b]' : 'bg-[#F5F0E8] border-[#DECFB3] text-[#A68D6A]'}`}>
                           Izbirno
                         </span>
                       )}

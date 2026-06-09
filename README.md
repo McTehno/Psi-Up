@@ -141,6 +141,16 @@ Za zagon projekta z Dockerjem potrebuješ:
 
 ### Zagon z Dockerjem
 
+
+Repozitorij najprej kloniramo lokalno:
+
+```bash
+git clone https://github.com/McTehno/NIDiKo.git
+cd NIDiKo
+```
+
+---
+
 Pred prvim zagonom pripravi okoljske datoteke na podlagi primerov:
 
 ```powershell
@@ -148,7 +158,7 @@ copy backend\.env.example backend\.env
 copy frontend\.env.example frontend\.env
 ```
 
-Nato po potrebi dopolni vrednosti v `.env` datotekah.
+Nato dopolni vrednosti v `.env` datotekah.
 
 Za razvojni zagon uporabi:
 

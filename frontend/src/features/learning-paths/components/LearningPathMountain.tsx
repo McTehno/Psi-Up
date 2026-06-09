@@ -1569,7 +1569,7 @@ export function LearningPathMountain({
     <section
       ref={containerRef}
       className={[
-        'relative isolate overflow-hidden rounded-[2rem] border border-[#DED2BC] bg-[#F7F1E6] shadow-sm min-[640px]:!h-auto min-[640px]:!min-h-0 min-[640px]:aspect-[1900/1000]',
+        'relative isolate overflow-hidden rounded-[2rem] border border-[#DED2BC] bg-[#F7F1E6] shadow-sm h-full min-[640px]:!h-auto min-[640px]:!min-h-0 min-[640px]:aspect-[1900/1000]',
         className,
       ].join(' ')}
     >

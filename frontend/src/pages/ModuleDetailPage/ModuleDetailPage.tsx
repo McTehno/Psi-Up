@@ -468,6 +468,7 @@ function ModuleDetailPage() {
               completedUnitIds={completedUnitIds}
               moduleId={moduleId}
               assessmentPositionUnitId={assessmentPositionUnitId}
+              assessmentResult={assessmentResult}
             />
 
             <section className="mt-8">

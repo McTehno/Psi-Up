@@ -1220,8 +1220,8 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <div className="relative h-[720px] min-[480px]:h-[760px] min-[640px]:h-[520px] min-[900px]:h-[570px] min-[1200px]:h-[620px] min-[1500px]:h-[calc(100vh-7.5rem)] min-[1500px]:min-h-[720px]">
-          <div className="h-full">
+        <div className="relative min-[1500px]:h-[calc(100vh-7.5rem)] min-[1500px]:min-h-[720px]">
+          <div>
             {hasMountainNodes ? (
               <LearningPathMountain
                 nodes={mountainNodes}
@@ -1234,10 +1234,9 @@ function LearningPathDetailPage() {
                 celebrateCompletedOnMount={learningPathIsCompleted}
                 onFavoriteClick={handleFavoriteClick}
                 onSaveClick={handleSaveClick}
-                className="h-full"
               />
             ) : (
-              <div className="flex h-full items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white">
+              <div className="flex h-[400px] items-center justify-center rounded-[2rem] border border-[#DED2BC] bg-white min-[1500px]:h-full">
                 <EmptyState
                   title="Ni modulov"
                   message="Ta učna pot trenutno nima modulov za prikaz."
@@ -1262,7 +1261,7 @@ function LearningPathDetailPage() {
           />
         </section>
 
-        <section className="mt-16 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:mt-20 sm:px-10 lg:mt-24 lg:px-14">
+        <section className="mt-8 min-[1500px]:mt-24 overflow-hidden rounded-[28px] border border-[#e5cda6] bg-[#fff8ee] px-8 py-7 shadow-[0_12px_35px_rgba(84,59,33,0.07)] sm:px-10 lg:px-14">
           <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
             <div>
               <div className="flex items-center gap-4">

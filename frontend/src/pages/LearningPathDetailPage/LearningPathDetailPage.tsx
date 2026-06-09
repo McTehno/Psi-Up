@@ -633,6 +633,7 @@ function createMountainNode(params: {
     assessmentStatus: nodeAssessmentStatus,
     assessmentProgress: nodeAssessmentProgress,
     questionYesCount: nodeQuestionProgressResult?.known_question_count ?? null,
+    questionMissingCount: nodeQuestionProgressResult?.missing_question_count ?? null,
     questionTotalCount: nodeQuestionProgressResult?.total_question_count ?? null,
     isAssessmentPosition: isNodeAssessmentPosition,
   }

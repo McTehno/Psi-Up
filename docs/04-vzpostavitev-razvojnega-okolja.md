@@ -41,17 +41,14 @@ cd NIDiKo
 
 Projekt uporablja ločene okoljske spremenljivke za backend in frontend.
 
-V repozitoriju sta pripravljeni predlogi:
+Pred prvim zagonom pripravi okoljske datoteke na podlagi primerov:
 
-- [`backend/.env.example`](../backend/.env.example)
-- [`frontend/.env.example`](../frontend/.env.example)
-
-Lokalno se iz teh predlog ustvarita pravi datoteki:
-
-```text
-backend/.env
-frontend/.env
+```powershell
+copy backend\.env.example backend\.env
+copy frontend\.env.example frontend\.env
 ```
+
+Nato dopolni vrednosti v `.env` datotekah.
 
 ---
 

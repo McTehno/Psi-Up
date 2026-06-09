@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 
@@ -196,55 +196,81 @@ usePageTitle(pageTitle)
           style={{ willChange: 'transform' }}
         >
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
-            {/* Title row with close button inline */}
-            <div className="flex items-center justify-between mb-2">
-              <h1 className={`font-serif text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
-                {isForgotPassword ? 'Ponastavitev gesla' : isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
-              </h1>
+            {/* Shared Close Button floating at the top right */}
+            <div className="absolute right-0 -top-1 -mr-2 z-50">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 -mr-2 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
+                className="p-2 text-[#706b60] hover:text-[#2C2417] hover:bg-[#fffdf8]/50 rounded-full transition-colors duration-300 cursor-pointer shrink-0"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
-              {isForgotPassword ? 'Vnesite e-poštni naslov za ponastavitev.' : isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
-            </p>
+            <div className="grid">
+              {/* --- LOGIN & REGISTER VIEW --- */}
+              <div 
+                className={`col-start-1 row-start-1 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                  isForgotPassword 
+                    ? '-translate-x-8 opacity-0 pointer-events-none scale-95 blur-[2px]' 
+                    : 'translate-x-0 opacity-100 scale-100 blur-0'
+                }`}
+              >
+                <div className="mb-2 pr-10">
+                  <h1 className={`font-serif text-3xl font-semibold tracking-tight transition-colors duration-700 ${isRegister ? 'text-[#d07a12]' : 'text-[#2f4a31]'}`}>
+                    {isRegister ? 'Ustvarite račun' : 'Dobrodošli nazaj'}
+                  </h1>
+                </div>
 
-            <div className="relative">
-              {/* Unified Auth Form */}
-              {isForgotPassword ? (
-                <ForgotPasswordForm
-                  onSubmit={handleSendResetEmail}
-                  isLoading={isLoading}
-                  onCancel={() => setIsForgotPassword(false)}
-                />
-              ) : (
-                <AuthForm
-                  isRegister={isRegister}
-                  onSubmit={handleSubmit}
-                  onForgotPassword={handleForgotPassword}
-                  isLoading={isLoading}
-                />
-              )}
-            </div>
+                <p className={`text-[#706b60] text-sm transition-all duration-700 ease-in-out ${isRegister ? 'mb-4' : 'mb-8'}`}>
+                  {isRegister ? 'Pridružite se in začnite svojo učno pot.' : 'Prijavite se za nadaljevanje.'}
+                </p>
 
-            {!isForgotPassword && (
-              <>
+                <div className="relative">
+                  <AuthForm
+                    isRegister={isRegister}
+                    onSubmit={handleSubmit}
+                    onForgotPassword={handleForgotPassword}
+                    isLoading={isLoading}
+                  />
+                </div>
+
                 <AuthDivider label={isRegister ? 'Ali se registrirajte z' : 'Ali nadaljujte z'} />
-
                 <GoogleLoginButton onClick={handleGoogleLogin} />
-
                 <AuthFooter
                   prompt={isRegister ? 'Če imate račun?' : 'Če nimate računa?'}
                   actionLabel={isRegister ? 'Prijava' : 'Registracija'}
                   onAction={toggleMode}
                 />
-              </>
-            )}
+              </div>
+
+              {/* --- FORGOT PASSWORD VIEW --- */}
+              <div 
+                className={`col-start-1 row-start-1 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                  !isForgotPassword 
+                    ? 'translate-x-8 opacity-0 pointer-events-none scale-95 blur-[2px]' 
+                    : 'translate-x-0 opacity-100 scale-100 blur-0'
+                }`}
+              >
+                <div className="mb-2 pr-10">
+                  <h1 className="font-serif text-3xl font-semibold tracking-tight text-[#2f4a31]">
+                    Ponastavitev gesla
+                  </h1>
+                </div>
+
+                <p className="text-[#706b60] text-sm mb-8">
+                  Vnesite e-poštni naslov za ponastavitev.
+                </p>
+
+                <div className="relative">
+                  <ForgotPasswordForm
+                    onSubmit={handleSendResetEmail}
+                    isLoading={isLoading}
+                    onCancel={() => setIsForgotPassword(false)}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

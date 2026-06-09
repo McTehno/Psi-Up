@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
-import SimpleMarkdownText from '../../../components/common/SimpleMarkdownText/SimpleMarkdownText'
+import AssistantAnswerBubble from '../../../components/common/AssistantAnswerBubble/AssistantAnswerBubble'
 import { Send } from 'lucide-react'
 
 import { CollapsibleChatPanel } from '../../../components/layout/ChatPanel/CollapsibleChatPanel'
@@ -219,10 +219,7 @@ function LearningPathAssistantBox({
                     </div>
 
                     <div className="flex justify-start">
-                      <SimpleMarkdownText
-                        content={message.answer}
-                        className="text-sm leading-6 text-[#5f6652]"
-                      />
+                      <AssistantAnswerBubble content={message.answer} />
                     </div>
                   </div>
                 )

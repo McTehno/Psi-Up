@@ -57,19 +57,11 @@ Namen dokumenta je prikazati glavne dele uporabniškega vmesnika na namiznem, ta
 
 Začetna stran uporabniku predstavi namen aplikacije **NIDiKo** in ga usmeri k raziskovanju učnih poti, modulov in učnih enot. Poudarek je na jasnem uvodnem sporočilu, pregledni strukturi vsebin in vizualno prijaznem prvem stiku z aplikacijo.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/zacetna-stran.png" alt="Začetna stran - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/zacetna-stran.png" alt="Začetna stran - tablični prikaz" width="420" />
@@ -88,19 +80,11 @@ Začetna stran uporabniku predstavi namen aplikacije **NIDiKo** in ga usmeri k r
 
 Iskanje uporabniku omogoča hitro odkrivanje učnih poti, modulov in učnih enot. Namenjeno je hitremu dostopu do relevantnih vsebin in podpira pregledno raziskovanje aplikacije.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/iskanje.png" alt="Iskanje - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/iskanje.png" alt="Iskanje - tablični prikaz" width="420" />
@@ -119,19 +103,11 @@ Iskanje uporabniku omogoča hitro odkrivanje učnih poti, modulov in učnih enot
 
 Stran **O nas** predstavi projekt, namen aplikacije in širši kontekst razvoja digitalnih kompetenc. Uporabniku pomaga razumeti, zakaj aplikacija obstaja in katero težavo rešuje.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/stran-o-nas-desktop-front.png" alt="O nas - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/o-nas.png" alt="O nas - tablični prikaz" width="420" />
@@ -152,10 +128,6 @@ Prijava in registracija omogočata dostop do osebnih funkcionalnosti aplikacije.
 
 <table>
   <tr>
-    <th>Prijava</th>
-    <th>Registracija</th>
-  </tr>
-  <tr>
     <td align="center">
       <img src="assets/screenshots/desktop/prijava-desktop-front.png" alt="Prijava" width="520" />
     </td>
@@ -175,19 +147,11 @@ Stran podrobnosti učne poti prikazuje opis učne poti, njeno strukturo, povezan
 
 Na tej strani lahko uporabnik vidi, kaj učna pot vključuje, komu je namenjena in kako se posamezni moduli povezujejo v smiselno zaporedje.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/ucna-pot-detail.png" alt="Učna pot - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/ucna-pot-detail.png" alt="Učna pot - tablični prikaz" width="420" />
@@ -206,25 +170,15 @@ Na tej strani lahko uporabnik vidi, kaj učna pot vključuje, komu je namenjena 
 
 Stran podrobnosti modula prikazuje opis modula, povezane učne enote in napredek znotraj izbranega sklopa. Modul predstavlja manjši, zaokrožen del učne poti.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/modul-podrobnosti-desktop-front.png" alt="Modul - namizni prikaz" width="720" />
 </p>
-
-### Dodatni namizni prikaz
 
 <p align="center">
   <img src="assets/screenshots/desktop/modul-detail2.png" alt="Modul - dodatni namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/modul-detail.png" alt="Modul - tablični prikaz" width="420" />
@@ -243,25 +197,15 @@ Stran podrobnosti modula prikazuje opis modula, povezane učne enote in napredek
 
 Stran podrobnosti učne enote prikazuje opis, teme, kompetence, podatke o izvedbi in dodatno podporo uporabniku. Učna enota je najmanjši del učne strukture in je namenjena konkretnemu delu znanja ali aktivnosti.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/ucna-enota-desktop-front.png" alt="Učna enota - namizni prikaz" width="720" />
 </p>
-
-### Prikaz na tablici
 
 <p align="center">
   <img src="assets/screenshots/tablet/ucna-enota-detail.png" alt="Učna enota - tablični prikaz" width="420" />
 </p>
 
-### Prikaz na mobilni napravi
-
 <table>
-  <tr>
-    <th>Mobilni prikaz</th>
-    <th>Dodatni mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/mobile/ucna-enota-detai.png" alt="Učna enota - mobilni prikaz" width="250" />
@@ -280,19 +224,11 @@ Stran podrobnosti učne enote prikazuje opis, teme, kompetence, podatke o izvedb
 
 Vprašalnik uporabniku omogoča samooceno trenutnega znanja. Trenutna različica temelji na vprašanjih tipa **DA/NE**, s katerimi sistem oceni, katere vsebine uporabnik že pozna in kje je smiselno nadaljevati.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/vprasalnik.png" alt="Vprašalnik - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/vprasalnik-tablet.png" alt="Vprašalnik - tablični prikaz" width="420" />
@@ -311,19 +247,11 @@ Vprašalnik uporabniku omogoča samooceno trenutnega znanja. Trenutna različica
 
 Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma naslednji korak. Namen tega prikaza je uporabniku dati jasno smer nadaljnjega učenja.
 
-### Namizni prikaz
-
 <p align="center">
   <img src="assets/screenshots/desktop/rezultat-vprasalnika-modul-desktop-front.png" alt="Rezultat vprašalnika - namizni prikaz" width="720" />
 </p>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/rezultat-vprasalnika.png" alt="Rezultat vprašalnika - tablični prikaz" width="420" />
@@ -342,30 +270,18 @@ Rezultat vprašalnika uporabniku pokaže priporočeno začetno točko oziroma na
 
 AI pomočnik uporabniku pomaga razumeti učno vsebino ali vprašanje v vprašalniku. Namenjen je dodatni podpori pri učenju in omogoča bolj interaktivno razumevanje vsebin.
 
-### Namizni prikaz
-
 <table>
   <tr>
-    <th>AI pomočnik na strani podrobnosti</th>
-    <th>AI pomočnik pri vprašalniku</th>
-  </tr>
-  <tr>
     <td align="center">
-      <img src="assets/screenshots/desktop/ai-pomocnik-detail.png" alt="AI pomočnik na strani podrobnosti" width="520" />
+      <img src="assets/screenshots/desktop/ai-pomocnik-detail.png" alt="AI pomočnik na strani podrobnosti - namizni prikaz" width="520" />
     </td>
     <td align="center">
-      <img src="assets/screenshots/desktop/ai-pomocnik-vprasalnik.png" alt="AI pomočnik pri vprašalniku" width="520" />
+      <img src="assets/screenshots/desktop/ai-pomocnik-vprasalnik.png" alt="AI pomočnik pri vprašalniku - namizni prikaz" width="520" />
     </td>
   </tr>
 </table>
 
-### Prikaz na tablici in mobilni napravi
-
 <table>
-  <tr>
-    <th>Tablični prikaz</th>
-    <th>Mobilni prikaz</th>
-  </tr>
   <tr>
     <td align="center">
       <img src="assets/screenshots/tablet/ai-pomocnik-detail.png" alt="AI pomočnik - tablični prikaz" width="420" />

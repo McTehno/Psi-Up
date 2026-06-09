@@ -41,36 +41,17 @@ cd NIDiKo
 
 Projekt uporablja ločene okoljske spremenljivke za backend in frontend.
 
-V repozitoriju sta pripravljeni predlogi:
+Pred prvim zagonom pripravi okoljske datoteke na podlagi primerov:
 
-- [`backend/.env.example`](../backend/.env.example)
-- [`frontend/.env.example`](../frontend/.env.example)
-
-Lokalno se iz teh predlog ustvarita pravi datoteki:
-
-```text
-backend/.env
-frontend/.env
+```powershell
+copy backend\.env.example backend\.env
+copy frontend\.env.example frontend\.env
 ```
 
+Nato dopolni vrednosti v `.env` datotekah.
+
 ---
-
-## 4. Backend okoljske spremenljivke
-
-V mapi `backend` ustvarimo datoteko `.env` na podlagi `backend/.env.example`.
-
-## 5. Frontend okoljske spremenljivke
-
-V mapi `frontend` ustvarimo datoteko `.env` na podlagi `frontend/.env.example`.
-
-Za lokalni razvoj je običajna vrednost backend API-ja:
-
-```env
-VITE_API_BASE_URL=http://localhost:8000
-```
----
-
-## 6. Priporočeni zagon z Docker Compose
+## 4. Priporočeni zagon z Docker Compose
 
 Za razvojni zagon se uporablja datoteka:
 
@@ -96,7 +77,7 @@ Razvojni Docker zagon omogoča hitrejše delo, ker uporablja live reload za back
 
 ---
 
-## 7. Ustavitev Docker okolja
+## 5. Ustavitev Docker okolja
 
 Okolje ustavimo z ukazom:
 
@@ -111,11 +92,11 @@ docker compose -f docker-compose.dev.yml up --build
 ```
 ---
 
-## 8. Ročni zagon brez Dockerja
+## 6. Ročni zagon brez Dockerja
 
 Če Docker ni na voljo, lahko frontend in backend zaženemo ločeno.
 
-### 8.1 Backend
+### 6.1 Backend
 
 Najprej se premaknemo v mapo `backend`:
 
@@ -161,7 +142,7 @@ API dokumentacija je dostopna na:
 http://localhost:8000/docs
 ```
 
-### 8.2 Frontend
+### 6.2 Frontend
 
 V drugem terminalu se premaknemo v mapo `frontend`:
 
@@ -189,7 +170,7 @@ http://localhost:5173
 
 ---
 
-## 9. Preverjanje delovanja
+## 7. Preverjanje delovanja
 
 Po zagonu preverimo:
 
@@ -202,7 +183,7 @@ Po zagonu preverimo:
 
 ---
 
-## 10. Pogoste težave
+## 8. Pogoste težave
 
 ### Frontend se ne poveže z backendom
 
@@ -259,7 +240,7 @@ AZURE_STORAGE_CONNECTION_STRING=
 
 ---
 
-## 11. Povzetek
+## 9. Povzetek
 
 Za običajen razvoj je priporočeno uporabiti Docker Compose, ker z enim ukazom zažene frontend in backend. Pred zagonom je treba pripraviti datoteki `backend/.env` in `frontend/.env`, ki temeljita na `.env.example` predlogah.
 

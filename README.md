@@ -44,12 +44,11 @@
 
 Vizija projekta je razviti pregleden in uporabniku prijazen priporočilni sistem, ki posamezniku pomaga izbrati ustrezno učno pot za razvoj digitalnih kompetenc. NIDiKo uporabnika vodi od začetne samoocene do priporočene učne poti, sestavljene iz modulov in učnih enot.
 
-Aplikacija uporabniku omogoča vpogled v trenutno znanje, priporočene naslednje korake in napredek proti izbranemu cilju. Učne poti so povezane s standardom DigComp, zato uporabnik lažje razume, katera digitalna znanja razvija in na kateri ravni.
-
 Rešitev naslavlja problem nepreglednosti pri izbiri izobraževalnih vsebin. Namesto ročnega iskanja posameznih učnih enot sistem predlaga smiselno pot, ki upošteva uporabnikovo izhodiščno znanje, cilje in odgovore v vprašalniku.
 
 Sistem je namenjen študentom, zaposlenim, profesorjem, starejšim uporabnikom, podjetjem in posameznikom brez osnovnega digitalnega znanja, ki želijo razvijati digitalne kompetence ali lažje izbrati ustrezno učno smer.
 
+Podrobnejši opis projekta je zapisan v dokumentu [Pregled projekta](docs/01-pregled-projekta.md).
 <a id="funkcionalnosti"></a>
 
 ## Ključne funkcionalnosti

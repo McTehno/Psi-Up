@@ -33,6 +33,7 @@ export type LearningPathMountainNode = {
   nodeType?: 'module' | 'learning_unit'
   detailPath?: string
   questionYesCount?: number | null
+  questionMissingCount?: number | null
   questionTotalCount?: number | null
 }
 
@@ -732,6 +733,20 @@ function getStatsNextStepItems(levelNodes: LearningPathMountainNode[]) {
   }
 }
 
+function getStatsAnsweredQuestionCount(node: LearningPathMountainNode) {
+  return (node.questionYesCount ?? 0) + (node.questionMissingCount ?? 0)
+}
+
+function hasStatsAssessmentStarted(node: LearningPathMountainNode) {
+  return (
+    getStatsAnsweredQuestionCount(node) > 0 ||
+    getStatsNodeProgress(node) > 0 ||
+    node.assessmentStatus != null ||
+    node.assessmentProgress != null ||
+    node.isAssessmentPosition === true
+  )
+}
+
 function getQuestionAnswerStats(
   nodes: LearningPathMountainNode[],
   isFullyCompleted: boolean,
@@ -752,8 +767,44 @@ function getQuestionAnswerStats(
 
   return {
     questionPercent,
-    hasStarted: totalProgress > 0,
+    hasStarted:
+      isFullyCompleted || nodes.some((node) => hasStatsAssessmentStarted(node)),
   }
+}
+
+function isStatsPreviousLevelCompleted(
+  node: LearningPathMountainNode,
+  sortedNodes: LearningPathMountainNode[],
+) {
+  const previousOrders = sortedNodes
+    .map((candidateNode) => candidateNode.order)
+    .filter((order) => order < node.order)
+    .sort((firstOrder, secondOrder) => firstOrder - secondOrder)
+
+  const previousOrder = previousOrders.at(-1)
+
+  if (previousOrder === undefined) {
+    return true
+  }
+
+  const previousLevelNodes = sortedNodes.filter(
+    (candidateNode) => candidateNode.order === previousOrder,
+  )
+
+  return previousLevelNodes.every(isStatsNodeCompleted)
+}
+
+function isStatsExactNextStartNode(
+  node: LearningPathMountainNode,
+  sortedNodes: LearningPathMountainNode[],
+) {
+  const progress = normalizeAssessmentProgress(node.assessmentProgress) ?? 0
+
+  return (
+    node.isAssessmentPosition === true &&
+    progress <= 0 &&
+    isStatsPreviousLevelCompleted(node, sortedNodes)
+  )
 }
 
 function getLearningPathStats(
@@ -821,14 +872,24 @@ function getLearningPathStats(
     (node) => !isStatsNodeCompleted(node) && getStatsNodeProgress(node) > 0,
   )
 
+  const hasExactStartNode = currentLevelNodes.some(
+    (node) =>
+      !isStatsNodeCompleted(node) &&
+      isStatsExactNextStartNode(node, sortedNodes),
+  )
+
   const nextStepLabel =
     nextStepIsParallel && nextStepItems.length > 1
       ? hasStartedCurrentLevel
         ? 'Nadaljuj z vzporednimi koraki'
-        : 'Vzporedni koraki'
+        : hasExactStartNode
+          ? 'Prični z vzporednimi koraki'
+          : 'Vzporedni koraki'
       : hasStartedCurrentLevel
         ? 'Nadaljuj z'
-        : 'Naslednji korak'
+        : hasExactStartNode
+          ? 'Prični z'
+          : 'Naslednji korak'
 
   const nextStepTitle =
     nextStepItems.length === 0

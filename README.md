@@ -18,6 +18,9 @@
   <a href="#zaslonski-prikazi">
     <img src="https://img.shields.io/badge/Prikazi-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zaslonski prikazi" />
   </a>
+   <a href="#delujoca-resitev">
+    <img src="https://img.shields.io/badge/Delujoča_rešitev-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Delujoča rešitev" />
+  </a>
   <a href="#namestitev-in-lokalni-zagon">
     <img src="https://img.shields.io/badge/Zagon-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zagon" />
   </a>
@@ -29,9 +32,6 @@
   </a>
   <a href="#struktura-projekta">
     <img src="https://img.shields.io/badge/Struktura-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Struktura" />
-  </a>
-  <a href="#delujoca-resitev">
-    <img src="https://img.shields.io/badge/Delujoča_rešitev-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Delujoča rešitev" />
   </a>
   <a href="#dokumentacija">
     <img src="https://img.shields.io/badge/Dokumentacija-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Dokumentacija" />
@@ -78,6 +78,13 @@ Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NID
 </p>
 
 Več zaslonskih prikazov je zbranih v dokumentu [08-zaslonski-prikazi.md](docs/08-zaslonski-prikazi.md).
+
+<a id="delujoca-resitev"></a>
+## Delujoča rešitev
+
+Delujoča različica aplikacije je trenutno dostopna na:
+
+[http://46.225.17.135](http://46.225.17.135)
 
 <a id="namestitev-in-lokalni-zagon"></a>
 
@@ -210,13 +217,6 @@ Za podrobnejši pregled posameznih delov glej:
 - [Backend README](backend/README.md)
 - [Arhitektura sistema](docs/03-arhitektura.md)
 - [Pravila poimenovanja in pisanja kode](docs/10-pravila-poimenovanja-in-pisanje-kode.md)
-
-<a id="delujoca-resitev"></a>
-## Delujoča rešitev
-
-Delujoča različica aplikacije je trenutno dostopna na:
-
-[http://46.225.17.135](http://46.225.17.135)
 
 ## Nadaljnji razvoj
 

@@ -111,32 +111,29 @@ export function VoiceHelpButton({
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          onClick={handlePlayVoiceHelp}
-          disabled={isLoading || isPlaying}
-          aria-label="Predvajaj glasovno pomoč"
-          className="inline-flex items-center gap-2 rounded-xl border border-stone-300 px-5 py-3 text-sm font-medium text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+          onClick={isPlaying ? handleStopVoiceHelp : handlePlayVoiceHelp}
+          disabled={isLoading}
+          aria-label={isPlaying ? "Ustavi glasovno pomoč" : "Predvajaj glasovno pomoč"}
+          className={
+            isPlaying
+              ? "inline-flex items-center gap-2 rounded-xl border border-red-300 px-5 py-3 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+              : "inline-flex items-center gap-2 rounded-xl border border-stone-300 px-5 py-3 text-sm font-medium text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+          }
         >
-          <Volume2 size={20} />
-          {isLoading
-            ? "Pripravljam glasovno pomoč ..."
-            : isPlaying
-              ? "Predvajanje ..."
-              : "Predvajaj glasovno pomoč"}
-        </button>
-
-        {isPlaying ? (
-          <button
-            type="button"
-            onClick={handleStopVoiceHelp}
-            aria-label="Ustavi glasovno pomoč"
-            className="inline-flex items-center gap-2 rounded-xl border border-red-300 px-5 py-3 text-sm font-medium text-red-700 transition hover:bg-red-50"
-          >
+          {isPlaying ? (
             <span aria-hidden="true" className="text-xs leading-none">
               ■
             </span>
-            Ustavi
-          </button>
-        ) : null}
+          ) : (
+            <Volume2 size={20} />
+          )}
+
+          {isLoading
+            ? "Pripravljam glasovno pomoč ..."
+            : isPlaying
+            ? "Ustavi"
+            : "Predvajaj glasovno pomoč"}
+        </button>
       </div>
 
       {errorMessage ? (

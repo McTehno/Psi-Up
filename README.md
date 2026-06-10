@@ -79,6 +79,13 @@ Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NID
 
 Več zaslonskih prikazov je zbranih v dokumentu [08-zaslonski-prikazi.md](docs/08-zaslonski-prikazi.md).
 
+<a id="delujoca-resitev"></a>
+## Delujoča rešitev
+
+Delujoča različica aplikacije je trenutno dostopna na:
+
+[http://46.225.17.135](http://46.225.17.135)
+
 <a id="namestitev-in-lokalni-zagon"></a>
 
 ## Namestitev in lokalni zagon
@@ -210,13 +217,6 @@ Za podrobnejši pregled posameznih delov glej:
 - [Backend README](backend/README.md)
 - [Arhitektura sistema](docs/03-arhitektura.md)
 - [Pravila poimenovanja in pisanja kode](docs/10-pravila-poimenovanja-in-pisanje-kode.md)
-
-<a id="delujoca-resitev"></a>
-## Delujoča rešitev
-
-Delujoča različica aplikacije je trenutno dostopna na:
-
-[http://46.225.17.135](http://46.225.17.135)
 
 ## Nadaljnji razvoj
 

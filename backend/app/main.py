@@ -30,8 +30,8 @@ from app.api.learning_unit_assistant import router as learning_unit_assistant_ro
 from app.api.module_assistant import router as module_assistant_router
 
 app = FastAPI(
-    title="Psi-Up API",
-    description="Backend API for the Psi-Up learning path recommendation system.",
+    title="NIDiKo API",
+    description="Backend API for the NIDiKo learning path recommendation system.",
     version="0.1.0",
 )
 app.add_exception_handler(HTTPException, http_exception_handler)
@@ -72,5 +72,5 @@ app.include_router(module_assistant_router, prefix="/api")
 @app.get("/")
 def read_root():
     return {
-        "message": "Psi-Up backend is running."
+        "message": "NIDiKo backend is running."
     }

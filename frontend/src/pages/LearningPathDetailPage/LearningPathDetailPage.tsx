@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CircleHelp, ExternalLink, Route as PathIcon } from 'lucide-react'
 
@@ -336,7 +336,7 @@ function getLearningUnitAssessmentProgress(
     ) ||
     assessmentResult.start_learning_unit_id === learningUnitId ||
     assessmentResult.current_position?.current_learning_unit_id ===
-      learningUnitId
+    learningUnitId
   ) {
     return 0
   }
@@ -352,9 +352,9 @@ function getNodeAssessmentProgress(
 ) {
   const nodeSpecificAssessmentResult = allowSessionAssessmentFallback
     ? getSessionAssessmentResult(
-        kind === 'learning_unit' ? 'learning_unit' : 'module',
-        nodeId,
-      )
+      kind === 'learning_unit' ? 'learning_unit' : 'module',
+      nodeId,
+    )
     : null
 
   if (kind === 'learning_unit') {
@@ -599,9 +599,9 @@ function createMountainNode(params: {
     )
     : null
 
-    const nodeQuestionProgressResult =
-      getNodeQuestionProgressResult(kind, nodeId, assessmentResult) ??
-      getNodeQuestionProgressResult(kind, nodeId, nodeSpecificAssessmentResult)
+  const nodeQuestionProgressResult =
+    getNodeQuestionProgressResult(kind, nodeId, assessmentResult) ??
+    getNodeQuestionProgressResult(kind, nodeId, nodeSpecificAssessmentResult)
 
   const isNodeAssessmentPosition =
     nodeAssessmentStatus !== 'completed' &&
@@ -954,16 +954,16 @@ function LearningPathDetailPage() {
 
 
   usePageTitle(
-  learningPath?.title
-    ? `${learningPath.title} | NIDiKo`
-    : 'Učna pot | NIDiKo',
-)
+    learningPath?.title
+      ? `${learningPath.title} | NIDiKo`
+      : 'Učna pot | NIDiKo',
+  )
 
   const learningPathContentId = useMemo(() => {
     if (!learningPath) {
       return undefined
     }
-    
+
     const contentId = getLearningPathEntityId(learningPath, learningPathId)
 
     return contentId || undefined
@@ -1233,6 +1233,7 @@ function LearningPathDetailPage() {
                 isSaved={progressIsSaved}
                 isCompleted={learningPathIsCompleted}
                 celebrateCompletedOnMount={learningPathIsCompleted}
+                sourceLearningPathId={learningPathContentId ?? learningPathId ?? ''}
                 onFavoriteClick={handleFavoriteClick}
                 onSaveClick={handleSaveClick}
               />

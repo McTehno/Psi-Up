@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+﻿import { useEffect, useState, useMemo } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   Award,
   Building2,
@@ -10,7 +10,7 @@ import {
   CircleDot,
   Users,
 } from 'lucide-react'
-import {usePageTitle} from '../../hooks/usePageTitle'
+import { usePageTitle } from '../../hooks/usePageTitle'
 
 import MapPinAreaIcon from '../../components/icons/MapPinAreaIcon'
 import {
@@ -236,7 +236,15 @@ function hasSelfAssessmentQuestions(learningUnit: LearningUnitResponse) {
 function LearningUnitDetailPage() {
   const { learningUnitId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
+  const sourceState = location.state as {
+    sourceModuleId?: string
+    sourceLearningPathId?: string
+  } | null
+
+  const sourceModuleId = sourceState?.sourceModuleId
+  const sourceLearningPathId = sourceState?.sourceLearningPathId
   const [learningUnit, setLearningUnit] = useState<LearningUnitDetailResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -245,10 +253,10 @@ function LearningUnitDetailPage() {
   const [manualCompletionOverride, setManualCompletionOverride] =
     useState<boolean | null>(null)
   usePageTitle(
-  learningUnit?.title
-    ? `${learningUnit.title} | NIDiKo`
-    : 'Učna enota | NIDiKo',
-)
+    learningUnit?.title
+      ? `${learningUnit.title} | NIDiKo`
+      : 'Učna enota | NIDiKo',
+  )
 
   const {
     isFavorite,
@@ -291,27 +299,51 @@ function LearningUnitDetailPage() {
     loadLearningUnit()
   }, [learningUnitId])
 
+
   useEffect(() => {
     if (!learningUnitId) {
       return
     }
 
-    const storedResult = sessionStorage.getItem(
+    function getStoredAssessmentResult(
+      key: string,
+    ): AssessmentResultResponse | null {
+      const storedResult = sessionStorage.getItem(key)
+
+      if (!storedResult) {
+        return null
+      }
+
+      try {
+        return JSON.parse(storedResult) as AssessmentResultResponse
+      } catch (error) {
+        console.error(error)
+        return null
+      }
+    }
+
+    const storedLearningUnitAssessmentResult = getStoredAssessmentResult(
       `assessment_result_${learningUnitId}`,
     )
 
-    if (!storedResult) {
-      setAssessmentResult(null)
-      return
-    }
+    const storedModuleAssessmentResult = sourceModuleId
+      ? getStoredAssessmentResult(`assessment_result_module_${sourceModuleId}`) ??
+      getStoredAssessmentResult(`assessment_result_${sourceModuleId}`)
+      : null
 
-    try {
-      setAssessmentResult(JSON.parse(storedResult) as AssessmentResultResponse)
-    } catch (error) {
-      console.error(error)
-      setAssessmentResult(null)
-    }
-  }, [learningUnitId])
+    const storedLearningPathAssessmentResult = sourceLearningPathId
+      ? getStoredAssessmentResult(
+        `assessment_result_learning_path_${sourceLearningPathId}`,
+      ) ?? getStoredAssessmentResult(`assessment_result_${sourceLearningPathId}`)
+      : null
+
+    setAssessmentResult(
+      storedLearningUnitAssessmentResult ??
+      storedModuleAssessmentResult ??
+      storedLearningPathAssessmentResult,
+    )
+  }, [learningUnitId, sourceModuleId, sourceLearningPathId])
+
 
   function handleStartQuestionnaire() {
     if (!learningUnitId) return

@@ -579,6 +579,8 @@ function ModuleDetailBox({
       ? `/learning-units/${node.moduleId}`
       : `/modules/${node.moduleId}`)
 
+  const description = node.description.trim()
+
   return (
     <article
       className={[
@@ -624,6 +626,14 @@ function ModuleDetailBox({
           {node.isRequired ? 'Obvezno' : 'Izbirno'}
         </span>
       </div>
+
+      {description && (
+        <div className="mt-4 rounded-2xl border border-[#eadfce] bg-[#fff8ee]/70 p-3">
+          <p className="mt-1 text-sm leading-6 text-[#51685a]">
+            {description}
+          </p>
+        </div>
+      )}
 
       <Link
         to={detailPath}

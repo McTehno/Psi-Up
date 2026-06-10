@@ -10,7 +10,7 @@ Namen dokumenta je predstaviti nadgradnje, s katerimi bomo izboljšali uporabni�
 
 Trenutni vprašalnik temelji na vprašanjih tipa **DA/NE**.
 
-Ker podatkovna struktura vprašanj že vsebuje polje `type`, je sistem pripravljen za razširitev z dodatnimi tipi vprašanj.
+Trenutna podatkovna struktura podpira razširitev vprašalnika z različnimi tipi vprašanj.
 
 Načrtovane razširitve:
 

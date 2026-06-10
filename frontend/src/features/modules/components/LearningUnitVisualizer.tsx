@@ -30,6 +30,7 @@ interface LearningUnitVisualizerProps {
   details?: LearningUnitResponse[];
   completedUnitIds?: string[];
   moduleId?: string;
+  sourceLearningPathId?: string;
   assessmentPositionUnitId?: string | null;
   assessmentResult?: AssessmentResultResponse | null;
 }
@@ -39,6 +40,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   details = [],
   completedUnitIds = [],
   moduleId,
+  sourceLearningPathId,
   assessmentPositionUnitId,
   assessmentResult
 }) => {
@@ -135,8 +137,13 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   }, []);
 
   const handleUnitClick = useCallback((unitId: string) => {
-    navigate(`/learning-units/${unitId}`);
-  }, [navigate]);
+  navigate(`/learning-units/${unitId}`, {
+    state: {
+      sourceModuleId: moduleId,
+      sourceLearningPathId,
+    },
+  })
+}, [navigate, moduleId, sourceLearningPathId])
 
   const handleNodeClick = useCallback((idx: number, unitId: string) => {
     if (isMobile) {

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+﻿import { useEffect, useMemo, useState } from 'react'
+import { useLocation ,useNavigate, useParams } from 'react-router-dom'
 import {
   Circle,
   Clock,
@@ -172,7 +172,10 @@ function getLearningUnitIdsFromModule(
 function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const sourceLearningPathId =
+  (location.state as { sourceLearningPathId?: string } | null)
+    ?.sourceLearningPathId
   const [moduleData, setModuleData] = useState<ModuleDetailResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -239,24 +242,39 @@ function ModuleDetailPage() {
   }, [moduleId])
 
   useEffect(() => {
-    if (!moduleId) {
-      return
-    }
+  if (!moduleId) {
+    return
+  }
 
-    const storedResult = sessionStorage.getItem(`assessment_result_${moduleId}`)
+  function getStoredAssessmentResult(key: string): AssessmentResultResponse | null {
+    const storedResult = sessionStorage.getItem(key)
 
     if (!storedResult) {
-      setAssessmentResult(null)
-      return
+      return null
     }
 
     try {
-      setAssessmentResult(JSON.parse(storedResult) as AssessmentResultResponse)
+      return JSON.parse(storedResult) as AssessmentResultResponse
     } catch (err) {
       console.error(err)
-      setAssessmentResult(null)
+      return null
     }
-  }, [moduleId])
+  }
+
+  const storedModuleAssessmentResult = getStoredAssessmentResult(
+    `assessment_result_${moduleId}`,
+  )
+
+  const storedLearningPathAssessmentResult = sourceLearningPathId
+    ? getStoredAssessmentResult(
+        `assessment_result_learning_path_${sourceLearningPathId}`,
+      ) ?? getStoredAssessmentResult(`assessment_result_${sourceLearningPathId}`)
+    : null
+
+  setAssessmentResult(
+    storedModuleAssessmentResult ?? storedLearningPathAssessmentResult,
+  )
+}, [moduleId, sourceLearningPathId])
 
   const learningUnitReferences = getArrayOrEmpty(moduleData?.learning_units)
   const learningUnitDetails = getArrayOrEmpty(moduleData?.learning_unit_details)
@@ -467,6 +485,7 @@ function ModuleDetailPage() {
               details={learningUnitDetails}
               completedUnitIds={completedUnitIds}
               moduleId={moduleId}
+              sourceLearningPathId={sourceLearningPathId}
               assessmentPositionUnitId={assessmentPositionUnitId}
               assessmentResult={assessmentResult}
             />

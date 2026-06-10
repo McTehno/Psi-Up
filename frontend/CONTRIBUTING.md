@@ -907,7 +907,7 @@ LLM mora upoštevati:
 Ko prosiš LLM za pomoč pri projektu, uporabi tak prompt:
 
 ```text
-Delamo na frontend projektu Psi-Up.
+Delamo na frontend projektu NIDiKo.
 
 Uporabljamo React, TypeScript, Vite, Tailwind CSS in React Router.
 Backend je FastAPI z /api prefixom.

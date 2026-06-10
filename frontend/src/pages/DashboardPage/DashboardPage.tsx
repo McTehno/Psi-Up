@@ -170,7 +170,7 @@ export default function DashboardPage() {
 		return null
 	}
 
-	
+
 	const displayName =
 		localUser?.name ||
 		user?.user_metadata?.full_name ||
@@ -243,20 +243,20 @@ export default function DashboardPage() {
 
 	const favoriteCount = progress
 		? progress.favorites.learning_path_ids.length +
-			progress.favorites.module_ids.length +
-			progress.favorites.learning_unit_ids.length
+		progress.favorites.module_ids.length +
+		progress.favorites.learning_unit_ids.length
 		: 0
 
 	const savedCount = progress
 		? progress.saved.learning_path_ids.length +
-			progress.saved.module_ids.length +
-			progress.saved.learning_unit_ids.length
+		progress.saved.module_ids.length +
+		progress.saved.learning_unit_ids.length
 		: 0
 
 	const completedCount = progress
 		? progress.completed.learning_path_ids.length +
-			progress.completed.module_ids.length +
-			progress.completed.learning_unit_ids.length
+		progress.completed.module_ids.length +
+		progress.completed.learning_unit_ids.length
 		: 0
 
 	const tabAccent: Record<DashboardTab, { underline: string; activeText: string }> = {
@@ -324,18 +324,17 @@ export default function DashboardPage() {
 										<Pencil className="h-3.5 w-3.5" />
 										Uredi profil
 									</button>
+									<button
+										type="button"
+										onClick={handleLogout}
+										className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-red-200/80 bg-red-50/60 px-4 text-sm font-semibold text-red-600 shadow-sm transition-all duration-300 hover:scale-105 hover:border-red-300 hover:bg-red-100 hover:shadow-md active:scale-95 sm:absolute sm:right-8 sm:top-8"
+									>
+										<LogOut className="h-4 w-4" />
+										<span className="sm:inline">Odjava</span>
+									</button>
 								</div>
 							)}
 						</div>
-
-						<button
-							type="button"
-							onClick={handleLogout}
-							className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-red-200/80 bg-red-50/60 px-4 text-sm font-semibold text-red-600 shadow-sm transition-all duration-300 hover:scale-105 hover:border-red-300 hover:bg-red-100 hover:shadow-md active:scale-95 sm:absolute sm:right-8 sm:top-8"
-						>
-							<LogOut className="h-4 w-4" />
-							<span className="hidden sm:inline">Odjava</span>
-						</button>
 					</div>
 				</div>
 

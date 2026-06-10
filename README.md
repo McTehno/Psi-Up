@@ -163,7 +163,7 @@ Projekt je razdeljen na frontend, backend in podatkovno bazo. Za razvoj, zagon i
 | Zagon in namestitev | Docker, Docker Compose |
 | AI podpora | Kontekstualni AI pomočnik |
 
-Podrobnejši pregled uporabljenih tehnologij, verzij in njihove vloge v projektu je zapisan v dokumentu [tehnoloski-sklad.md](docs/tehnoloski-sklad.md).
+Podrobnejši pregled uporabljenih tehnologij, verzij in njihove vloge v projektu je zapisan v dokumentu [02-tehnoloski-sklad.md](docs/02-tehnoloski-sklad.md).
 
 
 
@@ -222,7 +222,7 @@ Za podrobnejši pregled posameznih delov glej:
 
 Načrtovane nadgradnje vključujejo izboljšanje priporočilnega sistema, razširitev analitike uporabniškega napredka in boljšo podporo za upravljanje učnih vsebin.
 
-Več je opisano v dokumentu [nadaljnji-razvoj.md](docs/nadaljnji-razvoj.md).
+Več je opisano v dokumentu [13-nadaljnji-razvoj.md](docs/13-nadaljnji-razvoj.md).
 
 
 ## Dokumentacija

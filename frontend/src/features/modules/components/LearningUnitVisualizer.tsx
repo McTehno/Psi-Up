@@ -78,7 +78,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   const currentDesktopBg = desktopBgs[bgIndex];
   const currentMobileBg = mobileBgs[bgIndex];
 
-  // Detect mobile viewport (below Tailwind xl breakpoint to prevent card cutoffs)
+  // Direkten mobilni viewport (pod Tailwind xl breakpointda prepreci odrezane kartice)
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1199px)');
     setIsMobile(mq.matches);
@@ -90,7 +90,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // Close popup on outside click/tap
+  // Zapri pojavno okno ob kliku ali dotiku zunaj njega
   useEffect(() => {
     if (activeNodeIdx === null) return;
     const handler = (e: PointerEvent) => {
@@ -113,9 +113,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       animationFrameId = requestAnimationFrame(() => {
         if (!containerRef.current) return;
         const rect = containerRef.current.getBoundingClientRect();
-        // Calculate offset based on how far the container is from the viewport center
+        // Izracuna offset na podlagi kako dalec stran je konteiner iz njegovega centra
         const centerOffset = (rect.top - window.innerHeight / 2);
-        // Move the background slightly slower than the scroll speed
+        // Premikanje ozadja poteka nekoliko pocasneje kot scroll miske
         const offset = centerOffset * -0.15;
 
         if (parallaxBg1Ref.current) {
@@ -127,9 +127,9 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
       });
     };
 
-    // Use capture to ensure we catch scroll events from any nested scroll containers
+    // Uporabi capture fazo, da zajamemo scroll dogodke iz vseh gnezdenih scroll kontejnerjev
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
-    handleScroll(); // Initial position
+    handleScroll(); // Zacetna pozicija
     return () => {
       window.removeEventListener('scroll', handleScroll, { capture: true });
       cancelAnimationFrame(animationFrameId);
@@ -277,7 +277,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     });
   }
 
-  // Mobile popup data
+  // Mobilni popup data
   const activeNode = activeNodeIdx !== null ? nodePositions[activeNodeIdx] : null;
   const activeRef = activeNode?.unit;
   const activeDetail = activeRef
@@ -310,7 +310,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     }
   }
 
-  // Compute mobile popup position (clamped to container bounds)
+  // Izracuna mobilno popup pozicijo (clamped to container bounds)
   const getPopupStyle = (): React.CSSProperties => {
     if (!activeNode || !containerRef.current) return {};
     const containerWidth = containerRef.current.offsetWidth;
@@ -330,7 +330,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
     };
   };
 
-  // Arrow position pointing at the node
+  // Pozicija puscice usmerjena v vozlisce
   const getArrowOffset = (): number => {
     if (!activeNode || !containerRef.current) return 0;
     const containerWidth = containerRef.current.offsetWidth;
@@ -346,12 +346,12 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
   return (
     <div className={`relative w-full py-12 flex flex-col items-center rounded-3xl ${isMobile ? 'overflow-visible' : 'overflow-hidden'}`}>
 
-      {/* Sleek Nature Background Layer */}
+      {/* Elegantna ozadna plast z naravnim videzom */}
       <div className="absolute inset-0 pointer-events-none z-0 rounded-3xl overflow-hidden border border-[#eadfce]/60 bg-[#fffdf8] shadow-[inset_0_2px_20px_rgba(0,0,0,0.02)]">
-        {/* Soft base gradient */}
+        {/* Nezni gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#fffdf8] via-[#f9f5ed] to-[#f4eee1] opacity-60" />
 
-        {/* Mountain Image for Landscape Screens */}
+        {/* Slika gore za Landscape zaslone */}
         <div
           ref={parallaxBg1Ref}
           className="absolute inset-0 mix-blend-multiply opacity-[0.35] portrait:hidden"
@@ -363,7 +363,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
           }}
         />
 
-        {/* Mountain Image for Portrait Screens */}
+        {/* Slika gore za Portrait zaslone */}
         <div
           ref={parallaxBg2Ref}
           className="absolute inset-0 mix-blend-multiply opacity-[0.35] hidden portrait:block"
@@ -375,7 +375,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
           }}
         />
 
-        {/* Subtle radial glows for depth */}
+        {/* Subtilni radialni sijaji za globino */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-white/60 blur-[100px] rounded-full mix-blend-overlay" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#EACE9B]/10 blur-[80px] rounded-full mix-blend-multiply" />
         <div className="absolute top-1/3 left-0 w-[400px] h-[400px] bg-[#7DAE8C]/10 blur-[80px] rounded-full mix-blend-multiply" />
@@ -438,7 +438,7 @@ export const LearningUnitVisualizer: React.FC<LearningUnitVisualizerProps> = ({
             const isAssessmentPosition = assessmentPositionUnitId === ref.learning_unit_id;
             const nodeDelay = (pos.rowIndex + 1) * DRAW_DURATION;
 
-            // Calculate progress
+            // Izracuna napredek
             let progress = 0;
             if (isUnitCompleted) {
               progress = 1;

@@ -10,11 +10,11 @@ import GlowingOrbs from './GlowingOrbs'
 /**
  * HomeParallaxEnvironment
  *
- * A cinematic parallax background that reveals a mountain landscape
- * from behind a looping cloud video as the user scrolls.
+ * Kinematografsko parallax ozadje, ki razkriva gorsko pokrajino
+ * izza ponavljajocega se oblaka video posnetka med drsenjem.
  *
- * The container spans 800vh, covering the Hero down to Učne enote,
- * unpinning gracefully before Vprašalnik.
+ * Kontejner sega cez 800vh, pokriva Hero do Ucne enote,
+ * in se elegantno odlepi pred Vprasalnik.
  */
 type HomeParallaxEnvironmentProps = {
 	scrollYProgress: MotionValue<number>
@@ -22,11 +22,11 @@ type HomeParallaxEnvironmentProps = {
 
 function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentProps) {
 	const mountainContainerRef = useRef<HTMLDivElement | null>(null)
-	// Track last applied blur step to avoid redundant DOM writes
+	// Sledi zadnjemu uporabljenemu koraku zameglitve, da se izognes nepotrebnim DOM zapisom
 	const lastBlurStepRef = useRef(0)
 
-	/* ── Cloud layer transforms ──────────────────────────────────── */
-	// Clouds clear the screen fully by the time Učne poti starts (~0.14)
+	/* ── Transformacije oblakov ──────────────────────────────────── */
+	// Oblaki popolnoma zapustijo zaslon do trenutka, ko se zacnejo Ucne poti (~0.14)
 	const cloudY = useTransform(
 		scrollYProgress,
 		[0, 0.061, 0.152, 0.762],
@@ -39,38 +39,38 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 	)
 	const cloudScale = useTransform(scrollYProgress, [0, 0.762], [1, 1.1])
 
-	// Performance optimization: Completely remove video from render tree when invisible
+	// Optimizacija zmogljivosti: Popolnoma odstrani video iz render drevesa, ko ni viden
 	const cloudDisplay = useTransform(scrollYProgress, (v) => v > 0.15 ? 'none' : 'block')
 
-	/* ── Mountain layer transforms ───────────────────────────────── */
+	/* ── Gora layer transformacija ───────────────────────────────── */
 	const mountainY = useTransform(scrollYProgress, [0, 0.762, 1], ['0%', '-20%', '-28%'])
 
-	// Pan left for Učne enote
+	// Pan left for Ucne enote
 	const mountainX = useTransform(
 		scrollYProgress,
 		[0, 0.472, 0.625],
 		['0%', '0%', '-12%']
 	)
 
-	// Zooms in as we scroll from Učne poti to Moduli (0.30 - 0.38), 
-	// and again from Moduli to Učne enote (0.47 - 0.55), and continues to end of page.
+	// Priblizuje (zoom in), ko drsimo od Ucne poti do Modulov (0.30 - 0.38),
+	// in ponovno od Modulov do Ucne enote (0.47 - 0.55), ter se nadaljuje do konca strani.
 	const mountainScale = useTransform(
 		scrollYProgress,
 		[0, 0.305, 0.381, 0.472, 0.549, 0.762, 1],
 		[1.05, 1.05, 1.15, 1.15, 1.30, 1.30, 1.40]
 	)
 
-	/* ── Mountain reveal masks (Wipe effect for nice timing flow) ── */
+	/* ── Maske za razkrivanje gora (wipe efekt za lep casovni potek) ── */
 	const moduleGlowReveal = useTransform(scrollYProgress, [0.305, 0.381], [-20, 120])
 	const moduleGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${moduleGlowReveal}%, rgba(0,0,0,0) calc(${moduleGlowReveal}% + 20%))`
 
 	const unitGlowReveal = useTransform(scrollYProgress, [0.472, 0.549], [-20, 120])
 	const unitGlowMask = useMotionTemplate`linear-gradient(to top, rgba(0,0,0,1) ${unitGlowReveal}%, rgba(0,0,0,0) calc(${unitGlowReveal}% + 20%))`
 
-	/* ── End-of-page blur: quantized steps to avoid per-frame rasterization ── */
-	// Instead of setting blur on every scroll tick (~60/sec), we only write
-	// to the DOM when crossing a threshold (4 writes total). CSS transition
-	// on the element handles smooth interpolation on the GPU.
+	/* ── Zakljucna zameglitev strani: kvantizirani koraki, da se izognemo rasterizaciji na vsak frame ── */
+	// Namesto da nastavljamo blur ob vsakem scroll ticku (~60/s), zapisemo v DOM le
+	// ob prehodu praga (skupaj 4 zapisi). CSS transition na elementu poskrbi
+	// za gladko interpolacijo na GPU.
 	useMotionValueEvent(scrollYProgress, 'change', (v) => {
 		const mountainContainer = mountainContainerRef.current
 
@@ -80,7 +80,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 		else if (v > 0.95) step = 6
 		else if (v > 0.93) step = 4
 		else if (v > 0.91) step = 2
-		// Only touch the DOM if the step actually changed
+		// Spremeni DOM samo ce se korak zares spremeni
 		if (step !== lastBlurStepRef.current) {
 			lastBlurStepRef.current = step
 			const filterVal = step === 0 ? 'none' : `blur(${step}px)`
@@ -91,15 +91,15 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 
 	return (
 		<div className="fixed inset-0 h-screen w-full overflow-hidden -z-30 pointer-events-none" style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}>
-			{/* ── Layer 1 · Warm gradient base + ambient orbs ──────── */}
+			{/* ── Plast 1 · Warm gradient base + ambient orbs ──────── */}
 			<div
 				className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(208,122,18,0.10),_transparent_28%),radial-gradient(circle_at_80%_10%,_rgba(49,88,59,0.10),_transparent_24%),radial-gradient(circle_at_90%_80%,_rgba(234,223,206,0.45),_transparent_32%),linear-gradient(180deg,_#fffdf8,_#fff6eb)]"
 			/>
-			{/* Static ambient blurs — hidden on tablets for performance */}
+			{/* Staticni ambient blurs — skriti na tablicah za performance */}
 			<div className="absolute left-0 top-36 h-72 w-72 rounded-full bg-[#fff4e6] blur-3xl hidden lg:block" />
 			<div className="absolute right-0 top-24 h-96 w-96 rounded-full bg-[#f2f8f1] blur-3xl hidden lg:block" />
 
-			{/* ── Layer 2 · Mountain image (behind clouds) ────────── */}
+			{/* ── Plast 2 · Slika gore (za oblaki) ────────── */}
 			<motion.div
 				ref={mountainContainerRef}
 				className="absolute inset-x-0 top-0 h-[120%] w-full pt-[12vh]"
@@ -114,7 +114,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 				}}
 			>
 				<div className="relative h-full w-full">
-					{/* Base Mountain (Učne poti) */}
+					{/* Baza gora (Ucne poti) */}
 					<div className="absolute inset-0 z-0">
 						<img
 							src={pathMountainImage}
@@ -126,7 +126,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 						/>
 					</div>
 
-					{/* Highlighted Mountain (Moduli) - Reveals from bottom to top */}
+					{/* Highlighted gora (Moduli) - Razkrije od spodaj navzgor */}
 					<motion.div
 						className="absolute inset-0 h-full w-full z-10"
 						style={{
@@ -145,7 +145,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 						/>
 					</motion.div>
 
-					{/* Highlighted Mountain (Učne enote) - Reveals from bottom to top */}
+					{/* Highlighted gora (Moduli) - Razkrije od spodaj navzgor */}
 					<motion.div
 						className="absolute inset-0 h-full w-full z-20"
 						style={{
@@ -162,7 +162,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 							decoding="async"
 							draggable={false}
 						/>
-						{/* Glowing Orbs: internal components handle mobile hiding (e.g. orbs are hidden, pin stays visible) */}
+						{/* Zareci Orbs: notranje komponente upravljajo skrivanje na mobilnih napravah (npr. orbi so skriti, zigon ostane viden)*/}
 						<div className="absolute inset-0 z-[100]">
 							<GlowingOrbs scrollYProgress={scrollYProgress} />
 						</div>
@@ -170,7 +170,7 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 
 				</div>
 
-				{/* Soft vignette blending the mountain top into the base */}
+				{/* Mehak vignette prehod, ki povezuje vrh gore z osnovo */}
 				<div
 					className="absolute inset-x-0 top-0 h-[30%] z-[110]"
 					style={{
@@ -181,8 +181,8 @@ function HomeParallaxEnvironment({ scrollYProgress }: HomeParallaxEnvironmentPro
 
 			</motion.div>
 
-			{/* ── Layer 3 · Cloud video (covers mountains, drifts upward) ── */}
-			{/* Hidden on mobile/small tablets for battery + performance (Safari autoplay video is expensive) */}
+			{/* ── Plast 3 · Video oblakov (pokriva gore, se dviga navzgor) ── */}
+			{/*  Skrito na mobilnih napravah/malih tablicah zaradi baterije + performanc (Safari samodejno predvajanje videa je zahtevno) */}
 			<motion.div
 				className="absolute inset-x-0 top-0 h-[130%] w-full hidden sm:block"
 				style={{

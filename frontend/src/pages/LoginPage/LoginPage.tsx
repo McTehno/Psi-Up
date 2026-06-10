@@ -14,7 +14,6 @@ import {
 } from '../../features/auth'
 
 import { usePageTitle } from '../../hooks/usePageTitle'
-// Using relative path to the image as it is now in src/assets
 import loginBgImage from '../../assets/login-background-mountains.webp'
 import registerBgImage from '../../assets/register-background-mountains.webp'
 
@@ -36,7 +35,7 @@ export default function LoginPage() {
     : 'Prijava | NIDiKo'
 
 usePageTitle(pageTitle)
-  // Slovenian translations for common Supabase auth errors, this is unfortunately not an option through supabase :(
+  // Slovenski prevodi za pogoste Supabase avtorizacijske napake, tega zal ni mogoce nastaviti neposredno preko Supabase :(
   function translateAuthError(msg: string): string {
     const translations: Record<string, string> = {
       'Invalid login credentials': 'Napačen e-poštni naslov ali geslo.',
@@ -92,7 +91,7 @@ usePageTitle(pageTitle)
         if (error) throw error
       }
 
-      // On success
+      // Ob uspehu
       navigate(from, { replace: true })
     } catch (err: unknown) {
       const translated = translateAuthError(err instanceof Error ? err.message : '')
@@ -104,18 +103,16 @@ usePageTitle(pageTitle)
 
   async function handleGoogleLogin() {
     try {
-      setIsLoading(true); // Optional: if you want to show a loading state
-      window.localStorage.setItem('rememberMe', 'true') // Default to remember for OAuth
+      setIsLoading(true); // Prikaz loading stanje
+      window.localStorage.setItem('rememberMe', 'true') // Privzeto oznaceno na rememberMe
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // This tells Supabase where to redirect AFTER Google validates the user
+          // To pove Supabasu kam naj redirecta po tem ko Google validira uporabnika
           redirectTo: `${window.location.origin}${from === '/' ? '/dashboard' : from}`,
         }
       })
       if (error) throw error
-      // Note: You don't need to navigate() here. 
-      // OAuth will physically redirect the user away from your app to Google, and then back.
     } catch (err: unknown) {
       const translated = translateAuthError(err instanceof Error ? err.message : '')
       setToastMessage(translated)
@@ -136,10 +133,10 @@ usePageTitle(pageTitle)
       })
       if (error) throw error
 
-      // Since our toast component handles both success and error by variant,
-      // currently the variant is hardcoded to "error" in LoginPage.
-      // We might need to handle success variant or just show it as error variant 
-      // but let's show it. (Actually let's just use setToastMessage for now).
+      // Ker nase toast komponenta obravnava tako uspeh kot napako preko variant,
+      // je trenutno variant v LoginPage hardkodiran na "error".
+      // Morda bomo morali dodati "success" variant ali pa vse prikazati kot "error",
+      // ampak za zdaj ga vseeno prikazemo (pravzaprav zaenkrat uporabimo setToastMessage).
       setToastMessage('Povezava za ponastavitev gesla je bila poslana na vaš e-poštni naslov.')
       setIsForgotPassword(false)
     } catch (err: unknown) {
@@ -162,12 +159,12 @@ usePageTitle(pageTitle)
         duration={5000}
         onDismiss={() => setToastMessage(null)}
       />
-      {/* Large centered window containing the entire login/register experience */}
+      {/* Veliko centrirano okno ki vsebuje celotni login/register izkusnjo */}
       <div
         className="relative w-full max-w-[920px] overflow-hidden rounded-3xl shadow-2xl shadow-brown-900/20 border border-sand-300/60 animate-fade-in-up bg-[#fffdf8]"
         style={{ height: 'min(85vh, 600px)' }}
       >
-        {/* Login Background Image Wrapper */}
+        {/* Prijava Background Image Wrapper */}
         <div
           className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out z-0 ${isRegister ? 'opacity-0' : 'opacity-100'
             }`}
@@ -178,7 +175,7 @@ usePageTitle(pageTitle)
           }}
         />
 
-        {/* Register Background Image Wrapper */}
+        {/* Registracija Background Image Wrapper */}
         <div
           className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out z-0 ${isRegister ? 'opacity-100' : 'opacity-0'
             }`}
@@ -189,14 +186,14 @@ usePageTitle(pageTitle)
           }}
         />
 
-        {/* Sliding Frosted Glass Panel */}
+        {/* Drsna Frosted Glass Panel */}
         <div
           className={`absolute top-0 bottom-0 w-full md:w-1/2 flex flex-col justify-center px-8 lg:px-12 bg-[#fffdf8]/65 backdrop-blur-xl transition-transform duration-700 ease-in-out z-20 ${isRegister ? 'md:translate-x-full border-l border-[#ded5c6]/60' : 'translate-x-0 border-r border-[#ded5c6]/60'
             }`}
           style={{ willChange: 'transform' }}
         >
           <div className="w-full max-w-sm mx-auto relative z-10 transition-opacity duration-500">
-            {/* Shared Close Button floating at the top right */}
+            {/* Deljen Close gumb zgoraj desno */}
             <div className="absolute right-0 -top-1 -mr-2 z-50">
               <button
                 onClick={() => navigate(-1)}

@@ -1,5 +1,4 @@
 ﻿const API_HOST = import.meta.env.VITE_BACKEND_HOST
-// or we can import it from competencyGroups if it's there, but we can just redefine it.
 
 export async function getCompetencyRecommendations(groupId: string, answers: {question_index: number, answer_index: number}[]) {
 	const response = await fetch(`${API_HOST}/api/recommendations/competencies`, {

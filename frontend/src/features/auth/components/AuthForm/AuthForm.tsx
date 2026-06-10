@@ -21,7 +21,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
     onSubmit(email, password, isRegister ? name : undefined, isRegister ? undefined : rememberMe)
   }
 
-  // Colors based on mode
+  // Barve glede na temo
   const accentColor = isRegister ? 'text-[#d07a12]' : 'text-[#31583b]'
   const ringColor = isRegister ? 'focus:border-[#d07a12]' : 'focus:border-[#31583b]'
   const btnBg = isRegister ? 'bg-[#d07a12] hover:bg-[#b3660f]' : 'bg-[#31583b] hover:bg-[#2f4a31]'
@@ -31,7 +31,7 @@ export default function AuthForm({ isRegister, onSubmit, onForgotPassword, isLoa
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
 
-      {/* Name Field (Slides down and in) */}
+      {/* Naslov polja (animacija dol in naprej) */}
       <div 
         className={`grid transition-[grid-template-rows,opacity] duration-700 ease-in-out ${
           isRegister ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'

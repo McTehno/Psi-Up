@@ -59,16 +59,16 @@ function HomeScrollJourney() {
 	const currentProgressRef = useRef(0)
 	const pathLengthRef = useRef(0)
 
-	// Use refs to store layout values to avoid re-renders
+	// Uporabi refs za shranjevanje layout vrednosti da se izognemo re-renders
 	const modeRef = useRef<JourneyMode>(getJourneyMode())
 	const svgHeightRef = useRef(5600)
 
-	// We need a single initial render, then update via DOM directly
+	// Potrebujemo en inicialni render, nato pa posodobitve izvajamo neposredno preko DOM-a
 	const svgRef = useRef<SVGSVGElement | null>(null)
 	const trailPathRef = useRef<SVGPathElement | null>(null)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
-	// Compute initial values for first render
+	// Izracunamo zacetne vrednosti za prvi render
 	const initialMode = useMemo(() => getJourneyMode(), [])
 	const initialHeight = useMemo(() => {
 		const measured = getDocumentHeight()
@@ -77,7 +77,7 @@ function HomeScrollJourney() {
 	const viewBoxWidth = initialMode === 'mobile' ? 420 : 1200
 	const pathD = useMemo(() => getPathD(initialMode, initialHeight), [initialMode, initialHeight])
 
-	// Update layout measurements
+	// Posodobimo layout meritve
 	const updateLayout = useCallback(() => {
 		const nextMode = getJourneyMode()
 		const measuredHeight = getDocumentHeight()
@@ -86,7 +86,7 @@ function HomeScrollJourney() {
 		modeRef.current = nextMode
 		svgHeightRef.current = newHeight
 
-		// Update SVG dimensions and path via DOM (no React re-render)
+		// Posodobimo SVG dimenzije in pot preko DOM (no React re-render)
 		const newPathD = getPathD(nextMode, newHeight)
 		const newViewBoxWidth = nextMode === 'mobile' ? 420 : 1200
 
@@ -114,7 +114,7 @@ function HomeScrollJourney() {
 			currentProgressRef.current = 0
 			targetProgressRef.current = 0
 
-			// Update strokeDasharray
+			// Posodobiti strokeDasharray
 			pathRef.current.setAttribute('stroke-dasharray', String(totalLength))
 			pathRef.current.setAttribute('stroke-dashoffset', String(totalLength))
 
@@ -124,14 +124,14 @@ function HomeScrollJourney() {
 			}
 		}
 
-		// Update the gradient y2 attribute
+		// Posodobiti gradient y2 attribute
 		const gradientEl = svgRef.current?.querySelector('#home-journey-gradient')
 		if (gradientEl) {
 			gradientEl.setAttribute('y2', String(newHeight))
 		}
 	}, [])
 
-	// Initial layout + resize listener
+	// Inicializirati layout + resize poslusalca (listener)
 	useEffect(() => {
 		updateLayout()
 		const timeoutId = window.setTimeout(updateLayout, 150)
@@ -142,7 +142,7 @@ function HomeScrollJourney() {
 		}
 	}, [updateLayout])
 
-	// Measure path length on mount
+	// Izmeriti dolzino poti na goro
 	useEffect(() => {
 		if (!pathRef.current) return
 		const totalLength = pathRef.current.getTotalLength()
@@ -156,8 +156,8 @@ function HomeScrollJourney() {
 		}
 	}, [pathD])
 
-	// Main scroll-driven animation loop
-	// Key optimization: No React state updates — all DOM manipulation via refs
+	// Glavni scroll-driven animacijska zanka
+	// Kljucna optimizacija: Brez posodablanja stanj v reactu — vse DOM manipulacije preko refs
 	useEffect(() => {
 		function getProgressForViewportBottom() {
 			const pl = pathLengthRef.current
@@ -197,7 +197,7 @@ function HomeScrollJourney() {
 
 			currentProgressRef.current = next
 
-			// Direct DOM update — bypasses React render entirely
+			// Direktna DOM posodobitev — bypasses React render popolnoma
 			const pl = pathLengthRef.current
 			if (pathRef.current && pl > 0) {
 				pathRef.current.setAttribute('stroke-dashoffset', String(pl * (1 - next)))
@@ -265,7 +265,7 @@ function HomeScrollJourney() {
 					opacity="0.34"
 				/>
 
-				{/* Glow path: thicker semi-transparent duplicate replaces expensive feGaussianBlur */}
+				{/* Sijaj poti: debelejsi semi-transparentni podvojen zamenja dragi feGaussianBlur */}
 				<path
 					ref={glowPathRef}
 					d={pathD}

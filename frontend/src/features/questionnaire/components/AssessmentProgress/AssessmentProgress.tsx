@@ -1,5 +1,4 @@
-﻿// AssessmentProgress.tsx
-import { useState, type CSSProperties } from 'react'
+﻿import { useState, type CSSProperties } from 'react'
 import './AssessmentProgress.css'
 
 export type AssessmentProgressStepStatus =

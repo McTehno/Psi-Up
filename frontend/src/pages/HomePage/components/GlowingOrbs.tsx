@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, MotionValue, useTransform, useMotionTemplate, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import LocationPinIcon from '../../../components/icons/LocationPinIcon'
 
-// Safari-safe: Define CSS keyframes for orb floating to avoid 16 separate framer-motion animation instances
+// Safari-safe: definiraj CSS keyframes za lebdenje orb, da se izognemo 16 locenim framer-motion animacijam
 const orbFloatStyle = document.createElement('style')
 orbFloatStyle.textContent = `
   @keyframes orbFloat {
@@ -15,7 +15,7 @@ if (!document.head.querySelector('[data-orb-float]')) {
   document.head.appendChild(orbFloatStyle)
 }
 
-// Theme Colors
+// Temske barve
 const GREEN_COLOR = 'rgba(47, 74, 49, 1)' // #2f4a31
 const GREEN_GLOW = 'rgba(47, 74, 49, 0.6)'
 
@@ -35,8 +35,8 @@ type ModuleConfig = {
   orbs: OrbConfig[]
 }
 
-// Module groupings explicitly mapped to follow the right-side downward slopes of the 4 submountains
-// The coordinates feature a decreasing steepness (delta Y / delta X) to mimic natural curvature
+// Modulne skupine so eksplicitno preslikane tako, da sledijo desnim spustnim naklonom 4 podgora
+// Koordinate imajo padajoco strmino (delta Y / delta X), da posnemajo naravno ukrivljenost
 const modules: ModuleConfig[] = [
   {
     id: 'mod1_bottom',
@@ -92,7 +92,7 @@ type OrbNodeProps = {
 }
 
 function OrbNode({ orb, baseColor, baseGlowColor, scrollYProgress }: OrbNodeProps) {
-  // If the orb doesn't have a transition, just use a dummy mapped value that stays constant
+  // Ce orb nima tranzicije, preprosto uporabidummy mapirane vrednosti, ki ostanejo konstantne
   const input = orb.greenRange || [0, 1]
   const bgOutput = orb.greenRange ? [baseColor, GREEN_COLOR] : [baseColor, baseColor]
   const shadowOutput = orb.greenRange ? [baseGlowColor, GREEN_GLOW] : [baseGlowColor, baseGlowColor]
@@ -112,14 +112,14 @@ function OrbNode({ orb, baseColor, baseGlowColor, scrollYProgress }: OrbNodeProp
         height: '10px',
         backgroundColor,
         boxShadow,
-        // Use CSS animation instead of framer-motion animate to reduce JS overhead
+        // Uporabi CSS animacije namesto framer-motion animacij da se zmanjsa JS overhead
         animation: `orbFloat ${3 + orb.delay}s ease-in-out ${orb.delay}s infinite`,
         willChange: 'transform, opacity',
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
       }}
     >
-      {/* Inner core glow */}
+      {/* Sijaj notranjosti jedra */}
       <div className="absolute inset-0 rounded-full bg-white opacity-80 blur-[1px]" />
     </motion.div>
   )
@@ -130,8 +130,8 @@ type GlowingOrbsProps = {
 }
 
 export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
-  // Instead of useTransform which has notorious WebKit GPU culling bugs on hard refresh,
-  // we trigger a React state when the user reaches the Vprašalnik section.
+  // Namesto useTransform, ki ima znane WebKit GPU culling napake pri trdem osvezevanju,
+  // sprozimo React stanje, ko uporabnik doseze razdelek "Vprasalnik".
   const [showPin, setShowPin] = useState(false)
 
   const [isDesktop, setIsDesktop] = useState(() =>
@@ -155,7 +155,7 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
 
   return (
     <div className="absolute inset-0 h-full w-full pointer-events-none z-50">
-      {/* The Orbs (Unmounted on Mobile and Tablets — only desktop) */}
+      {/* Orbs (Unmounted na Mobile in Tablets — samo desktop) */}
       {isDesktop && (
         <div>
           {modules.map((mod) => (
@@ -174,7 +174,7 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
         </div>
       )}
 
-      {/* Standalone Location Pin (Mounted dynamically to completely avoid scroll-linked bugs) */}
+      {/* Samostojni lokacijski zigon (dinamicno priklopljen, da se popolnoma izognemo napakam, povezanim s scrollom) */}
       <div className="absolute pointer-events-none top-[58%] left-[90%] md:left-[65%] md:ml-[5px] -mt-[56px] -translate-x-1/2 z-[999]">
         <AnimatePresence>
           {showPin && (
@@ -189,7 +189,7 @@ export default function GlowingOrbs({ scrollYProgress }: GlowingOrbsProps) {
                 transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
                 className="relative flex items-center justify-center"
               >
-                {/* Pure CSS background pulse */}
+                {/* Cisti CSS puls v ozadju */}
                 <div className="absolute inset-0 rounded-full bg-white/40 z-20 animate-ping" style={{ animationDuration: '2s' }} />
                 <div className="absolute inset-0 rounded-full bg-white/80 blur-[12px] scale-150" />
 

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
 	Heart,
@@ -185,6 +185,11 @@ export default function DashboardPage() {
 		.join('')
 		.toUpperCase()
 		.slice(0, 2)
+
+	const isGoogleUser =
+		user?.app_metadata?.provider === 'google' ||
+		user?.app_metadata?.providers?.includes('google')
+
 
 	function getTabItems(): DashboardContentItem[] {
 		if (!progress) return []
@@ -449,6 +454,7 @@ export default function DashboardPage() {
 					<ProfileSettingsForm
 						localUser={localUser}
 						displayEmail={displayEmail}
+						isGoogleUser={isGoogleUser}
 						onProfileUpdated={(updatedUser) => {
 							updateLocalUser(updatedUser)
 						}}

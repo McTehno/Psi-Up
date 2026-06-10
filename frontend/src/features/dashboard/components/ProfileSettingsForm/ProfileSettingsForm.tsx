@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { KeyRound, Save } from 'lucide-react'
 
 import { supabase } from '../../../../services/supabase-client'
@@ -8,6 +8,7 @@ import type { UserResponse } from '../../../../types/user'
 type ProfileSettingsFormProps = {
 	localUser: UserResponse
 	displayEmail: string
+	isGoogleUser?: boolean
 	onProfileUpdated: (updatedUser: UserResponse) => void
 	onOpenPasswordChange: () => void
 	onCancel: () => void
@@ -16,6 +17,7 @@ type ProfileSettingsFormProps = {
 export default function ProfileSettingsForm({
 	localUser,
 	displayEmail,
+	isGoogleUser = false,
 	onProfileUpdated,
 	onOpenPasswordChange,
 	onCancel,
@@ -123,13 +125,19 @@ export default function ProfileSettingsForm({
 						type="email"
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
-						className="mt-2 w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)]"
+						className="mt-2 w-full rounded-2xl border border-[#eadfce]/80 bg-[#fffdf8]/75 px-4 py-3 text-sm font-semibold text-[#2C2417] outline-none transition-all duration-300 placeholder:text-[#c2b49e] focus:border-[#d07a12]/50 focus:bg-white/80 focus:shadow-[0_0_0_4px_rgba(208,122,18,0.08)] disabled:opacity-60 disabled:bg-[#f3f0ea]"
 						placeholder="email@example.com"
-						disabled={isSubmitting}
+						disabled={isSubmitting || isGoogleUser}
 					/>
-					<p className="mt-2 text-xs leading-5 text-[#a89880]">
-						Če spremeniš email, bo treba spremembo potrditi prek emaila.
-					</p>
+					{isGoogleUser ? (
+						<p className="mt-2 text-xs leading-5 text-[#a89880]">
+							Prijavljeni ste z Google računom, zato sprememba emaila ni mogoča.
+						</p>
+					) : (
+						<p className="mt-2 text-xs leading-5 text-[#a89880]">
+							Če spremeniš email, bo treba spremembo potrditi prek emaila.
+						</p>
+					)}
 				</div>
 
 				{errorMessage && (
@@ -165,25 +173,27 @@ export default function ProfileSettingsForm({
 				</div>
 			</form>
 
-			<div className="border-t border-[#eadfce]/70 pt-4">
-				<button
-					type="button"
-					onClick={onOpenPasswordChange}
-					className="flex w-full items-center justify-between rounded-2xl border border-[#eadfce]/80 bg-[#faf7f2]/60 px-4 py-3 text-left shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb]/80 hover:shadow-md active:scale-[0.99]"
-				>
-					<span>
-						<span className="flex items-center gap-2 text-sm font-bold text-[#504639]">
-							<KeyRound className="h-4 w-4 text-[#d07a12]" />
-							Spremeni geslo
+			{!isGoogleUser && (
+				<div className="border-t border-[#eadfce]/70 pt-4">
+					<button
+						type="button"
+						onClick={onOpenPasswordChange}
+						className="flex w-full items-center justify-between rounded-2xl border border-[#eadfce]/80 bg-[#faf7f2]/60 px-4 py-3 text-left shadow-sm transition-all duration-300 hover:border-[#d07a12]/30 hover:bg-[#fff6eb]/80 hover:shadow-md active:scale-[0.99]"
+					>
+						<span>
+							<span className="flex items-center gap-2 text-sm font-bold text-[#504639]">
+								<KeyRound className="h-4 w-4 text-[#d07a12]" />
+								Spremeni geslo
+							</span>
+							<span className="mt-1 block text-xs leading-5 text-[#a89880]">
+								Odpre se ločeno okno za nastavitev novega gesla.
+							</span>
 						</span>
-						<span className="mt-1 block text-xs leading-5 text-[#a89880]">
-							Odpre se ločeno okno za nastavitev novega gesla.
-						</span>
-					</span>
 
-					<span className="text-lg font-bold text-[#d07a12]">›</span>
-				</button>
-			</div>
+						<span className="text-lg font-bold text-[#d07a12]">›</span>
+					</button>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -70,13 +70,13 @@ NIDiKo vključuje naslednje glavne funkcionalnosti:
 
 - pregled učnih poti, modulov in učnih enot,
 - iskanje učnih vsebin,
-- strani podrobnosti za učne poti, module in učne enote,
 - samoocenjevalni vprašalnik,
 - prikaz rezultata samoocene,
 - priporočanje ustrezne začetne točke oziroma naslednjega koraka,
 - spremljanje uporabniškega napredka,
 - shranjevanje učnih vsebin,
-- označevanje priljubljenih in dokončanih vsebin,
+- označevanje priljubljenih vsebin,
+- označevanje dokončanih vsebin,
 - AI pomočnik za podporo pri razumevanju učnih vsebin in vprašanj,
 - glasovna pomoč pri vprašalniku.
 

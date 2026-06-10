@@ -58,6 +58,7 @@ type LearningPathMountainProps = {
   onFavoriteClick?: () => void
   onSaveClick?: () => void
   className?: string
+  sourceLearningPathId?: string
 }
 
 type Position = {
@@ -563,11 +564,13 @@ function FinishFlag({
 function ModuleDetailBox({
   node,
   onClose,
+  sourceLearningPathId,
   className = '',
   style,
 }: {
   node: PositionedMountainNode
   onClose: () => void
+  sourceLearningPathId?: string
   className?: string
   style?: CSSProperties
 }) {
@@ -637,6 +640,11 @@ function ModuleDetailBox({
 
       <Link
         to={detailPath}
+        state={
+          sourceLearningPathId
+            ? { sourceLearningPathId }
+            : undefined
+        }
         className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-[#31583b] px-4 py-2 text-xs font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#27462f]"
       >
         Podrobnosti
@@ -1395,12 +1403,14 @@ const detailBoxTransition = {
 function AnimatedModuleDetailBox({
   node,
   onClose,
+  sourceLearningPathId,
   containerClassName = '',
   containerStyle,
   boxClassName = '',
 }: {
   node: PositionedMountainNode
   onClose: () => void
+  sourceLearningPathId?: string
   containerClassName?: string
   containerStyle?: CSSProperties
   boxClassName?: string
@@ -1419,6 +1429,7 @@ function AnimatedModuleDetailBox({
           <ModuleDetailBox
             node={node}
             onClose={onClose}
+            sourceLearningPathId={sourceLearningPathId}
             className={boxClassName}
           />
         </motion.div>
@@ -1431,6 +1442,7 @@ export function LearningPathMountain({
   nodes,
   isCompleted = false,
   celebrateCompletedOnMount = false,
+  sourceLearningPathId,
   className = '',
 }: LearningPathMountainProps) {
   const componentId = useId().replace(/:/g, '')
@@ -1635,11 +1647,11 @@ export function LearningPathMountain({
           transition={{ duration: 0.5, delay: nodeDelay, ease: "easeOut" }}
         >
           {node.isAssessmentPosition && (
-            <motion.div 
-               className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]"
-               initial={{ opacity: 0, y: 10 }}
-               animate={isContainerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-               transition={{ duration: 0.5, delay: nodeDelay + 0.3, ease: "easeOut" }}
+            <motion.div
+              className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-0 -translate-x-1/2 translate-y-[6px] min-[640px]:translate-y-[7px] min-[1500px]:translate-y-[8px]"
+              initial={{ opacity: 0, y: 10 }}
+              animate={isContainerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.5, delay: nodeDelay + 0.3, ease: "easeOut" }}
             >
               <AssessmentPositionMarker label="" />
             </motion.div>
@@ -1656,10 +1668,9 @@ export function LearningPathMountain({
               isSelected ? 'scale-110 ring-4 ring-[#F8E7BE]/70' : '',
             ].join(' ')}
             aria-pressed={isSelected}
-            aria-label={`Odpri podrobnosti ${
-              node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
-            } ${node.title}`}
-            >
+            aria-label={`Odpri podrobnosti ${node.nodeType === 'learning_unit' ? 'učne enote' : 'modula'
+              } ${node.title}`}
+          >
             <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(255,255,255,0.55)]">
               {node.displayLabel}
             </span>
@@ -1810,6 +1821,7 @@ export function LearningPathMountain({
         <AnimatedModuleDetailBox
           node={selectedDesktopNode}
           onClose={() => setSelectedNodeId(null)}
+          sourceLearningPathId={sourceLearningPathId}
           containerClassName={DESKTOP_DETAIL_CLASS}
           containerStyle={{
             left: `${Math.min(Math.max(selectedDesktopNode.x, 24), 76)}%`,
@@ -1829,6 +1841,7 @@ export function LearningPathMountain({
         <AnimatedModuleDetailBox
           node={selectedTabletNode}
           onClose={() => setSelectedNodeId(null)}
+          sourceLearningPathId={sourceLearningPathId}
           containerClassName={TABLET_DETAIL_CLASS}
           containerStyle={getTabletDetailStyle()}
         />
@@ -1839,6 +1852,7 @@ export function LearningPathMountain({
           <AnimatedModuleDetailBox
             node={selectedMobileNode}
             onClose={() => setSelectedNodeId(null)}
+            sourceLearningPathId={sourceLearningPathId}
             boxClassName="max-h-[72vh] overflow-y-auto"
           />
         </div>

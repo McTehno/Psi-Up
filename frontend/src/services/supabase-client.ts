@@ -9,22 +9,22 @@ if (!supabaseUrl || !supabaseAnonKey) {
   )
 }
 
-// Custom storage wrapper
+// Lastni storage wrapper
 const customStorage = {
   getItem: (key: string): string | null => {
-    // Return from localStorage if available, otherwise sessionStorage
+    // Vrene iz localStorage ce je na voljo, drugace sessionStorage
     return window.localStorage.getItem(key) ?? window.sessionStorage.getItem(key)
   },
   setItem: (key: string, value: string): void => {
-    // Read user's preference set during login
+    // Prebere uporabnikove preference med prijavo
     const rememberMe = window.localStorage.getItem('rememberMe') === 'true'
     
     if (rememberMe) {
       window.localStorage.setItem(key, value)
-      window.sessionStorage.removeItem(key) // Clean up any old sessionStorage
+      window.sessionStorage.removeItem(key) // Pobrise old sessionStorage
     } else {
       window.sessionStorage.setItem(key, value)
-      window.localStorage.removeItem(key) // Clean up any old localStorage
+      window.localStorage.removeItem(key) // Pobrise old localStorage
     }
   },
   removeItem: (key: string): void => {

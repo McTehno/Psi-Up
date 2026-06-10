@@ -12,13 +12,13 @@ export default function UpdatePasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSessionReady, setIsSessionReady] = useState(false)
   usePageTitle('NIDiKo')
-  // Wait for Supabase to process the URL hash and set up the session
+  // Pocaka na Supabase da procesira URL hash in vzpostavi sejo
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setIsSessionReady(true)
       } else {
-        // We might be waiting for the onAuthStateChange if hash is present
+        // Morda bomo morali pocakati na onAuthStateChange ce se hash ni prisoten
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
           if (event === 'PASSWORD_RECOVERY' || session) {
             setIsSessionReady(true)
@@ -59,7 +59,7 @@ export default function UpdatePasswordPage() {
       if (error) throw error
 
       setToastMessage('Geslo je bilo uspešno spremenjeno.')
-      // Wait a moment so user can read the toast, then redirect
+      // Pocaka za trenutek da uporabnik prebere toeast in ga redirecta
       setTimeout(() => {
         navigate('/login', { replace: true })
       }, 2000)

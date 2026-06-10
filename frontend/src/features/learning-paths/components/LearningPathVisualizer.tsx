@@ -14,16 +14,16 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
   const targetCompetency = data?.targetCompetency?.trim() || 'Ciljna kompetenca ni določena'
   const numNodes = modules.length
 
-  // MAP CONSTANTS FOR MATHEMATICAL SINE CURVE
-  const ROW_HEIGHT = 180;        // Vertical distance between nodes
-  const SWING = 160;             // Horizontal distance from center curve peak
+  // ZEMLJEVID KONSTANT ZA MATEMATICNE VJUGE SINOSOV
+  const ROW_HEIGHT = 180;        // Vertikalna razdalja med vozlisci
+  const SWING = 160;             // Horizontalna razdalja od vrha krivulje do sredine
   const CENTER_X = 400;          // SVG Center
-  const OFFSET_TOP = 80;         // Starting margin top of the first curve
+  const OFFSET_TOP = 80;         // Zacetni margin top za prvo krivuljo
 
-  const finalGoalY = OFFSET_TOP + (numNodes * ROW_HEIGHT) + 60; // Final node directly on path bottom
-  const totalHeight = finalGoalY + 120; // Full SVG canvas height padding
+  const finalGoalY = OFFSET_TOP + (numNodes * ROW_HEIGHT) + 60; // Koncno vozlisce neposredno na spodnjem delu poti
+  const totalHeight = finalGoalY + 120; // Polni SVG canvas visinski padding
 
-  // Generate the single smooth sine-wave SVG path mathematically
+  // Matematicno ustvari enotno gladko SVG-pot v obliki sinusnega vala
   let pathD = `M ${CENTER_X} 0`;
   let prevX = CENTER_X;
   let prevY = 0;
@@ -31,13 +31,13 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
   const nodePositions: { x: number, y: number, isRight: boolean }[] = [];
 
   for (let i = 0; i < numNodes; i++) {
-    const isRight = i % 2 === 0; // Starts with a right swing
+    const isRight = i % 2 === 0; // Prisni z desnim zavojem
     const targetX = isRight ? CENTER_X + SWING : CENTER_X - SWING;
     const targetY = OFFSET_TOP + (i * ROW_HEIGHT);
 
     nodePositions.push({ x: targetX, y: targetY, isRight });
 
-    // Exact Cubic Bezier calculation for a continuous sinewave
+    // Natancen izracun kubicne Bezierjeve krivulje za neprekinjen sinusni val
     const cpY = (prevY + targetY) / 2;
     pathD += ` C ${prevX} ${cpY}, ${targetX} ${cpY}, ${targetX} ${targetY}`;
 
@@ -45,14 +45,14 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
     prevY = targetY;
   }
 
-  // Connect smoothly back to the center for the final graphical goal
+  // Gladko povezi nazaj proti sredini za koncni graficni cilj
   const cpY = (prevY + finalGoalY) / 2;
   pathD += ` C ${prevX} ${cpY}, ${CENTER_X} ${cpY}, ${CENTER_X} ${finalGoalY}`;
 
   return (
     <div className="relative w-full py-16 flex flex-col items-center">
 
-      {/* Header aligned like desired photo */}
+      {/* Header poravnan kot zelena slika */}
       <div className="mb-12 w-full max-w-4xl px-8 z-10 relative text-left">
         <span className="inline-flex items-center gap-2 bg-[#D1E0D7] text-[#33564A] text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full mb-6 relative">
           <BookOpen className="w-3.5 h-3.5" />
@@ -80,9 +80,9 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           </p>
         </div>
       ) : (
-        /* Mathematical canvas to hold SVG precisely matching HTML overlay grids via viewBox width=800 */
+        /* Matematicno platno za natancen SVG, ki se ujema z HTML prekrivnimi mrezami preko viewBox width=800 */
         <div className="relative w-full max-w-[800px] overflow-visible" style={{ height: `${totalHeight}px` }}>
-          {/* Continuous single Gradient Line Path */}
+          {/* Nadaljujoc samostojna Gradient Line pot */}
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox={`0 0 800 ${totalHeight}`}
@@ -90,7 +90,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
           >
             <defs>
               <linearGradient id="main-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                {/* This represents a beautiful unbroken transition across the whole path */}
+                {/*To predstavlja lepo neprekinjeno tranzicijo cez celotno pot */}
                 <stop offset="0%" stopColor="#7DAE8C" />
                 <stop offset="60%" stopColor="#A4B98E" />
                 <stop offset="100%" stopColor="#C4B491" />
@@ -106,7 +106,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
             />
           </svg>
 
-          {/* The Exact nodes anchored exactly to mathematical SVG map */}
+          {/* Tocna vozlisca so poravnana ustrezno matematicno z SVG mapo */}
           {modules.map((mod, i) => {
             const pos = nodePositions[i]
 
@@ -135,7 +135,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
               <div
                 key={moduleId}
                 className="absolute group z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2"
-                /* We strictly position them according to the 800px coordinate map by percentages so it scales properly */
+                /* Strogo jih postavimo glede na 800px koordinatni zemljevid z uporabo procentov, da se pravilno skalirajo */
                 style={{ left: `${(pos.x / 800) * 100}%`, top: `${pos.y}px` }}
               >
                 <button
@@ -152,7 +152,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
                   <Check className={`w-7 h-7 transition-colors duration-300 ${isSelected ? 'text-forest-700' : 'text-[#5c4d3c]'}`} strokeWidth={2} />
                 </button>
 
-                {/* Pure Floating labels strictly 90px away so they never overlap the node! */}
+                {/* Cisti lebdec label strogo na  90px stran da nima nikoli stika z vozlisci! */}
                 <div
                   className={`absolute top-1/2 -translate-y-1/2 w-64 ${pos.isRight ? 'left-[90px] text-left' : 'right-[90px] text-right'}`}
                 >
@@ -168,7 +168,7 @@ export const LearningPathVisualizer: React.FC<LearningPathVisualizerProps> = ({ 
             )
           })}
 
-          {/* Re-connected Final Anchor Goal straight matching SVG mathematics */}
+          {/* Ponovna povezava z zadnjim Anchor Goal naravnost v SVG izracunan matematicno */}
           <div
             className="absolute z-10 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2"
             style={{ left: '50%', top: `${finalGoalY}px` }}

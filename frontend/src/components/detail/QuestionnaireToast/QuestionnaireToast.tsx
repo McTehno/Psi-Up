@@ -22,7 +22,7 @@ export default function QuestionnaireToast({
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Check if user already dismissed it in this session to avoid spamming
+    // Preveri ali je uporabnik ze zavrnil, da se izognemo ponavljojocim prikazom
     const dismissed = sessionStorage.getItem(`dismissed_toast_${targetType}_${targetId}`)
     if (dismissed) return
 

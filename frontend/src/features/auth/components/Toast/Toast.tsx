@@ -58,7 +58,7 @@ export default function Toast({
     setPhase('exit')
   }, [])
 
-  // Cleanup timers on unmount
+  // Pocisti casovnike ob odstranitvi komponent
   useEffect(() => {
     return () => {
       if (exitTimer.current) clearTimeout(exitTimer.current)
@@ -66,37 +66,37 @@ export default function Toast({
     }
   }, [])
 
-  // When message changes, trigger the lifecycle
+  // Ko se sporocilo spremeni, sprozi zivljenski cikel (lifecycle)
   useEffect(() => {
     if (message) {
-      // Clear any pending timers from a previous toast
+      // Odstrani vse casovnike od prejsnih pobud k resevanju vprasalnika (toast)
       if (exitTimer.current) clearTimeout(exitTimer.current)
       if (autoTimer.current) clearTimeout(autoTimer.current)
 
       setCurrentMessage(message)
-      // 1) Mount: renders the element at its starting (off-screen) position
+      // 1) Ob priklopu (mount): prikaze element na njegovem zacetnem polozaju izven zaslona (off-screen)
       setPhase('mounting')
     } else if (phase !== 'hidden') {
       setPhase('exit')
     }
   }, [message])
 
-  // Phase transitions
+  // Faza tranzicije (transitions)
   useEffect(() => {
     if (phase === 'mounting') {
-      // 2) After one frame paint in the "mounting" position, transition to "visible"
+      // 2) Po izrisu enega okvirja (frame) v polozaju "mounting" preidi v stanje "visible"
       const raf1 = requestAnimationFrame(() => {
         const raf2 = requestAnimationFrame(() => {
           setPhase('visible')
         })
-        // Store for cleanup
+        // Shrani po ciscenju
         exitTimer.current = setTimeout(() => cancelAnimationFrame(raf2), 100)
       })
       return () => cancelAnimationFrame(raf1)
     }
 
     if (phase === 'visible') {
-      // 3) Start auto-dismiss countdown
+      // 3) Pricni auto-dismiss odstevanje
       autoTimer.current = setTimeout(dismiss, duration)
       return () => {
         if (autoTimer.current) clearTimeout(autoTimer.current)
@@ -104,7 +104,7 @@ export default function Toast({
     }
 
     if (phase === 'exit') {
-      // 4) After exit animation completes, hide and notify parent
+      // 4) Ko se izhodna animacija zakljuci, skrij element in obvesti nadrejeno komponento (parent)
       exitTimer.current = setTimeout(() => {
         setPhase('hidden')
         setCurrentMessage(null)
@@ -116,7 +116,7 @@ export default function Toast({
     }
   }, [phase, duration, dismiss, onDismiss])
 
-  // Don't render anything when hidden
+  // Ne izeisi nicesar ko je skrito (hidden)
   if (phase === 'hidden' || !currentMessage) return null
 
   const v = VARIANTS[variant]

@@ -25,17 +25,17 @@ function HomePage() {
 
 	useEffect(() => {
 		if (isSearchActive) {
-			// Standard lock
+			// Standardni zaklep
 			document.body.style.overflow = 'hidden'
 			
-			// iOS Safari robust lock
+			// iOS Safari robustni zaklep
 			document.documentElement.style.overflow = 'hidden'
 			
 			if (lenisRef.current) {
 				lenisRef.current.scrollTo(0, { immediate: true })
 				lenisRef.current.stop()
 			} else {
-				// Instant scroll to top for Safari
+				// Takojsnje drsenje na vrh za Safari
 				window.scrollTo(0, 0)
 			}
 		} else {
@@ -58,15 +58,15 @@ function HomePage() {
 	}, [isSearchActive])
 
 	useEffect(() => {
-		// Safari/iOS has native momentum scrolling that conflicts badly with Lenis
-		// causing rubber-banding, scroll-freezing, and double-scroll artifacts.
-		// Detect Safari and skip Lenis entirely on those platforms.
+		// Safari/iOS ima domacino momentum drsenje, ki slabo sodeluje z Lenisom
+		// povzroca elasticno "rubber-banding", zamrznitev scrolla in dvojne artefakte
+		// zaznaj Safari in na teh platformah popolnoma izpusti Lenis
 		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 		const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 			(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
 		if (isSafari || isIOS) {
-			// Let Safari use its native smooth scrolling
+			// Dovoliti Safari-ji naj uporablja nativno gladko drsenje
 			return
 		}
 
@@ -141,7 +141,7 @@ function HomePage() {
 					</Fragment>
 				))}
 
-				{/* ── Spacer: Vprašalnik → CTA ── */}
+				{/* ── Spacer: Vprasalnik → CTA ── */}
 				<SectionSpacer size="normal" />
 
 				<HomeFinalCtaSection />

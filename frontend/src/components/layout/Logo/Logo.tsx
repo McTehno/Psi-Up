@@ -9,7 +9,7 @@ type LogoProps = {
 }
 
 function Logo({ 
-  label = 'Psi-Up', 
+  label = 'NIDiKo', 
   hideLabel = false, 
   className = '',
   iconContainerClassName = 'h-11 w-11 rounded-full bg-white shadow-sm border border-sand-200',

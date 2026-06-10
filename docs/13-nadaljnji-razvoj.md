@@ -1,8 +1,8 @@
 # Nadaljnji razvoj
 
-Ta dokument opisuje smiselne možnosti za nadaljnji razvoj aplikacije **NIDiKo**.
+Ta dokument opisuje načrtovane smeri nadaljnjega razvoja aplikacije **NIDiKo**.
 
-Namen dokumenta je zbrati ideje, ki bi lahko izboljšale uporabniško izkušnjo, priporočanje učnih vsebin, spremljanje napredka in razširljivost sistema.
+Namen dokumenta je predstaviti nadgradnje, s katerimi bomo izboljšali uporabniško izkušnjo, priporočanje učnih vsebin, spremljanje napredka in razširljivost sistema.
 
 ---
 
@@ -10,25 +10,25 @@ Namen dokumenta je zbrati ideje, ki bi lahko izboljšale uporabniško izkušnjo,
 
 Trenutni vprašalnik temelji na vprašanjih tipa **DA/NE**.
 
-Ker podatkovna struktura vprašanj že vsebuje polje `type`, je sistem pripravljen za razširitev z dodatnimi tipi vprašanj.
+Trenutna podatkovna struktura podpira razširitev vprašalnika z različnimi tipi vprašanj.
 
-Možne razširitve:
+Načrtovane razširitve:
 
-- vprašanja z več možnimi odgovori,
-- vprašanja z lestvico ocenjevanja,
-- vprašanja z odprtim odgovorom,
-- vprašanja za samooceno stopnje znanja,
-- kombinacija različnih tipov vprašanj znotraj istega vprašalnika.
+* vprašanja z več možnimi odgovori,
+* vprašanja z lestvico ocenjevanja,
+* vprašanja z odprtim odgovorom,
+* vprašanja za samooceno stopnje znanja,
+* kombinacija različnih tipov vprašanj znotraj istega vprašalnika.
 
-S tem bi vprašalnik postal bolj prilagodljiv in primeren za različne vrste učnih vsebin.
+S tem bo vprašalnik postal bolj prilagodljiv in primeren za različne vrste učnih vsebin.
 
 ---
 
 ## 2. AI iskanje
 
-V prihodnje bi bilo mogoče obstoječe iskanje nadgraditi z AI podporo.
+Obstoječe iskanje bomo v nadaljnjem razvoju nadgradili z AI podporo.
 
-AI iskanje bi uporabniku omogočilo bolj naravno iskanje učnih vsebin, na primer z vprašanji ali opisi potreb.
+AI iskanje bo uporabniku omogočilo bolj naravno iskanje učnih vsebin, na primer z vprašanji ali opisi potreb.
 
 Primeri:
 
@@ -40,45 +40,59 @@ Primeri:
 Katera vsebina je primerna, če ne poznam umetne inteligence?
 ```
 
-Možne funkcionalnosti:
+Načrtovane funkcionalnosti:
 
-- iskanje po pomenu, ne samo po ključnih besedah,
-- predlogi sorodnih učnih vsebin,
-- razlaga, zakaj je določen rezultat ustrezen,
-- povezovanje iskalnega niza z učnimi potmi, moduli in učnimi enotami.
+* iskanje po pomenu, ne samo po ključnih besedah,
+* predlogi sorodnih učnih vsebin,
+* razlaga, zakaj je določen rezultat ustrezen,
+* povezovanje iskalnega niza z učnimi potmi, moduli in učnimi enotami.
 
 ---
+
 ## 3. Administracija učnih vsebin
 
-V prihodnje bi bilo mogoče dodati administracijski del za urejanje učnih vsebin.
+V nadaljnjem razvoju bomo dodali administracijski del za urejanje učnih vsebin.
 
-Možne funkcionalnosti:
+Načrtovane funkcionalnosti:
 
-- dodajanje učnih poti,
-- urejanje modulov,
-- urejanje učnih enot,
-- dodajanje vprašanj za samooceno,
-- pregled povezanih DigComp kompetenc,
-- urejanje vrstnega reda in predpogojev.
+* dodajanje učnih poti,
+* urejanje modulov,
+* urejanje učnih enot,
+* dodajanje vprašanj za samooceno,
+* pregled povezanih DigComp kompetenc,
+* urejanje vrstnega reda in predpogojev.
 
-S tem bi bilo upravljanje vsebin lažje in manj odvisno od ročnega urejanja podatkov v bazi.
+S tem bo upravljanje vsebin lažje, preglednejše in manj odvisno od ročnega urejanja podatkov v bazi.
 
 ---
 
 ## 4. Izboljšanje AI pomočnika
 
-AI pomočnika bi bilo mogoče dodatno izboljšati.
+AI pomočnika bomo dodatno nadgradili, da bo uporabniku nudil bolj kontekstualno in uporabno podporo pri učenju.
 
-Možne izboljšave:
+Načrtovane izboljšave:
 
-- boljši kontekst glede na trenutno vsebino,
-- bolj jasna razlaga rezultatov vprašalnika,
-- dodatna podpora pri izbiri naslednje učne vsebine.
+* boljši kontekst glede na trenutno vsebino,
+* jasnejša razlaga rezultatov vprašalnika,
+* podpora zgodovini pogovora z AI pomočnikom,
+* dodatna pomoč pri izbiri naslednje učne vsebine.
 
 ---
 
-## 5. Povzetek
+## 5. Izboljšanje uporabniškega vmesnika
 
-Nadaljnji razvoj aplikacije NIDiKo bi se lahko osredotočil predvsem na razširitev vprašalnika, AI iskanje in uporabniško nadzorno ploščo.
+Uporabniški vmesnik bomo nadgradili tako, da bo uporabniku še jasneje prikazoval njegov napredek, opravljene aktivnosti in priporočene naslednje korake.
 
-Te nadgradnje bi aplikacijo naredile bolj prilagodljivo, osebno in uporabno za različne skupine uporabnikov.
+Načrtovane izboljšave:
+
+* prikaz odgovorjenih vprašalnikov in že ocenjenih vsebin na uporabniškem profilu,
+* bolj vizualen prikaz napredka,
+* dodatna podpora pri izbiri naslednje učne vsebine.
+
+---
+
+## 6. Povzetek
+
+Nadaljnji razvoj aplikacije **NIDiKo** bo osredotočen predvsem na razširitev vprašalnika, AI iskanje, administracijo učnih vsebin, izboljšanje AI pomočnika in nadgradnjo uporabniškega vmesnika.
+
+Te nadgradnje bodo aplikacijo naredile bolj prilagodljivo, osebno in uporabno za različne skupine uporabnikov.

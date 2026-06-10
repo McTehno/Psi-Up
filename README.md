@@ -18,6 +18,9 @@
   <a href="#zaslonski-prikazi">
     <img src="https://img.shields.io/badge/Prikazi-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zaslonski prikazi" />
   </a>
+   <a href="#delujoca-resitev">
+    <img src="https://img.shields.io/badge/Delujoča_rešitev-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Delujoča rešitev" />
+  </a>
   <a href="#namestitev-in-lokalni-zagon">
     <img src="https://img.shields.io/badge/Zagon-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Zagon" />
   </a>
@@ -29,9 +32,6 @@
   </a>
   <a href="#struktura-projekta">
     <img src="https://img.shields.io/badge/Struktura-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Struktura" />
-  </a>
-  <a href="#delujoca-resitev">
-    <img src="https://img.shields.io/badge/Delujoča_rešitev-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Delujoča rešitev" />
   </a>
   <a href="#dokumentacija">
     <img src="https://img.shields.io/badge/Dokumentacija-F3E7D3?style=for-the-badge&labelColor=F8F1E7&color=E6D3B3" alt="Dokumentacija" />
@@ -78,6 +78,13 @@ Spodaj je prikazan reprezentativen prikaz uporabniškega vmesnika aplikacije NID
 </p>
 
 Več zaslonskih prikazov je zbranih v dokumentu [08-zaslonski-prikazi.md](docs/08-zaslonski-prikazi.md).
+
+<a id="delujoca-resitev"></a>
+## Delujoča rešitev
+
+Delujoča različica aplikacije je trenutno dostopna na:
+
+[http://46.225.17.135](http://46.225.17.135)
 
 <a id="namestitev-in-lokalni-zagon"></a>
 
@@ -156,7 +163,7 @@ Projekt je razdeljen na frontend, backend in podatkovno bazo. Za razvoj, zagon i
 | Zagon in namestitev | Docker, Docker Compose |
 | AI podpora | Kontekstualni AI pomočnik |
 
-Podrobnejši pregled uporabljenih tehnologij, verzij in njihove vloge v projektu je zapisan v dokumentu [tehnoloski-sklad.md](docs/tehnoloski-sklad.md).
+Podrobnejši pregled uporabljenih tehnologij, verzij in njihove vloge v projektu je zapisan v dokumentu [02-tehnoloski-sklad.md](docs/02-tehnoloski-sklad.md).
 
 
 
@@ -211,18 +218,11 @@ Za podrobnejši pregled posameznih delov glej:
 - [Arhitektura sistema](docs/03-arhitektura.md)
 - [Pravila poimenovanja in pisanja kode](docs/10-pravila-poimenovanja-in-pisanje-kode.md)
 
-<a id="delujoca-resitev"></a>
-## Delujoča rešitev
-
-Delujoča različica aplikacije je trenutno dostopna na:
-
-[http://46.225.17.135](http://46.225.17.135)
-
 ## Nadaljnji razvoj
 
 Načrtovane nadgradnje vključujejo izboljšanje priporočilnega sistema, razširitev analitike uporabniškega napredka in boljšo podporo za upravljanje učnih vsebin.
 
-Več je opisano v dokumentu [nadaljnji-razvoj.md](docs/nadaljnji-razvoj.md).
+Več je opisano v dokumentu [13-nadaljnji-razvoj.md](docs/13-nadaljnji-razvoj.md).
 
 
 ## Dokumentacija

@@ -127,7 +127,7 @@ function HomePage() {
 						</span>
 						<span>
 							<span className="block font-display text-xl tracking-tight text-[#111111]">
-								Psi-Up
+								NIDiKo
 							</span>
 							<span className="block text-sm text-[#706b60]">
 								Priporočilne učne poti
@@ -224,7 +224,7 @@ function HomePage() {
 						</h1>
 
 						<p className="mt-5 max-w-lg text-lg leading-8 text-[#706b60]">
-							Psi-Up poveže vprašalnik, DigComp in učno pot v eno jasno priporočilo.
+							NIDiKo poveže vprašalnik, DigComp in učno pot v eno jasno priporočilo.
 						</p>
 
 						<div className="mt-8 flex flex-wrap gap-3">

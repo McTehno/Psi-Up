@@ -321,24 +321,9 @@ AI in glasovni endpointi lahko vrnejo različne tipe napak.
 | `502 Bad Gateway` | Napaka pri zunanji AI oziroma glasovni storitvi |
 | `500 Internal Server Error` | Nepričakovana napaka na backendu |
 
-
 ---
 
-## 12. Avtentikacija
-
-Nekateri endpointi so javni, drugi zahtevajo prijavo.
-
-Za zaščitene endpointe frontend pošlje JWT token:
-
-```text
-Authorization: Bearer <access_token>
-```
-
-Backend nato preveri token in dovoli dostop samo do podatkov prijavljenega uporabnika.
-
----
-
-## 13. Povezani dokumenti
+## 12. Povezani dokumenti
 
 - [Vzpostavitev razvojnega okolja](04-vzpostavitev-razvojnega-okolja.md)
 - [Podatkovni model](05-podatkovni-model.md)
@@ -347,7 +332,7 @@ Backend nato preveri token in dovoli dostop samo do podatkov prijavljenega upora
 
 ---
 
-## 14. Opombe
+## 13. Opombe
 
 - Ta dokument predstavlja pregled glavnih endpointov in ni zamenjava za Swagger dokumentacijo.
 - Swagger dokumentacija je uporabna za natančne request in response sheme.

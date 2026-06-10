@@ -20,16 +20,6 @@ users
 AI assistant kolekcije
 ```
 
-Kompetence niso shranjene kot samostojne glavne entitete. Namesto tega so zapisane neposredno znotraj učnih enot, predvsem v poljih:
-
-```text
-acquired_competencies
-digcomp_competencies
-related_competency_codes
-```
-
-Prav tako se uporabniški napredek trenutno **ne hrani več v ločeni kolekciji `user_progress`**. Napredek je del dokumenta uporabnika v kolekciji `users`.
-
 ---
 
 ## 2. Osnovna struktura učnih vsebin
@@ -41,6 +31,8 @@ Učna pot
 Modul
 Učna enota
 ```
+> Več o uporabi referenčnega pristopa med učnimi vsebinami v MongoDB je zapisano v dokumentu: 
+> [ADR-004: Uporaba referenčnega pristopa med učnimi vsebinami v MongoDB](adr/ADR-004-uporaba-referencnega-pristopa-med-ucnimi-vsebinami-v-mongodb.md).
 
 Najmanjši del vsebine je **učna enota**. Več učnih enot lahko sestavlja **modul**. Učna pot pa je širša učna struktura, ki uporabnika vodi skozi več korakov.
 
@@ -455,53 +447,6 @@ last_submitted_at
 answers
 assessment_result
 assessment_result_saved_at
-```
-
-Primer pomena:
-
-- `target_type` pove, ali se vprašalnik nanaša na učno pot, modul ali učno enoto.
-- `target_id` pove ID vsebine, za katero je bil vprašalnik rešen.
-- `answers` vsebuje odgovore uporabnika.
-- `assessment_result` vsebuje rezultat samoocene in priporočeno začetno točko.
-
-### Primer uporabnika
-
-```json
-{
-  "_id": "user_example_id",
-  "auth_provider": "supabase",
-  "auth_user_id": "example-auth-user-id",
-  "name": "Testni uporabnik",
-  "email": "test@example.com",
-  "progress": {
-    "saved": {
-      "learning_path_ids": [],
-      "module_ids": [],
-      "learning_unit_ids": []
-    },
-    "favorites": {
-      "learning_path_ids": [],
-      "module_ids": [],
-      "learning_unit_ids": []
-    },
-    "completed": {
-      "learning_path_ids": [],
-      "module_ids": ["mod_003"],
-      "learning_unit_ids": ["ue_005", "ue_006", "ue_007"]
-    },
-    "current_positions": [
-      {
-        "learning_path_id": "up_002",
-        "current_module_id": "mod_004",
-        "current_learning_unit_id": "ue_008",
-        "updated_at": "2026-06-07T15:19:38.869Z"
-      }
-    ],
-    "questionnaire_answers": []
-  },
-  "created_at": "2026-06-04T07:18:56.962Z",
-  "updated_at": "2026-06-07T15:19:38.892Z"
-}
 ```
 
 ---

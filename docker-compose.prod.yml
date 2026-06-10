@@ -3,7 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: psi_up_backend
+    container_name: nidiko_backend
     ports:
       - "8000:8000"
     # Ker uporabljate Cloud MongoDB, zaledje zgolj prebere lokalni .env
@@ -15,7 +15,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: psi_up_frontend
+    container_name: nidiko_frontend
     ports:
       - "3000:80" # Aplikacija bo dostopna na http://localhost:3000
     depends_on:

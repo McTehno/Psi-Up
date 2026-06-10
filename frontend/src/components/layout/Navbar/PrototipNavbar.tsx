@@ -27,7 +27,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 			<nav className="relative mx-auto flex h-[76px] w-full max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
 				<Link
 					to="/"
-					aria-label="Psi-Up domov"
+					aria-label="NIDiKo domov"
 					className="group inline-flex shrink-0 items-center gap-3"
 				>
 					<Logo
@@ -38,7 +38,7 @@ function Navbar({ links = defaultLinks }: NavbarProps) {
 
 					<span className="hidden sm:block">
 						<span className="block font-display text-lg font-semibold tracking-tight text-[#111111]">
-							Psi-Up
+							NIDiKo
 						</span>
 						<span className="block text-xs font-medium text-[#706b60]">
 							Priporočilne učne poti

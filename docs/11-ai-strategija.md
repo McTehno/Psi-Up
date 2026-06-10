@@ -33,7 +33,7 @@ Prompti so običajno vsebovali:
 - pričakovani način odgovora,
 - zahtevo po minimalnih spremembah.
 
-Pri razvoju smo upoštevali tudi prispevna navodila:
+Pri razvoju smo upoštevali tudi prispevna navodila (primer uporabljenih promptov):
 
 - [Frontend CONTRIBUTING.md](../frontend/CONTRIBUTING.md)
 - [Backend CONTRIBUTING.md](../backend/CONTRIBUTING.md)
